@@ -1,0 +1,161 @@
+/**
+ * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
+ *
+ * @link      https://github.com/p-pit/PpitCore
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
+ */
+
+function check<?php echo $entity ?>UpdateProperties()
+{
+	var validity = true, error, number, val;
+<?php foreach ($properties as $property_id => $property ) : ?>
+
+	<?php if ($property['type'] == 'input' || $property['type'] == 'textarea') : ?>
+	
+	val = $('#<?php echo $property_id ?>').val();
+		<?php if ($property['mandatory']) : ?>
+	if (!val) {
+		renderElement("<?php echo $property_id ?>", "<?php echo $this->translate('Please input a value', 'ppit-core', $context->getLocale()) ?>");
+		validity = false;
+	}
+    else 
+	    <?php endif ?>
+
+    if (val.length > <?php echo $property['maxSize'] ?>) {
+		renderElement("<?php echo $property_id ?>", "<?php echo $this->translate('The input is too long', 'ppit-core', $context->getLocale()) ?>");
+		validity = false;
+	}
+    else {
+		renderElement("<?php echo $property_id ?>", null);
+	}
+	
+	<?php elseif ($property['type'] == 'date') : ?>
+	
+ 		val = document.getElementById('input_<?php echo $property_id ?>').value;
+
+		<?php if ($property['mandatory']) : ?>
+	if (val == "") {
+		renderElement("input_<?php echo $property_id ?>", "<?php echo $this->translate('Please input a value', 'ppit-core', $context->getLocale()) ?>");
+		validity = false;
+	}
+ 	else {
+
+	 	<?php else : ?>
+ 	if (val != "") {
+	
+		<?php endif ?>
+	
+		error = checkDate(val);
+		if (error) {
+			renderElement("input_<?php echo $property_id ?>", error);
+			validity = false;
+		}
+		val = encodeDate(val);
+	
+		<?php if (array_key_exists('minDate', $property)) : ?>
+		if (validity) {
+			if (val < '<?php echo $property['minDate'] ?>') {
+				renderElement("input_<?php echo $property_id ?>", "<?php echo sprintf($this->translate('The date should not be earlier to %s.', 'ppit-order', $context->getLocale()), $context->decodeDate($minDate)) ?>");
+				validity = false;
+			}
+		}
+	    else {
+			renderElement("input_<?php echo $property_id ?>", null);
+		}
+
+		<?php endif ?>
+		
+		<?php if (array_key_exists('maxDate', $property)) : ?>
+		if (validity) {
+			if (val > '<?php echo $property['maxDate'] ?>') {
+				renderElement("input_<?php echo $property_id ?>", "<?php echo sprintf($this->translate('The date should not be later to %s.', 'ppit-order', $context->getLocale()), $context->decodeDate($maxDate)) ?>");
+				validity = false;
+			}
+		}
+		<?php endif;?>
+	
+		if (validity) {
+			renderElement("input_<?php echo $property_id ?>", null);
+			document.getElementById('<?php echo $property_id ?>').value = val;
+	    }
+	}
+
+	<?php elseif ($property['type'] == 'select' || $property['type'] == 'repository') : ?>
+		<?php if ($property['mandatory']) : ?>
+
+	if (!document.getElementById("<?php echo $property_id ?>").value) {
+		renderElement("<?php echo $property_id ?>", "<?php echo $this->translate('Please select a value', 'ppit-core', $context->getLocale()) ?>");
+		validity = false;
+	}
+		<?php endif;?>
+		
+	<?php elseif ($property['type'] == 'email') : ?>
+
+		<?php if ($property['mandatory']) : ?>
+
+	if (!document.getElementById("<?php echo $property_id ?>").value) {
+		renderElement("<?php echo $property_id ?>", "<?php echo $this->translate('Please input a value', 'ppit-core', $context->getLocale()) ?>");
+		validity = false;
+	}
+	else {
+
+	 	<?php else : ?>
+ 	if (document.getElementById("<?php echo $property_id ?>").value) {
+	
+		<?php endif ?>
+	
+			error = checkEmail(document.getElementById('<?php echo $property_id ?>').value);
+			if (error) {
+				renderElement("<?php echo $property_id ?>", error);
+				validity = false;
+			}
+			else {
+				renderElement("<?php echo $property_id ?>", null);
+			}
+	    }
+	
+	<?php elseif ($property['type'] == 'phone') : ?>
+	
+		<?php if ($property['mandatory']) : ?>
+		
+	if (!document.getElementById("<?php echo $property_id ?>").value) {
+		renderElement("<?php echo $property_id ?>", "<?php echo $this->translate('Please input a value', 'ppit-core', $context->getLocale()) ?>");
+		validity = false;
+	}
+	else {
+
+	 	<?php else : ?>
+ 	if (document.getElementById("<?php echo $property_id ?>").value) {
+	
+		<?php endif;?>
+		
+			error = checkPhone(document.getElementById('<?php echo $property_id ?>').value);
+			if (error) {
+				renderElement("<?php echo $property_id ?>", error);
+				validity = false;
+			}
+			else {
+				renderElement("<?php echo $property_id ?>", null);
+			}
+	    }
+	
+	<?php elseif ($property['type'] == 'number') : ?>
+	
+			number = document.getElementById("input_<?php echo $property_id ?>").value;
+			error = checkNumber(number, <?php echo $property['minValue'] ?>, <?php echo $property['maxValue'] ?>);
+			if (error) {
+				renderElement("input_<?php echo $property_id ?>", error);
+				validity = false;
+			}
+		    else { 
+				renderElement("input_<?php echo $property_id ?>", null);
+				number = getNumber(number, 2);
+				document.getElementById("<?php echo $property_id ?>").value = number;
+			}
+
+	<?php endif ?>
+<?php endforeach ?>
+
+	return validity;
+}

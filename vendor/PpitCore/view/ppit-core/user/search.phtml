@@ -1,0 +1,17 @@
+<!-- 
+/**
+ * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
+ *
+ * @link      https://github.com/p-pit/PpitCore
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
+ */
+-->
+
+<div class="panel panel-default">
+	<div class="panel-heading" style="background: <?php echo $context->getConfig('styleSheet')['panelHeadingBackground'] ?>; color: <?php echo $context->getConfig('styleSheet')['panelHeadingColor'] ?>">
+		<strong><?php echo $this->translate('Users', 'ppit-core', $context->getLocale()).(($community_id) ? ' '.$community->name : '') ?></strong>
+    </div>
+    <div class="panel-body" id="user-list-panel">
+	</div>
+</div>
