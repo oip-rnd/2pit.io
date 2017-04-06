@@ -1,0 +1,321 @@
+<?php
+$first = true;
+$paramString = '?';
+foreach ($params as $name => $value) {
+	if (!$first) $paramString .= '&';
+	$first = false;
+	$paramString .= $name.'='.$value;
+}
+?>
+				<table class="table table-striped ppit_index">
+<!-- Column headers -->
+					<tr>
+						<th>&nbsp;</th>
+						<th>&nbsp;</th>
+						<th>
+							<?php echo $this->partial('/partials/action-widget.phtml', array(
+									'context' => $context,
+									'target' => 'vcard-list-panel',
+									'text' => $this->translate('Name', 'ppit-contact', $context->getLocale()),
+									'size' => 'btn-xs',
+									'id' => 'n_fn-anchor',
+									'route' => 'vcard/list',
+									'params' => array('community_id' => $community_id),
+									'getParams' => $paramString.'&major=n_fn'.(($major == 'n_fn' && $dir =='ASC') ? '&dir=DESC' : '&dir=ASC'),
+							)) ?>
+						</th>
+						<th>
+							<?php echo $this->partial('/partials/action-widget.phtml', array(
+									'context' => $context,
+									'target' => 'vcard-list-panel',
+									'text' => $this->translate('Email', 'ppit-contact', $context->getLocale()),
+									'size' => 'btn-xs',
+									'id' => 'email-anchor',
+									'route' => 'vcard/list',
+									'params' => array('community_id' => $community_id),
+									'getParams' => $paramString.'&major=email'.(($major == 'email' && $dir =='ASC') ? '&dir=DESC' : '&dir=ASC'),
+							)) ?>
+						</th>
+						<th>
+							<?php echo $this->partial('/partials/action-widget.phtml', array(
+									'context' => $context,
+									'target' => 'vcard-list-panel',
+									'text' => $this->translate('Phone', 'ppit-contact', $context->getLocale()),
+									'size' => 'btn-xs',
+									'id' => 'tel_cell-anchor',
+									'route' => 'vcard/list',
+									'params' => array('community_id' => $community_id),
+									'getParams' => $paramString.'&major=tel_cell'.(($major == 'tel_cell' && $dir =='ASC') ? '&dir=DESC' : '&dir=ASC'),
+							)) ?>
+						</th>
+<?php if (!$properties || array_key_exists('adr_city', $properties)) : ?>
+						<th>
+							<?php echo $this->partial('/partials/action-widget.phtml', array(
+									'context' => $context,
+									'target' => 'vcard-list-panel',
+									'text' => $this->translate('City', 'ppit-contact', $context->getLocale()),
+									'size' => 'btn-xs',
+									'id' => 'adr_city-anchor',
+									'route' => 'vcard/list',
+									'params' => array('community_id' => $community_id),
+									'getParams' => $paramString.'&major=adr_city'.(($major == 'adr_city' && $dir =='ASC') ? '&dir=DESC' : '&dir=ASC'),
+							)) ?>
+						</th>
+<?php endif;?>
+<?php if (!$properties || array_key_exists('adr_state', $properties)) : ?>
+						<th>
+							<?php echo $this->partial('/partials/action-widget.phtml', array(
+									'context' => $context,
+									'target' => 'vcard-list-panel',
+									'text' => $this->translate('State', 'ppit-contact', $context->getLocale()),
+									'size' => 'btn-xs',
+									'id' => 'adr_state-anchor',
+									'route' => 'vcard/list',
+									'params' => array('community_id' => $community_id),
+									'getParams' => $paramString.'&major=state'.(($major == 'state' && $dir =='ASC') ? '&dir=DESC' : '&dir=ASC'),
+							)) ?>
+						</th>
+<?php endif;?>
+<?php if (!$properties || array_key_exists('adr_state', $properties)) : ?>
+						<th>
+							<?php echo $this->partial('/partials/action-widget.phtml', array(
+									'context' => $context,
+									'target' => 'vcard-list-panel',
+									'text' => $this->translate('Country', 'ppit-contact', $context->getLocale()),
+									'size' => 'btn-xs',
+									'id' => 'adr_country-anchor',
+									'route' => 'vcard/list',
+									'params' => array('community_id' => $community_id),
+									'getParams' => $paramString.'&major=country'.(($major == 'country' && $dir =='ASC') ? '&dir=DESC' : '&dir=ASC'),
+							)) ?>
+						</th>
+<?php endif;?>
+<?php if (!$properties || array_key_exists('adr_country', $properties)) : ?>
+						<th>
+							<?php echo $this->partial('/partials/action-widget.phtml', array(
+									'context' => $context,
+									'target' => 'vcard-list-panel',
+									'text' => $this->translate('Sex', 'ppit-contact', $context->getLocale()),
+									'size' => 'btn-xs',
+									'id' => 'sex-anchor',
+									'route' => 'vcard/list',
+									'params' => array('community_id' => $community_id),
+									'getParams' => $paramString.'&major=sex'.(($major == 'sex' && $dir =='ASC') ? '&dir=DESC' : '&dir=ASC'),
+							)) ?>
+						</th>
+<?php endif;?>
+<?php if (!$properties || array_key_exists('birth_date', $properties)) : ?>
+						<th>
+							<?php echo $this->partial('/partials/action-widget.phtml', array(
+									'context' => $context,
+									'target' => 'vcard-list-panel',
+									'text' => $this->translate('Birth date', 'ppit-contact', $context->getLocale()),
+									'size' => 'btn-xs',
+									'id' => 'birth_date-anchor',
+									'route' => 'vcard/list',
+									'params' => array('community_id' => $community_id),
+									'getParams' => $paramString.'&major=birth_date'.(($major == 'birth_date' && $dir =='ASC') ? '&dir=DESC' : '&dir=ASC'),
+							)) ?>
+						</th>
+<?php endif;?>
+<?php if (!$properties || array_key_exists('place_of_birth', $properties)) : ?>
+						<th>
+							<?php echo $this->partial('/partials/action-widget.phtml', array(
+									'context' => $context,
+									'target' => 'vcard-list-panel',
+									'text' => $this->translate('Place of birth', 'ppit-contact', $context->getLocale()),
+									'size' => 'btn-xs',
+									'id' => 'place_of_birth-anchor',
+									'route' => 'vcard/list',
+									'params' => array('community_id' => $community_id),
+									'getParams' => $paramString.'&major=place_of_birth'.(($major == 'place_of_birth' && $dir =='ASC') ? '&dir=DESC' : '&dir=ASC'),
+							)) ?>
+						</th>
+<?php endif;?>
+<?php if (!$properties || array_key_exists('nationality', $properties)) : ?>
+						<th>
+							<?php echo $this->partial('/partials/action-widget.phtml', array(
+									'context' => $context,
+									'target' => 'vcard-list-panel',
+									'text' => $this->translate('Nationality', 'ppit-contact', $context->getLocale()),
+									'size' => 'btn-xs',
+									'id' => 'nationality-anchor',
+									'route' => 'vcard/list',
+									'params' => array('community_id' => $community_id),
+									'getParams' => $paramString.'&major=nationality'.(($major == 'nationality' && $dir =='ASC') ? '&dir=DESC' : '&dir=ASC'),
+							)) ?>
+						</th>
+<?php endif;?>
+					</tr>
+<!-- Rows -->
+<?php foreach ($vcards as $vcard) : ?>
+	<?php if ($context->isAllowed('vcard/detail')) : ?>
+					<tr class="vcard">
+						<td>
+							<?php echo $this->partial('/partials/action-widget.phtml', array(
+									'context' => $context,
+									'target' => 'vcard-detail-panel-'.$vcard->id,
+									'targetClass' => 'vcard-detail-panel',
+									'glyphicon' => 'glyphicon-zoom-in',
+									'class' => 'index-btn',
+									'title' => $this->translate('Detail', 'ppit-core', $context->getLocale()),
+									'id' => 'vcard-detail-anchor-'.$vcard->id,
+									'route' => 'vcard/detail',
+									'script' => 'vcard/detail-'.$vcard->id.'-script',
+									'params' => array('id' => $vcard->id),
+							)) ?>
+						</td>
+						<td>
+							<span class="info">
+								<img height="40" src="<?php echo $this->url('vcard/photo', array('id' => $vcard->id)) ?>"/>
+								<span><img height="150" src="<?php echo $this->url('vcard/photo', array('id' => $vcard->id)) ?>"/></span>
+							</span>
+						</td>
+						<td><?php echo $vcard->n_fn ?></td>
+						<td><a href="mailto:<?php echo $vcard->email ?>"><?php echo $vcard->email ?></a></td>
+						<td><a href="tel:<?php echo $vcard->tel_cell ?>"><?php echo $vcard->tel_cell ?></a></td>
+	<?php if (!$properties || array_key_exists('adr_city', $properties)) : ?>
+						<td><?php echo $vcard->adr_city ?></td>
+	<?php endif;?>
+	<?php if (!$properties || array_key_exists('adr_state', $properties)) : ?>
+						<td><?php echo $vcard->adr_state ?></td>
+	<?php endif;?>
+	<?php if (!$properties || array_key_exists('adr_country', $properties)) : ?>
+						<td><?php echo $vcard->adr_country ?></td>
+	<?php endif;?>
+	<?php if (!$properties || array_key_exists('sex', $properties)) : ?>
+						<td><?php echo $vcard->sex ?></td>
+	<?php endif;?>
+	<?php if (!$properties || array_key_exists('birth_date', $properties)) : ?>
+						<td><?php echo $vcard->birth_date ?></td>
+	<?php endif;?>
+	<?php if (!$properties || array_key_exists('place_of_birth', $properties)) : ?>
+						<td><?php echo $vcard->place_of_birth ?></td>
+	<?php endif;?>
+	<?php if (!$properties || array_key_exists('nationality', $properties)) : ?>
+						<td><?php echo $vcard->nationality ?></td>
+	<?php endif;?>
+					</tr>
+	<?php endif;?>
+
+<!-- Detail panel -->
+					<tr><td colspan="12">
+						<div class="col-md-6 col-md-offset-3 vcard-detail-panel" id="vcard-detail-panel-<?php echo $vcard->id ?>"></div>
+					</td></tr>
+
+	<?php endforeach; ?>
+				</table>
+
+<script id="vcard/list-script">
+
+// Zoom
+<?php foreach ($vcards as $vcard) : ?>
+	eval(document.getElementById('vcard-detail-anchor-<?php echo $vcard->id ?>-script').innerHTML);
+<?php endforeach;?>
+
+eval(document.getElementById('n_fn-anchor-script').innerHTML);
+$("#n_fn-anchor-glyphicon").removeClass("glyphicon-triangle-top");
+<?php if (isset($major) && $major == 'n_fn') : ?>
+	<?php if ($dir == 'ASC') : ?>
+		$("#n_fn-anchor-glyphicon").addClass("glyphicon-triangle-top");
+	<?php else : ?>
+		$("#n_fn-anchor-glyphicon").addClass("glyphicon-triangle-bottom");
+	<?php endif;?>
+<?php endif;?>
+
+eval(document.getElementById('email-anchor-script').innerHTML);
+$("#email-anchor-glyphicon").removeClass("glyphicon-triangle-top");
+<?php if (isset($major) && $major == 'email') : ?>
+	<?php if ($dir == 'ASC') : ?>
+		$("#email-anchor-glyphicon").addClass("glyphicon-triangle-top");
+	<?php else : ?>
+		$("#email-anchor-glyphicon").addClass("glyphicon-triangle-bottom");
+	<?php endif;?>
+<?php endif;?>
+
+eval(document.getElementById('tel_cell-anchor-script').innerHTML);
+$("#tel_cell-anchor-glyphicon").removeClass("glyphicon-triangle-top");
+<?php if (isset($major) && $major == 'tel_cell') : ?>
+	<?php if ($dir == 'ASC') : ?>
+		$("#tel_cell-anchor-glyphicon").addClass("glyphicon-triangle-top");
+	<?php else : ?>
+		$("#tel_cell-anchor-glyphicon").addClass("glyphicon-triangle-bottom");
+	<?php endif;?>
+<?php endif;?>
+
+<?php if (!$properties || array_key_exists('adr_city', $properties)) : ?>
+	eval(document.getElementById('adr_city-anchor-script').innerHTML);
+	$("#adr_city-anchor-glyphicon").removeClass("glyphicon-triangle-top");
+	<?php if (isset($major) && $major == 'adr_city') : ?>
+		<?php if ($dir == 'ASC') : ?>
+			$("#adr_city-anchor-glyphicon").addClass("glyphicon-triangle-top");
+		<?php else : ?>
+			$("#adr_city-anchor-glyphicon").addClass("glyphicon-triangle-bottom");
+		<?php endif;?>
+	<?php endif;?>
+<?php endif;?>
+
+<?php if (!$properties || array_key_exists('adr_state', $properties)) : ?>
+	eval(document.getElementById('adr_state-anchor-script').innerHTML);
+	$("#adr_state-anchor-glyphicon").removeClass("glyphicon-triangle-top");
+	<?php if (isset($major) && $major == 'adr_state') : ?>
+		<?php if ($dir == 'ASC') : ?>
+			$("#adr_state-anchor-glyphicon").addClass("glyphicon-triangle-top");
+		<?php else : ?>
+			$("#adr_state-anchor-glyphicon").addClass("glyphicon-triangle-bottom");
+		<?php endif;?>
+	<?php endif;?>
+<?php endif;?>
+
+<?php if (!$properties || array_key_exists('adr_country', $properties)) : ?>
+	eval(document.getElementById('adr_country-anchor-script').innerHTML);
+	$("#adr_country-anchor-glyphicon").removeClass("glyphicon-triangle-top");
+	<?php if (isset($major) && $major == 'adr_country') : ?>
+		<?php if ($dir == 'ASC') : ?>
+			$("#adr_country-anchor-glyphicon").addClass("glyphicon-triangle-top");
+		<?php else : ?>
+			$("#adr_country-anchor-glyphicon").addClass("glyphicon-triangle-bottom");
+		<?php endif;?>
+	<?php endif;?>
+<?php endif;?>
+
+<?php if (!$properties || array_key_exists('birth_date', $properties)) : ?>
+	eval(document.getElementById('birth_date-anchor-script').innerHTML);
+	$("#birth_date-anchor-glyphicon").removeClass("glyphicon-triangle-top");
+	<?php if (isset($major) && $major == 'birth_date') : ?>
+		<?php if ($dir == 'ASC') : ?>
+			$("#birth_date-anchor-glyphicon").addClass("glyphicon-triangle-top");
+		<?php else : ?>
+			$("#birth_date-anchor-glyphicon").addClass("glyphicon-triangle-bottom");
+		<?php endif;?>
+	<?php endif;?>
+<?php endif;?>
+
+<?php if (!$properties || array_key_exists('place_of_birth', $properties)) : ?>
+	eval(document.getElementById('place_of_birth-anchor-script').innerHTML);
+	$("#place_of_birth-anchor-glyphicon").removeClass("glyphicon-triangle-top");
+	<?php if (isset($major) && $major == 'adr_country') : ?>
+		<?php if ($dir == 'ASC') : ?>
+			$("#place_of_birth-anchor-glyphicon").addClass("glyphicon-triangle-top");
+		<?php else : ?>
+			$("#place_of_birth-anchor-glyphicon").addClass("glyphicon-triangle-bottom");
+		<?php endif;?>
+	<?php endif;?>
+<?php endif;?>
+			
+<?php if (!$properties || array_key_exists('nationality', $properties)) : ?>
+	eval(document.getElementById('nationality-anchor-script').innerHTML);
+	$("#nationality-anchor-glyphicon").removeClass("glyphicon-triangle-top");
+	<?php if (isset($major) && $major == 'adr_country') : ?>
+		<?php if ($dir == 'ASC') : ?>
+			$("#nationality-anchor-glyphicon").addClass("glyphicon-triangle-top");
+		<?php else : ?>
+			$("#nationality-anchor-glyphicon").addClass("glyphicon-triangle-bottom");
+		<?php endif;?>
+	<?php endif;?>
+<?php endif;?>
+
+			
+$('.vcard-detail-panel').hide();
+
+</script>

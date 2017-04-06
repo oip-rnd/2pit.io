@@ -1,0 +1,32 @@
+<!-- 
+/**
+ * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
+ *
+ * @link      https://github.com/p-pit/PpitCore
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
+ */
+-->
+
+<?php
+$images = array();
+$dir = './public/img/'.$context->getInstance()->caption;
+if ($dh = opendir($dir)) {
+	while (($file = readdir($dh)) !== false) {
+		if (substr($file, 0, 1) != '.' && preg_match('#\.(jpe?g|gif|png)$#i', $file)) $images[$file] = '/img/'.$context->getInstance()->caption.'/'.$file;
+	}
+	closedir($dh);
+}
+?>
+
+<button type="button" id="image-delete-btn" class="btn btn-default" title="<?php echo $this->translate('Delete', 'ppit-core', $context->getLocale())?>">
+	<span class="glyphicon glyphicon-remove" id="group-glyphicon"></span>
+</button>
+&nbsp;&nbsp;&nbsp;&nbsp;
+		
+<?php foreach ($images as $name => $path) : ?>
+			<input type="hidden" id="logo_<?php echo substr($name, 0, strpos($name, '.')) ?>" value="<?php echo $path?>" />
+			<a class="image-select" id="image-select_<?php echo substr($name, 0, strpos($name, '.')) ?>">
+				<img width="30" src="<?php echo $this->basePath($path) ?>"/>
+			</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<?php endforeach;?>

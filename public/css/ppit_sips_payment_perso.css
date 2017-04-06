@@ -1,0 +1,488 @@
+/* GENERAL */
+  html {
+  		/* default background color */
+      background-color: #fff;
+  }
+	body {
+	  /* center */
+    margin: 0 auto;
+		/* background image width + 150px */
+    width: 828px;
+    /* background image height + 100px */
+		height: 778px;
+		/* background color */
+		background-color: #fff;
+		/* background image */
+		background-image: url(img/default_sips_payment_background.png);
+		background-repeat: no-repeat;
+		background-position: 75px 80px; /* 75px = 150px / 2 */
+		/* font list */
+		font-family: Calibri, Tahoma, Arial, Helvetica, sans-serif;
+		/* font size */
+		font-size: 0.95em;
+		/* font color */
+		color: #202020;
+		/*padding-top: 40px;*/
+	}
+	center {
+		clear: both;
+		text-align: left;
+	}
+	/* hide hr */
+	hr {
+		border: 0;
+		height: 0;
+		visibility: hidden;
+	}
+	.sips_body_page br  {
+    /*display: block;*/
+  }
+	form input, form select {
+      font-family: Calibri, Arial, Helvetica, sans-serif;
+  }
+  form input {
+    padding-left: 3px;
+    padding-right: 3px;
+  }
+  table.sips_teg_table {
+    border-collapse: collapse;
+  }
+  /* hide the advert logo */
+  .sips_body_page center img  {
+    /*visibility: hidden;
+    height: 0px;*/
+  }
+  .sips_advert_logo {
+    text-align: center;
+ }
+
+/* SHOP NAME */
+	table.sips_shop_name_table {
+        visibility: hidden;
+		border-collapse: collapse;
+		/* background image width + 150px */
+		width: 828px;
+		height: 90px;
+		/*border: solid 1px black;*/
+		margin-bottom: 10px;
+		margin-top: 20px;
+	}	
+	/* logo 1 and logo 2 */
+	table.sips_shop_name_table td {
+		vertical-align: bottom;
+    /*border: solid 1px black;*/
+	}	
+	/* shop title */
+	table.sips_shop_name_table td center {
+		text-align: left;
+		margin-left: 100px;
+		
+		/*background-image: url(img/default_sips_payment_puce_black.png);
+    background-repeat: no-repeat;
+    background-position: 0% 85%;
+    padding-left: 10px;*/
+		
+		/*border: solid 1px black;*/
+	} 
+  /* shop title */
+  .sips_shop_name_font {
+	   /* padding between logo 1 and shop title */
+     /*padding-left: 5px;*/
+	}
+
+/* LOGO */
+	img.sips_logo {
+		margin-top: 7px;
+		margin-right: 100px;
+	}
+	
+/* TRANS REF */
+	table.sips_trans_ref_table {
+		margin-left: 100px;
+		margin-top: 10px;
+    width: 450px;
+	}	
+	table.sips_trans_ref_table i {
+		font-weight: normal;
+		font-style: normal;
+		color: #202020;
+	}	
+	.sips_trans_ref_table_id_customer, .sips_trans_ref_table_id_transaction, .sips_trans_ref_table_amount_transaction, .sips_trans_ref_table_date, .sips_trans_ref_table_url, .sips_trans_ref_table_id_customer, .sips_trans_ref_table_id_transaction, .sips_trans_ref_table_amount_transaction, .sips_trans_ref_msg_cardholder_nb, .sips_trans_ref_card_auth_nb, .sips_trans_ref_card_auth_certif {
+    color: #D3184D;
+    font-weight: bold;
+  }
+	
+/* SECURE MESSAGE */
+	b.sips_secure_message {
+		display: block;
+		clear: both;
+		font-size: 0.8em;
+		color: #202020;
+		font-weight: normal;
+		margin-top: 40px;
+		margin-left: 103px;
+		width: 640px;
+	}	
+	b.sips_secure_message img {
+		vertical-align: middle;
+	}
+	
+/* FORM */
+	form {
+    position: relative;
+    top: 10px;
+    padding-left: 0px;
+    padding-top: 0px;
+		padding-bottom: 15px;
+		margin-right: 50px;
+		font-size: 0.8em;
+		line-height: 2em;
+		font-weight: bold;
+		text-align: center;
+		width: 600px;
+		margin-left: 103px;
+	}	
+	center form {
+		text-align: center;
+		background: none;
+		border: none;
+	}
+	
+/* CARD INFOS */  
+  form span.sips_card_number_title {
+    background-image: url(img/default_sips_payment_puce_red.png);
+    background-repeat: no-repeat;
+    background-position: 0% 50%;
+    padding-left: 10px;
+	}	
+	form input.sips_card_number_input {
+		margin-left: 10px;
+		margin-right: 10px;
+	}	
+	form span.sips_expiry_date_card_title#ID_EXPIRE_FIN {
+    background-image: url(img/default_sips_payment_puce_red.png);
+    background-repeat: no-repeat;
+    background-position: 0% 50%;
+    padding-left: 10px;
+	}
+	form span.sips_expiry_date_card_title#ID_SLASH {
+	}
+  form select.sips_expiry_month_card_input {
+		margin-left: 10px;
+	}
+	form input.sips_cryptogram_code_input {
+		margin-left: 10px;
+	}	
+	a.sips_cryptogram_example {
+    background-image: url(img/default_sips_payment_puce_red.png);
+    background-repeat: no-repeat;
+    background-position: 0% 50%;
+    padding-left: 10px;
+    color: #D3184D;
+  }
+  form span.sips_cryptogram_message {
+    background-image: url(img/default_sips_payment_puce_red.png);
+    background-repeat: no-repeat;
+    background-position: 0% 50%;
+    padding-left: 10px;
+	}
+	form input.sips_card_4dbc_input {
+		margin-left: 10px;
+	}	
+  form span.sips_card_4dbc_message {
+    background-image: url(img/default_sips_payment_puce_red.png);
+    background-repeat: no-repeat;
+    background-position: 0% 50%;
+    padding-left: 10px;
+	}
+	form input.sips_submit_button {
+    background-color: #E8E8E8;
+    border: 1px #202020 solid;
+    color: #202020;
+  }	
+	form input.sips_customer_return_button {
+    background-color: #E8E8E8;
+    border: 1px #202020 solid;
+    color: #202020;
+  }
+  form span.sips_issuernumber_message {
+    background-image: url(img/default_sips_payment_puce_red.png);
+    background-repeat: no-repeat;
+    background-position: 0% 50%;
+    padding-left: 10px;
+  }
+  form input.sips_issuernumber_input {
+    margin-right: 10px;
+  }
+  
+  form span.sips_startdate_message {
+    background-image: url(img/default_sips_payment_puce_red.png);
+    background-repeat: no-repeat;
+    background-position: 0% 50%;
+    padding-left: 10px;
+    margin-right: 10px;
+  }
+  form input.sips_startdate_input {
+  }
+  
+  
+  form span.sips_cvv2-cvc2_fields_message {
+  }
+  form select.sips_cvv2-cvc2_fields_input {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  form span {
+  }
+  form input {
+    margin-left: 10px;
+  }
+  b.sips_card_message_number {
+		display: block;
+		clear: both;
+		font-size: 0.8em;
+		color: #202020;
+		font-weight: normal;
+		margin-left: 103px;
+		margin-top: 10px;
+		width: 640px;
+	}	
+  b.sips_finaref_message {
+		display: block;
+		clear: both;
+		font-size: 0.8em;
+		color: #202020;
+		font-weight: normal;
+		margin-left: 103px;
+		margin-top: 10px;
+		width: 640px;
+	}
+	b.sips_s2p_message {
+		display: block;
+		clear: both;
+		font-size: 0.8em;
+		color: #202020;
+		font-weight: normal;
+		margin-left: 103px;
+		margin-top: 10px;
+		width: 640px;
+	}
+	
+	form span.sips_birthdaydate_message {
+    background-image: url(img/default_sips_payment_puce_red.png);
+    background-repeat: no-repeat;
+    background-position: 0% 50%;
+    padding-left: 10px;
+  }
+  form input.sips_birthdaydate_input {
+    margin-right: 10px;
+  }
+  
+  form span.sips_settlementmode_message {
+    /*background-image: url(img/default_sips_payment_puce_red.png);
+    background-repeat: no-repeat;
+    background-position: 0% 50%;
+    padding-left: 10px;*/
+    margin-right: 10px;
+  }
+	
+  
+			
+/* COPYRIGHT */
+	b i.sips_footer_message {
+		display: block;
+		margin-top: 0px;
+    margin-left: 0px;
+		text-align: center;
+		font-weight: bold;
+		font-style: normal;
+		font-size: 0.8em;
+    color: #D3184D;
+	}
+
+/* ERRORS */
+	h2, h3 {
+		font-size: 1em;
+  }
+  i.sips_error_code {
+    margin-left: 103px;
+		text-align: left;
+		color: #D3184D;
+		font-style: normal;
+	}
+	b.sips_error {
+    margin-left: 103px;
+		font-size: 0.85em;
+	}
+	b.sips_error br {
+    display: none;
+	}
+	span.sips_last_try_message {
+    margin-left: 105px;
+		font-style: normal;
+		color: #D3184D;
+		font-size: 0.85em;
+	}
+	span.sips_last_try_message br {
+		display: none;
+	}
+	
+/* ACCEPTED TRANSACTION */
+	h3.sips_payment_accepted_message {
+		color: #D3184D;
+		font-size: 1em;
+		font-weight: bold;
+		text-align: center;
+	}
+	span.sips_keep_reference_message {
+	  display: block;
+    font-size: 1em;
+		font-weight: bold;
+		color: #D3184D;
+		text-align: center;
+	}
+	span.sips_no_windows_message {
+		display: block;
+		margin: 0 100px;
+		text-align: center;
+	}
+  .sips_trans_ref_table_date_result, .sips_trans_ref_table_url_result, .sips_trans_ref_table_id_customer_result, .sips_trans_ref_table_id_transaction_result, .sips_trans_ref_table_amount_transaction_result, .sips_trans_ref_msg_cardholder_nb_result, .sips_trans_ref_card_auth_nb_result, .sips_trans_ref_card_auth_certif_result {
+    font-weight: normal;
+  }
+	
+/* FINAL ERROR */
+	.sips_error_trans {
+    text-align: center;
+		font-style: italic;
+		font-weight: bold;
+    display: block;
+    margin: auto;
+    padding-top: 10px;
+  }
+  
+  .sips_error_trans_message {
+		text-align: center;
+		font-style: italic;
+		font-weight: bold;
+    display: block;
+    margin: auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 600px;
+	}  
+  h2.sips_refusal_message {
+    text-align: center;
+		font-style: italic;
+		font-weight: bold;
+    display: block;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .sips_retry_message {
+    text-align: center;
+		font-style: italic;
+		font-weight: bold;
+    display: block;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+/* 3D */
+  .sips_threeD_redirect_info_message {
+    margin-left: 103px;
+    margin-right: 20px;
+    font-size: 1em;
+  }
+  .sips_threeD_noredirect_action_message {
+    margin-left: 103px;
+    font-size: 0.85em;   
+  }
+  .sips_redirect_message {
+    font-size: 0.85em;
+     
+  }
+  .sips_threeD_info_message {
+    width: 640px;
+    font-size: 1em;
+  }
+  
+  
+  
+  
+  
+  .sips_noreg_trans_message {
+    margin-left: 103px;
+    font-size: 1em;
+  }
+  
+  
+  .sips_warning_message {
+    margin-left: 103px;
+    font-size: 1em;
+  }
+  
+  table.sips_cryptogram_table {
+    border-collapse: collapse;
+    border: 1px #000 none;
+    width: 640px;
+    /*margin: auto;*/
+    text-align: left;
+    margin-top: 10px;
+  }
+
+  table.sips_cryptogram_table td {
+    border: 1px #000 none;
+  }
+
+  table.sips_card_4dbc_table {
+    border-collapse: collapse;
+    border: 1px #000 none;
+    width: 640px;
+    /*margin: auto;*/
+    text-align: left;
+    margin-top: 10px;
+  }
+
+  table.sips_card_4dbc_table td {
+    border: 1px #000 none;
+  }
+
+
+/* TABLEAU MULTI-DEVISES */
+
+.sips_currency_table {
+  width: 800px;
+  margin: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.sips_currency_data_table {
+
+}
+.sips_currency_data_rows {
+
+}
+.sips_currency_data_cells {
+
+}
+/* Montant indicatif et date de derni?re mise ?? jour */
+.sips_currency_messages_table {
+  font-size: 0.7em;
+}
+/* Montant indicatif de l'achat */  
+.sips_currency_addtexte_message {
+  
+}
+/* Date de derni?re mise ?? jour des taux */
+.sips_currency_date_message {
+  
+}
+/* Montant */
+.sips_currency_amount_result {
+  
+}
+/* Devise */
+.sips_currency_name_result {
+
+}
+

@@ -1,0 +1,31 @@
+<?php
+$spa = $context->isSpaMode();
+$anchorStyle = ($spa) ? $context->getAnchorStyle() : 'classic';
+$current = 'orgUnit';
+?>
+
+<!-- Display header on MPA mode -->
+<?php if (!$spa) : ?>
+	<?php 
+		$this->current = 'admin';
+		echo $this->partial('/partials/menu'); 
+	?>
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+<?php endif;?>
+
+		<div class="panel panel-default">
+		    <div class="panel-body">
+				<div align="center" style="font-size: 250%"><img width="100" src="<?php echo $this->basePath('images/dyadeo.png') ?>"/>&nbsp;&nbsp;Administration</div>
+				<br>
+           		<div align="center"><img width="400" src=<?php echo $this->basePath('images/diamond.png') ?> alt="<?php echo $this->translate('Diamond') ?>" /></div>
+			</div>
+		</div>
+<?php if (!$spa) : ?>
+	</div>
+</div>
+<?php endif;?>
+
+<script id="dashboard_script">
+
+</script>

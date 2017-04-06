@@ -1,0 +1,122 @@
+<!-- Load the common form javascript functions -->
+<?php echo $this->partial('/partials/common-form-js.phtml'); ?>
+
+<?php
+$title = 'P-PIT';
+$this->headTitle($title);
+echo $this->partial('/partials/header');
+?>
+
+<div>&nbsp;</div>
+<div id="main_menu" >
+	    <div class="col-md-10 col-md-offset-1">
+			<div align="center">
+
+<?php if ($context->isAllowed('order/index')) : ?>
+				<button type="button" class="btn btn-default menu-btn" id="order-anchor" onclick="<?php echo $this->url('order/index', array('type' => null)) ?>">
+					<?php echo $this->translate('Orders', 'ppit-order', $context->getLocale()) ?>
+				</button>
+<?php endif ?>
+
+<?php if ($context->isAllowed('imapMessage/index')) : ?>
+				<button type="button" class="btn btn-default menu-btn" id="document-anchor" onclick="<?php echo $this->url('document/index', array('mailbox' => 'INBOX')) ?>">
+					<?php echo $this->translate('INBOX', 'ppit-support', $context->getLocale()) ?>
+				</button>
+<?php endif ?>
+			
+<?php if ($context->isAllowed('document/index')) : ?>
+				<button type="button" class="btn btn-default menu-btn" id="document-anchor" onclick="<?php echo $this->url('document/index') ?>">
+					<?php echo $this->translate('Documents', 'ppit-document', $context->getLocale()) ?>
+				</button>
+<?php endif ?>
+
+<?php if ($context->isAllowed('productCategory/index')) : ?>
+				<button type="button" class="btn btn-default menu-btn" id="product-anchor" onclick="<?php echo $this->url('productCategory/index') ?>">
+					<?php echo $this->translate('Catalogue', 'ppit-master-data', $context->getLocale()) ?>
+				</button>
+<?php endif ?>
+
+<?php if ($context->isAllowed('ppitUser/index')) : ?>
+				<button type="button" class="btn btn-default menu-btn" id="user-anchor" onclick="<?php echo $this->url('ppitUser/index') ?>">
+					<?php echo $this->translate('Users', 'ppit-user', $context->getLocale()) ?>
+				</button>
+<?php endif ?>
+
+<?php if ($context->isAllowed('orgUnit/index')) : ?>
+				<button type="button" class="btn btn-default menu-btn" id="orgUnit-anchor" onclick="<?php echo $this->url('orgUnit/index') ?>">
+					<?php echo $this->translate('Organization', 'ppit-master-data', $context->getLocale()) ?>
+				</button>
+<?php endif ?>
+
+<?php if ($context->isAllowed('community/index')) : ?>
+				<button type="button" class="btn btn-default menu-btn" id="community-anchor" onclick="<?php echo $this->url('community/index') ?>">
+					<?php echo $this->translate('Communities', 'ppit-contact', $context->getLocale()) ?>
+				</button>
+<?php endif ?>
+
+<?php if ($context->isAllowed('vcard/search')) : ?>
+				<button type="button" class="btn btn-default menu-btn" id="vcard-anchor" onclick="<?php echo $this->url('vcard/search') ?>">
+					<?php echo $this->translate('Contacts', 'ppit-contacts', $context->getLocale()) ?>
+				</button>
+<?php endif ?>
+
+</div>
+			<div>&nbsp;</div>
+		</div>
+	</div>
+</div>
+
+<!-- Main panel -->
+<div class="row">
+    <div class="col-md-6 ppit-panel" id="index_action">
+	</div>
+
+	<div class="col-md-6 ppit-panel" id="form_action" style="display: none">
+	</div>
+</div>
+
+<!-- Index panel -->
+<div class="row">
+    <div class="ppit-panel" id="index-panel">
+	</div>
+</div>
+
+<script>
+
+function loadPanel(target, route)
+{
+	// Hide the other panels
+	$('.ppit-panel').hide();
+	$('#' + target).show();
+	// Anchor to the main panel
+	$(location).attr('hash', '#');
+	var xhttp = new XMLHttpRequest();
+	xhttp.open("GET", route, false);
+	xhttp.send();
+	if (xhttp.status == 401) location.href = '<?php echo $this->url('ppitUser/expired')?>';
+	if (xhttp.readyState == 4) {
+<?php if (!$config['ppitCoreSettings']['isTraceActive']) : ?>
+		if (xhttp.status == 200) {
+<?php endif;?>
+		document.getElementById(target).innerHTML = xhttp.responseText;
+	<?php if (!$config['ppitCoreSettings']['isTraceActive']) : ?>
+		}
+	<?php endif;?>
+}
+
+<?php echo $this->partial('/partials/reload-function'); ?>
+<?php echo $this->partial('/partials/ppit-imap-message-scripts') ?>
+<?php echo $this->partial('/partials/ppit-order-scripts') ?>
+<?php echo $this->partial('/partials/ppit-order-message-scripts') ?>
+
+<?php if ($context->isAuthenticated()) : ?>
+	<?php if ($entry == 'imapMessage') : ?>
+activateImapMessage('INBOX');
+	<?php elseif ($entry == 'user') : ?>
+activateUser();
+	<?php endif;?>
+<?php else : ?>
+showLogin();
+<?php endif;?>
+
+</script>

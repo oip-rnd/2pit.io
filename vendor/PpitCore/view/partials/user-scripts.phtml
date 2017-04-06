@@ -1,0 +1,343 @@
+/**
+ * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
+ *
+ * @link      https://github.com/p-pit/PpitCore
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
+ */
+
+function connectRemoveIcon(id, target)
+{
+	$('#' + id).click(function () {
+		$('#' + target).hide();
+		$('.progress-detail-anchor').removeClass('btn-primary').addClass('btn-default');
+	});
+}
+
+function sortUserList(criterion) {
+	var dir;
+	ascCriterion = $('.glyphicon-triangle-top').first().parent().attr('id');
+	descCriterion = $('.glyphicon-triangle-bottom').first().parent().attr('id');
+	if (criterion + '-anchor' == ascCriterion) dir = 'DESC'; else dir = 'ASC';
+	getUserList(criterion, dir);
+}
+
+// Load the list
+function getUserList(major, dir) {		
+
+	// Execute the ajax request
+	route = '<?php echo $this->url('user/list', array('community_id' => $context->getCommunityId())) ?>' + '?major=' + major + ((dir =='ASC') ? '&dir=ASC' : '&dir=DESC');
+ 	xhttp = new XMLHttpRequest();
+	xhttp.open("GET", route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.readyState == 4 <?php if (!$config['ppitCoreSettings']['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+			document.getElementById('user-list-panel').innerHTML = xhttp.responseText;
+			// Connect the sort anchors
+			$('.ppit-sort-anchor').each(function () {
+				$(this).click(function () {
+					sortUserList($(this).attr('id').split('-')[0]);
+				});
+			});
+
+			// Connect the add anchor
+			$('#user-add-anchor').click(function () {
+				showUserDetail('0', 'update');
+			});
+			
+			// Connect the detail anchors
+			$('.user-detail-anchor').each(function () {
+				$(this).click(function () {
+					showUserDetail($(this).attr('id').split('_')[1], 'update');
+				});
+			});
+		}
+	}
+	xhttp.send();
+}
+
+function connectApplicationRole() {
+<?php foreach ($context->getConfig('ppitApplications') as $applicationId => $application) : ?>
+	$('#application_<?php echo $applicationId ?>').click(function () {
+		if (!document.getElementById('application_<?php echo $applicationId ?>').checked) {
+	<?php foreach ($application['roles'] as $roleId => $role) : ?>
+			document.getElementById('role_<?php echo $roleId ?>').checked = false;
+	<?php endforeach;?>
+		}
+	});
+<?php endforeach;?>
+
+<?php foreach ($context->getConfig('ppitApplications') as $applicationId => $application) : ?>
+	<?php foreach ($application['roles'] as $roleId => $role) : ?>
+	$('#role_<?php echo $roleId ?>').click(function () {
+		if (document.getElementById('role_<?php echo $roleId ?>').checked) {
+			document.getElementById('application_<?php echo $applicationId ?>').checked = true;
+		}
+	});
+	<?php endforeach;?>
+<?php endforeach;?>
+}
+
+function showUserDetail(id, action)
+{
+	$('#form_action').show();
+	$(location).attr('hash', 'order_form');
+
+	// Execute the ajax request
+	xhttp = new XMLHttpRequest();
+	var route;
+	if (action == 'update') route = '<?php echo $this->url('user/update', array('community_id' => 0)) ?>/' + id;
+	else if (action == 'revoke') route = '<?php echo $this->url('user/revoke') ?>/' + id;
+	else if (action == 'delete') route = '<?php echo $this->url('user/delete') ?>/' + id;
+	else if (action == 'passwordRequest') route = '<?php echo $this->url('user/passwordRequest') ?>/' + id;
+
+	xhttp.open("GET", route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.readyState == 4 <?php if (!$config['ppitCoreSettings']['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+			document.getElementById('form_action').innerHTML = xhttp.responseText;
+			connectApplicationRole();
+
+			// Connect the revoke anchor
+			$('#revoke-anchor').click(function () {
+				showUserDetail(id, 'revoke');
+			});
+
+			// Connect the delete anchor
+			$('#delete-anchor').click(function () {
+				showUserDetail(id, 'delete');
+			});
+
+			// Connect the password request anchor
+			$('#passwordRequest-anchor').click(function () {
+				showUserDetail(id, 'passwordRequest');
+			});
+			
+			connectRemoveIcon('remove-anchor', 'form_action');
+			if (action == 'update') connectUserUpdateForm(id);
+			else if (action == 'revoke') connectUserRevokeForm(id);
+			else if (action == 'delete') connectUserDeleteForm(id);
+			else if (action == 'passwordRequest') connectUserPasswordRequestForm(id);
+/*
+			$('#autocompletion').autocomplete({
+				source : function(request, response){
+					$.ajax({
+				            url : '<?php //echo $this->url('vcard/listRest') ?>', // Server request returning json data
+				            dataType : 'json', // The data type is json
+				            data : {
+				                filter : $('#autocompletion').val(), // Giving the prefix (at least 3 chars input)
+				                maxRows : 15
+				            },
+				            
+				            success : function(donnee){
+				            		response($.map(donnee.data, function(object) {
+				        			document.getElementById("autocompletion_n_title").value = object.n_title;
+				        			document.getElementById("autocompletion_n_first").value = object.n_first;
+				        			document.getElementById("autocompletion_n_last").value = object.n_last;
+				        			document.getElementById("autocompletion_email").value = object.email;
+									return object.label;
+				                }));
+				            }
+				        });
+					},
+					select: function( event, ui ) {
+						document.getElementById("n_title").value = document.getElementById("autocompletion_n_title").value;
+						document.getElementById("n_first").value = document.getElementById("autocompletion_n_first").value;
+						document.getElementById("n_last").value = document.getElementById("autocompletion_n_last").value;
+						document.getElementById("email").value = document.getElementById("autocompletion_email").value;
+				},
+				minLength: 3
+			});*/
+		}
+	}
+	xhttp.send();
+}
+
+// Update action
+<?php 
+$properties = array();
+$properties['locale'] = array('type' => 'select', 'mandatory' => false);
+$properties['is_notified'] = array('type' => 'checkbox');
+//$properties['community_id'] = array('type' => 'select', 'mandatory' => false);
+
+if ($context->getConfig('student/property/level')) {
+	foreach ($context->getConfig('student/property/level')['modalities'] as $levelId => $unused) {
+		$properties['level_'.$levelId] = array('type' => 'checkbox');
+	}
+}
+
+if ($context->getConfig('student/property/discipline')) {
+	foreach ($context->getConfig('student/property/discipline')['modalities'] as $disciplineId => $unused) {
+		$properties['discipline_'.$disciplineId] = array('type' => 'checkbox');
+	}
+}
+
+if ($context->getConfig('student/property/place')) {
+	foreach ($places as $place) {
+		$properties['place_'.$place->id] = array('type' => 'checkbox');
+	}
+}
+
+foreach ($context->getConfig('ppitApplications') as $applicationId => $application) {
+	$properties['application_'.$applicationId] = array('type' => 'checkbox');
+	foreach ($application['roles'] as $roleId => $role) {
+		$properties['role_'.$roleId] = array('type' => 'checkbox');
+	}
+}
+$properties['email'] = array('type' => 'email', 'mandatory' => true);
+$properties['n_first'] = array('type' => 'input', 'mandatory' => true, 'maxSize' => 255);
+$properties['n_last'] = array('type' => 'input', 'mandatory' => true, 'maxSize' => 255);
+$properties['n_title'] = array('type' => 'input', 'mandatory' => false, 'maxSize' => 255);
+$properties['username'] = array('type' => 'input', 'mandatory' => false, 'maxSize' => 255);
+$properties['update_time'] = array('type' => 'hidden');
+echo $this->partial('/partials/check-update-properties', array('entity' => 'User', 'context' => $context, 'properties' => $properties)) 
+?>
+
+function connectUserUpdateForm(id)
+{
+<?php foreach ($properties as $property_id => $property) : ?>
+	<?php if ($property['type'] == 'date') : ?>
+		$('#input_<?php echo $property_id ?>').datepicker();
+	<?php endif;?>
+<?php endforeach ?>
+
+	var form = document.getElementById('ppit-form');
+	form.onsubmit = function(event) {
+		
+		event.preventDefault();
+	
+		// Check validity
+		var validity = checkUserUpdateProperties();
+	
+		if (validity) {
+		
+			// Create a new FormData object.
+			var formData = new FormData();
+			
+			// Get the properties values
+<?php foreach ($properties as $propertyId => $property) : ?>
+	<?php if ($property['type'] == 'checkbox') : ?>
+				if (document.getElementById('<?php echo $propertyId ?>').checked) {
+	<?php endif;?>
+				formData.append('<?php echo $propertyId ?>', document.getElementById('<?php echo $propertyId ?>').value);
+	<?php if ($property['type'] == 'checkbox') : ?>
+				}
+	<?php endif;?>
+<?php endforeach ?>
+			
+			var xhttp = new XMLHttpRequest();
+			var route = '<?php echo $this->url('user/update') ?>/' + '<?php echo $community_id ?>/' + id;
+			xhttp.open('POST', route, true);
+			// Set up a handler for when the request finishes.
+			xhttp.onload = function () {
+				if (xhttp.readyState == 4 <?php if (!$context->getConfig()['ppitCoreSettings']['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+					document.getElementById('form_action').innerHTML = xhttp.responseText;
+					getUserList('n_fn', 'ASC');
+					connectRemoveIcon('remove-anchor', 'form_action');
+				}
+			};
+			xhttp.send(formData);
+		}
+		else return false;
+	}
+}
+
+// Revoke action
+function connectUserRevokeForm(id)
+{
+	var form = document.getElementById('ppit-form');
+	form.onsubmit = function(event) {
+		
+		event.preventDefault();
+	
+		// Create a new FormData object.
+		var formData = new FormData();
+		
+		// Get the properties values
+		formData.append('state', ((document.getElementById('state').checked) ? 1 : 0));
+		formData.append('update_time', document.getElementById('update_time').value);
+		
+		var xhttp = new XMLHttpRequest();
+		var route = '<?php echo $this->url('user/revoke') ?>/' + id;
+		xhttp.open('POST', route, true);
+		// Set up a handler for when the request finishes.
+		xhttp.onload = function () {
+			if (xhttp.readyState == 4 <?php if (!$context->getConfig()['ppitCoreSettings']['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+				document.getElementById('form_action').innerHTML = xhttp.responseText;
+				getUserList('n_fn', 'ASC');
+				connectRemoveIcon('remove-anchor', 'form_action');
+			}
+		}
+		xhttp.send(formData);
+	}
+}
+
+// Delete action
+function connectUserDeleteForm(id)
+{
+	var form = document.getElementById('ppit-form');
+	form.onsubmit = function(event) {
+		
+		event.preventDefault();
+	
+		// Create a new FormData object.
+		var formData = new FormData();
+		
+		// Get the properties values
+		formData.append('update_time', document.getElementById('update_time').value);
+		
+		var xhttp = new XMLHttpRequest();
+		var route = '<?php echo $this->url('user/delete') ?>/' + id;
+		xhttp.open('POST', route, true);
+		// Set up a handler for when the request finishes.
+		xhttp.onload = function () {
+			if (xhttp.readyState == 4 <?php if (!$context->getConfig()['ppitCoreSettings']['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+				document.getElementById('form_action').innerHTML = xhttp.responseText;
+				getUserList('n_fn', 'ASC');
+
+				connectRemoveIcon('remove-anchor', 'form_action');
+			}
+		};
+		xhttp.send(formData);
+	}
+}
+
+// Password request action
+function connectUserPasswordRequestForm(id)
+{
+	var form = document.getElementById('ppit-form');
+	form.onsubmit = function(event) {
+		
+		event.preventDefault();
+	
+		// Create a new FormData object.
+		var formData = new FormData();
+		
+		// Get the properties values
+		formData.append('update_time', document.getElementById('update_time').value);
+		
+		var xhttp = new XMLHttpRequest();
+		var route = '<?php echo $this->url('user/passwordRequest') ?>/' + id;
+		xhttp.open('POST', route, true);
+		// Set up a handler for when the request finishes.
+		xhttp.onload = function () {
+			if (xhttp.readyState == 4 <?php if (!$context->getConfig()['ppitCoreSettings']['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+				document.getElementById('form_action').innerHTML = xhttp.responseText;
+				getUserList('n_fn', 'ASC');
+
+				connectRemoveIcon('remove-anchor', 'form_action');
+			}
+		};
+		xhttp.send(formData);
+	}
+}
+
+function activateUser() {
+	// Load the search panel and highlight the menu entry
+	loadPanel('index_action', '<?php echo $this->url('user/search') ?>');
+	$('.menu-btn').removeClass("btn-primary").addClass("btn-default");
+	$('#user-anchor').removeClass("btn-default").addClass("btn-primary");
+
+	getUserList('n_fn', 'ASC');
+}
+
+//$('#user-anchor').click(function () { $(location).attr('href', '<?php echo $this->url('home') ?>?entry=user'); });
+$('#user-anchor').click(function () { activateUser(); });

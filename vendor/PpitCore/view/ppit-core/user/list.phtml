@@ -1,0 +1,61 @@
+<!-- 
+/**
+ * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
+ *
+ * @link      https://github.com/p-pit/PpitCore
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
+ */
+-->
+
+<table class="table table-striped ppit_index">
+	<tr>
+		<th>&nbsp;</th>
+
+		<th>
+			<button type="button" class="btn btn-default btn-xs ppit-sort-anchor" id="n_fn-anchor">
+				<span><?php echo $this->translate('Name', 'ppit-core', $context->getLocale()) ?></span>
+<?php if ($major == 'n_fn') : ?>
+				<span class="glyphicon glyphicon-triangle-<?php echo ($dir == 'ASC') ? 'top' : 'bottom' ?>"></span>
+<?php endif;?>
+			</button>
+		</th>
+
+		<th>
+			<button type="button" class="btn btn-default btn-xs ppit-sort-anchor" id="username-anchor">
+				<span><?php echo $this->translate('Identifier', 'ppit-core', $context->getLocale()) ?></span>
+<?php if ($major == 'username') : ?>
+				<span class="glyphicon glyphicon-triangle-<?php echo ($dir == 'ASC') ? 'top' : 'bottom' ?>"></span>
+<?php endif;?>
+			</button>
+		</th>
+	</tr>
+
+	<tr>
+		<td colspan="9">
+			<button type="button" class="btn btn-default user-add-anchor" title="<?php echo ($context->getInstance()->status == 'accepted') ? $this->translate('Add', 'ppit-core', $context->getLocale()) : $this->translate('Please sign the ethical charter, prior to use P-Pit services with real data and/or give acces to real users.', null, $context->getLocale()) ?>" id="<?php echo 'user-add-anchor' ?>" <?php if ($context->getInstance()->status != 'accepted') echo 'disabled="disabled"' ?>>
+				<span class="glyphicon glyphicon-plus"></span>
+			</button>
+		</td>
+	</tr>
+<?php foreach ($users as $user) : ?>
+	<tr class="searchable">
+		<td>
+			<button type="button" class="btn btn-default user-detail-anchor" title="<?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?>" id="<?php echo 'user-detail-anchor_'.$user->user_id ?>">
+				<span class="glyphicon glyphicon-zoom-in"></span>
+			</button>
+		</td>
+				
+	<?php 
+	if (!$user->state || $user->community_status == 'blocked' || $user->community_status == 'suspended') $style = 'style="color: red"';
+	elseif ($user->vcard_id == $context->getContactId()) $style = 'style="font-style: italic"';
+	else $style = '';
+	?>
+
+		<td <?php echo $style ?>>
+			<?php echo $user->n_fn ?>
+		</td>
+		<td <?php echo $style ?>><?php echo $user->username ?></td>
+	</tr>
+<?php endforeach; ?>
+</table>

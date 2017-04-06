@@ -1,0 +1,2 @@
+2017-03-26T20:31:38+02:00 INFO (6): to: youremail@yourprovider.io - subject: Vos identifiants - body: Bienvenue sur le portail P-PIT,
+Afin de définir votre mot de passe pour votre identifiant : admin, veuillez suivre ce lien : localhost/~bruno/2pit.io/public/user/initpassword/1?hash=e0ef7682353cb24ba19d584ae19cb503

@@ -1,0 +1,218 @@
+.panel-default {
+	box-shadow: 3px 3px 10px #AAAAAA;
+}
+.panel-default .panel-heading {
+	font-size: 18px;
+	text-align: center;
+}
+.panel-default .front-page {
+	background-color: #006179;
+	color: #FFF;
+	font-size: 18px;
+	text-align: center;
+}
+div.front-page a {
+	color: #fff;
+}
+*.p-pit {
+	font-family: sans-serif;
+	color: #006179;
+	font-weight: bold;
+	font-size: 28px;
+}
+.jumbotron {
+	background-color: #FFF;
+	color: #555;
+}
+.row {
+	color: #555;
+}
+blockquote {
+	border-left: 4px solid #d6d6d6;
+	background: #f9f9f9;
+	font-family: "Georgia", "Times New Roman", Times, serif;
+	font-size: 18px;
+	font-style: italic;
+	color: #555;
+	line-height: 26px;
+}
+span.info
+{
+    position:relative;
+}
+
+span.info:hover {z-index:25;}
+
+span.info span{display: none}
+
+span.info:hover span
+{
+    display:block;
+    position:absolute;
+    top:2em; left:2em; width:10em;
+    border:1px solid #0cf;
+    background-color:#fff; color:#fff;
+}
+.notification {
+	font-size: 1.2em;
+}
+
+.ppit-header-caption {
+	text-align: right;
+	font-weight: bold;
+}
+
+h1.ppit {
+	text-align:center;
+	font-size: 1.5em;
+}
+
+h2.ppit {
+	font-size: 1.2em;
+}
+
+h3.ppit {
+	font-size: 1.0em;
+	font-weight: bold
+}
+
+h5.ppit {
+	font-size: 10px;
+	font-weight: bold
+}
+
+table.ppit {
+	margin-bottom: 20px;
+	font-size: 1em;
+	width: 100%;
+	border-width: 1px; 
+ 	border-style: solid; 
+	border-color: gray;
+	border-collapse: collapse;
+}
+
+table.ppit caption { 
+	font-size:1.2em; 
+	padding:1em 0 0.5em 1em;
+}
+
+table.ppit th {
+	text-align: center;
+	color: #666;
+	border-width:1px; 
+ 	border-style:solid; 
+	border-color:gray;
+	background-color:#DDD;
+	font-size: 10px;
+}
+
+table.ppit td {
+	color: #666;
+	border-width:1px; 
+ 	border-style:solid; 
+	border-color:gray;
+	font-size: 10px;
+	padding-bottom: 8px;
+	padding-left: 8px;
+	padding-right: 8px;
+	padding-top: 8px;
+}
+
+table.ppit td.title {
+	font-weight: bold;
+	color: #FFFFFF;
+	background-color:#006169;
+}
+
+table.ppit td.caption {
+	text-align: left;
+	font-weight: bold;
+}
+
+table.ppit td.number {
+	text-align: right;
+}
+
+table.ppit td.alert {
+	color: red;
+	font-weight: bold;
+}
+table.ppit_index {
+	font-size: 1em;
+}
+table.ppit_index caption { 
+	font-size:1.2em; 
+	padding:1em 0 0.5em 1em;
+}
+table.ppit_index th {
+	color: #666;
+    font-size:1em;
+	background-color:#EEE;
+}
+
+table.ppit_index td {
+	color: #666;
+	font-size: 1em;
+}
+
+table.ppit_index td.caption {
+	text-align: left;
+	font-weight: bold;
+}
+
+table.ppit_index td.number {
+	text-align: right;
+}
+
+table.ppit_index td.alert {
+	color: red;
+	font-weight: bold;
+}
+
+table.ppit-address {
+	width: 80%;
+    margin-left:auto; 
+    margin-right:auto;
+	border-style: hidden;
+}
+
+table.ppit-address tr {
+	line-height: 14px;
+}
+
+table.ppit-address td {
+	border-style: hidden;
+	font-size: 12px;
+}
+
+table.ppit-bill-rows {
+	width: 80%;
+    margin-left:auto; 
+    margin-right:auto;
+}
+
+table.ppit-bill-sums {
+	margin-bottom: 20px;
+	width: 80%;
+    margin-left:auto; 
+    margin-right:auto;
+	border-style: hidden;
+}
+
+table.ppit-bill-sums tr {
+	line-height: 10px;
+}
+
+table.ppit-bill-sums td {
+	border-style: hidden;
+	font-size: 10px;
+}
+
+tr.inactive {
+	color: lightgray;
+	font-style: italic;
+}
+
+div.footer {
+	font-size: 0.6em;
+}
