@@ -16,8 +16,7 @@ Clone the repository:
     git clone git://github.com/2pit-io/2pit.io
     create a database on Mysql (le’t say 2pit_io)
 
-    Adapt this line in config/autoload/global.php according to your mysql settings 
-and the name you gave to the database:
+    Adapt this line in config/autoload/global.php according to your mysql settings and the name you gave to the database:
     'dsn' => 'mysql:dbname=2pit_io;host=localhost:3306',
 
     Adapt those lines in config/autoload/local.php according to your mysql user and password:
