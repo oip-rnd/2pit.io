@@ -73,7 +73,7 @@ function getCommunityList(param, input) {
 	xhttp.onreadystatechange = function() {
 		if (xhttp.readyState == 4 && xhttp.status == 200) {
 			document.getElementById('community_list').innerHTML = xhttp.responseText;
-<?php if ($config['ppitCoreSettings']['isTraceActive']) : ?>
+<?php if ($config['isTraceActive']) : ?>
 			console.log('getCommunityList, route = ' + '<?php echo $this->url('community/list') ?>?' + param + '=' + input);
 			console.log(xhttp.responseText);
 <?php endif;?>

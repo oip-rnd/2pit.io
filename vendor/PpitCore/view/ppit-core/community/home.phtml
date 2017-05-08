@@ -1,0 +1,76 @@
+
+<!-- Load the common form javascript functions -->
+<?php echo $this->partial('/partials/common-form-js.phtml'); ?>
+
+<?php
+$title = $context->getConfig('student/index')['title'][$context->getLocale()];
+$this->headTitle($title);
+echo $this->partial('/partials/header');
+?>
+
+<?php echo $this->partial('/partials/menu-rendering'); ?>
+<?php echo $this->partial('/partials/page-rendering'); ?>
+
+	<!-- Main panel -->
+	<div class="row">
+		<div class="col-md-12 ppit-panel" id="main-panel">
+			<div class="panel panel-default">
+				<div class="panel-heading" style="background:  <?php echo $context->getConfig('styleSheet')['panelHeadingBackground'] ?>; color: <?php echo $context->getConfig('styleSheet')['panelHeadingColor'] ?>">
+					<strong><?php echo $community->name ?></strong>
+		
+<?php if ($context->isDemoModeActive()) : ?>
+					<a class="tip" href="#"
+title="
+<h4><?php echo $this->translate('Page d\'accueil élève', 'ppit-studies', $context->getLocale()) ?></h4>
+<p><?php echo $this->translate("Ce panneau est la page d'accueil de l'élève ou du parent connecté. Il est accessible, pour contrôle, à l'équipe pédagogique et au personnel du centre, à partir du bouton <san class='glyphicon glyphicon-zoom-in' /> en regard de chaque élève de la liste.", 'ppit-studies', $context->getLocale()) ?></p>
+<p><?php echo $this->translate("Notez l'organisation de l'information en onglets thématiques. Le personnel accède aux seuls onglets pour lesquels il est habilité. Par exemple, seul le personnel médical ou sportif est habilité aux informations médicales.", 'ppit-studies', $context->getLocale()) ?></p>
+">
+					    <img src="<?php echo $this->basePath('img/tip.png') ?>" width="20" />
+					</a>
+<?php endif;?>	
+		
+				</div>
+				<div class="panel-body">
+
+<!-- Photo -->
+					<div style="text-align: center">
+<?php if ($place->logo_href) : ?>
+						<a href="<?php echo $place->logo_href ?>" rel="follow" target="_blank">
+<?php endif;?>
+							<img height="60" src="<?php echo $this->basePath($place->logo_src) ?>" alt="<?php echo $context->getInstance()->caption ?> logo" />
+<?php if ($place->logo_href) : ?>
+						</a>
+<?php endif;?>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<img height="150" src="<?php echo $this->url('vcard/photo', array('id' => $community->contact_1_id)) ?>"/>
+					</div>
+
+					<div>&nbsp;</div>
+				
+					<ul class="nav nav-tabs">
+						<li data-toggle="tab" class="dashboard-tab active" id="event-tab"><a><?php echo $this->translate('Events', 'ppit-studies', $context->getLocale()) ?></a></li>
+		  				<li data-toggle="tab" class="dashboard-tab"><a id="learning-tab"><?php echo $this->translate('Learning', 'ppit-studies', $context->getLocale()) ?></a></li>
+					</ul>
+			
+					<div class="tab-content">
+						<div class="tab-pane fade in active" id="dashboard-panel"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<?php if ($clocks) : ?>
+<?php echo $this->partial('/partials/clock-rendering'); ?>
+<?php endif ?>
+
+<script>
+
+<?php
+echo $this->partial('/partials/community-home-scripts');
+echo $this->partial('/partials/ppit-controller') 
+?>
+
+activateCommunityHome();
+
+</script>

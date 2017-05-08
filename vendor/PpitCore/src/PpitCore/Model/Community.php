@@ -499,7 +499,6 @@ class Community implements InputFilterAwareInterface
     			
     			// Notify
     			if ($live) {
-    				$url = $config['ppitCoreSettings']['domainName'];
     				$instance = $instances[$credit->instance_id];
     				foreach ($instance->administrators as $contact) {
     					if (!$mailTo || !strcmp($contact->email, $mailTo)) { // Restriction on the given mailTo parameter
@@ -525,7 +524,6 @@ class Community implements InputFilterAwareInterface
     
     			// Notify
     			if ($live) {
-    				$url = $config['ppitCoreSettings']['domainName'];
     				$instance = $instances[$credit->instance_id];
     				foreach ($instance->administrators as $contact) {
     					if (!$mailTo || !strcmp($contact->email, $mailTo)) { // Restriction on the given mailTo parameter

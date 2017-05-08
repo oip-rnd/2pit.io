@@ -9,20 +9,20 @@
 
 namespace PpitCore;
 
-use PpitCore\Model\Agent;
-use PpitCore\Model\AgentAttachment;
+use PpitCore\Model\App;
 use PpitCore\Model\Community;
 use PpitCore\Model\Context;
 use PpitCore\Model\Credit;
+use PpitCore\Model\Document;
+use PpitCore\Model\DocumentPart;
+use PpitCore\Model\Event;
 use PpitCore\Model\Generic;
 use PpitCore\Model\GenericTable;
 use PpitCore\Model\Interaction;
 use PpitCore\Model\Instance;
 use PpitCore\Model\InstanceTable;
-use PpitCore\Model\OrgUnit;
-use PpitCore\Model\OrgUnitContact;
+use PpitCore\Model\Page;
 use PpitCore\Model\Place;
-use PpitCore\Model\Template;
 use PpitCore\Model\User;
 use PpitCore\Model\UserTable;
 use PpitCore\Model\Token;
@@ -105,27 +105,16 @@ class Module //implements AutoloaderProviderInterface, ConfigProviderInterface
     {
         return array(
             'factories' => array(
- 	          	'PpitCore\Model\AgentTable' =>  function($sm) {
-                    $tableGateway = $sm->get('AgentTableGateway');
+                'PpitCore\Model\AppTable' => function($sm) {
+                    $tableGateway = $sm->get('AppTableGateway');
                     $table = new GenericTable($tableGateway);
                     return $table;
                 },
-                'AgentTableGateway' => function ($sm) {
+                'AppTableGateway' => function ($sm) {
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new Agent());
-                    return new TableGateway('core_agent', $dbAdapter, null, $resultSetPrototype);
-                },
- 	          	'PpitCore\Model\AgentAttachentTable' =>  function($sm) {
-                    $tableGateway = $sm->get('AgentAttachmentTableGateway');
-                    $table = new GenericTable($tableGateway);
-                    return $table;
-                },
-                'AgentAttachmentTableGateway' => function ($sm) {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
-                    $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new AgentAttachment());
-                    return new TableGateway('core_agent_attachment', $dbAdapter, null, $resultSetPrototype);
+                    $resultSetPrototype->setArrayObjectPrototype(new App());
+                    return new TableGateway('core_app', $dbAdapter, null, $resultSetPrototype);
                 },
                 'PpitCore\Model\CommunityTable' =>  function($sm) {
                     $tableGateway = $sm->get('CommunityTableGateway');
@@ -149,7 +138,40 @@ class Module //implements AutoloaderProviderInterface, ConfigProviderInterface
                     $resultSetPrototype->setArrayObjectPrototype(new Credit());
                     return new TableGateway('core_credit', $dbAdapter, null, $resultSetPrototype);
                 },
-            	'PpitCore\Model\GenericTable' =>  function($sm) {
+            	'PpitCore\Model\DocumentTable' =>  function($sm) {
+                    $tableGateway = $sm->get('DocumentTableGateway');
+                    $table = new GenericTable($tableGateway);
+                    return $table;
+                },
+                'DocumentTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Document());
+                    return new TableGateway('core_document', $dbAdapter, null, $resultSetPrototype);
+                },
+            	'PpitCore\Model\DocumentPartTable' =>  function($sm) {
+                    $tableGateway = $sm->get('DocumentPartTableGateway');
+                    $table = new GenericTable($tableGateway);
+                    return $table;
+                },
+                'DocumentPartTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new DocumentPart());
+                    return new TableGateway('core_document_part', $dbAdapter, null, $resultSetPrototype);
+                },
+                'PpitCore\Model\EventTable' =>  function($sm) {
+                    $tableGateway = $sm->get('CoreEventTableGateway');
+                    $table = new GenericTable($tableGateway);
+                    return $table;
+                },
+                'CoreEventTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new \PpitCore\Model\Event());
+                    return new TableGateway('core_event', $dbAdapter, null, $resultSetPrototype);
+                },
+                'PpitCore\Model\GenericTable' =>  function($sm) {
                     $tableGateway = $sm->get('GenericTableGateway');
                     $table = new GenericTable($tableGateway);
                     return $table;
@@ -182,27 +204,16 @@ class Module //implements AutoloaderProviderInterface, ConfigProviderInterface
                     $resultSetPrototype->setArrayObjectPrototype(new Instance());
                     return new TableGateway('core_instance', $dbAdapter, null, $resultSetPrototype);
                 },
-                'PpitCore\Model\OrgUnitTable' => function($sm) {
-                    $tableGateway = $sm->get('OrgUnitTableGateway');
+                'PpitCore\Model\PageTable' => function($sm) {
+                    $tableGateway = $sm->get('PageTableGateway');
                     $table = new GenericTable($tableGateway);
                     return $table;
                 },
-                'OrgUnitTableGateway' => function ($sm) {
+                'PageTableGateway' => function ($sm) {
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new OrgUnit());
-                    return new TableGateway('core_org_unit', $dbAdapter, null, $resultSetPrototype);
-                },
-                'PpitCore\Model\OrgUnitContactTable' => function($sm) {
-                    $tableGateway = $sm->get('OrgUnitContactTableGateway');
-                    $table = new GenericTable($tableGateway);
-                    return $table;
-                },
-                'OrgUnitContactTableGateway' => function ($sm) {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
-                    $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new OrgUnitContact());
-                    return new TableGateway('core_org_unit_contact', $dbAdapter, null, $resultSetPrototype);
+                    $resultSetPrototype->setArrayObjectPrototype(new Page());
+                    return new TableGateway('core_page', $dbAdapter, null, $resultSetPrototype);
                 },
                 'PpitCore\Model\PlaceTable' => function($sm) {
                     $tableGateway = $sm->get('PlaceTableGateway');
@@ -215,17 +226,6 @@ class Module //implements AutoloaderProviderInterface, ConfigProviderInterface
                     $resultSetPrototype->setArrayObjectPrototype(new Place());
                     return new TableGateway('core_place', $dbAdapter, null, $resultSetPrototype);
                 },
-                'PpitCore\Model\TemplateTable' => function($sm) {
-                    $tableGateway = $sm->get('TemplateTableGateway');
-                    $table = new GenericTable($tableGateway);
-                    return $table;
-                },
-                'TemplateTableGateway' => function ($sm) {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
-                    $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new Template());
-                    return new TableGateway('core_template', $dbAdapter, null, $resultSetPrototype);
-                },
                 'PpitCore\Model\TokenTable' =>  function($sm) {
                     $tableGateway = $sm->get('TokenTableGateway');
                     $table = new GenericTable($tableGateway);
@@ -235,14 +235,14 @@ class Module //implements AutoloaderProviderInterface, ConfigProviderInterface
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new Token());
-                    return new TableGateway('user_token', $dbAdapter, null, $resultSetPrototype);
+                    return new TableGateway('core_user_token', $dbAdapter, null, $resultSetPrototype);
                 },
-                'CoreTableGateway' => function ($sm) {
+/*                'CoreTableGateway' => function ($sm) {
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new Token());
-                    return new TableGateway('user_token', $dbAdapter, null, $resultSetPrototype);
-                },
+                    return new TableGateway('core_user_token', $dbAdapter, null, $resultSetPrototype);
+                },*/
             	'PpitCore\Model\UserTable' =>  function($sm) {
                     $tableGateway = $sm->get('UserTableGateway');
                     $table = new UserTable($tableGateway);
@@ -252,7 +252,7 @@ class Module //implements AutoloaderProviderInterface, ConfigProviderInterface
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new User());
-                    return new TableGateway('user', $dbAdapter, null, $resultSetPrototype);
+                    return new TableGateway('core_user', $dbAdapter, null, $resultSetPrototype);
                 },
                 'PpitCore\Model\UserContactTable' =>  function($sm) {
                     $tableGateway = $sm->get('UserContactTableGateway');
@@ -263,7 +263,7 @@ class Module //implements AutoloaderProviderInterface, ConfigProviderInterface
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new UserContact());
-                    return new TableGateway('user_contact', $dbAdapter, null, $resultSetPrototype);
+                    return new TableGateway('core_user_contact', $dbAdapter, null, $resultSetPrototype);
                 },
                 'PpitCore\Model\VcardTable' =>  function($sm) {
                     $tableGateway = $sm->get('VcardTableGateway');

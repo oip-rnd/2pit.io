@@ -19,6 +19,7 @@ use PpitCore\Model\Place;
 use PpitCore\Model\Vcard;
 use PpitCore\Model\User;
 use PpitCore\Model\UserContact;
+use Zend\Http\Client;
 use Zend\Log\Logger;
 use Zend\Log\Writer;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -35,6 +36,9 @@ class UserController extends AbstractActionController
     	$context = Context::getCurrent();
 		if (!$context->isAuthenticated()) $this->redirect()->toRoute('home');
 
+		$instance = Instance::get($context->getInstanceId());
+    	$place = Place::getTable()->transGet($context->getPlaceId());
+		
 		$community_id = (int) $context->getCommunityId();
 		
 		$menu = $context->getConfig('menus')['p-pit-admin'];
@@ -43,6 +47,8 @@ class UserController extends AbstractActionController
     	return new ViewModel(array(
     			'context' => $context,
     			'config' => $context->getConfig(),
+    			'instance' => $instance,
+				'place' => $place,
     			'menu' => $menu,
     			'community_id' => $community_id,
     			'currentEntry' => $currentEntry,
@@ -59,9 +65,6 @@ class UserController extends AbstractActionController
 		$community_id = (int) $this->params()->fromRoute('community_id', 0);
 		if (!$community_id) $community_id = $context->getCommunityId();
 		$community = Community::get($community_id);
-
-    	// Retrieve the available role list
-    	$roles = $context->getConfig()['ppitUserSettings']['roles'];
 
     	$view = new ViewModel(array(
         	'context' => $context,
@@ -81,9 +84,6 @@ class UserController extends AbstractActionController
 		$instance_id = $context->getInstanceId();
 		$community_id = (int) $this->params()->fromRoute('community_id', 0);
 
-    	// Retrieve the available role list
-    	$roles = $context->getConfig()['ppitUserSettings']['roles'];
-
     	$major = $this->params()->fromQuery('major', 'n_fn');
     	$dir = $this->params()->fromQuery('dir', 'ASC');
     	$users = User::getList($instance_id, $community_id, $major, $dir);
@@ -95,7 +95,6 @@ class UserController extends AbstractActionController
     		'major' => $major,
     		'dir' => $dir,
     		'users' => $users,
-    		'roles' => $roles
     	));
     	$view->setTerminal(true);
     	return $view;
@@ -164,45 +163,43 @@ class UserController extends AbstractActionController
 			    	$data['roles'] = array();
 					foreach ($context->getConfig('ppitApplications') as $application) {
 				    	foreach ($application['roles'] as $roleId => $role) {
-				    		if ($request->getPost('role_'.$roleId)) $data['roles'][$roleId] = true;
-				    		else $data['roles'][$roleId] = false;
+				    		if ($request->getPost('role_'.$roleId)) $data['roles'][$roleId] = $roleId;
 				    	}
 					}
 
-			    	$data['perimeters'] = array();
-			    	$data['perimeters']['p-pit-studies'] = array();
 			    	$data['applications'] = array();
 			    	foreach ($instance->applications as $applicationId => $default) {
-			    		if ($request->getPost('application_'.$applicationId)) $data['applications'][$applicationId] = $default;
+			    		if ($request->getPost('application_'.$applicationId)) $data['applications'][$applicationId] = $instance->applications[$applicationId];
 			    	}
-
-			    	$authorizedPlaces = array();
-					foreach ($places as $place) {
-						if ($request->getPost('place_'.$place->id)) $authorizedPlaces[] = $place->id;
+			    	
+			    	$data['perimeters'] = array();
+			    	
+			    	foreach ($context->getConfig('perimeters') as $applicationId => $application) {
+			    		if ($applicationId == 'p-pit-admin') {
+				    		$authorizedPlaces = array();
+				    		foreach ($places as $place) {
+				    			if ($request->getPost('place_'.$place->id)) $authorizedPlaces[] = $place->id;
+				    		}
+				    		if (count($authorizedPlaces)) $data['perimeters']['p-pit-admin']['place_id'] = $authorizedPlaces;
+			    		}
+			    		else {
+			    			foreach ($application as $specificationId => $specification) {
+			    				$perimeter = array();
+						    	foreach ($context->getConfig($specification)['modalities'] as $modalityId => $unused) {
+						    		if ($request->getPost($specificationId.'_'.$modalityId)) $perimeter[] = $modalityId;
+						    	}
+						    	if (count($perimeter)) {
+						    		$data['perimeters'][$applicationId][$specificationId] = $perimeter;
+						    	}
+			    			}
+			    		}
 			    	}
-		    		if (count($authorizedPlaces)) $data['perimeters']['p-pit-studies']['place_id'] = $authorizedPlaces;
-
-		    		if ($context->getConfig('student/property/discipline')) {
-			    		$disciplines = array();
-				    	foreach ($context->getConfig('student/property/discipline')['modalities'] as $disciplineId => $unused) {
-							if ($request->getPost('discipline_'.$disciplineId)) $disciplines[] = $disciplineId;
-				    	}
-				    	if (count($disciplines)) $data['perimeters']['p-pit-studies']['property_1'] = $disciplines;
-		    		}
-	
-		    		if ($context->getConfig('student/property/level')) {
-		    			$levels = array();
-				    	foreach ($context->getConfig('student/property/level')['modalities'] as $levelId => $unused) {
-							if ($request->getPost('level_'.$levelId)) $levels[] = $levelId;
-				    	}
-				    	if (count($levels)) $data['perimeters']['p-pit-studies']['property_4'] = $levels;
-		    		}
 
 			    	$data['locale'] = $request->getPost('locale');
 			    	$data['is_notified'] = $request->getPost('is_notified');
-			    	$data['is_demo_mode_active'] = true;
+			    	if (!$contact->id) $data['is_demo_mode_active'] = true;
 			    	 
-			    	if ($contact->loadData($data, $community_id) != 'OK') throw new \Exception('View error');
+			    	if ($contact->loadData($data) != 'OK') throw new \Exception('View error');
 			    	$rc = $user->loadData($request, $contact);
 					if ($rc != 'OK') $error = $rc;
 					else {
@@ -247,7 +244,6 @@ class UserController extends AbstractActionController
         }
 
     	// Retrieve the available locale list
-    	$locales = $context->getConfig()['ppitUserSettings']['locales'];
         $view = new ViewModel(array(
         	'context' => $context,
         	'instance' => $instance,
@@ -258,6 +254,7 @@ class UserController extends AbstractActionController
     		'communities' => $communities,
         	'vcards' => $vcards,
         	'places' => $places,
+    		'locales' => $context->getConfig()['locales'],
         	'csrfForm' => $csrfForm,
         	'user' => $user,
         	'message' => $message,
@@ -354,12 +351,14 @@ class UserController extends AbstractActionController
     	// Clean the session
     	$container = new Container('Zend_Auth');
 		$container->user_id = null;
-    	
-    	$context = Context::getCurrent();
+	
+		$context = Context::getCurrent();
 
-    	$instance_caption = $this->params()->fromRoute('instance_caption', null);
+		$instance_caption = $this->params()->fromRoute('instance_caption', null);
     	if ($instance_caption) Context::$instance = Instance::get($instance_caption, 'caption');
     
+    	$place = Place::getTable()->transGet($context->getPlaceId());
+
     	// Instanciate the csrf form
     	$csrfForm = new CsrfForm();
     	$csrfForm->addCsrfElement('csrf');
@@ -382,6 +381,30 @@ class UserController extends AbstractActionController
 		    		if ($this->params()->fromQuery('redirect')) {
 		    			return $this->redirect()->toRoute($this->params()->fromQuery('redirect'), array(), array('query' => $this->params()->fromQuery()));
 		    		}
+		    		elseif ($this->params()->fromQuery('auth')) {
+				
+				    	// Submit the P-Pit get-authenticate message
+				    	$safe = $context->getConfig()['ppitUserSettings']['safe'];
+				    	$url = $this->params()->fromQuery('auth').'/user/get-authenticate';
+				    	$client = new Client(
+				    			$url,
+				    			array(
+				    					'adapter' => 'Zend\Http\Client\Adapter\Curl',
+				    					'maxredirects' => 0,
+				    					'timeout'      => 30,
+				    			)
+				    	);
+				    	$username = 'bruno@p-pit.fr';
+				    	$client->setAuth($username, $safe['p-pit'][$username], Client::AUTH_BASIC);
+				    	$client->setMethod('POST');
+				    	$token = md5(uniqid(rand(), true));
+				    	$client->setParameterPost(array(
+				    		'authentication_token' => $token,
+					    	'authentication_validity' => date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s').' 300 seconds')),
+				    	));
+				    	$response = $client->send();
+		    			return $this->redirect()->toUrl($this->params()->fromQuery('auth').'?identity='.$identity.'&authentication_token='.$token);
+		    		}
 	    			else return $this->redirect()->toRoute('home');
 		    	}
 		    	else $error = $rc;
@@ -390,6 +413,7 @@ class UserController extends AbstractActionController
     	$view = new ViewModel(array(
     			'context' => Context::getCurrent(),
 				'config' => $context->getconfig(),
+    			'place' => $place,
     			'redirect' => $this->params()->fromQuery('redirect'),
     			'active' => 'login',
     			'csrfForm' => $csrfForm,
@@ -439,6 +463,8 @@ class UserController extends AbstractActionController
     	$context = Context::getCurrent();
     	$config = $context->getConfig();
 
+    	$place = Place::getTable()->transGet($context->getPlaceId());
+    	
     	// Retrieve the object and control access
     	$user = User::get($id);
     	$vcard = Vcard::getTable()->get($context->getContactId());
@@ -473,6 +499,7 @@ class UserController extends AbstractActionController
     	$view = new ViewModel(array(
     			'context' => $context,
 				'config' => $context->getconfig(),
+    			'place' => $place,
     			'active' => 'password',
     			'id' => $id,
     			'csrfForm' => $csrfForm,
@@ -492,6 +519,8 @@ class UserController extends AbstractActionController
     	// Retrieve the user
     	$context = Context::getCurrent();
 
+    	$place = Place::getTable()->transGet($context->getPlaceId());
+    	
     	// Retrieve the existing user
     	$user = User::get($id);
 
@@ -500,6 +529,7 @@ class UserController extends AbstractActionController
 
     	$view = new ViewModel(array(
     			'context' => $context,
+    			'place' => $place,
     			'user' => $user,
     			'config' => $context->getConfig(),
     			'id' => $id,
@@ -523,7 +553,8 @@ class UserController extends AbstractActionController
     {
     	// Retrieve the context
     	$context = Context::getCurrent();
-
+    	$place = Place::getTable()->transGet($context->getPlaceId());
+    	
     	$instance_caption = $this->params()->fromRoute('instance_caption', null);
     	if ($instance_caption) Context::$instance = Instance::get($instance_caption, 'caption');
 
@@ -548,6 +579,7 @@ class UserController extends AbstractActionController
     	$view = new ViewModel(array(
     			'context' => $context,
     			'config' => $context->getconfig(),
+    			'place' => $place,
     			'csrfForm' => $csrfForm,
     			'locale' => 'fr_FR',
     			'error' => $error,
@@ -560,7 +592,7 @@ class UserController extends AbstractActionController
     {
     	// Retrieve the context
     	$context = Context::getCurrent();
-    
+
     	// Check the presence of the id parameter for the entity to update
     	$id = (int) $this->params()->fromRoute('id', 0);
     	if (!$id) return $this->redirect()->toRoute('index');
@@ -598,6 +630,7 @@ class UserController extends AbstractActionController
     public function initpasswordAction()
     {
     	$context = Context::getCurrent();
+    	$place = Place::getTable()->transGet($context->getPlaceId());
     	$id = (int) $this->params()->fromRoute('id', 0);
     	if (!$id) {
     		return $this->redirect()->toRoute('user/logout');
@@ -632,6 +665,7 @@ class UserController extends AbstractActionController
     	$view = new ViewModel(array(
     		'context' => $context,
 			'config' => $context->getconfig(),
+    		'place' => $place,
     		'csrfForm' => $csrfForm,
     		'id' => $id,
     		'hash' => $hash,
@@ -649,5 +683,73 @@ class UserController extends AbstractActionController
 		$user = User::getTable()->transGet($context->getUserId());
 		$context->getSecurityAgent()->changeContact($user, $vcard_id, null);
 		return $this->redirect()->toRoute('home');
+    }
+
+    public function authenticateAction()
+    {
+    	// Retrieve the context
+    	$context = Context::getCurrent();
+    	$instance = Instance::get($context->getInstanceId());
+    	$url = $context->getConfig('ppitCommitment/P-Pit')['userAuthenticateRedirect']['domain'].'/user/login?auth=http://'.'p-pit.test';
+		return $this->redirect()->toUrl($url);
+    }
+
+    public function getAuthenticateAction()
+    {
+		$context = Context::getCurrent();
+
+    	// Check basic authentication
+    	if (isset($_SERVER['PHP_AUTH_USER'])) {
+    		$username = $_SERVER['PHP_AUTH_USER'];
+    		$password = $_SERVER['PHP_AUTH_PW'];
+    	} elseif (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+    		if (strpos(strtolower($_SERVER['HTTP_AUTHORIZATION']),'basic')===0)
+    			list($username, $password) = explode(':',base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6)));
+    	}
+    	if (!$context->getSecurityAgent()->authenticate($username, $password)) {
+    		$this->getResponse()->setStatusCode('401');
+	    	return $this->getResponse();
+    	}
+    	else {
+			$user = User::get($username, 'username');
+    		if (!$user) {
+				$this->getResponse()->setStatusCode('422');
+		    	return $this->getResponse();
+			}
+			$user->authentication_token = $this->getRequest()->getPost('authentication_token');
+			$user->authentication_validity = $this->getRequest()->getPost('authentication_validity');
+			$user->update(null);
+			$this->getResponse()->setStatusCode('200');
+	    	return $this->getResponse();
+    	}
+    }
+
+    public function getApplicationsAction()
+    {
+    	// Retrieve the context
+    	$context = Context::getCurrent();
+
+    	// Check basic authentication
+    	if (isset($_SERVER['PHP_AUTH_USER'])) {
+    		$username = $_SERVER['PHP_AUTH_USER'];
+    		$password = $_SERVER['PHP_AUTH_PW'];
+    	} elseif (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+    		if (strpos(strtolower($_SERVER['HTTP_AUTHORIZATION']),'basic')===0)
+    			list($username, $password) = explode(':',base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6)));
+    	}
+    	if (!$context->getSecurityAgent()->authenticate($username, $password)) {
+    		$this->getResponse()->setStatusCode('401');
+	    	return $this->getResponse();
+    	}
+    	else {
+			$user = User::get($username, 'username');
+    		if (!$user) {
+				$this->getResponse()->setStatusCode('422');
+		    	return $this->getResponse();
+			}
+			$this->getResponse()->setContent(json_encode($user->applications));
+			$this->getResponse()->setStatusCode('200');
+	    	return $this->getResponse();
+    	}
     }
 }

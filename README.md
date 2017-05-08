@@ -3,7 +3,7 @@
 
 Introduction
 ------------
-This is the minimal 2pit application. It is based on a standard ZF2 installation. It is packaged with the core module (\vendor\PpitCore) and the default security manager (\vendor\PpitUser), based on a login with a password input in a form.
+This is the minimal 2pit application. It is based on a standard ZF2 installation. It is packaged with the core module (\vendor\PpitCore) and the default security manager (\vendor\PpitUser), providing a classic authentication mode based on login/password in a form.
 
 Please note that only the 2pit application is under GPL license. Each file under GPL mentions it explicitly. The ZF2 application on which is packaged 2pit has it own license which is not affected by 2pit.
 
@@ -76,5 +76,7 @@ Login
 At this stage, you should get the 2pit login page when browsing to your website. Click on Lost password and type « admin » as an identifier then Confirm.
 
 You should receive an email with a link. By following it, you get the New password form. Type « Admin » and twice your new password, then Confirm.
+
+(If you encounter difficulties to receive emails on your server, please note as a backup that email sent are logged in data/logs/mailing.txt.)
 
 You can now login as admin.

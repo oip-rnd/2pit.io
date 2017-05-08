@@ -154,7 +154,7 @@ class Interaction implements InputFilterAwareInterface
     	$data['type'] = $this->type;
     	$data['format'] = $this->format;
     	$data['direction'] = $this->direction;
-    	$data['place_id'] = $this->place_id;
+    	$data['place_id'] = (int) $this->place_id;
     	$data['reference'] = $this->reference;
     	$data['content'] = $this->content;
     	$data['http_status'] = $this->http_status;
@@ -240,7 +240,7 @@ class Interaction implements InputFilterAwareInterface
 
     	// Todo list vs search modes
     	if ($mode == 'todo') {
-    		$where->like('core_interaction.update_time', date('Y-m-d').'%');
+    		$where->equalTo('core_interaction.status', 'new');
     	}
     	else {
     		// Set the filters
@@ -341,6 +341,11 @@ class Interaction implements InputFilterAwareInterface
 		if (array_key_exists('content', $data)) {
 	    	$content = $data['content'];
 			if ($this->content != $content) $auditRow['content'] = $this->content = $content;
+		}
+		if (array_key_exists('http_status', $data)) {
+			$http_status = trim(strip_tags($data['http_status']));
+			if (strlen($http_status) > 255) return 'Integrity';
+			if ($this->http_status != $http_status) $auditRow['http_status'] = $this->http_status = $http_status;
 		}
 		if (array_key_exists('property_1', $data)) {
 			$property_1 = trim(strip_tags($data['property_1']));

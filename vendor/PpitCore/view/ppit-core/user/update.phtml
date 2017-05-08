@@ -134,89 +134,57 @@
 <!-- Perimeters -->
 <div class="col-sm-12"><h3><?php echo $this->translate('Perimeters', 'ppit-core', $context->getLocale()) ?></h3></div>
 
-<?php if ($context->getConfig('student/property/place')) : ?>
-<!-- Places -->
-<div class="col-sm-12"><h4><?php echo $context->getConfig('student/property/place')['labels'][$context->getLocale()] ?></h3></div>
+<?php foreach ($context->getConfig('perimeters') as $applicationId => $application) : ?>
+	<?php if ($applicationId == 'p-pit-admin') : ?>
+	<div class="col-sm-12"><h4><?php echo $context->getConfig('student/property/place')['labels'][$context->getLocale()] ?></h3></div>
 
-	<?php foreach ($places as $place) : ?>
-	<?php
-	$found = false;
-	if (array_key_exists('p-pit-studies', $contact->perimeters)) foreach ($contact->perimeters['p-pit-studies'] as $propertyId => $propertyValues) {
-		if ($propertyId == 'place_id') {
-			foreach ($propertyValues as $propertyValue) if ($propertyValue == $place->id) $found = true;
+		<?php foreach ($places as $place) : ?>
+		<?php
+		$found = false;
+		if (array_key_exists('p-pit-admin', $contact->perimeters)) foreach ($contact->perimeters['p-pit-admin'] as $propertyId => $propertyValues) {
+			if ($propertyId == 'place_id') {
+				foreach ($propertyValues as $propertyValue) if ($propertyValue == $place->id) $found = true;
+			}
 		}
-	}
-	?>
-		<div class="form-group" id="place_<?php echo $place->id ?>_group">
-			<label class="col-sm-5 control-label"><?php echo $place->caption ?></label>
-			<div class="col-sm-7">
-				<input type="checkbox" id="place_<?php echo $place->id ?>" class="form-control" value="1" <?php if ($found) echo 'checked="checked"' ?><?php if (isset($isDisabled) && $isDisabled) echo ' disabled ="disabled"' ?>>
-			</div>
+		?>
+	<div class="form-group" id="place_<?php echo $place->id ?>_group">
+		<label class="col-sm-5 control-label"><?php echo $place->caption ?></label>
+		<div class="col-sm-7">
+			<input type="checkbox" id="place_<?php echo $place->id ?>" class="form-control" value="1" <?php if ($found) echo 'checked="checked"' ?><?php if (isset($isDisabled) && $isDisabled) echo ' disabled ="disabled"' ?>>
 		</div>
-	<?php endforeach;?>
-<?php endif;?>
+	</div>
+		<?php endforeach;?>
 
-<?php if ($context->getConfig('student/property/discipline')) : ?>
-<!-- Discipline -->
-<div class="col-sm-12"><h4><?php echo $context->getConfig('student/property/discipline')['labels'][$context->getLocale()] ?></h3></div>
+	<?php else : ?>
 
-	<?php foreach ($context->getConfig('student/property/discipline')['modalities'] as $disciplineId => $discipline) : ?>
-	<?php
-	$found = false;
-	if (array_key_exists('p-pit-studies', $contact->perimeters)) foreach ($contact->perimeters['p-pit-studies'] as $propertyId => $propertyValues) {
-		if ($propertyId == 'property_1') {
-			foreach ($propertyValues as $propertyValue) if ($propertyValue == $disciplineId) $found = true;
+		<?php 
+		foreach ($application as $specificationId => $specification) : 
+			$specification = $context->getConfig($specification);
+		?>
+
+	<div class="col-sm-12"><h4><?php echo $specification['labels'][$context->getLocale()] ?></h3></div>
+
+		<?php foreach ($specification['modalities'] as $modalityId => $modality) : ?>
+		<?php
+		$found = false;
+		if (array_key_exists($applicationId, $contact->perimeters)) foreach ($contact->perimeters[$applicationId] as $propertyId => $propertyValues) {
+			if ($propertyId == $specificationId) {
+				foreach ($propertyValues as $propertyValue) if ($propertyValue == $modalityId) $found = true;
+			}
 		}
-	}
-	?>
-		<div class="form-group" id="discipline_<?php echo $disciplineId ?>_group">
-			<label class="col-sm-5 control-label"><?php echo $discipline[$context->getLocale()] ?></label>
-			<div class="col-sm-7">
-				<input type="checkbox" id="discipline_<?php echo $disciplineId ?>" class="form-control" value="1" <?php if ($found) echo 'checked="checked"' ?><?php if (isset($isDisabled) && $isDisabled) echo ' disabled ="disabled"' ?>>
-			</div>
+		?>
+
+	<div class="form-group" id="<?php echo $specificationId.'_'.$modalityId ?>_group">
+		<label class="col-sm-5 control-label"><?php echo $modality[$context->getLocale()] ?></label>
+		<div class="col-sm-7">
+			<input type="checkbox" id="<?php echo $specificationId.'_'.$modalityId ?>" class="form-control" value="1" <?php if ($found) echo 'checked="checked"' ?><?php if (isset($isDisabled) && $isDisabled) echo ' disabled ="disabled"' ?>>
 		</div>
-	<?php endforeach;?>
-<?php endif;?>
+	</div>
+			<?php endforeach;?>
+		<?php endforeach;?>
 
-<?php if ($context->getConfig('student/property/level')) :?>
-<!-- Classes -->
-<div class="col-sm-12"><h4><?php echo $context->getConfig('student/property/level')['labels'][$context->getLocale()] ?></h3></div>
-
-	<?php foreach ($context->getConfig('student/property/level')['modalities'] as $levelId => $level) : ?>
-	<?php
-	$found = false;
-	if (array_key_exists('p-pit-studies', $contact->perimeters)) foreach ($contact->perimeters['p-pit-studies'] as $propertyId => $propertyValues) {
-		if ($propertyId == 'property_4') {
-			foreach ($propertyValues as $propertyValue) if ($propertyValue == $levelId) $found = true;
-		}
-	}
-	?>
-		<div class="form-group" id="level_<?php echo $levelId ?>_group">
-			<label class="col-sm-5 control-label"><?php echo $level[$context->getLocale()] ?></label>
-			<div class="col-sm-7">
-				<input type="checkbox" id="level_<?php echo $levelId ?>" class="form-control" value="1" <?php if ($found) echo 'checked="checked"' ?><?php if (isset($isDisabled) && $isDisabled) echo ' disabled ="disabled"' ?>>
-			</div>
-		</div>
-	<?php endforeach;?>
-<?php endif;?>
-
-		<div>&nbsp;</div>
-
-<!-- Community -->
-<!--		<div class="form-group" id="community_id_group">
-			<label class="col-sm-5 control-label"><?php //echo $this->translate('Community', 'ppit-contact', $context->getLocale()) ?></label>
-			<div class="col-sm-7">
-				<select id="community_id" class="form-control" <?php //if (isset($isDisabled) && $isDisabled) echo 'disabled ="disabled"' ?>>
-					 <option></option>
-	<?php //foreach ($communities as $communityId => $community) : ?>
-					 <option value="<?php //echo $communityId ?>" <?php //if ($contact->community_id == $communityId) echo 'selected="selected"'?>><?php //echo $community->name ?></option>
-	<?php //endforeach;?>
-				</select>
-			</div>
-			<div class="col-sm-12"><p class="help-block" id="community_id_error"></p></div>
-		</div>
-		
-		<div>&nbsp;</div> -->
+	<?php endif;?>
+<?php endforeach;?>
 
 <!-- Accept notifications ? -->
 		<div class="form-group" id="is_notified_group">
@@ -232,8 +200,9 @@
 			<div class="col-sm-7">
 				<select name="locale" id="locale" class="form-control"<?php if (isset($isDisabled) && $isDisabled) echo ' disabled ="disabled"' ?>>
 					<option value=""><-- <?php echo $this->translate('Please choose', 'ppit-core', $context->getLocale()) ?> --></option>
-					<option value="en_US" <?php if ($contact->locale == 'en_US') echo 'selected="selected"'; ?>>en_US</option>
-					<option value="fr_FR" <?php if ($contact->locale == 'fr_FR') echo 'selected="selected"'; ?>>fr_FR</option>
+<?php foreach ($locales as $localeId => $locale) : ?>
+					<option value="<?php echo $localeId ?>" <?php if ($contact->locale == $localeId) echo 'selected="selected"'; ?>><?php echo $locale ?></option>
+<?php endforeach;?>
 				</select>
 			</div>
 			<div class="col-sm-12"><p class="help-block" id="locale_error"></p></div>

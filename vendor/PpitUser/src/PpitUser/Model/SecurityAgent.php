@@ -25,6 +25,40 @@ class SecurityAgent
 {    
 	private $acl;
 
+	protected function getAcl() { return $this->acl; }
+
+	public function wsAuthenticate($sm)
+	{
+		// Initialize the logger
+		$writer = new \Zend\Log\Writer\Stream('data/log/interaction.txt');
+		$logger = new \Zend\Log\Logger();
+		$logger->addWriter($writer);
+	
+		// Check basic authentication
+		if (isset($_SERVER['PHP_AUTH_USER'])) {
+			$username = $_SERVER['PHP_AUTH_USER'];
+			$password = $_SERVER['PHP_AUTH_PW'];
+		} elseif (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+			if (strpos(strtolower($_SERVER['HTTP_AUTHORIZATION']),'basic')===0)
+				list($username, $password) = explode(':',base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6)));
+		}
+		if ($this->authenticate($username, $password) == 'Authentication') {
+
+			// Write to the log
+			$logger->info($_SERVER['QUERY_STRING'].';401;'.$username.';');
+			$sm->get('Response')->setStatusCode('401');
+			header('location: user/login');
+			return false;
+		}
+		else {
+			$user = User::getTable()->transGet($username, 'username');
+			Context::updateFromUserId(Context::getCurrent()->getConfig(), $user->user_id);
+			$container = new Container('Zend_Auth');
+			$container->user_id = $user->user_id;
+			return true;
+		}
+	}
+	
 	public function getUserId()
 	{
 		// Retrieve the currentUser
@@ -190,8 +224,7 @@ class SecurityAgent
     public function authenticate($identity, $credential)
     {
     	$context = Context::getCurrent();
-    	
-    	$auth = new AuthenticationService();
+		$auth = new AuthenticationService();
     	$dbAdapter = User::getTable()->getAdapter();
  
     	$credentialValidationCallback = function($dbCredential, $requestCredential) {
@@ -199,7 +232,7 @@ class SecurityAgent
     		$bcrypt->setCost(14);
     		return $bcrypt->verify($requestCredential, $dbCredential);
     	};
-    	$authAdapter = new AuthAdapter($dbAdapter, 'user', 'username', 'password', $credentialValidationCallback);
+    	$authAdapter = new AuthAdapter($dbAdapter, 'core_user', 'username', 'password', $credentialValidationCallback);
 
     	$authAdapter
 	    	->setIdentity($identity)

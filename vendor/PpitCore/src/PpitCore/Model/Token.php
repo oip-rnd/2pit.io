@@ -89,7 +89,7 @@ class Token extends Context
 
 		// Retrieve the token
     	$select = Token::getTable()->getSelect()
-    		->where(array('authorized_route' => $authorized_route, 'value' => $value/*, 'validity >= ?' => Date('Y-m-d')*/));
+    		->where(array('authorized_route' => $authorized_route, 'value' => $value, 'validity >= ?' => Date('Y-m-d')));
     	$cursor = Token::getTable()->transSelectWith($select);
     	$authorized = false;
     	foreach ($cursor as $token) 

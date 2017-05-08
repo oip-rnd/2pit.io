@@ -152,7 +152,7 @@ echo $this->partial('/partials/form-button-script', array(
 		xhttp.onreadystatechange = function() {
 			if (xhttp.readyState == 4 && xhttp.status == 200) {
 				document.getElementById('community_function_list').innerHTML = xhttp.responseText;
-	<?php if ($config['ppitCoreSettings']['isTraceActive']) : ?>
+	<?php if ($config['isTraceActive']) : ?>
 				console.log('getContractList, route = ' + '<?php echo $this->url('contract/list') ?>');
 				console.log(xhttp.responseText);
 	<?php endif;?>

@@ -12,8 +12,9 @@ namespace PpitCore\Controller;
 use PpitCore\Form\CsrfForm;
 use PpitCore\Model\Context;
 use PpitCore\Model\Csrf;
+use PpitCore\Model\Document;
 use PpitCore\Model\Instance;
-use PpitDocument\Model\DocumentPart;
+use PpitCore\Model\Place;
 use Zend\Console\Request as ConsoleRequest;
 use Zend\View\Model\ViewModel;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -24,10 +25,12 @@ class InstanceController extends AbstractActionController
     public function indexAction()
     {
     	$context = Context::getCurrent();
+    	$place = Place::get($context->getPlaceId());
 
     	return new ViewModel(array(
     			'context' => $context,
     			'config' => $context->getConfig(),
+    			'place' => $place,
     	));
     }
 
@@ -187,11 +190,13 @@ class InstanceController extends AbstractActionController
     	// Retrieve the context
     	$context = Context::getCurrent();
     
-    	// Retrieve the instance
+    	// Retrieve the instance and place
     	$instance = Instance::get($context->getInstanceId());
-    
-    	$content = DocumentPart::getTable()->transGet($context->getConfig('documentPart/currentEthicalCharter'))->content;
-    	
+    	$place = Place::getTable()->transGet($context->getPlaceId());
+    	 
+    	$document = Document::getTable()->transGet($context->getConfig()['document/ethicalCharter']);
+    	$document->retrieveContent();
+
     	// Instanciate the csrf form
     	$csrfForm = new CsrfForm();
     	$csrfForm->addCsrfElement('csrf');
@@ -206,7 +211,7 @@ class InstanceController extends AbstractActionController
     		if ($csrfForm->isValid()) { // CSRF check
     
 				$data = array();
-    			$data['ethical_charter'] = $content;
+    			$data['validated_ethical_charter_id'] = $document->id;
 				$data['status'] = 'accepted';
 				$instance->loadData($data);
 
@@ -228,7 +233,8 @@ class InstanceController extends AbstractActionController
     			'context' => $context,
     			'config' => $context->getconfig(),
     			'instance' => $instance,
-    			'content' => $content,
+    			'place' => $place,
+    			'document' => $document,
     			'csrfForm' => $csrfForm,
     			'message' => $message,
     			'error' => $error,
@@ -243,11 +249,13 @@ class InstanceController extends AbstractActionController
     
     	// Retrieve the instance
     	$instance = Instance::get($context->getInstanceId());
+    	$place = Place::getTable()->transGet($context->getPlaceId());
 
     	$view = new ViewModel(array(
     			'context' => $context,
     			'config' => $context->getconfig(),
     			'instance' => $instance,
+    			'place' => $place,
     	));
     	return $view;
     }
@@ -257,7 +265,7 @@ class InstanceController extends AbstractActionController
     	$context = Context::getCurrent();
     	$config = $context->getConfig();
     	$request = $this->getRequest();
-    	 
+
     	// Make sure that we are running in a console and the user has not tricked our
     	// application into running this action from a public web server.
     	if (!$request instanceof ConsoleRequest){
@@ -323,7 +331,7 @@ class InstanceController extends AbstractActionController
     		if ($csrfForm->isValid()) { // CSRF check
 				// Write the loaded images
 				$files = $request->getFiles()->toArray();
-				if ($files) foreach ($files as $file) Instance::saveFile($file, './public/logos/');
+				if ($files) foreach ($files as $file) Instance::saveFile($file);
     		}
     	}
     	$view = new ViewModel(array(

@@ -81,7 +81,7 @@ function eraseInteractionSearch() {
 
 <?php endforeach;?>
 
-	getInteractionList(interactionGetParams(), 'reference', 'ASC');
+	getInteractionList(interactionGetParams(), 'update_time', 'DESC');
 }
 
 function sortInteractionList(criterion) {
@@ -103,7 +103,7 @@ function filterInteractionList() {
 	}
 	else {
 		criterion = descCriterion.split('-')[0];
-		dir = 'ASC';
+		dir = 'DESC';
 	}
 	getInteractionList(interactionGetParams(), criterion, dir);
 }
@@ -164,7 +164,7 @@ function getInteractionList(params, major, dir) {
 	xhttp.onreadystatechange = function() {
 		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
 		if (xhttp.readyState == 4) {
-	<?php if (!$config['ppitCoreSettings']['isTraceActive']) : ?>
+	<?php if (!$config['isTraceActive']) : ?>
 			if (xhttp.status == 200) {
 	<?php endif;?>
 			document.getElementById('interaction-list-panel').innerHTML = xhttp.responseText;
@@ -190,7 +190,7 @@ function getInteractionList(params, major, dir) {
 					getInteractionDetail($(this).attr('id').split('_')[1]);
 				});
 			});
-<?php if (!$config['ppitCoreSettings']['isTraceActive']) : ?>
+<?php if (!$config['isTraceActive']) : ?>
 			}
 <?php endif;?>
 		}
@@ -240,7 +240,7 @@ function connectInteractionUpdateForm(id, action, target)
 		event.preventDefault();
 	
 		// Check validity
-		var validity = checkInteractionUpdateProperties(id);
+		var validity = (action != 'process' && action != 'delete') ? checkInteractionUpdateProperties(id) : true;
 		if (validity) {
 		
 			// Create a new FormData object.
@@ -278,14 +278,14 @@ function connectInteractionUpdateForm(id, action, target)
 			xhttp.onload = function () {
 				if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
 				if (xhttp.readyState == 4) {
-			<?php if (!$config['ppitCoreSettings']['isTraceActive']) : ?>
+			<?php if (!$config['isTraceActive']) : ?>
 					if (xhttp.status == 200) {
 			<?php endif;?>
 					document.getElementById(target).innerHTML = xhttp.responseText;
 					filterInteractionList();
 					connectInteractionUpdateForm(id, action, target);
 					$('.action-btn').removeClass('btn-primary').addClass('btn-default');
-			<?php if (!$config['ppitCoreSettings']['isTraceActive']) : ?>
+			<?php if (!$config['isTraceActive']) : ?>
 					}
 			<?php endif;?>
 				}
@@ -306,7 +306,7 @@ function getInteractionUpdate(id, action, target) {
 	xhttp.onreadystatechange = function() {
 		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
 		if (xhttp.readyState == 4) {
-	<?php if (!$config['ppitCoreSettings']['isTraceActive']) : ?>
+	<?php if (!$config['isTraceActive']) : ?>
 			if (xhttp.status == 200) {
 	<?php endif;?>
 			document.getElementById(target).innerHTML = xhttp.responseText;
@@ -318,7 +318,7 @@ function getInteractionUpdate(id, action, target) {
 			}
 			else $('#interaction-add-anchor').click(function () { getInteractionUpdate(id, 'add', target); });
 			connectInteractionUpdateForm(id, action, target);
-<?php if (!$config['ppitCoreSettings']['isTraceActive']) : ?>
+<?php if (!$config['isTraceActive']) : ?>
 			}
 <?php endif;?>
 		}
@@ -349,7 +349,7 @@ function getInteractionDetail(id) {
 	xhttp.onreadystatechange = function() {
 		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
 		if (xhttp.readyState == 4) {
-	<?php if (!$config['ppitCoreSettings']['isTraceActive']) : ?>
+	<?php if (!$config['isTraceActive']) : ?>
 			if (xhttp.status == 200) {
 	<?php endif;?>
 			document.getElementById('form_action').innerHTML = xhttp.responseText;
@@ -376,5 +376,5 @@ function activateInteraction() {
 	?>
 	$('#mode-text').text('<?php echo $todoTitle ?>');
 	connectInteractionSearchInputs();
-	getInteractionList('?', 'reference', 'ASC');
+	getInteractionList('?', 'update_time', 'DESC');
 }

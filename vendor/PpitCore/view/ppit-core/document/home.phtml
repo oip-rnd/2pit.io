@@ -1,0 +1,12 @@
+<?php
+$title = $page->specification['title'][$context->getLocale()];
+$this->headTitle($title);
+echo $this->partial('/partials/header');
+?>
+
+<?php echo $this->partial('/partials/menu-rendering'); ?>
+<?php echo $this->partial('/partials/page-rendering'); ?>
+
+<?php if ($clocks) : ?>
+<?php echo $this->partial('/partials/clock-rendering'); ?>
+<?php endif ?>

@@ -24,8 +24,6 @@ class Module
 
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($em);
-        
-		Context::retrieve($e);
     }
 
     public function getConfig()

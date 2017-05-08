@@ -77,11 +77,11 @@ class UserContact implements InputFilterAwareInterface
     {
     	$context = Context::getCurrent();
     	$select = UserContact::getTable()->getSelect()
-    		->join('core_instance', 'user_contact.instance_id = core_instance.id', array('instance_caption' => 'caption'), 'left')
-	    	->join('core_vcard', 'user_contact.vcard_id = core_vcard.id', array('n_fn', 'email', 'tel_work', 'tel_cell'), 'left')
-    		->join('user', 'user_contact.user_id = user.user_id', array(), 'left')
+    		->join('core_instance', 'core_user_contact.instance_id = core_instance.id', array('instance_caption' => 'caption'), 'left')
+	    	->join('core_vcard', 'core_user_contact.vcard_id = core_vcard.id', array('n_fn', 'email', 'tel_work', 'tel_cell'), 'left')
+    		->join('core_user', 'core_user_contact.user_id = core_user.user_id', array(), 'left')
     		->join('core_community', 'core_vcard.community_id = core_community.id', array('community_name' => 'name'), 'left')
-    		->where(array('user_contact.user_id' => $context->getUserId()))
+    		->where(array('core_user_contact.user_id' => $context->getUserId()))
     		->order(array('instance_caption', 'n_fn'));
     	$cursor = UserContact::getTable()->transSelectWith($select);
     	$contacts = array();
@@ -135,7 +135,7 @@ class UserContact implements InputFilterAwareInterface
     	$context = Context::getCurrent();
     
     	// Check consistency
-    	if (Generic::getTable()->cardinality('user_contact', array('user_id' => $this->user_id, 'vcard_id' => $this->vcard_id)) > 0) return 'Duplicate';
+    	if (Generic::getTable()->cardinality('core_user_contact', array('user_id' => $this->user_id, 'vcard_id' => $this->vcard_id)) > 0) return 'Duplicate';
 
     	$this->id = null;
     	UserContact::getTable()->save($this);

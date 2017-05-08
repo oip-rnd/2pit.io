@@ -15,49 +15,12 @@ return array(
     ),
 	'router' => array(
         'routes' => array(
-            '' => array(
-                'type' => 'Zend\Mvc\Router\Http\Literal',
-                'options' => array(
-                    'route'    => '/',
-                	'defaults' => array(
-                        'controller' => 'Application\Controller\Home',
-                        'action'     => 'index',
-                    ),
-                ),
-            ),
-        	'home' => array(
-                'type'    => 'segment',
-                'options' => array(
-                    'route'    => '/home',
-                	'defaults' => array(
-                        '__NAMESPACE__' => 'Application\Controller',
-                        'controller'    => 'Home',
-                        'action'        => 'index',
-                    ),
-                ),
-                'may_terminate' => true,
-                'child_routes' => array(
-	                'index' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/index[/:instance_caption]',
-	                    	'defaults' => array(
-	                    		'action' => 'index',
-	                        ),
-	                    ),
-	                ),
-                ),
-            ),
         ),
     ),
 	'bjyauthorize' => array(
 		// Guard listeners to be attached to the application event manager
 		'guards' => array(
 			'BjyAuthorize\Guard\Route' => array(
-
-				array('route' => '', 'roles' => array('guest')),
-				array('route' => 'home', 'roles' => array('guest')),
-				array('route' => 'home/index', 'roles' => array('guest')),
 			)
 		)
 	),
@@ -128,21 +91,4 @@ return array(
 	        ),
  		),
 	),
-	'title' => array(
-			'fr_FR' => 'P-Pit',
-			'en_US' => '2pit',
-	),
-	'menu' => array(
-			'instance' => array(
-					'action' => 'Instance',
-					'route' => 'instance/index',
-					'params' => array('type' => ''),
-					'urlParams' => array(),
-					'label' => array(
-							'en_US' => 'Instances',
-							'fr_FR' => 'Instances',
-					),
-			),
-	),
-	'defaultEntry' => 'instance',
 );

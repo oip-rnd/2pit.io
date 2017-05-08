@@ -6,6 +6,10 @@ use PpitContact\Model\ContactMessage;
 use PpitCore\Model\Community;
 use PpitCore\Model\Csrf;
 use PpitCore\Model\Context;
+use PpitCore\Model\Event;
+use PpitCore\Model\Instance;
+use PpitCore\Model\Place;
+use PpitCore\Model\Page;
 use PpitCore\Model\Vcard;
 use PpitCore\Form\CsrfForm;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -18,10 +22,12 @@ class CommunityController extends AbstractActionController
     {    	
     	// Retrieve the context
     	$context = Context::getCurrent();
+    	$place = Place::get($context->getPlaceId());
 
     	$view = new ViewModel(array(
     			'context' => $context,
 				'config' => $context->getconfig(),
+    			'place' => $place,
     	));
    		$view->setTerminal(true);
    		return $view;
@@ -138,6 +144,61 @@ class CommunityController extends AbstractActionController
     	));
    		$view->setTerminal(true);
    		return $view;
+    }
+
+    public function homeAction()
+    {
+    	$context = Context::getCurrent();
+    	$instance = Instance::get($context->getInstanceId());
+    	$place = Place::get($context->getPlaceId());
+    	$community = Community::get($context->getCommunityId());
+    	 
+    	$menu = Page::get('menu', 'identifier');
+    	$page = Page::get('dashboard', 'identifier');
+		$clocks = Page::get('clocks', 'identifier');
+    	return new ViewModel(array(
+    			'context' => $context,
+    			'config' => $context->getConfig(),
+    			'instance' => $instance,
+    			'place' => $place,
+    			'community' => $community,
+    			'menu' => $menu,
+    			'page' => $page,
+    			'pageId' => 'employeeFile',
+    			'clocks' => $clocks,
+    	));
+    }
+
+    public function dashboardAction()
+    {
+    	$context = Context::getCurrent();
+    	$community = CommUnity::get($context->getCommunityId());
+    	$type = $this->params()->fromRoute('type');
+    	$events = Event::retrieveComing($type, $community->id);
+    	$view = new ViewModel(array(
+    			'context' => $context,
+    			'config' => $context->getconfig(),
+    			'community' => $community,
+    			'events' => $events,
+    	));
+    	$view->setTerminal(true);
+    	return $view;
+    }
+
+    public function planningAction()
+    {
+    	$context = Context::getCurrent();
+    	$community = Community::get($context->getCommunityId());
+    	$type = $this->params()->fromRoute('type');
+    	$events = Event::retrieveComing($type, $community->id);
+    	$view = new ViewModel(array(
+    			'context' => $context,
+    			'config' => $context->getconfig(),
+    			'community' => $community,
+    			'events' => $events,
+    	));
+    	$view->setTerminal(true);
+    	return $view;
     }
     
     public function sendMessageAction()

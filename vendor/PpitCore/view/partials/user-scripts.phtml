@@ -30,7 +30,7 @@ function getUserList(major, dir) {
  	xhttp = new XMLHttpRequest();
 	xhttp.open("GET", route, true);
 	xhttp.onreadystatechange = function() {
-		if (xhttp.readyState == 4 <?php if (!$config['ppitCoreSettings']['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+		if (xhttp.readyState == 4 <?php if (!$config['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
 			document.getElementById('user-list-panel').innerHTML = xhttp.responseText;
 			// Connect the sort anchors
 			$('.ppit-sort-anchor').each(function () {
@@ -92,7 +92,7 @@ function showUserDetail(id, action)
 
 	xhttp.open("GET", route, true);
 	xhttp.onreadystatechange = function() {
-		if (xhttp.readyState == 4 <?php if (!$config['ppitCoreSettings']['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+		if (xhttp.readyState == 4 <?php if (!$config['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
 			document.getElementById('form_action').innerHTML = xhttp.responseText;
 			connectApplicationRole();
 
@@ -156,27 +156,24 @@ function showUserDetail(id, action)
 $properties = array();
 $properties['locale'] = array('type' => 'select', 'mandatory' => false);
 $properties['is_notified'] = array('type' => 'checkbox');
-//$properties['community_id'] = array('type' => 'select', 'mandatory' => false);
 
-if ($context->getConfig('student/property/level')) {
-	foreach ($context->getConfig('student/property/level')['modalities'] as $levelId => $unused) {
-		$properties['level_'.$levelId] = array('type' => 'checkbox');
+foreach ($context->getConfig('perimeters') as $applicationId => $application) {
+	if ($applicationId == 'p-pit-admin') {
+		foreach ($places as $place) {
+			$properties['place_'.$place->id] = array('type' => 'checkbox');
+		}
+	}
+	else {
+		foreach ($application as $specificationId => $specification) {
+			foreach ($context->getConfig($specification)['modalities'] as $modalityId => $unused) {
+				$properties[$specificationId.'_'.$modalityId] = array('type' => 'checkbox');
+			}
+		}
 	}
 }
 
-if ($context->getConfig('student/property/discipline')) {
-	foreach ($context->getConfig('student/property/discipline')['modalities'] as $disciplineId => $unused) {
-		$properties['discipline_'.$disciplineId] = array('type' => 'checkbox');
-	}
-}
-
-if ($context->getConfig('student/property/place')) {
-	foreach ($places as $place) {
-		$properties['place_'.$place->id] = array('type' => 'checkbox');
-	}
-}
-
-foreach ($context->getConfig('ppitApplications') as $applicationId => $application) {
+foreach ($instance->applications as $applicationId => $unused) {
+	$application = $context->getConfig('ppitApplications')[$applicationId];
 	$properties['application_'.$applicationId] = array('type' => 'checkbox');
 	foreach ($application['roles'] as $roleId => $role) {
 		$properties['role_'.$roleId] = array('type' => 'checkbox');
@@ -228,7 +225,7 @@ function connectUserUpdateForm(id)
 			xhttp.open('POST', route, true);
 			// Set up a handler for when the request finishes.
 			xhttp.onload = function () {
-				if (xhttp.readyState == 4 <?php if (!$context->getConfig()['ppitCoreSettings']['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+				if (xhttp.readyState == 4 <?php if (!$context->getConfig()['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
 					document.getElementById('form_action').innerHTML = xhttp.responseText;
 					getUserList('n_fn', 'ASC');
 					connectRemoveIcon('remove-anchor', 'form_action');
@@ -260,7 +257,7 @@ function connectUserRevokeForm(id)
 		xhttp.open('POST', route, true);
 		// Set up a handler for when the request finishes.
 		xhttp.onload = function () {
-			if (xhttp.readyState == 4 <?php if (!$context->getConfig()['ppitCoreSettings']['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+			if (xhttp.readyState == 4 <?php if (!$context->getConfig()['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
 				document.getElementById('form_action').innerHTML = xhttp.responseText;
 				getUserList('n_fn', 'ASC');
 				connectRemoveIcon('remove-anchor', 'form_action');
@@ -289,7 +286,7 @@ function connectUserDeleteForm(id)
 		xhttp.open('POST', route, true);
 		// Set up a handler for when the request finishes.
 		xhttp.onload = function () {
-			if (xhttp.readyState == 4 <?php if (!$context->getConfig()['ppitCoreSettings']['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+			if (xhttp.readyState == 4 <?php if (!$context->getConfig()['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
 				document.getElementById('form_action').innerHTML = xhttp.responseText;
 				getUserList('n_fn', 'ASC');
 
@@ -319,7 +316,7 @@ function connectUserPasswordRequestForm(id)
 		xhttp.open('POST', route, true);
 		// Set up a handler for when the request finishes.
 		xhttp.onload = function () {
-			if (xhttp.readyState == 4 <?php if (!$context->getConfig()['ppitCoreSettings']['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+			if (xhttp.readyState == 4 <?php if (!$context->getConfig()['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
 				document.getElementById('form_action').innerHTML = xhttp.responseText;
 				getUserList('n_fn', 'ASC');
 

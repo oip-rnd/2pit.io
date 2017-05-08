@@ -22,14 +22,15 @@ class PlaceController extends AbstractActionController
     public function indexAction()
     {
     	$context = Context::getCurrent();
-
-		$applicationId = 'p-pit-admin';
+    	$place = Place::getTable()->transGet($context->getPlaceId());
+    	$applicationId = 'p-pit-admin';
 		$applicationName = 'P-Pit Admin';
 		$currentEntry = $this->params()->fromQuery('entry', 'place');
 		
     	return new ViewModel(array(
     			'context' => $context,
     			'config' => $context->getConfig(),
+    			'place' => $place,
     			'active' => 'application',
     			'applicationId' => $applicationId,
     			'applicationName' => $applicationName,

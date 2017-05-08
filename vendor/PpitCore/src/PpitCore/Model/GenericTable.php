@@ -65,7 +65,7 @@ class GenericTable
 		return $this->tableGateway->selectWith($select);
     }
 
-    public function cardinality($entity, $where)
+    public function cardinality($entity, $where, $group = null)
     {
     	$context = Context::getCurrent();
     	$where['instance_id'] = $context->getInstanceId();
@@ -78,20 +78,39 @@ class GenericTable
 		return $this->tableGateway->selectWith($select)->current()->count;
     }
 
-    public function get($id, $column = 'id')
+    public function distribution($entity, $where, $group)
+    {
+    	$context = Context::getCurrent();
+    	$where['instance_id'] = $context->getInstanceId();
+    	$select = new \Zend\Db\Sql\Select();
+    	$select->from($entity);
+    	$select
+	    	->columns(array('group' => $group, 'count' => new \Zend\Db\Sql\Expression('COUNT(*)')))
+    		->where($where);
+    	$select->group($group);
+    	//		echo $select->getSqlString($this->getAdapter()->getPlatform()).'<br>';
+    	$cursor = $this->tableGateway->selectWith($select);
+    	$result = array();
+    	foreach ($cursor as $row) $result[$row->group] = $row->count;
+    	return $result;
+    }
+    
+    public function get($id, $column = 'id', $includeDeleted = false)
     {
     	$context = Context::getCurrent();
     	$where = array($column => $id);
-       	$where['instance_id'] = $context->getInstanceId();
+    	if (!$includeDeleted) $where['status != ?'] = 'deleted';
+    	$where['instance_id'] = $context->getInstanceId();
     	$rowset = $this->tableGateway->select($where);
     	$row = $rowset->current();
     	return $row;
     }
 
 	// To use with caution !
-    public function transGet($id, $column = 'id')
+    public function transGet($id, $column = 'id', $includeDeleted = false)
     {
     	$where = array($column => $id);
+    	if (!$includeDeleted) $where['status != ?'] = 'deleted';
     	$rowset = $this->tableGateway->select($where);
     	$row = $rowset->current();
     	return $row;

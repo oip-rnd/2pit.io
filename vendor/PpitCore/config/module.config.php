@@ -12,11 +12,15 @@ return array(
         'invokables' => array(
             'PpitCore\Controller\Community' => 'PpitCore\Controller\CommunityController',
         	'PpitCore\Controller\Credit' => 'PpitCore\Controller\CreditController',
+            'PpitCore\Controller\Home' => 'PpitCore\Controller\HomeController',
+        	'PpitCore\Controller\Document' => 'PpitCore\Controller\DocumentController',
+        	'PpitCore\Controller\Event' => 'PpitCore\Controller\EventController',
         	'PpitCore\Controller\Interaction' => 'PpitCore\Controller\InteractionController',
         	'PpitCore\Controller\Instance' => 'PpitCore\Controller\InstanceController',
         	'PpitCore\Controller\Place' => 'PpitCore\Controller\PlaceController',
+        	'PpitCore\Controller\Public' => 'PpitCore\Controller\PublicController',
         	'PpitCore\Controller\User' => 'PpitCore\Controller\UserController',
-        	'PpitContact\Controller\Vcard' => 'PpitCore\Controller\VcardController',
+        	'PpitCore\Controller\Vcard' => 'PpitCore\Controller\VcardController',
         ),
     ),
 
@@ -56,6 +60,39 @@ return array(
 		
     'router' => array(
         'routes' => array(
+            'index' => array(
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => array(
+                    'route'    => '/',
+                	'defaults' => array(
+                        'controller' => 'PpitCore\Controller\Home',
+                        'action'     => 'index',
+                    ),
+                ),
+            ),
+        	'home' => array(
+                'type'    => 'segment',
+                'options' => array(
+                    'route'    => '/home',
+                	'defaults' => array(
+                        '__NAMESPACE__' => 'PpitCore\Controller',
+                        'controller'    => 'Home',
+                        'action'        => 'index',
+                    ),
+                ),
+                'may_terminate' => true,
+                'child_routes' => array(
+	                'index' => array(
+	                    'type' => 'segment',
+	                    'options' => array(
+	                        'route' => '/index[/:instance_caption]',
+	                    	'defaults' => array(
+	                    		'action' => 'index',
+	                        ),
+	                    ),
+	                ),
+                ),
+            ),
         	'community' => array(
                 'type'    => 'literal',
                 'options' => array(
@@ -118,6 +155,33 @@ return array(
 	                        ),
 	                    ),
 	                ),
+        			'home' => array(
+        				'type' => 'segment',
+        				'options' => array(
+        					'route' => '/home',
+        					'defaults' => array(
+        							'action' => 'home',
+        					),
+       					),
+        			),
+        			'planning' => array(
+        				'type' => 'segment',
+        				'options' => array(
+        					'route' => '/planning[/:type]',
+        					'defaults' => array(
+        						'action' => 'planning',
+        					),
+       					),
+        			),
+	       			'dashboard' => array(
+        				'type' => 'segment',
+        				'options' => array(
+        					'route' => '/dashboard[/:type]',
+        					'defaults' => array(
+        						'action' => 'dashboard',
+	        				),
+       					),
+        			),
 	       			'sendMessage' => array(
 	                    'type' => 'segment',
 	                    'options' => array(
@@ -132,54 +196,63 @@ return array(
 	                ),
 	       		),
         	),
-        	'credit' => array(
+        	'document' => array(
                 'type'    => 'literal',
                 'options' => array(
-                    'route'    => '/credit',
+                    'route'    => '/document',
                     'defaults' => array(
-                        'controller' => 'PpitCore\Controller\Credit',
+                        'controller' => 'PpitCore\Controller\Document',
                         'action'     => 'index',
                     ),
                 ),
-           		'may_terminate' => true,
-	       		'child_routes' => array(
-        						'index' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/index',
-        										'defaults' => array(
-        												'action' => 'index',
-        										),
-        								),
-        						),
-        						'search' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/search',
-        										'defaults' => array(
-        												'action' => 'search',
-        										),
-        								),
-        						),
-        						'list' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/list',
-        										'defaults' => array(
-        												'action' => 'list',
-        										),
-        								),
-        						),
-        						'export' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/export',
-        										'defaults' => array(
-        												'action' => 'export',
-        										),
-        								),
-        						),
-	       						'detail' => array(
+            	'may_terminate' => true,
+            		'child_routes' => array(
+	        				'home' => array(
+	        						'type' => 'segment',
+	        						'options' => array(
+	        								'route' => '/home',
+	        								'defaults' => array(
+	        										'action' => 'home',
+	        								),
+	        						),
+	        				),
+            				'index' => array(
+	        						'type' => 'segment',
+	        						'options' => array(
+	        								'route' => '/index[/:parent_id]',
+	        								'defaults' => array(
+	        										'action' => 'index',
+	        								),
+	        						),
+	        				),
+	        				'search' => array(
+	        						'type' => 'segment',
+	        						'options' => array(
+	        								'route' => '/search[/:parent_id]',
+	        								'defaults' => array(
+	        										'action' => 'search',
+	        								),
+	        						),
+	        				),
+	        				'list' => array(
+	        						'type' => 'segment',
+	        						'options' => array(
+	        								'route' => '/list[/:parent_id]',
+	        								'defaults' => array(
+	        										'action' => 'list',
+	        								),
+	        						),
+	        				),
+	        				'export' => array(
+	        						'type' => 'segment',
+	        						'options' => array(
+	        								'route' => '/export[/:parent_id]',
+	        								'defaults' => array(
+	        										'action' => 'export',
+	        								),
+	        						),
+	        				),
+	       					'detail' => array(
         								'type' => 'segment',
         								'options' => array(
         										'route' => '/detail[/:id]',
@@ -191,19 +264,191 @@ return array(
         										),
         								),
         						),
-	       						'downloadInvoice' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/download-invoice[/:id]',
-        										'constraints' => array(
-        												'id' => '[0-9]*',
-        										),
-        										'defaults' => array(
-        												'action' => 'downloadInvoice',
-        										),
-        								),
-        						),
-	       		),
+            				'dropboxRegister' => array(
+            						'type' => 'segment',
+            						'options' => array(
+            								'route' => '/dropbox-register',
+            								'defaults' => array(
+            										'action' => 'dropboxRegister',
+            								),
+            						),
+            				),
+            				'add' => array(
+            						'type' => 'segment',
+            						'options' => array(
+            								'route' => '/add[/:parent_id]',
+            								'constraints' => array(
+            										'parent_id' => '[0-9]*',
+            								),
+            								'defaults' => array(
+            										'action' => 'add',
+            								),
+            						),
+            				),
+            				'update' => array(
+            						'type' => 'segment',
+            						'options' => array(
+            								'route' => '/update[/:id]',
+            								'constraints' => array(
+            										'id' => '[0-9]*',
+            								),
+            								'defaults' => array(
+            										'action' => 'update',
+            								),
+            						),
+            				),
+            				'download' => array(
+            						'type' => 'segment',
+            						'options' => array(
+            								'route' => '/download[/:id]',
+            								'constraints' => array(
+            										'id'     => '[0-9]*',
+            								),
+            								'defaults' => array(
+            										'action' => 'download',
+            								),
+            						),
+            				),
+            		),
+            ),
+        	'public' => array(
+                'type'    => 'literal',
+                'options' => array(
+                    'route'    => '/public',
+                    'defaults' => array(
+                        'controller' => 'PpitCore\Controller\Public',
+                        'action'     => 'displayPage',
+                    ),
+                ),
+            	'may_terminate' => true,
+            		'child_routes' => array(
+            				'displayBlog' => array(
+	        						'type' => 'segment',
+	        						'options' => array(
+	        								'route' => '/blog[/:directory][/:name]',
+            								'constraints' => array(
+											        'directory' => '[a-zA-Z0-9_-]+',
+											        'name' => '[a-zA-Z0-9_-]+',
+            								),
+	        								'defaults' => array(
+	        										'action' => 'displayBlog',
+	        								),
+	        						),
+	        				),
+            				'displayPage' => array(
+	        						'type' => 'segment',
+	        						'options' => array(
+	        								'route' => '[/:directory][/:name]',
+            								'constraints' => array(
+											        'directory' => '[a-zA-Z0-9_-]+',
+											        'name' => '[a-zA-Z0-9_-]+',
+            								),
+	        								'defaults' => array(
+	        										'action' => 'displayPage',
+	        								),
+	        						),
+	        				),
+            				'home' => array(
+	        						'type' => 'segment',
+	        						'options' => array(
+	        								'route' => '/home',
+	        								'defaults' => array(
+	        										'action' => 'home',
+	        								),
+	        						),
+	        				),
+            		),
+        	),
+        	'event' => array(
+                'type'    => 'literal',
+                'options' => array(
+                    'route'    => '/event',
+                    'defaults' => array(
+                        'controller' => 'PpitCore\Controller\Event',
+                        'action'     => 'index',
+                    ),
+                ),
+            	'may_terminate' => true,
+            		'child_routes' => array(
+            				'index' => array(
+            						'type' => 'segment',
+            						'options' => array(
+            								'route' => '/index[/:type]',
+            								'defaults' => array(
+            										'action' => 'index',
+            								),
+            						),
+            				),
+            				'search' => array(
+            						'type' => 'segment',
+            						'options' => array(
+            								'route' => '/search[/:type]',
+            								'defaults' => array(
+            										'action' => 'search',
+            								),
+            						),
+            				),
+            				'list' => array(
+	        						'type' => 'segment',
+	        						'options' => array(
+	        								'route' => '/list[/:type]',
+	        								'defaults' => array(
+	        										'action' => 'list',
+	        								),
+	        						),
+	        				),
+        					'get' => array(
+	        						'type' => 'segment',
+	        						'options' => array(
+		        							'route' => '/get',
+		  									'defaults' => array(
+			       									'action' => 'get',
+		        							),
+	        						),
+        					),
+            				'export' => array(
+	        						'type' => 'segment',
+	        						'options' => array(
+	        								'route' => '/export[/:type]',
+	        								'defaults' => array(
+	        										'action' => 'export',
+	        								),
+	        						),
+	        				),
+            				'synchronize' => array(
+	        						'type' => 'segment',
+	        						'options' => array(
+	        								'route' => '/synchronize[/:type]',
+	        								'defaults' => array(
+	        										'action' => 'synchronize',
+	        								),
+	        						),
+	        				),
+            				'detail' => array(
+            						'type' => 'segment',
+            						'options' => array(
+            								'route' => '/detail[/:id]',
+            								'constraints' => array(
+            										'id'     => '[0-9]*',
+            								),
+            								'defaults' => array(
+            										'action' => 'detail',
+            								),
+            						),
+            				),
+            				'update' => array(
+            						'type' => 'segment',
+            						'options' => array(
+            								'route' => '/update[/:id][/:act]',
+            								'constraints' => array(
+            										'id'     => '[0-9]*',
+            								),
+            								'defaults' => array(
+            										'action' => 'update',
+            								),
+            						),
+            				),
+            		),
             ),
         	'interaction' => array(
                 'type'    => 'literal',
@@ -276,10 +521,22 @@ return array(
             								),
             						),
             				),
+            				'send' => array(
+	        						'type' => 'segment',
+	        						'options' => array(
+	        								'route' => '/send[/:id]',
+            								'constraints' => array(
+            										'id'     => '[0-9]*',
+            								),
+	        								'defaults' => array(
+	        										'action' => 'send',
+	        								),
+	        						),
+	        				),
             				'receive' => array(
 	        						'type' => 'segment',
 	        						'options' => array(
-	        								'route' => '/receive',
+	        								'route' => '/receive[/:type]',
 	        								'defaults' => array(
 	        										'action' => 'receive',
 	        								),
@@ -676,6 +933,33 @@ return array(
 	                        ),
 	                    ),
 	                ),
+	       			'authenticate' => array(
+	                    'type' => 'segment',
+	                    'options' => array(
+	                        'route' => '/authenticate',
+	                    	'defaults' => array(
+	                            'action' => 'authenticate',
+	                        ),
+	                    ),
+	                ),
+	       			'getAuthenticate' => array(
+	                    'type' => 'segment',
+	                    'options' => array(
+	                        'route' => '/get-authenticate',
+	                    	'defaults' => array(
+	                            'action' => 'getAuthenticate',
+	                        ),
+	                    ),
+	                ),
+	       			'getApplications' => array(
+	                    'type' => 'segment',
+	                    'options' => array(
+	                        'route' => '/get-applications',
+	                    	'defaults' => array(
+	                            'action' => 'getApplications',
+	                        ),
+	                    ),
+	                ),
 	       		),
 	       	),
         	'vcard' => array(
@@ -683,7 +967,7 @@ return array(
                 'options' => array(
                     'route'    => '/vcard',
                     'defaults' => array(
-                        'controller' => 'PpitContact\Controller\Vcard',
+                        'controller' => 'PpitCore\Controller\Vcard',
                         'action'     => 'index',
                     ),
                 ),
@@ -825,21 +1109,43 @@ return array(
 		'guards' => array(
 			'BjyAuthorize\Guard\Route' => array(
 
+				array('route' => 'index', 'roles' => array('guest')),
+				array('route' => 'home', 'roles' => array('guest')),
+				array('route' => 'home/index', 'roles' => array('guest')),
+
 				array('route' => 'community', 'roles' => array('admin')),
 				array('route' => 'community/dataList', 'roles' => array('admin')),
 				array('route' => 'community/delete', 'roles' => array('admin')),
 				array('route' => 'community/index', 'roles' => array('admin')),
 				array('route' => 'community/list', 'roles' => array('admin')),
+            	array('route' => 'community/get', 'roles' => array('user')),
 				array('route' => 'community/update', 'roles' => array('admin')),
+				array('route' => 'community/home', 'roles' => array('user')),
+				array('route' => 'community/planning', 'roles' => array('user')),
+				array('route' => 'community/dashboard', 'roles' => array('user')),
 				array('route' => 'community/sendMessage', 'roles' => array('admin')),
-						
-				array('route' => 'credit', 'roles' => array('admin')),
-				array('route' => 'credit/index', 'roles' => array('admin')),
-				array('route' => 'credit/search', 'roles' => array('admin')),
-				array('route' => 'credit/list', 'roles' => array('admin')),
-				array('route' => 'credit/export', 'roles' => array('admin')),
-				array('route' => 'credit/detail', 'roles' => array('admin')),
-				array('route' => 'credit/downloadInvoice', 'roles' => array('admin')),
+
+				array('route' => 'document', 'roles' => array('user')),
+				array('route' => 'document/home', 'roles' => array('user')),
+				array('route' => 'document/index', 'roles' => array('user')),
+				array('route' => 'document/search', 'roles' => array('user')),
+				array('route' => 'document/export', 'roles' => array('user')),
+            	array('route' => 'document/list', 'roles' => array('user')),
+				array('route' => 'document/detail', 'roles' => array('user')),
+				array('route' => 'document/download', 'roles' => array('user')),
+				array('route' => 'document/dropboxRegister', 'roles' => array('admin')),
+				array('route' => 'document/add', 'roles' => array('user')),
+				array('route' => 'document/update', 'roles' => array('user')),
+				
+				array('route' => 'event', 'roles' => array('admin')),
+				array('route' => 'event/index', 'roles' => array('admin')),
+				array('route' => 'event/search', 'roles' => array('admin')),
+				array('route' => 'event/list', 'roles' => array('admin')),
+				array('route' => 'event/get', 'roles' => array('admin')),
+				array('route' => 'event/export', 'roles' => array('admin')),
+				array('route' => 'event/synchronize', 'roles' => array('admin')),
+				array('route' => 'event/detail', 'roles' => array('admin')),
+				array('route' => 'event/update', 'roles' => array('admin')),
 
 				array('route' => 'interaction', 'roles' => array('admin')),
 				array('route' => 'interaction/index', 'roles' => array('admin')),
@@ -848,6 +1154,7 @@ return array(
 				array('route' => 'interaction/export', 'roles' => array('admin')),
 				array('route' => 'interaction/detail', 'roles' => array('admin')),
 				array('route' => 'interaction/update', 'roles' => array('admin')),
+				array('route' => 'interaction/send', 'roles' => array('admin')),
 				array('route' => 'interaction/receive', 'roles' => array('guest')),
 				array('route' => 'interaction/process', 'roles' => array('admin')),
 						
@@ -856,14 +1163,12 @@ return array(
 				array('route' => 'instance/search', 'roles' => array('admin')),
 				array('route' => 'instance/list', 'roles' => array('admin')),
 				array('route' => 'instance/export', 'roles' => array('admin')),
-//				array('route' => 'instance/add', 'roles' => array('admin')),
 				array('route' => 'instance/detail', 'roles' => array('admin')),
 				array('route' => 'instance/update', 'roles' => array('admin')),
 				array('route' => 'instance/accept', 'roles' => array('admin')),
 				array('route' => 'instance/legalNotices', 'roles' => array('guest')),
 				array('route' => 'instance/addImage', 'roles' => array('admin')),
 				array('route' => 'instance/addLogo', 'roles' => array('admin')),
-//				array('route' => 'instance/delete', 'roles' => array('admin')),
 
 				array('route' => 'place', 'roles' => array('admin')),
 				array('route' => 'place/index', 'roles' => array('admin')),
@@ -873,6 +1178,10 @@ return array(
 				array('route' => 'place/export', 'roles' => array('admin')),
             	array('route' => 'place/list', 'roles' => array('admin')),
 				array('route' => 'place/update', 'roles' => array('admin')),
+
+				array('route' => 'public/displayPage', 'roles' => array('guest')),
+				array('route' => 'public/displayBlog', 'roles' => array('guest')),
+				array('route' => 'public/home', 'roles' => array('guest')),
 
 				array('route' => 'user', 'roles' => array('admin')),
 				array('route' => 'user/index', 'roles' => array('admin')),
@@ -892,7 +1201,10 @@ return array(
 				array('route' => 'user/revoke', 'roles' => array('admin')),
 				array('route' => 'user/changeContact', 'roles' => array('user')),
 				array('route' => 'user/delete', 'roles' => array('admin')),
-					
+				array('route' => 'user/authenticate', 'roles' => array('guest')),
+				array('route' => 'user/getAuthenticate', 'roles' => array('guest')),
+				array('route' => 'user/getApplications', 'roles' => array('guest')),
+
 				array('route' => 'vcard', 'roles' => array('admin')),
 				array('route' => 'vcard/add', 'roles' => array('admin')),
 				array('route' => 'vcard/photo', 'roles' => array('user')),
@@ -966,8 +1278,8 @@ return array(
 			),
 	),
 
-	'contact/perimeters' => array(
-			'p-pit-admin' => array(),
+	'perimeters' => array(
+			'p-pit-admin' => null,
 	),
 		
 	'ppitCoreDependencies' => array(
@@ -997,11 +1309,21 @@ return array(
 					),
 					'user' => array(
 							'route' => 'user/index',
-							'params' => array('type' => 'p-pit-studies'),
+							'params' => array(),
+							'glyphicon' => 'glyphicon-user',
 							'urlParams' => array(),
 							'label' => array(
 									'en_US' => 'Users',
 									'fr_FR' => 'Utilisateurs',
+							),
+					),
+					'document' => array(
+							'route' => 'document/index',
+							'params' => array(),
+							'glyphicon' => 'glyphicon-file',
+							'label' => array(
+									'en_US' => 'Documents',
+									'fr_FR' => 'Documents',
 							),
 					),
 					'interaction' => array(
@@ -1011,6 +1333,15 @@ return array(
 							'label' => array(
 									'en_US' => 'Interactions',
 									'fr_FR' => 'Interactions',
+							),
+					),
+					'event' => array(
+							'route' => 'event/index',
+							'params' => array(),
+							'glyphicon' => 'glyphicon-calendar',
+							'label' => array(
+									'en_US' => 'Events',
+									'fr_FR' => 'Evènements',
 							),
 					),
 			),
@@ -1048,7 +1379,6 @@ return array(
 	),
 		
 	'creditConsumers' => array(
-			'\PpitCommitment\Model\Commitment::consumeCredits',
 			'\PpitCore\Model\Community::consumeCredits',
 	),
 		
@@ -1059,36 +1389,285 @@ return array(
 			'title' => array('en_US' => 'P-PIT Admin', 'fr_FR' => 'P-PIT Admin'),
 	),
 
-	// Interaction
+	// Document
 
-	'interaction/type/agent' => array(
-			'controller' => '\PpitCore\Model\Agent::controlInteraction',
-			'processor' => '\PpitCore\Model\Agent::processInteraction',
+	'document' => array(
+			'type' => array(
+					'type' => 'select',
+					'modalities' => array(
+							'directory' => array(
+								'glyphicon' => 'glyphicon-folder-close',
+								'en_US' => 'Directory',
+								'fr_FR' => 'Répertoire',
+							),
+							'link' => array(
+								'glyphicon' => 'glyphicon-cloud',
+								'en_US' => 'Link',
+								'fr_FR' => 'Lien',
+							),
+							'attachment' => array(
+								'glyphicon' => 'glyphicon-paperclip',
+								'en_US' => 'Attachment',
+								'fr_FR' => 'Pièce jointe',
+							),
+							'dynamic' => array(
+								'glyphicon' => 'glyphicon-file',
+								'en_US' => 'Dynamic',
+								'fr_FR' => 'Dynamique',
+							),
+							'html' => array(
+								'glyphicon' => 'glyphicon-file',
+								'en_US' => 'HTML',
+								'fr_FR' => 'HTML',
+							),
+					),
+					'labels' => array(
+							'en_US' => 'Type',
+							'fr_FR' => 'Type',
+					),
+			),
+			'name' => array(
+					'type' => 'input',
+					'labels' => array(
+							'en_US' => 'Name',
+							'fr_FR' => 'Nom',
+					),
+			),
+			'update_time' => array(
+					'type' => 'time',
+					'labels' => array(
+							'en_US' => 'Updated',
+							'fr_FR' => 'Modifié',
+					),
+			),
+			'url' => array(
+					'type' => 'input',
+					'labels' => array(
+							'en_US' => 'URL',
+							'fr_FR' => 'URL',
+					),
+			),
 	),
-	
-	'interaction/type/agentAttachment' => array(
-			'controller' => '\PpitCore\Model\AgentAttachment::controlInteraction',
-			'processor' => '\PpitCore\Model\AgentAttachment::processInteraction',
+	'document/index' => array(
+			'title' => array('en_US' => 'P-PIT Document', 'fr_FR' => 'P-PIT Document'),
+	),
+	'document/search' => array(
+			'title' => array('en_US' => 'Documents', 'fr_FR' => 'Documents'),
+			'todoTitle' => array('en_US' => 'active', 'fr_FR' => 'actifs'),
+			'searchTitle' => array('en_US' => 'search', 'fr_FR' => 'recherche'),
+			'main' => array(
+					'type' => 'select',
+					'name' => 'contains',
+					'update_time' => 'range',
+			),
+			'more' => array(),
+	),
+	'document/list' => array(
+			'type' => 'glyphicon',
+			'name' => 'text',
+			'update_time' => 'text',
+	),
+	'document/detail' => array(
+			'title' => array('en_US' => 'Document', 'fr_FR' => 'Document'),
+			'displayAudit' => false,
 	),
 		
-	'interaction/type/organization' => array(
-			'controller' => '\PpitCore\Model\OrgUnit::controlInteraction',
-			'processor' => '\PpitCore\Model\OrgUnit::processInteraction',
+	// Event
+	
+	'event/status' => array(
+			'type' => 'select',
+			'modalities' => array(
+					'new' => array('en_US' => 'New', 'fr_FR' => 'Nouveau'),
+			),
+			'labels' => array(
+					'en_US' => 'Status',
+					'fr_FR' => 'Statut',
+			),
+	),
+	'event/type' => array(
+			'type' => 'select',
+			'modalities' => array(
+					'place' => array('en_US' => 'Place', 'fr_FR' => 'Etablissement'),
+					'vcard' => array('en_US' => 'Contact', 'fr_FR' => 'Contact'),
+			),
+			'labels' => array(
+					'en_US' => 'Type',
+					'fr_FR' => 'Type',
+			),
+	),
+	'event/identifier' => array(
+			'type' => 'input',
+			'labels' => array(
+					'en_US' => 'Identifier',
+					'fr_FR' => 'Identifiant',
+			),
+	),
+	'event/place_identifier' => array(
+			'type' => 'input',
+			'labels' => array(
+					'en_US' => 'Place code',
+					'fr_FR' => 'Code établissement',
+			),
+	),
+	'event/place_caption' => array(
+			'type' => 'input',
+			'labels' => array(
+					'en_US' => 'Place',
+					'fr_FR' => 'Etablissement',
+			),
+	),
+	'event/community_name' => array(
+			'type' => 'input',
+			'labels' => array(
+					'en_US' => 'Name',
+					'fr_FR' => 'Nom',
+			),
+	),
+	'event/caption' => array(
+			'type' => 'input',
+			'labels' => array(
+					'en_US' => 'Caption',
+					'fr_FR' => 'Libellé',
+			),
+	),
+	'event/description' => array(
+			'type' => 'input',
+			'labels' => array(
+					'en_US' => 'Description',
+					'fr_FR' => 'Description',
+			),
+	),
+	'event/begin_date' => array(
+			'type' => 'date',
+			'labels' => array(
+					'en_US' => 'Begin date',
+					'fr_FR' => 'Date début',
+			),
+	),
+	'event/end_date' => array(
+			'type' => 'date',
+			'labels' => array(
+					'en_US' => 'End date',
+					'fr_FR' => 'Date fin',
+			),
+	),
+	'event/value' => array(
+			'type' => 'input',
+			'labels' => array(
+					'en_US' => 'Value',
+					'fr_FR' => 'Valeur',
+			),
+	),
+	'event/update_time' => array(
+			'type' => 'datetime',
+			'labels' => array(
+					'en_US' => 'Update time',
+					'fr_FR' => 'Heure de mise à jour',
+			),
 	),
 
+	'event' => array(
+			'statuses' => array(),
+			'category' => array(
+					'learning' => array(
+							'labels' => array('en_US' => 'Learning', 'fr_FR' => 'Formation'),
+							'color' => array('green' => null),
+					),
+			),
+			'properties' => array(
+					'status' => array('type' => 'specific', 'definition' => 'event/status'),
+					'type' => array('type' => 'specific', 'definition' => 'event/type'),
+					'identifier' => array('type' => 'specific', 'definition' => 'event/identifier'),
+					'place_identifier' => array('type' => 'specific', 'definition' => 'event/place_identifier'),
+					'place_caption' => array('type' => 'specific', 'definition' => 'event/place_caption'),
+					'community_name' => array('type' => 'specific', 'definition' => 'event/community_name'),
+					'caption' => array('type' => 'specific', 'definition' => 'event/caption'),
+					'description' => array('type' => 'specific', 'definition' => 'event/description'),
+					'value' => array('type' => 'specific', 'definition' => 'event/value'),
+					'update_time' => array('type' => 'specific', 'definition' => 'event/update_time'),
+			),
+	),
+	
+	'event/index' => array(
+			'title' => array('en_US' => 'P-Pit SynApps', 'fr_FR' => 'P-Pit SynApps'),
+	),
+	
+	'event/search' => array(
+			'title' => array('en_US' => 'Events', 'fr_FR' => 'Evènements'),
+			'todoTitle' => array('en_US' => 'recent', 'fr_FR' => 'récents'),
+			'searchTitle' => array('en_US' => 'search', 'fr_FR' => 'recherche'),
+			'main' => array(
+					'status' => 'value',
+					'type' => 'value',
+					'place_identifier' => 'contains',
+					'community_name' => 'contains',
+					'identifier' => 'contains',
+					'caption' => 'contains',
+					'value' => 'range',
+					'update_time' => 'range',
+			),
+	),
+	
+	'event/list' => array(
+			'type' => 'select',
+			'identifier' => 'text',
+			'caption' => 'text',
+			'value' => 'number',
+			'update_time' => 'time',
+	),
+	
+	'event/detail' => array(
+			'title' => array('en_US' => 'Event detail', 'fr_FR' => 'Détail de l\'évènement'),
+			'displayAudit' => true,
+	),
+	
+	'event/update' => array(
+			'status' => array('mandatory' => true),
+			'type' => array('mandatory' => true),
+			'identifier' => array('mandatory' => true),
+			'caption' => array('mandatory' => false),
+			'description' => array('mandatory' => false),
+			'value' => array('mandatory' => false),
+	),
+
+	'event/export' => array(
+			'status' => null,
+			'type' => null,
+			'place_identifier' => null,
+			'place_caption' => null,
+			'community_name' => null,
+			'identifier' => null,
+			'caption' => null,
+			'description' => null,
+			'value' => null,
+	),
+		
+	// Interaction
+
+	'interaction/type/app' => array(
+			'controller' => '\PpitCore\Model\App::controlInteraction',
+			'processor' => '\PpitCore\Model\App::processInteraction',
+	),
+		
 	'interaction/type/document' => array(
-			'controller' => '\PpitDocument\Model\Document::controlInteraction',
-			'processor' => '\PpitDocument\Model\Document::processInteraction',
+			'controller' => '\PpitCore\Model\Document::controlInteraction',
+			'processor' => '\PpitCore\Model\Document::processInteraction',
+	),
+
+	'interaction/type/event' => array(
+			'controller' => '\PpitCore\Model\Event::controlInteraction',
+			'processor' => '\PpitCore\Model\Event::processInteraction',
 	),
 		
 	'interaction/type' => array(
 			'type' => 'select',
 			'modalities' => array(
-					'generic' => array('en_US' => 'Generic', 'fr_FR' => 'JSON'),
-					'organization' => array('en_US' => 'Organization', 'fr_FR' => 'Organisation'),
+					'app' => array('en_US' => 'Apps', 'fr_FR' => 'Apps'),
+/*					'organization' => array('en_US' => 'Organization', 'fr_FR' => 'Organisation'),
 					'agent' => array('en_US' => 'Agents', 'fr_FR' => 'Agents'),
-					'agentAttachment' => array('en_US' => 'Agent attachments', 'fr_FR' => 'Affectations d\'Agents'),
+					'agentAttachment' => array('en_US' => 'Agent attachments', 'fr_FR' => 'Affectations d\'Agents'),*/
 					'document' => array('en_US' => 'Documents', 'fr_FR' => 'Documents'),
+					'event' => array('en_US' => 'Events', 'fr_FR' => 'Evènements'),
 			),
 			'labels' => array(
 					'en_US' => 'Type',
@@ -1116,7 +1695,7 @@ return array(
 							'modalities' => array(
 									'application/xml' => array('en_US' => 'XML', 'fr_FR' => 'XML'),
 									'application/json' => array('en_US' => 'JSON', 'fr_FR' => 'JSON'),
-									'applicatin/csv' => array('en_US' => 'CSV', 'fr_FR' => 'CSV'),
+									'text/csv' => array('en_US' => 'CSV', 'fr_FR' => 'CSV'),
 							),
 							'labels' => array(
 									'en_US' => 'Format',
@@ -1238,6 +1817,8 @@ return array(
 			'format' => array('mandatory' => true),
 			'direction' => array('mandatory' => false),
 			'reference' => array('mandatory' => false),
+			'content' => array('mandatory' => false),
+			'http_status' => array('mandatory' => false),
 	),
 
 	// Place

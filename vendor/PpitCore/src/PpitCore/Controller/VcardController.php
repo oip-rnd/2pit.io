@@ -5,8 +5,9 @@ use PpitCore\Form\CsrfForm;
 use PpitCore\Model\Community;
 use PpitCore\Model\Context;
 use PpitCore\Model\Csrf;
-use PpitCore\Model\Vcard;
+use PpitCore\Model\Place;
 use PpitCore\Model\User;
+use PpitCore\Model\Vcard;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Session\Container;
 use Zend\View\Model\JsonModel;
@@ -22,6 +23,7 @@ class VcardController extends AbstractActionController
 		// Retrieve the context
 		$context = Context::getCurrent();
 		$instance_id = (int) $this->params()->fromRoute('instance_id', 0);
+    	$place = Place::get($context->getPlaceId());
 		$community_id = (int) $this->params()->fromRoute('community_id', 0);
 		$community = Community::getTable()->get($community_id);
 	
@@ -35,6 +37,7 @@ class VcardController extends AbstractActionController
 				'context' => $context,
 				'config' => $context->getconfig(),
 				'instance_id' => $instance_id,
+				'place' => $place,
 				'community_id' => $community_id,
 				'community' => $community,
 				'major' => $major,

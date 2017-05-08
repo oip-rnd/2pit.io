@@ -62,13 +62,13 @@
 		<?php if ($property) : ?>
 	
 			<?php if ($rendering == 'date') : ?>
-		<td><?php echo $context->decodeDate($place->properties[$propertyId]) ?></td>
+		<td><?php echo $context->decodeDate($interaction->properties[$propertyId]) ?></td>
 
 			<?php elseif ($rendering == 'time') : ?>
 		<td><?php echo $interaction->properties[$propertyId] ?></td>
 
 			<?php elseif ($rendering == 'number') : ?>
-		<td style="text-align: right"><?php echo $context->formatFloat($place->properties[$propertyId], 2) ?></td>
+		<td style="text-align: right"><?php echo $context->formatFloat($interaction->properties[$propertyId], 2) ?></td>
 
 			<?php elseif ($rendering =='select') : ?>
 		<td><?php echo $property['modalities'][$interaction->properties[$propertyId]][$context->getLocale()] ?></td>
