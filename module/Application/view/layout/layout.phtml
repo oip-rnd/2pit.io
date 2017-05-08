@@ -1,0 +1,159 @@
+<?php echo $this->doctype(); ?>
+<?php
+	$children = $this->viewModel()->getCurrent()->getChildren();
+	$child = $children[0];
+	$description = (isset($child->description) ? $child->description : null)
+?>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <?php echo $this->headTitle()->setSeparator('')->setAutoEscape(false) ?>
+<?php if ($description) : ?>
+		<meta name="description" content="<?php echo $description ?>">
+<?php endif;?>
+<?php if (isset($child->robots)) : ?>
+		<meta name="robots" content="<?php echo $child->robots ?>">
+<?php else : ?>
+		<meta name="robots" content="noindex, nofollow">
+<?php endif;?>
+
+        <?php echo $this->headMeta()
+            ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+        ?>
+
+        <!-- Le styles -->
+        <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
+                        ->prependStylesheet($this->basePath() . '/css/ppit-style.css')
+        				->prependStylesheet($this->basePath() . '/css/style.css')
+                        ->prependStylesheet($this->basePath() . '/css/bootstrap-theme.min.css')
+//                        ->prependStylesheet($this->basePath() . '/bootstrap-3.3.7-dist/css/bootstrap-theme.min.css')
+                        ->prependStylesheet($this->basePath() . '/css/bootstrap.min.css')
+//                        ->prependStylesheet($this->basePath() . '/bootstrap-3.3.7-dist/css/bootstrap.min.css') ?>
+		<link rel="stylesheet" href="<?php echo $this->basePath('/jquery-ui-1.11.4/jquery-ui.css') ?>">
+		<link rel='stylesheet' href="<?php echo $this->basePath('/fullcalendar/fullcalendar.css') ?>" />
+		<link rel='stylesheet' href="<?php echo $this->basePath('/css/flipclock.css') ?>" />
+		
+        <!-- Scripts -->
+        <?php echo $this->headScript()
+//			->prependFile($this->basePath() . '/js/jqplot.pieRenderer.min.js')
+//        	->prependFile($this->basePath() . '/js/jquery.jqplot.min.js')
+        	->prependFile($this->basePath() . '/js/bootstrap.min.js')
+//        	->prependFile($this->basePath() . '/bootstrap-3.3.7-dist/js/bootstrap.min.js')
+        	->prependFile($this->basePath() . '/js/jquery.min.js')
+            ->prependFile($this->basePath() . '/js/respond.min.js', 'text/javascript', array('conditional' => 'lt IE 9',))
+            ->prependFile($this->basePath() . '/js/html5shiv.js',   'text/javascript', array('conditional' => 'lt IE 9',))
+        ; ?>
+		<script src="<?php echo $this->basePath('/jquery-ui-1.11.4/jquery-ui.js') ?>"></script>
+        <script src="<?php echo $this->basePath("ckeditor/ckeditor.js") ?>"></script>
+		<script src="<?php echo $this->basePath('/js/moment-with-locales.min.js') ?>"></script>
+		<script src="<?php echo $this->basePath('/fullcalendar/fullcalendar.js') ?>"></script>
+		<script src="<?php echo $this->basePath('/js/flipclock.min.js') ?>"></script>
+		<script>
+		$(document).ready(function() {
+		    $('#calendar').fullCalendar({
+		        // put your options and callbacks here
+		    })
+		});
+		</script>
+<style type="text/css" id="custom-background-css">
+body { 
+	background-color: #ededed;
+}
+.panel-default {
+    border-color: #006169; <!-- #006169 --> <!-- #79CCF3 -->
+}
+.panel-default > .panel-heading {
+    background-image: none;
+}
+</style>
+    </head>
+    <body>
+<?php if (isset($child->context)) : ?>
+		<?php $active = (isset($child->active)) ? $child->active : 'home' ?>
+		<?php $applicationName = (isset($child->applicationName)) ? $child->applicationName : 'Apps' ?>
+<?php endif;?>
+        <nav class="navbar <?php echo ($child->context) ? $child->context->getConfig('styleSheet')['navbar'] : null ?>">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <div class="container">
+<?php if (isset($child->context) && $child->context->isAuthenticated()) : ?>
+                <div class="navbar-header">
+					<a class="navbar-brand" href="<?php echo $this->url('home') ?>" rel="follow">
+			    		<?php echo $child->context->getFormatedName() ?></a>
+			    </div>
+<?php endif;?>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+<?php if (!isset($child->homePage) || !$child->homePage) : ?>
+                    	<li <?php if (isset($active) && $active == 'home') echo 'class="active"' ?>><a href="<?php echo $this->url('home/index', array('instance_caption' => ($child->context) ? $child->context->getInstance()->caption : '')) ?>" rel="follow"><?php echo $this->translate('Home') ?></a></li>
+<?php endif;?>
+<?php if (isset($child->context)) : ?>
+	<?php if ($child->context->isAuthenticated()) : ?>
+				        <li class="dropdown <?php if ($active == 'application') echo 'active' ?>">
+				          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true" rel="nofollow"><img height="17" src="<?php echo $this->basePath('img/carre80.png') ?>" />&nbsp;&nbsp;<?php echo $applicationName ?>&nbsp;<span class="caret"></span></a>
+				          <ul class="dropdown-menu">
+<?php foreach ($child->context->getApplications() as $applicationId => $application) : ?>
+	<?php $url = (array_key_exists('url', $application) ? $application['url'] : $this->url($application['route'], $application['params']))?>
+				          	<li class="dropdown-item <?php if ($applicationName == $application['labels'][$child->context->getLocale()]) echo 'active' ?>"><a href="<?php echo $url ?>" rel="nofollow"><?php echo $application['labels'][$child->context->getLocale()]?></a></li>
+<?php endforeach;?>
+				          </ul>
+		        		</li>
+				        <li class="dropdown <?php if ($active == 'password') echo 'active' ?>">
+				          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true" rel="nofollow"><span class="glyphicon glyphicon-user"> </span><span class="caret"></span></a>
+				          <ul class="dropdown-menu">
+				          	<li class="dropdown-item <?php if ($active == 'password') echo 'active' ?>"><a class="account-list-anchor" href="<?php echo $this->url('user/password', array('id' => $child->context->getUserId())) ?>" rel="nofollow"><?php echo $this->translate('Password', 'ppit-core', $child->context->getLocale()) ?></a></li>
+				          	<li class="dropdown-item"><a class="account-list-anchor" href="<?php echo $this->url('user/logout', array('instance_caption' => $child->context->getInstance()->caption)) ?>" rel="nofollow"><?php echo $this->translate('Logout', 'ppit-core', $child->context->getLocale()) ?></a></li>
+<?php if (count($child->context->getContacts()) > 1) : ?>
+	<?php foreach ($child->context->getContacts() as $vcard_id => $userContact) : ?>
+				          	<li class="dropdown-item <?php if ($vcard_id == $child->context->getContactId()) echo 'active' ?>"><a href="<?php echo $this->url('user/changeContact', array('vcard_id' => $vcard_id)) ?>" rel="nofollow"><?php echo $userContact->instance_caption ?> - <?php echo $userContact->n_fn ?></a></li>
+	<?php endforeach;?>
+<?php endif;?>
+				          </ul>
+		        		</li>
+                    	<li><a href="<?php echo $this->url('vcard/demoMode') ?>" rel="follow" class="glyphicon glyphicon-question-sign" title="<?php echo $this->translate('Activate or deactivate demo mode', null, $child->context->getLocale()) ?>"></a></li>
+	<?php else : ?>
+						<li <?php if ($active == 'login') echo 'class="active"' ?>><a href="<?php echo $this->url('user/login', array('instance_caption' => $child->context->getInstance()->caption)) ?>" rel="nofollow"><?php echo $this->translate('Login', 'ppit-core', $child->context->getLocale()) ?></a></li>
+	<?php endif;?>
+<?php endif;?>
+					</ul>
+                </div><!--/.nav-collapse -->
+            </div>
+        </nav>
+        <div class="container">
+            <?php echo $this->content; ?>
+            <footer>
+<div style="width: 100%; height: 40; background-color: <?php echo $child->context->getConfig('headerParams')['background-color'] ?>; border-radius: 8px; display: block">
+	<table class="table">
+		<tr>
+			<td>
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				<a href="<?php echo $this->url('instance/legalNotices') ?>" rel="follow">Mentions légales</a>
+
+<?php if ($child->place->reception_contact && $child->place->reception_contact->tel_work) : ?>
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				<a href="tel:<?php echo $child->place->reception_contact->tel_work ?>"><span class="glyphicon glyphicon-earphone"></span>&nbsp;<?php echo $child->place->reception_contact->tel_work ?></a>
+<?php endif;?>
+
+<?php if ($child->place->reception_contact && $child->place->reception_contact->email) : ?>
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				<a href="mailto:<?php echo $child->place->reception_contact->email ?>"><span class="glyphicon glyphicon-send"></span>&nbsp;Envoyer un email</a>
+<?php endif;?>
+			</td>
+	        <td style="text-align: right">
+				<a target="_blank" href="https://www.2pit.io" title="Powered by 2Pit" rel="follow">
+					<img height="20" src="<?php echo $this->basePath('img/p-pit-200.png') ?>" alt="Powered by 2Pit" />
+				</a>
+	        </td>
+		</tr>
+	</table>
+</div>
+            </footer>
+        </div> <!-- /container -->
+        <?php echo $this->inlineScript() ?>
+   </body>
+</html>
