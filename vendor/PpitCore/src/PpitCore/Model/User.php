@@ -34,9 +34,12 @@ class User extends Context
     public $password;
     public $password_init_token;
     public $password_init_validity;
+    public $authentication_token;
+    public $authentication_validity;
     public $nb_trials;
     public $state;
     public $requires_notifications = true;
+    public $applications;
     public $update_time;
 
     // Joined properties
@@ -92,9 +95,12 @@ class User extends Context
  	   	$this->password = (isset($data['password'])) ? $data['password'] : null;
  	   	$this->password_init_token = (isset($data['password_init_token'])) ? $data['password_init_token'] : null;
  	   	$this->password_init_validity = (isset($data['password_init_validity'])) ? $data['password_init_validity'] : null;
+ 	   	$this->authentication_token = (isset($data['authentication_token'])) ? $data['authentication_token'] : null;
+ 	   	$this->authentication_validity = (isset($data['authentication_validity'])) ? $data['authentication_validity'] : null;
  	   	$this->nb_trials = (isset($data['nb_trials'])) ? $data['nb_trials'] : null;
  	   	$this->state = (isset($data['state'])) ? $data['state'] : null;
  	   	$this->requires_notifications = (isset($data['requires_notifications'])) ? $data['requires_notifications'] : null;
+ 	   	$this->applications = (isset($data['applications'])) ? json_decode($data['applications'], true) : array();
  	   	$this->update_time = (isset($data['update_time'])) ? $data['update_time'] : null;
  	   	
  	   	// Joined properties
@@ -118,10 +124,13 @@ class User extends Context
     	$data['password'] = $this->password;
     	$data['password_init_token'] = $this->password_init_token;
     	$data['password_init_validity'] = $this->password_init_validity;
+    	$data['authentication_token'] = $this->authentication_token;
+    	$data['authentication_validity'] = $this->authentication_validity;
     	$data['nb_trials'] = $this->nb_trials;
     	$data['state'] = (int) $this->state;
     	$data['vcard_id'] = (int) $this->vcard_id;
     	$data['requires_notifications'] = (int) $this->requires_notifications;
+    	$data['applications'] = json_encode($this->applications);
     	return $data;
     }
 
@@ -133,8 +142,8 @@ class User extends Context
     	if (!$major) $major = 'username';
     	if (!$dir) $dir = 'ASC';
     	$select = User::getTable()->getSelect()
-	    	->join('core_instance', 'user.instance_id = core_instance.id', array('instance_caption' => 'caption'), 'left')
-	    	->join('core_vcard', 'user.vcard_id = core_vcard.id', array('n_fn'), 'left')
+	    	->join('core_instance', 'core_user.instance_id = core_instance.id', array('instance_caption' => 'caption'), 'left')
+	    	->join('core_vcard', 'core_user.vcard_id = core_vcard.id', array('n_fn'), 'left')
 	    	->join('core_community', 'core_vcard.community_id = core_community.id', array('community_id' => 'id', 'community_name' => 'name', 'community_status' => 'status'), 'left')
 	    	->order(array($major.' '.$dir, 'username'));
 		
@@ -232,14 +241,14 @@ class User extends Context
     public function isUsed($object)
     {
     	if (get_class($object) == 'PpitCore\Model\Vcard') {
-			if (Generic::getTable()->cardinality('user', array('vcard_id' => $object->id)) > 0) return true;
+			if (Generic::getTable()->cardinality('core_user', array('vcard_id' => $object->id)) > 0) return true;
     	}
     	return false;
     }
 
     public function isDeletable()
     {
-    	if (Generic::getTable()->cardinality('user_contact', array('user_id' => $this->user_id, 'vcard_id <> ?' => $this->vcard_id)) > 0) return false;
+    	if (Generic::getTable()->cardinality('core_user_contact', array('user_id' => $this->user_id, 'vcard_id <> ?' => $this->vcard_id)) > 0) return false;
     	return true;
     }
     

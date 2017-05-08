@@ -9,11 +9,14 @@
 
 namespace PpitCore\Controller;
 
+use PpitCore\Form\CsrfForm;
+use PpitCore\Model\Instance;
 use PpitCore\Model\Interaction;
-use PpitCore\ViewHelper\SsmlInteractionViewHelper;
+use PpitCore\Model\Place;
 use PpitCore\Model\Csrf;
 use PpitCore\Model\Context;
-use PpitCore\Form\CsrfForm;
+use PpitCore\ViewHelper\SsmlInteractionViewHelper;
+use Zend\Http\Client;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
@@ -22,7 +25,8 @@ class InteractionController extends AbstractActionController
     public function indexAction()
     {
     	$context = Context::getCurrent();
-
+    	$place = Place::getTable()->transGet($context->getPlaceId());
+    	
 		$applicationId = 'p-pit-synapps';
 		$applicationName = 'SynApps by P-Pit';
 		$currentEntry = $this->params()->fromQuery('entry', 'place');
@@ -30,6 +34,7 @@ class InteractionController extends AbstractActionController
     	return new ViewModel(array(
     			'context' => $context,
     			'config' => $context->getConfig(),
+    			'place' => $place,
     			'active' => 'application',
     			'applicationId' => $applicationId,
     			'applicationName' => $applicationName,
@@ -77,8 +82,8 @@ class InteractionController extends AbstractActionController
     	$context = Context::getCurrent();
     	 
     	$params = $this->getFilters($this->params());
-    	$major = ($this->params()->fromQuery('major', 'identifier'));
-    	$dir = ($this->params()->fromQuery('dir', 'ASC'));
+    	$major = ($this->params()->fromQuery('major', 'update_time'));
+    	$dir = ($this->params()->fromQuery('dir', 'DESC'));
 
     	if (count($params) == 0) $mode = 'todo'; else $mode = 'search';
 
@@ -165,11 +170,76 @@ class InteractionController extends AbstractActionController
     		 
     		if ($csrfForm->isValid()) { // CSRF check
     			if ($action == 'process') {
-    				$function = $context->getConfig('interaction/type/'.$interaction->type)['processor'];
-    				$rc = call_user_func($function, $interaction);
-    				if ($rc != 'OK') $error = $rc;
-    				else $message = $rc;
-    				$interaction->http_status = $rc;
+    				if ($interaction->direction == 'output') {
+				    	$instance = Instance::get($context->getInstanceId());
+    					$safe = $context->getConfig()['ppitUserSettings']['safe'];
+    					$url = $context->getConfig()['ppitCoreSettings']['interactionPostMessage']['url'].'?type='.$interaction->type.'&reference='.$interaction->reference;
+    					$client = new Client(
+    							$url,
+    							array(
+    									'adapter' => 'Zend\Http\Client\Adapter\Curl',
+    									'maxredirects' => 0,
+    									'timeout'      => 30,
+    							)
+    					);
+    					$username = $context->getConfig()['ppitCoreSettings']['interactionPostMessage']['user'];
+    					$client->setAuth($username, $safe[$instance->caption][$username], Client::AUTH_BASIC);
+    					$client->setEncType($interaction->format);
+    					$client->setMethod('POST');
+    					$client->setRawBody($interaction->content);
+    					$response = $client->send();
+    					$interaction->http_status = $response->renderStatusLine();
+		    			$message = 'OK';
+		    			$action = null;
+    				}
+    				else {
+	    				$data = array();
+    					if ($interaction->format == 'application/json') {
+		    				$content = json_decode($interaction->content, true);
+		    				$function = $context->getConfig('interaction/type/'.$interaction->type)['processor'];
+	    					$rc = call_user_func($function, $content);
+		    				if ($rc != 'OK') $error = $rc;
+	    					else $message = $rc;
+
+	    					$data['http_status'] = $rc;
+	    				}
+	    			    elseif ($interaction->format == 'text/csv') {
+							$globalRc = 'OK';
+							$newContent = '';
+							$rows = str_getcsv($interaction->content, "\n");
+							$first = true;
+							foreach($rows as $row) {
+								if ($first) {
+									$first = false;
+									$identifiers = str_getcsv($row, ";");
+								}
+								else {
+									$array = str_getcsv($row, ";");
+									if (count($array) != count($identifiers)) {
+										$row .= ';"error: bad number of columns"';
+									}
+									else {
+										$content = array();
+										for ($i = 0; $i < count($identifiers); $i++) {
+											$content[$identifiers[$i]] = $array[$i];
+										}
+				    					$function = $context->getConfig('interaction/type/'.$interaction->type)['processor'];
+				    					$rc = call_user_func($function, $content);
+				    					$row .= '"'.$rc.'"';
+									}
+								}
+								$newContent .= $row."\n";
+							}
+							
+							$data['content'] = $newContent;
+		    				if ($globalRc != 'OK') $error = $globalRc;
+	    					else $message = $globalRc;
+	    					$data['http_status'] = $globalRc;
+	    			    }
+    				}
+    				$data['status'] = 'processed';
+					if ($interaction->loadData($data) != 'OK') throw new \Exception('View error');
+    				$interaction->update(null);
     			}
     			else {
 	
@@ -186,8 +256,8 @@ class InteractionController extends AbstractActionController
 		    		try {
 		    			if (!$interaction->id) $rc = $interaction->add();
 		    			elseif ($action == 'delete') $rc = $interaction->delete($request->getPost('interaction_update_time'));
-		    			else $rc = $interaction->update($request->getPost('interaction_update_time'));
-	    				if ($rc != 'OK') $error = $rc;
+		    			elseif ($action == 'update') $rc = $interaction->update($request->getPost('interaction_update_time'));
+		    			if ($rc != 'OK') $error = $rc;
 		    			if ($error) $connection->rollback();
 		    			else {
 		    				$connection->commit();
@@ -221,38 +291,21 @@ class InteractionController extends AbstractActionController
     {
     	// Retrieve the context
     	$context = Context::getCurrent();
-
-    	// Initialize the logger
-    	$writer = new \Zend\Log\Writer\Stream('data/log/interaction.txt');
-    	$logger = new \Zend\Log\Logger();
-    	$logger->addWriter($writer);
-
-//    	$instance_caption = $this->params()->fromRoute('instance_caption', null);
-//    	$id = $this->params()->fromRoute('id', null);
-
-    	// Check basic authentication
-    	if (isset($_SERVER['PHP_AUTH_USER'])) {
-    		$username = $_SERVER['PHP_AUTH_USER'];
-    		$password = $_SERVER['PHP_AUTH_PW'];
-    	} elseif (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-    		if (strpos(strtolower($_SERVER['HTTP_AUTHORIZATION']),'basic')===0)
-    			list($username, $password) = explode(':',base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6)));
-    	}
-    	if (!$context->getSecurityAgent()->authenticate($username, $password)) {
-    		 
-    		// Write to the log
-    		$logger->info('commitment-post/'.$id.';401;'.$username.';'.$password);
+    	$type = $this->params()->fromRoute('type', 'generic');
+    	$reference = $this->params()->fromQuery('reference', 'generic');
+    	if (!$context->wsAuthenticate($this->getEvent())) {
     		$this->getResponse()->setStatusCode('401');
-	    	return $this->getResponse();
+    		return $this->getResponse();
     	}
     	else {
     		// Log the received message
 			$interaction = Interaction::instanciate();
 			$data = array();
-			$data['type'] = 'generic';
+			$data['type'] = $type;
 			$data['format'] = $this->getRequest()->getHeaders()->get('content-type')->getFieldValue();
 			$data['direction'] = 'input';
-			$data['content'] = $this->getRequest()->getContent();
+			$data['reference'] = $reference;
+			$data['content'] = utf8_encode($this->getRequest()->getContent());
 			$rc = $interaction->loadData($data);
 			if ($rc != 'OK') {
 		    	$logger->info('interaction/receive'.';422;'.$rc.';');
@@ -273,22 +326,12 @@ class InteractionController extends AbstractActionController
 		    		$message->http_status = $rc;
 		    		$message->update($message->update_time);
 		    			
-		    		// Write to the log
-		    		$logger->info('interaction/receive'.';422;'.$rc.';');
-		    		$this->getResponse()->setStatusCode('422');
 		    		return $this->getResponse();
 		    	}
 
-				// Update the message with any return code from the commitment insert or update
 				$interaction->http_status = '200';
 				$interaction->update(null);
-
 				$connection->commit();
-				
-				// Write to the log
-				if ($context->getConfig()['ppitCoreSettings']['isTraceActive']) {
-					$logger->info('interaction/receive/'.$interaction->id.';200;');
-				}
 		    	$this->getResponse()->setStatusCode('200');
 		    	return $this->getResponse();
 	    	}

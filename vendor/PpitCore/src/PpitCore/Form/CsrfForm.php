@@ -31,7 +31,7 @@ class CsrfForm extends Form
 				),
             	'options' => array(
                     'csrf_options' => array(
-                        'timeout' => ($settings) ? $settings['ppitCoreSettings']['formExpiration'] : 600
+                        'timeout' => ($settings) ? $settings['formExpiration'] : 600
                     )
                 )
             )

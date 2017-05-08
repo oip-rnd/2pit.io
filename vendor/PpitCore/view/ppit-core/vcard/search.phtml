@@ -155,9 +155,9 @@ function getVcardList() {
 	
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
-		if (xhttp.readyState == 4<?php if (!$config['ppitCoreSettings']['isTraceActive']) echo ' && xhttp.status == 200' ?>) {
+		if (xhttp.readyState == 4<?php if (!$config['isTraceActive']) echo ' && xhttp.status == 200' ?>) {
 			document.getElementById('vcard-list-panel').innerHTML = xhttp.responseText;
-<?php if ($config['ppitCoreSettings']['isTraceActive']) : ?>
+<?php if ($config['isTraceActive']) : ?>
 			console.log('getVcardList, route = ' + '<?php echo $this->url('vcard/list', array('community_id' => $community_id)) ?>' + params);
 			console.log(xhttp.responseText);
 <?php endif;?>

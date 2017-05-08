@@ -17,8 +17,6 @@ $this->headTitle($title);
 echo $this->partial('/partials/header');
 ?>
 
-<div class="container">
-
 <!-- Front product 1 -->
 <div class="row">
 
@@ -60,122 +58,54 @@ echo $this->partial('/partials/header');
 					</form>
 
 <!-- Display the document -->
-					<div><?php echo $content ?></div>
+
+<?php for ($i = 0; $i < count($document->parts); $i++) : ?>
+	<?php $documentPart = $document->parts[$i]; ?>
+
+					<div id="document_part_panel_<?php echo $documentPart->id ?>">
+	
+	<?php
+	if ($context->getLocale() == $document->locale_1 && $documentPart->image_locale_1) $image = $documentPart->image_locale_1;
+	elseif ($context->getLocale() == $document->locale_2 && $documentPart->image_locale_2) $image = $documentPart->image_locale_2;
+	else $image = $documentPart->image;
+	?>
+	<?php if ($image) : ?>
+						<div align="center">
+		<?php if (array_key_exists('href', $image)) : ?>
+							<a href="<?php echo $image['href'] ?>" <?php if (array_key_exists('target', $image)) echo 'target="'.$image['target'].'"' ?>>
+		<?php endif;?>
+								<img 
+		<?php foreach ($image as $attr => $value) : ?>
+			<?php if ($attr == 'src') : ?>
+				<?php if (is_array($value)) $value = $value[rand(0, count($value)-1)]?>
+									src="<?php echo $this->basePath($value) ?>"
+			<?php elseif ($attr != 'href' && $attr != 'target') : ?>
+									<?php echo $attr ?>="<?php echo $value ?>"
+			<?php endif;?>
+		<?php endforeach;?>
+								/>
+		<?php if (array_key_exists('href', $image)) : ?>
+							</a>
+		<?php endif;?>
+						</div>
+	<?php endif;?>
+			
+	<?php
+	if ($context->getLocale() == $document->locale_1 && $documentPart->content_locale_1) $content = $documentPart->content_locale_1;
+	elseif ($context->getLocale() == $document->locale_2 && $documentPart->content_locale_2) $content = $documentPart->content_locale_2;
+	else $content = $documentPart->content;
+	?>
+						<div><?php echo $documentPart->content ?></div>
+					</div>
+					</div>
+<?php endfor;?>
 				</div>
-             </div>
+            </div>
         </div>
 	</div>
 </div>
 
 <script>
-
-function location_href(button, target) { 
-	document.location.href=target; 
-}
-
-$('#form_action').hide();
-
-function showForm(button, target) {
-
-	$('#form_action').show();
-	$(location).attr('hash', 'form_action');
-	
-	var xhttp = new XMLHttpRequest();
-	xhttp.open('GET', target, true);
-	xhttp.onreadystatechange = function() {
-		if (xhttp.readyState == 4 <?php if (!$config['ppitCoreSettings']['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
-			document.getElementById('form_action').innerHTML = xhttp.responseText;
-			$('#remove-anchor').click(function() { 
-				$('#form_action').hide(); 
-			});
-			connectInstanceTryForm();
-			$('#caption').focus();
-		}
-	}
-	xhttp.send();
-}
-
-<?php 
-$properties = array();
-$properties['caption'] = array('type' => 'input', 'mandatory' => true, 'maxSize' => 255);
-$properties['n_title'] = array('type' => 'input', 'mandatory' => true, 'maxSize' => 255);
-$properties['n_first'] = array('type' => 'input', 'mandatory' => true, 'maxSize' => 255);
-$properties['n_last'] = array('type' => 'input', 'mandatory' => true, 'maxSize' => 255);
-$properties['email'] = array('type' => 'email', 'mandatory' => true, 'maxSize' => 255);
-$properties['tel_work'] = array('type' => 'phone', 'mandatory' => true, 'maxSize' => 255);
-$properties['username'] = array('type' => 'input', 'mandatory' => true, 'maxSize' => 255);
-$properties['requires_notifications'] = array('type' => 'hidden');
-$properties['locale'] = array('type' => 'hidden');
-
-echo $this->partial('/partials/check-update-properties', array('entity' => 'Instance', 'context' => $context, 'properties' => $properties)) 
-?>
-
-function connectInstanceTryForm()
-{
-<?php foreach ($properties as $propertyId => $property) : ?>
-	<?php if ($property['type'] == 'date') : ?>
-	$('#input_<?php echo $propertyId ?>').datepicker();
-	<?php endif;?>
-<?php endforeach ?>
-
-	var form = document.getElementById('ppit-form');
-	form.onsubmit = function(event) {
-
-		event.preventDefault();
-
-// Check validity
-		var validity = checkInstanceUpdateProperties();
-
-		if (validity) {
-
-// Create a new FormData object.
-			var formData = new FormData();
-
-// Get the properties values
-<?php foreach ($properties as $propertyId => $property) : ?>
-
-	<?php if ($property['type'] == 'input' || $property['type'] == 'date' || $property['type'] == 'textarea' || $property['type'] == 'select' || $property['type'] == 'number' || $property['type'] == 'email' || $property['type'] == 'phone' || $property['type'] == 'hidden') : ?>
-			formData.append('<?php echo $propertyId ?>', document.getElementById('<?php echo $propertyId ?>').value);
-
-	<?php elseif ($property['type'] == 'checkbox') : ?>
-			formData.append('<?php echo $propertyId ?>', ((document.getElementById('<?php echo $propertyId ?>').checked) ? 1 : 0));
-
-	<?php elseif ($property['type'] == 'file') : ?>
-			var fileSelect = document.getElementById('order_form');
-			if (fileSelect) {
-				var files = fileSelect.files;
-				for (var i = 0; i < files.length; i++) {
-					var file = files[i];
-					formData.append('order_form', file, file.name);
-				}
-			}
-
-	<?php endif ?>
-
-<?php endforeach ?>
-
-			var xhttp = new XMLHttpRequest();
-			var route, target;
-			route = '<?php echo $this->url('commitment/try') ?>';
-			target = 'form_action';
-			xhttp.open('POST', route, true);
-			xhttp.onload = function () {
-				if (xhttp.readyState == 4 <?php if (!$context->getConfig()['ppitCoreSettings']['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
-					document.getElementById(target).innerHTML = xhttp.responseText;
-					$('#remove-anchor').click(function() { 
-						$('#form_action').hide(); 
-					});
-					connectInstanceTryForm();
-					$('#loader').removeClass('loader');
-				}
-			};
-			
-			$('#loader').addClass('loader');
-			xhttp.send(formData);
-		}
-		else return false;
-	}
-}
 
 <?php if ($fqdn == 'www.p-pit.fr') : ?>
 <!-- Google analytics -->

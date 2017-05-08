@@ -19,7 +19,8 @@ use Zend\InputFilter\InputFilterInterface;
  */
 class Generic implements InputFilterAwareInterface
 {
-    /** @var string */ public $count;
+    /** @var string */ public $group;
+	/** @var string */ public $count;
     
     /** 
      * Ignored 
@@ -41,7 +42,8 @@ class Generic implements InputFilterAwareInterface
 	 */
     public function exchangeArray($data)
     {
-        $this->count = (isset($data['count'])) ? $data['count'] : null;
+        $this->group = (isset($data['group'])) ? $data['group'] : null;
+    	$this->count = (isset($data['count'])) ? $data['count'] : null;
     }
 
 	/**

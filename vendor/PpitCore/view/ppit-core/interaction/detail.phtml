@@ -24,7 +24,7 @@
 		<?php echo $this->translate('History', 'ppit-core', $context->getLocale()) ?> (<a id="audit-label" href="#"><?php echo $this->translate('Show', 'ppit-core', $context->getLocale()) ?></a>)
 		<div id="audit-panel" class="panel panel-default">
 			<div class="panel-body">
-	<?php foreach ($interaction->audit as $event) : ?>
+	<?php foreach (array_reverse($interaction->audit) as $event) : ?>
 				<div class="row">
 					<div class="col-md-12">
 						<strong><?php echo $context->decodeDate(substr($event['time'], 0, 10)).substr($event['time'], 10) ?>:</strong>&nbsp;
@@ -33,6 +33,7 @@
 				</div>
 		<?php foreach ($event as $propertyId => $property) : ?>
 			<?php if ($propertyId != 'time' && $propertyId != 'n_fn') : ?>
+				<?php if (in_array($propertyId, array('content'))) $property = htmlentities($property) ?>
 				<div class="row">
 					<div class="col-md-2" align="right">&nbsp;</div>
 					<div class="col-md-10"><em><?php echo $propertyId.': '.$property ?></em></div>

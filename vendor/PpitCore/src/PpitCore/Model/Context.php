@@ -47,9 +47,10 @@ class Context implements InputFilterAwareInterface
 	/** @var \PpitCore\Model\Context */ protected static $exemplary;
     /** @var int */ public static $static_user_id;
 	/** @var \PpitCore\Model\Instance */ public static $instance;
-    /** @var int */ protected static $place_id;
+    /** @var \PpitCore\Model\App */ public static $static_app;
     /** @var array */ protected static $static_applications;
-    /** @var string */ protected static $static_formated_name;
+	/** @var int */ protected static $place_id;
+	/** @var string */ protected static $static_formated_name;
 	/** @var int */ protected static $static_community_id;
 	/** @var int */ protected static $static_vcard_id;
 	/** @var array */ protected static $static_roles;
@@ -75,7 +76,8 @@ class Context implements InputFilterAwareInterface
      * Returns the current Context
      * @return Context
      */
-	public static function getCurrent() {
+	public static function getCurrent($app = null) {
+		if ($app) Context::$static_app = $app;
 		return Context::$exemplary;
 	}
 
@@ -98,7 +100,7 @@ class Context implements InputFilterAwareInterface
 	 * @return \PpitCore\Model\instance|NULL
 	 */
     public function getInstance() { return Instance::get(Context::$exemplary->getInstanceId()); }
-	
+    
 	/**
 	 * Returns the route of the home page for the current instance. It defaults to 'index'.
 	 * @return string|NULL
@@ -236,14 +238,15 @@ class Context implements InputFilterAwareInterface
     /**
      * Returns the current Zend config if $key is not given
      * If $key is given:
-     * - either this key belongs to the instance specification, in which keys the method returns the corresponding value
+     * - either this key belongs to the instance specification, in which case the method returns the corresponding value
      * - or it does not belong to the instance specification, in which case the method returns the value for this key in the Zend config.
      * @param string $key
      * @return boolean
      */
 	public function getConfig($key = null) {
     	if ($key) {
-    		if (array_key_exists($key, $this->getInstance()->specifications)) return $this->getInstance()->specifications[$key];
+    		if (Context::$static_app && array_key_exists($key, Context::$static_app->specification)) return Context::$static_app->specification[$key];
+    		elseif (array_key_exists($key, $this->getInstance()->specifications)) return $this->getInstance()->specifications[$key];
     		elseif (array_key_exists($key, Context::$config)) return Context::$config[$key];
     		else return null;
     	}
@@ -405,6 +408,39 @@ class Context implements InputFilterAwareInterface
     	}
     }
     
+    public static function updateFromUserId($config, $user_id)
+    {
+    	$user = User::getTable()->transGet($user_id);
+    	if ($user) {
+    		 
+    		$contact = Vcard::getTable()->transget($user->vcard_id);
+    		Context::$static_vcard_id = $contact->id;
+    		 
+    		// Retrieve the instance data
+    		Context::$instance = Instance::get($contact->instance_id);
+    		 
+    		$user->community = Community::get($contact->community_id);
+    		Context::$static_applications = array();
+    		foreach ($contact->applications as $applicationId => $default) {
+    			if (array_key_exists($applicationId, Context::$exemplary->getConfig('ppitApplications'))) Context::$static_applications[$applicationId] = $default;
+    		}
+    		$contact->applications;
+    		Context::$static_community_id = $contact->community_id;
+    		Context::$static_vcard_id = $contact->id;
+    		Context::$static_formated_name = $contact->n_fn;
+    		Context::$static_is_demo_mode_active = $config['isDemoModeActive'] && $contact->is_demo_mode_active;
+    		Context::$static_roles = array();
+    		foreach ($contact->roles as $role) Context::$static_roles[$role] = $role;
+    		Context::$static_roles['guest'] = 'guest';
+    		Context::$static_roles['user'] = 'user';
+    		Context::$static_perimeters = $contact->perimeters;
+    		Context::$static_locale = $contact->locale;
+    	
+    		// Retrieve the place data
+    		Context::$place_id = Context::$exemplary->getConfig('defaultPlaceId');
+    	}
+    }
+    
     /**
      * Installs the context for the Zend request processing and retrieves or intializes the user, vcard and community properties.
      * This static method should not be called outside from the bootstrap method of the Zend module class.
@@ -429,9 +465,10 @@ class Context implements InputFilterAwareInterface
     		$request = $sm->get('Request');
     		$fqdn = (method_exists($request, 'getUri')) ? $request->getUri()->getHost() : null;
     		if ($fqdn) Context::$instance = Instance::get($fqdn, 'fqdn');
-    		if (!Context::$instance) Context::$instance = Instance::get($config['ppitCoreSettings']['defaultInstanceId']);
+    		if (!Context::$instance) Context::$instance = Instance::get($config['defaultInstanceId']);
 
     		Context::$static_applications = array();
+    		Context::$place_id = $config['defaultPlaceId'];
     		Context::$static_community_id = 0;
     		Context::$static_vcard_id = 0;
     		Context::$static_formated_name = 'Guest';
@@ -444,38 +481,17 @@ class Context implements InputFilterAwareInterface
     		else Context::$static_locale = Context::$instance->default_locale;
     	}
     	else {
-    		$user = $sm->get('PpitCore\Model\UserTable')->transGet($user_id);
-    		if ($user) {
-    	
-    			$contact = $sm->get('PpitCore\Model\VcardTable')->transget($user->vcard_id);
-    			Context::$static_vcard_id = $contact->id;
-    	
-    			// Retrieve the instance data
-    			Context::$instance = Instance::get($contact->instance_id);
-    	
-    			$user->community = $sm->get('PpitCore\Model\CommunityTable')->get($contact->community_id);
-    			Context::$static_applications = array();
-    			foreach ($contact->applications as $applicationId => $default) {
-    				if (array_key_exists($applicationId, Context::$exemplary->getConfig('ppitApplications'))) Context::$static_applications[$applicationId] = $default;
-    			}
-    			$contact->applications;
-    			Context::$static_community_id = $contact->community_id;
-    			Context::$static_vcard_id = $contact->id;
-    			Context::$static_formated_name = $contact->n_fn;
-    			Context::$static_is_demo_mode_active = $config['isDemoModeActive'] && $contact->is_demo_mode_active;
-    			Context::$static_roles = array();
-    			foreach ($contact->roles as $role) Context::$static_roles[$role] = $role;
-    			Context::$static_roles['guest'] = 'guest';
-    			Context::$static_roles['user'] = 'user';
-    			Context::$static_perimeters = $contact->perimeters;
-    			Context::$static_locale = $contact->locale;
-    			 
-    			// Retrieve the place data
-    			Context::$place_id = $config['ppitCoreSettings']['defaultPlaceId'];
-    		}
+    		Context::updateFromUserId($config, $user_id);
     	}
     }
 
+    public static function wsAuthenticate($e)
+    {
+    	$app = $e->getApplication();
+    	$sm = $app->getServiceManager();
+    	return Context::$exemplary->getSecurityAgent()->wsAuthenticate($sm);
+    }
+    
     /**
      * Not used in P-Pit
      * {@inheritDoc}

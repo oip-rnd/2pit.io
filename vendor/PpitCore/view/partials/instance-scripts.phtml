@@ -81,7 +81,7 @@ function getInstanceList(params, major, dir) {
 	xhttp.onreadystatechange = function() {
 		if (xhttp.status == 401) location.href = '<?php echo $this->url('home/index', array('instance_caption' => $context->getInstance()->caption))?>';
 		if (xhttp.readyState == 4) {
-	<?php if (!$config['ppitCoreSettings']['isTraceActive']) : ?>
+	<?php if (!$config['isTraceActive']) : ?>
 			if (xhttp.status == 200) {
 	<?php endif;?>
 			document.getElementById('instance-list-panel').innerHTML = xhttp.responseText;
@@ -99,7 +99,7 @@ function getInstanceList(params, major, dir) {
 					getInstanceDetail($(this).attr('id').split('_')[1]);
 				});
 			});
-	<?php if (!$config['ppitCoreSettings']['isTraceActive']) : ?>
+	<?php if (!$config['isTraceActive']) : ?>
 			}
 	<?php endif;?>
 		}
@@ -139,12 +139,12 @@ function connectActionAnchors(id, action)
 	xhttp.onreadystatechange = function() {
 		if (xhttp.status == 401) location.href = '<?php echo $this->url('home/index', array('instance_caption' => $context->getInstance()->caption))?>';
 		if (xhttp.readyState == 4) {
-	<?php if (!$config['ppitCoreSettings']['isTraceActive']) : ?>
+	<?php if (!$config['isTraceActive']) : ?>
 			if (xhttp.status == 200) {
 	<?php endif;?>
 			document.getElementById('instance-update-panel').innerHTML = xhttp.responseText;
 			connectInstanceUpdateForm(id, action);
-	<?php if (!$config['ppitCoreSettings']['isTraceActive']) : ?>
+	<?php if (!$config['isTraceActive']) : ?>
 			}
 	<?php endif;?>
 		}
@@ -208,9 +208,9 @@ function connectInstanceUpdateForm(id, action)
 			xhttp.open('POST', route, true);
 			// Set up a handler for when the request finishes.
 			xhttp.onload = function () {
-				if (xhttp.readyState == 4 <?php if (!$context->getConfig()['ppitCoreSettings']['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+				if (xhttp.readyState == 4 <?php if (!$context->getConfig()['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
 
-<?php if ($context->getConfig()['ppitCoreSettings']['isTraceActive']) : ?>
+<?php if ($context->getConfig()['isTraceActive']) : ?>
 					console.log('post, route = ' + route);
 					console.log(xhttp.responseText);
 <?php endif;?>
@@ -232,9 +232,9 @@ function getInstanceUpdate(id) {
 
 	xhttp.open('GET', route, true);
 	xhttp.onreadystatechange = function() {
-		if (xhttp.readyState == 4 <?php if (!$config['ppitCoreSettings']['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+		if (xhttp.readyState == 4 <?php if (!$config['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
 			document.getElementById('instance-update-panel').innerHTML = xhttp.responseText;
-<?php if ($config['ppitCoreSettings']['isTraceActive']) : ?>
+<?php if ($config['isTraceActive']) : ?>
 			console.log('instance-update-panel, route = ' + route);
 			console.log(xhttp.responseText);
 <?php endif;?>
@@ -262,7 +262,7 @@ function getInstanceDetail(id) {
 	xhttp.onreadystatechange = function() {
 		if (xhttp.status == 401) location.href = '<?php echo $this->url('home/index', array('instance_caption' => $context->getInstance()->caption))?>';
 		if (xhttp.readyState == 4) {
-	<?php if (!$config['ppitCoreSettings']['isTraceActive']) : ?>
+	<?php if (!$config['isTraceActive']) : ?>
 			if (xhttp.status == 200) {
 	<?php endif;?>
 			document.getElementById('form_action').innerHTML = xhttp.responseText;
@@ -274,7 +274,7 @@ function getInstanceDetail(id) {
 				$('#update-anchor').click(function () { connectActionAnchors(id, 'update'); });
 				$('#delete-anchor').click(function () { connectActionAnchors(id, 'delete'); });
 			}
-	<?php if (!$config['ppitCoreSettings']['isTraceActive']) : ?>
+	<?php if (!$config['isTraceActive']) : ?>
 			}
 	<?php endif;?>
 		}

@@ -149,7 +149,7 @@ function getPlaceList(params, major, dir) {
 	xhttp.onreadystatechange = function() {
 		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
 		if (xhttp.readyState == 4) {
-	<?php if (!$config['ppitCoreSettings']['isTraceActive']) : ?>
+	<?php if (!$config['isTraceActive']) : ?>
 			if (xhttp.status == 200) {
 	<?php endif;?>
 			document.getElementById('place-list-panel').innerHTML = xhttp.responseText;
@@ -175,7 +175,7 @@ function getPlaceList(params, major, dir) {
 					getPlaceDetail($(this).attr('id').split('_')[1]);
 				});
 			});
-<?php if (!$config['ppitCoreSettings']['isTraceActive']) : ?>
+<?php if (!$config['isTraceActive']) : ?>
 			}
 <?php endif;?>
 		}
@@ -219,7 +219,7 @@ function uploadImage()
 	xhttp.open('POST', route, true);
 	// Set up a handler for when the request finishes.
 	xhttp.onload = function () {
-		if (xhttp.readyState == 4 <?php if (!$context->getConfig()['ppitCoreSettings']['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+		if (xhttp.readyState == 4 <?php if (!$context->getConfig()['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
 			document.getElementById('logo-preview').innerHTML = xhttp.responseText;
 			$('.logo-select').each(function () {
 				$(this).click(function () {
@@ -302,7 +302,7 @@ function connectPlaceUpdateForm(id, action, target)
 			xhttp.open('POST', route, true);
 			// Set up a handler for when the request finishes.
 			xhttp.onload = function () {
-				if (xhttp.readyState == 4 <?php if (!$context->getConfig()['ppitCoreSettings']['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+				if (xhttp.readyState == 4 <?php if (!$context->getConfig()['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
 					document.getElementById(target).innerHTML = xhttp.responseText;
 					filterPlaceList();
 					connectPlaceUpdateForm(id, action, target);
@@ -325,7 +325,7 @@ function getPlaceUpdate(id, action, target) {
 	xhttp.onreadystatechange = function() {
 		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
 		if (xhttp.readyState == 4) {
-	<?php if (!$config['ppitCoreSettings']['isTraceActive']) : ?>
+	<?php if (!$config['isTraceActive']) : ?>
 			if (xhttp.status == 200) {
 	<?php endif;?>
 			document.getElementById(target).innerHTML = xhttp.responseText;
@@ -367,7 +367,7 @@ function getPlaceUpdate(id, action, target) {
 				$('#logo_src').val('');
 				$('#input_logo_src').attr('src', '');
 			});			
-<?php if (!$config['ppitCoreSettings']['isTraceActive']) : ?>
+<?php if (!$config['isTraceActive']) : ?>
 			}
 <?php endif;?>
 		}
@@ -397,7 +397,7 @@ function getPlaceDetail(id) {
 	xhttp.onreadystatechange = function() {
 		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
 		if (xhttp.readyState == 4) {
-	<?php if (!$config['ppitCoreSettings']['isTraceActive']) : ?>
+	<?php if (!$config['isTraceActive']) : ?>
 			if (xhttp.status == 200) {
 	<?php endif;?>
 			document.getElementById('form_action').innerHTML = xhttp.responseText;

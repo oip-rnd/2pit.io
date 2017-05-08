@@ -35,7 +35,7 @@ class Instance implements InputFilterAwareInterface
     /** @var string */ public $caption;
     /** @var string */ public $sponsor_instance_caption;
     /** @var boolean */ public $is_active;
-    /** @var string */ public $ethical_charter;
+    /** @var int */ public $validated_ethical_charter_id;
     /** @var string */ public $applications;
 	/** @var string */ public $home_page;
     /** @var array */ public $specifications;
@@ -73,7 +73,7 @@ class Instance implements InputFilterAwareInterface
         $this->caption = (isset($data['caption'])) ? $data['caption'] : null;
         $this->sponsor_instance_caption = (isset($data['sponsor_instance_caption'])) ? $data['sponsor_instance_caption'] : null;
         $this->is_active = (isset($data['is_active'])) ? $data['is_active'] : null;
-        $this->ethical_charter = (isset($data['ethical_charter'])) ? $data['ethical_charter'] : null;
+        $this->validated_ethical_charter_id = (isset($data['validated_ethical_charter_id'])) ? $data['validated_ethical_charter_id'] : null;
         $this->applications = (isset($data['applications'])) ? json_decode($data['applications'], true) : null;
         $this->home_page = (isset($data['home_page'])) ? $data['home_page'] : null;
         $this->specifications = (isset($data['specifications'])) ? json_decode($data['specifications'], true) : null;
@@ -96,7 +96,7 @@ class Instance implements InputFilterAwareInterface
     	$data['caption'] = $this->caption;
     	$data['sponsor_instance_caption'] = $this->sponsor_instance_caption;
     	$data['is_active'] = $this->is_active;
-    	$data['ethical_charter'] = $this->ethical_charter;
+    	$data['validated_ethical_charter_id'] = $this->validated_ethical_charter_id;
     	$data['applications'] = $this->applications;
     	$data['home_page'] = $this->home_page;
     	$data['specifications'] = $this->specifications;
@@ -170,7 +170,7 @@ class Instance implements InputFilterAwareInterface
     	$config = Context::getCurrent()->getConfig();
     	
     	$instance = Instance::getTable()->get($id, $column);
-		if ($instance && $config['ppitCoreSettings']['specificationMode'] == 'config') $instance->specifications = $config['specifications'];
+		if ($instance && $config['specificationMode'] == 'config') $instance->specifications = $config['specifications'];
 		return $instance;
     }
 
@@ -233,10 +233,9 @@ class Instance implements InputFilterAwareInterface
     		if (strlen($comment) > 2047) return 'Integrity';
     		if ($this->comment != $comment) $auditRow['comment'] = $this->comment = $comment;
     	}
-		if (array_key_exists('ethical_charter',$data)) {
-	    	$ethical_charter = $data['ethical_charter'];
-	    	if (strlen($ethical_charter) > 16777215) return 'Integrity';
-    		if ($this->ethical_charter != $ethical_charter) $auditRow['ethical_charter'] = $this->ethical_charter = $ethical_charter;
+		if (array_key_exists('validated_ethical_charter_id',$data)) {
+	    	$validated_ethical_charter_id = (int) $data['validated_ethical_charter_id'];
+    		if ($this->validated_ethical_charter_id != $validated_ethical_charter_id) $auditRow['validated_ethical_charter_id'] = $this->validated_ethical_charter_id = $validated_ethical_charter_id;
 		}
         if (array_key_exists('applications', $data)) {
 	    	$applications = $data['applications'];
@@ -297,7 +296,7 @@ class Instance implements InputFilterAwareInterface
     	$context = Context::getCurrent();
     	$config = $context->getConfig();
     	if ($config['isDemoAccountUpdatable'] || $context->getInstanceId() != 0) {
-    		if ($file['size'] > $context->getConfig()['ppitCoreSettings']['maxUploadSize']) $error = 'Size';
+    		if ($file['size'] > $context->getConfig()['maxUploadSize']) $error = 'Size';
 	    	else {
 	    		$name = $file['name'];
 	    		$type = $file['type'];

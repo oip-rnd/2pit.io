@@ -1,0 +1,42 @@
+<link rel="stylesheet" href="<?php echo $this->basePath('/jClocksGMT-master/css/jClocksGMT.css') ?>">
+
+<div class="row">
+    <div class="col-md-12">
+				<div style="text-align: center">
+	<?php foreach ($clocks->specification as $clockId => $unused) : ?>
+			        <span id="<?php echo $clockId ?>"></span>
+	<?php endforeach;?>
+			    </div>
+	</div>
+</div>
+
+<script src="<?php echo $this->basePath('/jClocksGMT-master/js/jquery.rotate.js') ?>"></script>
+<script src="<?php echo $this->basePath('/jClocksGMT-master/js/jClocksGMT.js') ?>"></script>
+
+<script>
+$(document).ready(function(){
+
+	<?php foreach ($clocks->specification as $clockId => $clock) : ?>
+    $('#<?php echo $clockId ?>').jClocksGMT(
+    {   
+		<?php if (array_key_exists('title', $clock)) : ?>
+    	title: '<?php echo $clock['title'] ?>', 
+    	<?php endif ?>
+
+		<?php if (array_key_exists('offset', $clock)) : ?>
+        offset: '<?php echo $clock['offset'] ?>',
+        <?php endif ?>
+
+		<?php if (array_key_exists('skin', $clock)) : ?>
+        skin: <?php echo $clock['skin'] ?>,
+        <?php endif ?>
+
+		<?php if (array_key_exists('digital', $clock)) : ?>
+        digital: <?php echo ($clock['digital']) ? 'true' : 'false' ?>,
+        <?php endif ?>
+
+        imgpath: '<?php echo $this->basePath('/jClocksGMT-master/') ?>'
+    });
+    <?php endforeach ?>
+});
+</script>

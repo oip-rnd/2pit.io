@@ -2,13 +2,6 @@
 namespace PpitUser;
 
 use PpitCore\Model\GenericTable;
-/*use PpitUser\Model\PpitIdentity;
-use PpitUser\Model\Token;
-use PpitUser\Model\User;
-use PpitUser\Model\UserContact;
-use PpitUser\Model\UserRole;
-use PpitUser\Model\UserRoleLinker;
-use PpitUser\Model\UserTable;*/
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;

@@ -24,7 +24,7 @@ use Zend\InputFilter\InputFilterInterface;
  * A Vcard stores for a given contact:
  * - Identification properties: title, name, birthdate, nationality
  * - Contact properties: email, phone numbers and ost address
- * - Habilitation properties: roles (which can be refined at the organisational unit level (\PpitCore\Model\OrgUnit) and context-specific perimeters (other than those managed by organisation units)
+ * - Habilitation properties: roles and context-specific perimeters
  * - Preference properties: locale, demo mode and notifications acceptation
  * A vcard can be global to a 2pit logical instance (\PpitCore\Model\Instance) or belong to a community (\PpitCore\Model\Community)
  */
@@ -335,9 +335,13 @@ class Vcard implements InputFilterAwareInterface
     	return $vcard;
     }
     
-    public function loadData($data, $community_id = 0)
+    public function loadData($data)
     {
     	$context = Context::getCurrent();
+    	$auditRow = array(
+    			'time' => Date('Y-m-d G:i:s'),
+    			'n_fn' => $context->getFormatedName(),
+    	);
 
     	// Save the identifying previous data
     	$this->previous_n_last = $this->n_last;
@@ -345,111 +349,139 @@ class Vcard implements InputFilterAwareInterface
     	$this->previous_email = $this->email;
     	$this->previous_tel_cell = $this->tel_cell;
 
-    	$this->applications = array();
     	if (array_key_exists('applications', $data)) {
-	    	foreach($data['applications'] as $credit => $checked) $this->applications[$credit] = $checked;
+    		$applications = $data['applications'];
+    		if ($this->applications != $applications) $auditRow['applications'] = $this->applications = $applications;
     	}    	
-    	if (array_key_exists('community_id', $data)) $this->community_id = (int) $data['community_id'];
+    	
+    	if (array_key_exists('community_id', $data)) {
+    		$community_id = (int) $data['community_id'];
+    		if ($this->community_id != $community_id) $auditRow['community_id'] = $this->community_id = $community_id;
+    	}
     	if (array_key_exists('n_title', $data)) {
-    		$this->n_title =  trim(strip_tags($data['n_title']));
-    		if (strlen($this->n_title) > 255) return 'Integrity';
+    		$n_title =  trim(strip_tags($data['n_title']));
+    		if (strlen($n_title) > 255) return 'Integrity';
+    		if ($this->n_title != $n_title) $auditRow['n_title'] = $this->n_title = $n_title;
     	}
     	if (array_key_exists('n_last', $data)) {
-    		$this->n_last =  trim(strip_tags($data['n_last']));
-    		if (strlen($this->n_last) > 255) return 'Integrity';
+    		$n_last =  trim(strip_tags($data['n_last']));
+    		if (strlen($n_last) > 255) return 'Integrity';
+    		if ($this->n_last != $n_last) $auditRow['n_last'] = $this->n_last = $n_last;
     	}
     	if (array_key_exists('n_first', $data)) {
-    		$this->n_first =  trim(strip_tags($data['n_first']));
-    		if (strlen($this->n_first) > 255) return 'Integrity';
+    		$n_first =  trim(strip_tags($data['n_first']));
+    		if (strlen($n_first) > 255) return 'Integrity';
+    		if ($this->n_first != $n_first) $auditRow['n_first'] = $this->n_first = $n_first;
     	}
     	if (array_key_exists('email', $data)) {
-    		$this->email =  trim(strip_tags($data['email']));
-    		if (strlen($this->email) > 255) return 'Integrity';
-    		if ($this->email && !preg_match(Vcard::$emailRegex, $this->email)) return 'Integrity';
+    		$email =  trim(strip_tags($data['email']));
+    		if (strlen($email) > 255) return 'Integrity';
+    		if ($email && !preg_match(Vcard::$emailRegex, $email)) return 'Integrity';
+    		if ($this->email != $email) $auditRow['email'] = $this->email = $email;
     	}
     	if (array_key_exists('tel_work', $data)) {
-    		$this->tel_work =  trim(strip_tags($data['tel_work']));
-	    	if (strlen($this->tel_work) > 255) return 'Integrity';
-	    	if ($this->tel_work && !preg_match(Vcard::$telRegex, $this->tel_work)) return 'Integrity';
-	    }
+    		$tel_work =  trim(strip_tags($data['tel_work']));
+	    	if (strlen($tel_work) > 255) return 'Integrity';
+	    	if ($tel_work && !preg_match(Vcard::$telRegex, $tel_work)) return 'Integrity';
+    		if ($this->tel_work != $tel_work) $auditRow['tel_work'] = $this->tel_work = $tel_work;
+    	}
     	if (array_key_exists('tel_cell', $data)) {
-    		$this->tel_cell =  trim(strip_tags($data['tel_cell']));
-	    	if (strlen($this->tel_cell) > 255) return 'Integrity';
-	    	if ($this->tel_cell && !preg_match(Vcard::$telRegex, $this->tel_cell)) return 'Integrity';
+    		$tel_cell =  trim(strip_tags($data['tel_cell']));
+	    	if (strlen($tel_cell) > 255) return 'Integrity';
+	    	if ($tel_cell && !preg_match(Vcard::$telRegex, $tel_cell)) return 'Integrity';
+    		if ($this->tel_cell != $tel_cell) $auditRow['tel_cell'] = $this->tel_cell = $tel_cell;
     	}
     	if (array_key_exists('adr_street', $data)) {
-    		$this->adr_street = trim(strip_tags($data['adr_street']));
-    		if (strlen($this->adr_street) > 255) return 'Integrity';
+    		$adr_street = trim(strip_tags($data['adr_street']));
+    		if (strlen($adr_street) > 255) return 'Integrity';
+    		if ($this->adr_street != $adr_street) $auditRow['adr_street'] = $this->adr_street = $adr_street;
     	}
     	if (array_key_exists('adr_extended', $data)) {
-    		$this->adr_extended = trim(strip_tags($data['adr_extended']));
-    		if (strlen($this->adr_extended) > 255) return 'Integrity';
+    		$adr_extended = trim(strip_tags($data['adr_extended']));
+    		if (strlen($adr_extended) > 255) return 'Integrity';
+    		if ($this->adr_extended != $adr_extended) $auditRow['adr_extended'] = $this->adr_extended = $adr_extended;
     	}
     	if (array_key_exists('adr_post_office_box', $data)) {
-    		$this->adr_post_office_box = trim(strip_tags($data['adr_post_office_box']));
-    		if (strlen($this->adr_post_office_box) > 255) return 'Integrity';
+    		$adr_post_office_box = trim(strip_tags($data['adr_post_office_box']));
+    		if (strlen($adr_post_office_box) > 255) return 'Integrity';
+    		if ($this->adr_post_office_box != $adr_post_office_box) $auditRow['adr_post_office_box'] = $this->adr_post_office_box = $adr_post_office_box;
     	}
     	if (array_key_exists('adr_zip', $data)) {
-    		$this->adr_zip = trim(strip_tags($data['adr_zip']));
-    		if (strlen($this->adr_zip) > 255) return 'Integrity';
+    		$adr_zip = trim(strip_tags($data['adr_zip']));
+    		if (strlen($adr_zip) > 255) return 'Integrity';
+    		if ($this->adr_zip != $adr_zip) $auditRow['adr_zip'] = $this->adr_zip = $adr_zip;
     	}
     	if (array_key_exists('adr_city', $data)) {
-    		$this->adr_city = trim(strip_tags($data['adr_city']));
-    		if (strlen($this->adr_city) > 255) return 'Integrity';
+    		$adr_city = trim(strip_tags($data['adr_city']));
+    		if (strlen($adr_city) > 255) return 'Integrity';
+    		if ($this->adr_city != $adr_city) $auditRow['adr_city'] = $this->adr_city = $adr_city;
     	}
     	if (array_key_exists('adr_state', $data)) {
-    		$this->adr_state = trim(strip_tags($data['adr_state']));
-    		if (strlen($this->adr_state) > 255) return 'Integrity';
+    		$adr_state = trim(strip_tags($data['adr_state']));
+    		if (strlen($adr_state) > 255) return 'Integrity';
+    		if ($this->adr_state != $adr_state) $auditRow['adr_state'] = $this->adr_state = $adr_state;
     	}
     	if (array_key_exists('adr_country', $data)) {
-    		$this->adr_country = trim(strip_tags($data['adr_country']));
-    		if (strlen($this->adr_country) > 255) return 'Integrity';
+    		$adr_country = trim(strip_tags($data['adr_country']));
+    		if (strlen($adr_country) > 255) return 'Integrity';
+    		if ($this->adr_country != $adr_country) $auditRow['adr_country'] = $this->adr_country = $adr_country;
     	}
     	if (array_key_exists('sex', $data)) {
     		$this->sex = trim(strip_tags($data['sex']));
     		if (strlen($this->sex) > 255) return 'Integrity';
+    		if ($this->sex != $sex) $auditRow['sex'] = $this->sex = $sex;
     	}
     	if (array_key_exists('birth_date', $data)) {
-    		$this->birth_date = trim(strip_tags($data['birth_date']));
-			if ($this->birth_date && !checkdate(substr($this->birth_date, 5, 2), substr($this->birth_date, 8, 2), substr($this->birth_date, 0, 4))) return 'Integrity';
-       	}
+    		$birth_date = trim(strip_tags($data['birth_date']));
+			if ($birth_date && !checkdate(substr($birth_date, 5, 2), substr($birth_date, 8, 2), substr($birth_date, 0, 4))) return 'Integrity';
+    		if ($this->birth_date != $birth_date) $auditRow['birth_date'] = $this->birth_date = $birth_date;
+    	}
     	if (array_key_exists('place_of_birth', $data)) {
-    		$this->place_of_birth = trim(strip_tags($data['place_of_birth']));
-    		if (strlen($this->place_of_birth) > 255) return 'Integrity';
+    		$place_of_birth = trim(strip_tags($data['place_of_birth']));
+    		if (strlen($place_of_birth) > 255) return 'Integrity';
+    		if ($this->place_of_birtgh != $place_of_birth) $auditRow['place_of_birth'] = $this->place_of_birth = $place_of_birth;
     	}
     	if (array_key_exists('nationality', $data)) {
-    		$this->nationality = trim(strip_tags($data['nationality']));
-    		if (strlen($this->nationality) > 255) return 'Integrity';
+    		$nationality = trim(strip_tags($data['nationality']));
+    		if (strlen($nationality) > 255) return 'Integrity';
+    		if ($this->nationality != $nationality) $auditRow['nationality'] = $this->nationality = $nationality;
     	}
     	if (array_key_exists('locale', $data)) {
-    		$this->locale = trim(strip_tags($data['locale']));
-    		if (strlen($this->locale) > 255) return 'Integrity';
+    		$locale = trim(strip_tags($data['locale']));
+    		if (strlen($locale) > 255) return 'Integrity';
+    		if ($this->locale != $locale) $auditRow['locale'] = $this->locale = $locale;
     	}
     	if (array_key_exists('is_notified', $data)) {
-    		$this->is_notified = $data['is_notified'];
+    		$is_notified = (int) $data['is_notified'];
+    		if ($this->is_notified != $is_notified) $auditRow['is_notified'] = $this->is_notified = $is_notified;
     	}
     	if (array_key_exists('is_demo_mode_active', $data)) {
-    		$this->is_demo_mode_active = (int) $data['is_demo_mode_active'];
+    		$is_demo_mode_active = (int) $data['is_demo_mode_active'];
+    		if ($this->is_demo_mode_active != $is_demo_mode_active) $auditRow['is_demo_mode_active'] = $this->is_demo_mode_active = $is_demo_mode_active;
     	}
+    	
     	if (array_key_exists('roles', $data)) {
-	    	$roles = array();
-	    	foreach($data['roles'] as $role => $checked) {
-	    		if ($checked) $roles[$role] = $role;
-	    	}
-	    	$this->roles = $roles;
+    		$roles = $data['roles'];
+    		if ($this->roles != $roles) $auditRow['roles'] = $this->roles = $roles;
     	}
+
     	if (array_key_exists('perimeters', $data)) {
-	    	foreach ($data['perimeters'] as $perimeterId => $perimeter) {
-	    		$this->perimeters[$perimeterId] = $perimeter;
-	    	}
+    		$perimeters = $data['perimeters'];
+    		if ($this->perimeters != $perimeters) $auditRow['perimeters'] = $this->perimeters = $perimeters;
     	}
+
     	$this->n_fn = $this->n_last.', '.$this->n_first;
-    	return 'OK';
+
+		// Update the audit
+		$this->audit[] = $auditRow;
+    	
+		return 'OK';
     }
     
     public function add()
     {
     	$context = Context::getCurrent();
+    	$this->status = 'new';
        	Vcard::getTable()->save($this);
     	return 'OK';
     }
@@ -470,7 +502,7 @@ class Vcard implements InputFilterAwareInterface
     	$config = $context->getConfig();
     	if ($config['isDemoAccountUpdatable'] || $context->getInstanceId() != 0) {
     		$context = Context::getCurrent();
-    		if ($file['size'] > $context->getConfig()['ppitCoreSettings']['maxUploadSize']) $error = 'Size';
+    		if ($file['size'] > $context->getConfig()['maxUploadSize']) $error = 'Size';
     		else {
     			$name = $file['name'];
     			$type = $file['type'];
@@ -518,6 +550,8 @@ class Vcard implements InputFilterAwareInterface
     
     public function isDeletable()
     {
+    	if (Generic::getTable()->cardinality('core_event', array('status != ?' => 'deleted', 'place_id' => $this->id)) > 0) return false;
+    	
     	$config = Context::getCurrent()->getConfig();
     	foreach($config['ppitContactDependencies'] as $dependency) {
     		if ($dependency->isUsed($this)) return false;
