@@ -127,12 +127,12 @@ class UserTable
 	            	$this->tableGateway->update($data, $where);
 	            	                    	
 	        		// Write to the log
-	    			$writer = new Writer\Stream('data/log/user.txt');
+/*	    			$writer = new Writer\Stream('data/log/user.txt');
 	            	$logger = new Logger();
 			        $logger->addWriter($writer);
 			        $content = '';
 			        foreach ($data as $cell) $content .= ';'.$cell;
-			        $logger->info('update;'.$context->getUserId().$content);
+			        $logger->info('update;'.$context->getUserId().$content);*/
 			        return $entity->user_id;
 	            } else {
 	                throw new \Exception('Form id does not exist');
