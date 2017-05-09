@@ -110,12 +110,12 @@ class UserTable
 	        	$this->tableGateway->insert($data);
 
 		        // Write to the log
-	    		$writer = new Writer\Stream('data/log/user.txt');
+/*	    		$writer = new Writer\Stream('data/log/user.txt');
 		        $logger = new Logger();
 		        $logger->addWriter($writer);
 		        $content = '';
 		        foreach ($data as $cell) $content .= ';'.$cell;
-		        $logger->info('add;'.$context->getUserId().$content);
+		        $logger->info('add;'.$context->getUserId().$content);*/
 
 	            $entity->user_id = $this->getAdapter()->getDriver()->getLastGeneratedValue();
 	            return $entity->user_id;

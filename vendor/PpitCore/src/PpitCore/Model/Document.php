@@ -525,16 +525,10 @@ class Document implements InputFilterAwareInterface
 		}
 		$previous = Document::getWithPath($data['path'].$data['name']);
 		if ($data['action'] == 'add') {
-			if ($previous) {
-				$connection->rollback();
-				return 'Duplicate';
-			}
+			if ($previous) return 'Duplicate';
 		}
 		else {
-			if (!$previous) {
-				$connection->rollback();
-				return 'Consistency';
-			}
+			if (!$previous) return 'Consistency';
 			$document = $previous;
 		}
 

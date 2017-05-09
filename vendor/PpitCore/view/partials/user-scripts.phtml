@@ -157,23 +157,6 @@ $properties = array();
 $properties['locale'] = array('type' => 'select', 'mandatory' => false);
 $properties['is_notified'] = array('type' => 'checkbox');
 
-<<<<<<< Updated upstream
-if ($context->getConfig('student/property/level')) {
-	foreach ($context->getConfig('student/property/level')['modalities'] as $levelId => $unused) {
-		$properties['level_'.$levelId] = array('type' => 'checkbox');
-	}
-}
-
-if ($context->getConfig('student/property/discipline')) {
-	foreach ($context->getConfig('student/property/discipline')['modalities'] as $disciplineId => $unused) {
-		$properties['discipline_'.$disciplineId] = array('type' => 'checkbox');
-	}
-}
-
-if ($context->getConfig('student/property/place')) {
-	foreach ($places as $place) {
-		$properties['place_'.$place->id] = array('type' => 'checkbox');
-=======
 foreach ($context->getConfig('perimeters') as $applicationId => $application) {
 	if ($applicationId == 'p-pit-admin') {
 		foreach ($places as $place) {
@@ -186,7 +169,6 @@ foreach ($context->getConfig('perimeters') as $applicationId => $application) {
 				$properties[$specificationId.'_'.$modalityId] = array('type' => 'checkbox');
 			}
 		}
->>>>>>> Stashed changes
 	}
 }
 
