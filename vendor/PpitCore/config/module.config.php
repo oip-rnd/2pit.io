@@ -1734,6 +1734,13 @@ return array(
 									'fr_FR' => 'Contenu',
 							),
 					),
+					'file' => array(
+							'type' => 'file',
+							'labels' => array(
+									'en_US' => 'Upload a file',
+									'fr_FR' => 'Télécharger un fichier',
+							),
+					),
 					'http_status' => array(
 							'type' => 'input',
 							'labels' => array(
@@ -1818,6 +1825,7 @@ return array(
 			'direction' => array('mandatory' => false),
 			'reference' => array('mandatory' => false),
 			'content' => array('mandatory' => false),
+			'file' => array('mandatory' => false),
 			'http_status' => array('mandatory' => false),
 	),
 

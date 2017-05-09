@@ -248,27 +248,18 @@ class App implements InputFilterAwareInterface
     public static function processInteraction($data)
     {
     	$context = Context::getCurrent();
-    	$connection = App::getTable()->getAdapter()->getDriver()->getConnection();
-    	$connection->beginTransaction();
-    	try {
-    		if ($data['action'] == 'update' || $data['action'] == 'delete') $app = App::get($data['identifier'], 'identifier');
-    		elseif ($data['action'] == 'add') $app = App::instanciate();
-    		if ($data['action'] == 'delete') $rc = $app->delete(null);
-    		else {
-    			if ($app->loadData($data) != 'OK') throw new \Exception('View error');
-    			if (!$app->id) $rc = $app->add();
-    			else $rc = $app->update(null);
-    			$data['result'] = $rc;
-    			if ($rc != 'OK') {
-    				$connection->rollback();
-			    	return $rc;
-    			}
+    	if ($data['action'] == 'update' || $data['action'] == 'delete') $app = App::get($data['identifier'], 'identifier');
+    	elseif ($data['action'] == 'add') $app = App::instanciate();
+    	if ($data['action'] == 'delete') $rc = $app->delete(null);
+    	else {
+    		if ($app->loadData($data) != 'OK') throw new \Exception('View error');
+    		if (!$app->id) $rc = $app->add();
+    		else $rc = $app->update(null);
+    		$data['result'] = $rc;
+    		if ($rc != 'OK') {
+    			$connection->rollback();
+		    	return $rc;
     		}
-    		$connection->commit();
-    	}
-    	catch (\Exception $e) {
-    		$connection->rollback();
-    		throw $e;
     	}
     	return $rc;
     }

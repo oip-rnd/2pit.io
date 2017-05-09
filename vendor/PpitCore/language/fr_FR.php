@@ -102,6 +102,7 @@
 			'Please note that this email has a validity of %s days.' => 'Veuillez noter que cet email a une validité de %s jours.',
 			'Please select a value' => 'Veuillez sélectionner une valeur',
 			'Preview' => 'Aperçu',
+			'Process' => 'Traiter',
 			'Properties' => 'Propriétés',
 			'Quantity' => 'Quantité',
 			'Re-enter the new password' => 'Ressaisir le nouveau mot de passe',

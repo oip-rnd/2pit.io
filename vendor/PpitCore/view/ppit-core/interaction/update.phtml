@@ -17,7 +17,7 @@
 			<span class="glyphicon glyphicon-trash"></span>
 		</button>
 
-		<button type="button" class="btn btn-default action-btn" id="interaction-process-anchor" title="<?php echo $this->translate('Delete', 'ppit-core', $context->getLocale()) ?>" <?php if (!$interaction->isDeletable()) echo 'disabled="disabled"' ?>>
+		<button type="button" class="btn btn-default action-btn" id="interaction-process-anchor" title="<?php echo $this->translate('Process', 'ppit-core', $context->getLocale()) ?>" <?php if (!$interaction->isDeletable()) echo 'disabled="disabled"' ?>>
 			<span class="glyphicon glyphicon-cog"></span>
 		</button>
 <?php endif;?>
@@ -102,6 +102,9 @@ if ($interaction->id && $action != 'update' || $message == 'OK') $isDisabled = t
 	    			<option value="<?php echo $key ?>" <?php if ($interaction->properties[$propertyId] == $key) echo 'selected="selected"' ?>><?php echo $labels[$context->getLocale()] ?></option>
 			<?php endforeach;?>
 				</select>
+
+		<?php elseif ($property['type'] == 'file') : ?>
+				<input type="file" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" class="form-control" />
 	
 		<?php else : ?>
 				<input class="form-control" id="<?php echo $propertyId ?>" value="<?php echo $interaction->properties[$propertyId] ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?> />

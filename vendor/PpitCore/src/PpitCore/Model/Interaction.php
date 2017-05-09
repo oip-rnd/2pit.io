@@ -15,6 +15,7 @@ use PpitCore\Model\Generic;
 use PpitCore\Model\Instance;
 use PpitCore\Model\Vcard;
 use Zend\Db\Sql\Where;
+use Zend\Http\Client;
 use Zend\InputFilter\Factory as InputFactory;
 use Zend\InputFilter\InputFilter;
 use Zend\InputFilter\InputFilterAwareInterface;
@@ -501,8 +502,8 @@ class Interaction implements InputFilterAwareInterface
 
     	return 'OK';
 	}
-	
-    /**
+    
+	/**
      * Adds a new row in the database. 
      * @return string
      */
@@ -528,6 +529,78 @@ class Interaction implements InputFilterAwareInterface
 		return ('OK');
     }
     
+    public function processInput()
+    {
+		$context = Context::getCurrent();
+    	$data = array();
+    	if ($this->format == 'application/json') {
+    		$content = json_decode($this->content, true);
+    		$function = $context->getConfig('interaction/type/'.$this->type)['processor'];
+    		$globalRc = call_user_func($function, $content);
+    		$data['http_status'] = $globalRc;
+    	}
+    	elseif ($this->format == 'text/csv') {
+    		$globalRc = 'OK';
+    		$newContent = '';
+    		$rows = str_getcsv($this->content, "\n");
+    		$first = true;
+    		foreach($rows as $row) {
+    			if ($first) {
+    				$first = false;
+    				$identifiers = str_getcsv($row, ";");
+    			}
+    			else {
+    				$array = str_getcsv($row, ";");
+    				if (count($array) != count($identifiers)) {
+    					$row .= ';"error: bad number of columns"';
+    				}
+    				else {
+    					$content = array();
+    					for ($i = 0; $i < count($identifiers); $i++) {
+    						$content[$identifiers[$i]] = $array[$i];
+    					}
+    					$function = $context->getConfig('interaction/type/'.$this->type)['processor'];
+    					$rc = call_user_func($function, $content);
+    					$row .= '"'.$rc.'"';
+    				}
+    			}
+    			$newContent .= $row."\n";
+    		}
+    			
+    		$data['content'] = $newContent;
+    		$data['http_status'] = $globalRc;
+    	}
+    	$data['status'] = 'processed';
+		if ($this->loadData($data) != 'OK') throw new \Exception('View error');
+    	$this->update(null);
+    	return $globalRc;
+    }
+    
+    public function processOutput()
+    {
+		$context = Context::getCurrent();
+    	$instance = Instance::get($context->getInstanceId());
+    	$safe = $context->getConfig()['ppitUserSettings']['safe'];
+    	$url = $context->getConfig()['ppitCoreSettings']['interactionPostMessage']['url'].'/'.$this->type.'&reference='.$this->reference;
+    	$client = new Client(
+    			$url,
+    			array(
+    					'adapter' => 'Zend\Http\Client\Adapter\Curl',
+    					'maxredirects' => 0,
+    					'timeout'      => 30,
+    			)
+    			);
+    	$username = $context->getConfig()['ppitCoreSettings']['interactionPostMessage']['user'];
+    	$client->setAuth($username, $safe[$this->caption][$username], Client::AUTH_BASIC);
+    	$client->setEncType($this->format);
+    	$client->setMethod('POST');
+    	$client->setRawBody($this->content);
+    	$response = $client->send();
+    	$this->http_status = $response->renderStatusLine();
+    	$action = null;
+    	return $this->http_status;
+    }
+
     /**
      * Checks if this interaction can de deleted. 
      * An interaction is not deletable if the result of calling the isUsed() method for each class which has registered itself in the 'ppitCoreDependencies' list returns true.

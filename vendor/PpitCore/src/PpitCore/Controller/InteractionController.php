@@ -170,76 +170,10 @@ class InteractionController extends AbstractActionController
     		 
     		if ($csrfForm->isValid()) { // CSRF check
     			if ($action == 'process') {
-    				if ($interaction->direction == 'output') {
-				    	$instance = Instance::get($context->getInstanceId());
-    					$safe = $context->getConfig()['ppitUserSettings']['safe'];
-    					$url = $context->getConfig()['ppitCoreSettings']['interactionPostMessage']['url'].'?type='.$interaction->type.'&reference='.$interaction->reference;
-    					$client = new Client(
-    							$url,
-    							array(
-    									'adapter' => 'Zend\Http\Client\Adapter\Curl',
-    									'maxredirects' => 0,
-    									'timeout'      => 30,
-    							)
-    					);
-    					$username = $context->getConfig()['ppitCoreSettings']['interactionPostMessage']['user'];
-    					$client->setAuth($username, $safe[$instance->caption][$username], Client::AUTH_BASIC);
-    					$client->setEncType($interaction->format);
-    					$client->setMethod('POST');
-    					$client->setRawBody($interaction->content);
-    					$response = $client->send();
-    					$interaction->http_status = $response->renderStatusLine();
-		    			$message = 'OK';
-		    			$action = null;
-    				}
-    				else {
-	    				$data = array();
-    					if ($interaction->format == 'application/json') {
-		    				$content = json_decode($interaction->content, true);
-		    				$function = $context->getConfig('interaction/type/'.$interaction->type)['processor'];
-	    					$rc = call_user_func($function, $content);
-		    				if ($rc != 'OK') $error = $rc;
-	    					else $message = $rc;
-
-	    					$data['http_status'] = $rc;
-	    				}
-	    			    elseif ($interaction->format == 'text/csv') {
-							$globalRc = 'OK';
-							$newContent = '';
-							$rows = str_getcsv($interaction->content, "\n");
-							$first = true;
-							foreach($rows as $row) {
-								if ($first) {
-									$first = false;
-									$identifiers = str_getcsv($row, ";");
-								}
-								else {
-									$array = str_getcsv($row, ";");
-									if (count($array) != count($identifiers)) {
-										$row .= ';"error: bad number of columns"';
-									}
-									else {
-										$content = array();
-										for ($i = 0; $i < count($identifiers); $i++) {
-											$content[$identifiers[$i]] = $array[$i];
-										}
-				    					$function = $context->getConfig('interaction/type/'.$interaction->type)['processor'];
-				    					$rc = call_user_func($function, $content);
-				    					$row .= '"'.$rc.'"';
-									}
-								}
-								$newContent .= $row."\n";
-							}
-							
-							$data['content'] = $newContent;
-		    				if ($globalRc != 'OK') $error = $globalRc;
-	    					else $message = $globalRc;
-	    					$data['http_status'] = $globalRc;
-	    			    }
-    				}
-    				$data['status'] = 'processed';
-					if ($interaction->loadData($data) != 'OK') throw new \Exception('View error');
-    				$interaction->update(null);
+    				if ($interaction->direction == 'output') $rc = $intraction->processOutput();
+    				else $rc = $interaction->processInput();
+    				if ($rc != 'OK') $error = $rc;
+    				else $message = $rc;
     			}
     			else {
 	
@@ -249,7 +183,16 @@ class InteractionController extends AbstractActionController
 			    		$data[$propertyId] = $request->getPost(($propertyId));
 			    	}
 					if ($interaction->loadData($data) != 'OK') throw new \Exception('View error');
-	
+					$files = $request->getFiles()->toArray();
+					if ($files) {
+						$file = current($files);
+					    if ($file['size'] > $context->getConfig()['maxUploadSize']) $error = 'Size';
+				    	else {
+				    		$this->content = file_get_contents($file['tmp_name']);
+						}
+						$interaction->getFileContent($file);
+					}
+
 		    		// Atomically save
 		    		$connection = Interaction::getTable()->getAdapter()->getDriver()->getConnection();
 		    		$connection->beginTransaction();
@@ -291,6 +234,12 @@ class InteractionController extends AbstractActionController
     {
     	// Retrieve the context
     	$context = Context::getCurrent();
+    
+    	// Initialize the logger
+    	$writer = new \Zend\Log\Writer\Stream('data/log/commitment-message.txt');
+    	$logger = new \Zend\Log\Logger();
+    	$logger->addWriter($writer);
+    	
     	$type = $this->params()->fromRoute('type', 'generic');
     	$reference = $this->params()->fromQuery('reference', 'generic');
     	if (!$context->wsAuthenticate($this->getEvent())) {
@@ -313,7 +262,7 @@ class InteractionController extends AbstractActionController
 		    	return $this->getResponse();
 			}
 
-			// Atomically save
+			// Atomically load and save the interaction
 			$connection = Interaction::getTable()->getAdapter()->getDriver()->getConnection();
 			$connection->beginTransaction();
 			try {
@@ -333,7 +282,6 @@ class InteractionController extends AbstractActionController
 				$interaction->update(null);
 				$connection->commit();
 		    	$this->getResponse()->setStatusCode('200');
-		    	return $this->getResponse();
 	    	}
     	   	catch (\Exception $e) {
     			$connection->rollback();
@@ -343,6 +291,32 @@ class InteractionController extends AbstractActionController
     			$this->getResponse()->setStatusCode('500');
     			return $this->getResponse();
     	    }
-    	}
+
+			// Atomically process the interaction
+			$connection = Interaction::getTable()->getAdapter()->getDriver()->getConnection();
+			$connection->beginTransaction();
+			try {
+				$rc = $interaction->processInput();
+				if ($rc != 'OK') {
+		    		$connection->rollback();
+	
+		    		// Update the message with any return code from the account insert or update
+		    		$message->http_status = $rc;
+		    		$message->update($message->update_time);
+		    			
+		    		return $this->getResponse();
+		    	}
+		    	$connection->commit();
+			}
+    	   	catch (\Exception $e) {
+    			$connection->rollback();
+	    			
+    			// Write to the log
+    			$logger->info('interaction/receive/'.';500;'.$e->getMessage().';');
+    			$this->getResponse()->setStatusCode('500');
+    			return $this->getResponse();
+    	    }
+    	    return $this->getResponse();
+		}
     }
 }

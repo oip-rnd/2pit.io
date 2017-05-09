@@ -703,54 +703,45 @@ class Event implements InputFilterAwareInterface
     public static function processInteraction($data)
     {
     	$context = Context::getCurrent();
-    	$connection = Event::getTable()->getAdapter()->getDriver()->getConnection();
-    	$connection->beginTransaction();
-    	try {
-    		if ($data['action'] == 'update' || $data['action'] == 'delete') $event = Event::get($data['identifier'], 'identifier');
-    		elseif ($data['action'] == 'add') $event = Event::instanciate();
+    	if ($data['action'] == 'update' || $data['action'] == 'delete') $event = Event::get($data['identifier'], 'identifier');
+    	elseif ($data['action'] == 'add') $event = Event::instanciate();
 
-    		if ($data['action'] == 'delete') $rc = $event->delete(null);
-    		elseif ($data['action'] == 'add' || $data['action'] == 'update') {
-    			if (array_key_exists('place_identifier', $data)) {
-    				$place = Place::get($data['place_identifier'], 'identifier');
-    				if ($place) $data['place_id'] = $place->id;
-    			}
-    		    if (array_key_exists('n_fn', $data)) {
-    				$vcard = Vcard::get($data['n_fn'], 'n_fn');
-    				if ($vcard) $data['vcard_id'] = $vcard->id;
-    			}
-    			if ($event->loadData($data) != 'OK') throw new \Exception('View error');
-    			if (!$event->id) $rc = $event->add();
-    			else $rc = $event->update(null);
-    			if ($rc != 'OK') {
-    				$connection->rollback();
-			    	return $rc;
-    			}
+    	if ($data['action'] == 'delete') $rc = $event->delete(null);
+    	elseif ($data['action'] == 'add' || $data['action'] == 'update') {
+    		if (array_key_exists('place_identifier', $data)) {
+    			$place = Place::get($data['place_identifier'], 'identifier');
+    			if ($place) $data['place_id'] = $place->id;
     		}
-    		elseif ($data['action'] == 'synchronize') {
-    			$params = $data['params'];
-    			$params['type'] = $data['type'];
-    			foreach ($data['rows'] as $row) {
-    				$event = Event::instanciate();
-    				if ($event->loadData($row) != 'OK') throw new \Exception('Integrity');
-    				$old = Event::get($event->identifier, 'identifier');
-    				$rc = $old->delete(null);
-    			    if ($rc != 'OK') {
-    					$connection->rollback();
-			    		return $rc;
-	    			}
-    				$rc = $event->add();
-    			    if ($rc != 'OK') {
-    					$connection->rollback();
-			    		return $rc;
-	    			}
-    			}
+    	    if (array_key_exists('n_fn', $data)) {
+    			$vcard = Vcard::get($data['n_fn'], 'n_fn');
+    			if ($vcard) $data['vcard_id'] = $vcard->id;
     		}
-    		$connection->commit();
+    		if ($event->loadData($data) != 'OK') throw new \Exception('View error');
+    		if (!$event->id) $rc = $event->add();
+    		else $rc = $event->update(null);
+    		if ($rc != 'OK') {
+    			$connection->rollback();
+		    	return $rc;
+    		}
     	}
-    	catch (\Exception $e) {
-    		$connection->rollback();
-    		throw $e;
+    	elseif ($data['action'] == 'synchronize') {
+    		$params = $data['params'];
+    		$params['type'] = $data['type'];
+    		foreach ($data['rows'] as $row) {
+    			$event = Event::instanciate();
+    			if ($event->loadData($row) != 'OK') throw new \Exception('Integrity');
+    			$old = Event::get($event->identifier, 'identifier');
+    			$rc = $old->delete(null);
+    		    if ($rc != 'OK') {
+    				$connection->rollback();
+		    		return $rc;
+	   			}
+    			$rc = $event->add();
+    		    if ($rc != 'OK') {
+    				$connection->rollback();
+		    		return $rc;
+	   			}
+    		}
     	}
     	return $rc;
     }
