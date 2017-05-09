@@ -27,6 +27,11 @@ Clone the repository:
         ),
     );
 
+Ensure that the directory data/log and all files in it are writable by the web-server.
+For example o a Linux system you can
+    
+    chown -R www-data:www-data data/log
+    chmod -R 700 data/log
 
 Web Server Setup
 ----------------
@@ -75,7 +80,7 @@ Login
 
 At this stage, you should get the 2pit login page when browsing to your website. Click on Lost password and type « admin » as an identifier then Confirm.
 
-You should receive an email with a link. By following it, you get the New password form. Type « Admin » and twice your new password, then Confirm.
+You should receive an email with a link. By following it, you get the New password form. Type « admin » and twice your new password, then Confirm.
 
 (If you encounter difficulties to receive emails on your server, please note as a backup that email sent are logged in data/logs/mailing.txt.)
 
