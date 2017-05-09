@@ -244,7 +244,6 @@ class UserController extends AbstractActionController
         }
 
     	// Retrieve the available locale list
-    	$locales = $context->getConfig()['locales'];
         $view = new ViewModel(array(
         	'context' => $context,
         	'instance' => $instance,
@@ -255,6 +254,7 @@ class UserController extends AbstractActionController
     		'communities' => $communities,
         	'vcards' => $vcards,
         	'places' => $places,
+    		'locales' => $context->getConfig()['locales'],
         	'csrfForm' => $csrfForm,
         	'user' => $user,
         	'message' => $message,
@@ -394,7 +394,7 @@ class UserController extends AbstractActionController
 				    					'timeout'      => 30,
 				    			)
 				    	);
-				    	$username = 'bruno@p-pit.fr';
+				    	$username = 'to be configured';
 				    	$client->setAuth($username, $safe['p-pit'][$username], Client::AUTH_BASIC);
 				    	$client->setMethod('POST');
 				    	$token = md5(uniqid(rand(), true));

@@ -301,8 +301,8 @@ class InteractionController extends AbstractActionController
 		    		$connection->rollback();
 	
 		    		// Update the message with any return code from the account insert or update
-		    		$message->http_status = $rc;
-		    		$message->update($message->update_time);
+		    		$interaction->http_status = $rc;
+		    		$interaction->update($interaction->update_time);
 		    			
 		    		return $this->getResponse();
 		    	}
