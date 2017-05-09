@@ -252,7 +252,7 @@ function connectInteractionUpdateForm(id, action, target)
 	<?php if ($property['type'] == 'checkbox') : ?>
 			formData.append('<?php echo $propertyId ?>', ((document.getElementById('<?php echo $propertyId ?>').checked) ? 1 : 0));
 
-	<?php elseif ($property['type'] == 'attachment') : ?>
+	<?php elseif ($property['type'] == 'file') : ?>
 			var fileSelect = document.getElementById('<?php echo $propertyId ?>');
 			if (fileSelect) {
 				var files = fileSelect.files;

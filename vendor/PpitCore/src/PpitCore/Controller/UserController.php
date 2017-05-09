@@ -244,6 +244,7 @@ class UserController extends AbstractActionController
         }
 
     	// Retrieve the available locale list
+    	$locales = $context->getConfig()['locales'];
         $view = new ViewModel(array(
         	'context' => $context,
         	'instance' => $instance,
@@ -254,7 +255,6 @@ class UserController extends AbstractActionController
     		'communities' => $communities,
         	'vcards' => $vcards,
         	'places' => $places,
-    		'locales' => $context->getConfig()['locales'],
         	'csrfForm' => $csrfForm,
         	'user' => $user,
         	'message' => $message,

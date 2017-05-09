@@ -512,53 +512,41 @@ class Document implements InputFilterAwareInterface
 	public static function processInteraction($data)
 	{
 		$context = Context::getCurrent();
-		$connection = Document::getTable()->getAdapter()->getDriver()->getConnection();
-		$connection->beginTransaction();
-		try {
-			if ($data['action'] == 'update' || $data['action'] == 'delete') $document = Document::getWithPath($data['path'].$data['name']);
-			elseif ($data['action'] == 'add') $document = Document::instanciate();
+		if ($data['action'] == 'update' || $data['action'] == 'delete') $document = Document::getWithPath($data['path'].$data['name']);
+		elseif ($data['action'] == 'add') $document = Document::instanciate();
 
-			if (array_key_exists('path', $data)) {
-				$parent = Document::getWithPath($data['path']);
-				if ($parent) $data['parent_id'] = $parent->id;
-				else {
-					$connection->rollback();
-					return 'Consistency';
-				}
-			}
-			$previous = Document::getWithPath($data['path'].$data['name']);
-			if ($data['action'] == 'add') {
-				if ($previous) {
-					$connection->rollback();
-					return 'Duplicate';
-				}
-			}
+		if (array_key_exists('path', $data)) {
+			$parent = Document::getWithPath($data['path']);
+			if ($parent) $data['parent_id'] = $parent->id;
 			else {
-				if (!$previous) {
-					$connection->rollback();
-					return 'Consistency';
-				}
-				$document = $previous;
-			}
-
-			if ($data['action'] == 'delete') {
-				$rc = $document->delete(null);
-			}
-			else {
-				if ($document->loadData($data) != 'OK') throw new \Exception('View error');
-				if (!$document->id) $rc = $document->add();
-				else $rc = $document->update(null);
-			}
-			if ($rc != 'OK') {
 				$connection->rollback();
+				return 'Consistency';
 			}
-			else $connection->commit();
-			return $rc;
 		}
-		catch (\Exception $e) {
-			$connection->rollback();
-			throw $e;
+		$previous = Document::getWithPath($data['path'].$data['name']);
+		if ($data['action'] == 'add') {
+			if ($previous) {
+				$connection->rollback();
+				return 'Duplicate';
+			}
 		}
+		else {
+			if (!$previous) {
+				$connection->rollback();
+				return 'Consistency';
+			}
+			$document = $previous;
+		}
+
+		if ($data['action'] == 'delete') {
+			$rc = $document->delete(null);
+		}
+		else {
+			if ($document->loadData($data) != 'OK') throw new \Exception('View error');
+			if (!$document->id) $rc = $document->add();
+			else $rc = $document->update(null);
+		}
+		return $rc;
 	}
 	
 	public function isUsed($object)
