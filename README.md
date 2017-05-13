@@ -14,7 +14,7 @@ Clone the repository:
 
     cd my/project/dir
     git clone git://github.com/2pit-io/2pit.io
-    create a database on Mysql (le’t say 2pit_io)
+    create a database on Mysql (let's say 2pit_io)
 
     Adapt this line in config/autoload/global.php according to your own mysql settings:
     'dsn' => 'mysql:dbname=2pit_io;host=localhost:3306',
@@ -28,7 +28,7 @@ Clone the repository:
     );
 
 Ensure that the directory data/log and all files in it are writable by the web-server.
-For example o a Linux system you can
+For example on a Linux system you can
     
     chown -R www-data:www-data data/log
     chmod -R 700 data/log
