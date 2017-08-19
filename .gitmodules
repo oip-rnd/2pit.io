@@ -1,0 +1,3 @@
+[submodule "vendor/PpitCore"]
+	path = vendor/PpitCore
+	url = https://github.com/2pit-io/PpitCore.git
