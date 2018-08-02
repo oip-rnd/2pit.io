@@ -20,12 +20,16 @@ div.front-page a {
 	font-weight: bold;
 	font-size: 28px;
 }
+.public-text {
+    font-weight: 300;
+    color: rgb(133, 134, 134);
+}
 .jumbotron {
 	background-color: #FFF;
 	color: #555;
 }
 .row {
-	color: #555;
+//	color: #555;
 }
 blockquote {
 	border-left: 4px solid #d6d6d6;

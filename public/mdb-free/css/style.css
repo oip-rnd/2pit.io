@@ -1,1 +1,18 @@
-/* YOUR CUSTOM STYLES */
+html,
+body,
+.view {
+    height: 100%;
+}
+
+.extra-margins {
+    margin-top: 1rem;
+    margin-bottom: 2.5rem;
+}
+main {
+    padding-top: 4.5rem;
+    padding-bottom: 2rem;
+}
+
+.flex-center {
+    color: #fff;
+}
