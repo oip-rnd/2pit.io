@@ -39,8 +39,8 @@ function eventGetParams() {
 <?php endforeach;?>
 
 	<?php
-	$todoTitle = $content_description['search']['todoTitle'][$context->getLocale()];
-	$searchTitle = $content_description['search']['searchTitle'][$context->getLocale()];
+	$todoTitle = $context->localize($content_description['search']['todoTitle']);
+	$searchTitle = $context->localize($content_description['search']['searchTitle']);
 	?>
 	$('#mode-text').text((todo) ? '<?php echo $todoTitle ?>' : '<?php echo $searchTitle ?>');
 

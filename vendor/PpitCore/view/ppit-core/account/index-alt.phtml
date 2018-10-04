@@ -136,7 +136,7 @@ $this->headTitle($title);
 		<?php if (array_key_exists('fa', $entryDef)) : ?>
 				<i class="<?php echo $entryDef['fa'] ?>"></i>
 		<?php endif;?>
-				<?php echo $entryDef['label'][$context->getLocale()] ?>
+				<?php echo $context->localize($entryDef['label']) ?>
 		    </a>
 		  </li>
 	<?php endif ?>
@@ -149,7 +149,7 @@ $this->headTitle($title);
 	<!-- Main panel -->
 	<div class="row">
 		<div class="col-md-12" id="index_panel"></div>
-	</div
+	</div>
 </div>
 
 <!-- Modal -->
