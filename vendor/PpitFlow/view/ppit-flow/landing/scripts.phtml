@@ -1,0 +1,155 @@
+<script>
+<?php if ($message == 'OK') : ?>
+toastr.success('<?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?>');
+<?php elseif ($error && $error != 'Authentication') : ?>
+toastr.error('<?php echo $this->translate('Technical information: ', 'ppit-core', $context->getLocale()).$error[0] ?>');
+toastr.error('<?php echo $this->translate('An error has occurred, please try again later', 'ppit-core', $context->getLocale()) ?>');
+<?php endif ?>
+
+$('.portlet-header').hide();
+$('.resizable').hide();
+</script>
+
+<?php if ($context->hasRole('admin')) : ?>
+<!-- Updatable landing page for authorized users -->
+
+<!-- Image upload -->
+<script>
+ $('#intro_change_image').change(function () {
+  var formData = new FormData();
+  var fileSelect = document.getElementById('intro_change_image_path');
+  if (fileSelect) {
+    var files = fileSelect.files;
+    for (var i = 0; i < files.length; i++) {
+      var file = files[i];
+      formData.append('intro_change_image_path', file, file.name);
+    }
+  }
+});
+
+  var xhttp = new XMLHttpRequest();
+  xhttp = new XMLHttpRequest();
+  xhttp.open("POST", '<?php //echo $this->url('config/upload', ['identifier' => $place_identifier.'_landing']) ?>', true);
+  xhttp.onreadystatechange = function() {
+    if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+    if (xhttp.readyState == 4) {
+      if (xhttp.status == 200) {
+        $('#intro_change_image').attr('src', '<?php echo $this->basePath() ?>' + xhttp.responseText + '?random=' + (new Date()).getTime());
+      }
+      else {
+        console.log(xhttp.status + ' ' + xhttp.statusText);
+        toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+      }
+    }
+  }
+  xhttp.send(formData);
+</script
+
+<!-- Medium editor -->
+<script src="<?php echo $this->basePath('medium-editor-master/dist/js/medium-editor.js') ?>"></script>
+<script>
+  //Returns a function, that, as long as it continues to be invoked, will not
+  //be triggered. The function will be called after it stops being called for
+  //N milliseconds. If `immediate` is passed, trigger the function on the
+  //leading edge, instead of the trailing.
+  function debounce(func, wait, immediate) {
+    var timeout;
+    return function() {
+    var context = this, args = arguments;
+    var later = function() {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+    var callNow = immediate && !timeout;
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+      if (callNow) func.apply(context, args);
+    };
+  };
+  var editor = new MediumEditor('.editable', {
+    buttonLabels: 'fontawesome'
+  });
+  function triggerAutoSave(event, editable) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("POST", '<?php echo $this->url('config/v1', ['identifier' => $place_identifier.'_landing']) ?>', true);
+    xhttp.onreadystatechange = function() {
+      if (xhttp.readyState == 4 && xhttp.status == 200) {
+      }
+    }
+    var content = { content: {} };
+    content.content[editable.id] = editable.innerHTML;
+    xhttp.send(JSON.stringify(content));
+  }
+  var throttledAutoSave = debounce(triggerAutoSave, 1000);
+  editor.subscribe('editableInput', throttledAutoSave);
+</script>
+<!--/ medium editor -->
+
+<!-- jqueryui: sortable portlets -->
+<script src="<?php echo $this->basePath('jquery-ui-1.12.1/jquery-ui.js') ?>"></script>
+<script>
+$( function() {
+  $( ".presentation-section" ).sortable({
+    connectWith: ".presentation-section",
+    handle: ".portlet-header",
+    cancel: ".portlet-toggle",
+    placeholder: "portlet-placeholder ui-corner-all ui-state-highlight"
+  });
+   
+  $( ".portlet" )
+    .addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
+    .find( ".portlet-header" )
+    .addClass( "ui-widget-header ui-corner-all" )
+    .prepend( "<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
+
+  $( ".portlet-toggle" ).on( "click", function() {
+    var icon = $( this );
+    icon.toggleClass( "ui-icon-minusthick ui-icon-plusthick" );
+    icon.closest( ".portlet" ).find( ".portlet-content" ).toggle();
+  });
+} );
+//$('.presentation-section').addClass('portlet');
+$('.portlet-header').show();
+</script>
+<!--/ jqueryui: sortable portlets -->
+
+<!--/ jqueryui: resizable -->
+<script>
+/*$( function() {
+  var currentWidth;
+  $( ".resizable" ).resizable({
+    maxWidth: 600,
+//    handles: "e",
+    create: function( event, ui ) {
+      var classAttr = $(this).parent().attr('class'), pos = classAttr.search('col-');
+      var nbCols = parseInt(classAttr.substring(pos+7));
+      $(this).css('width', nbCols*50 + 'px');
+      currentWidth = nbCols*50;
+    },
+    resize: function( event, ui ) {
+      if (ui.size.width % 50 == 0) {
+        $(this).parent().removeClass('col-md-1');
+        $(this).parent().removeClass('col-md-2');
+        $(this).parent().removeClass('col-md-3');
+        $(this).parent().removeClass('col-md-4');
+        $(this).parent().removeClass('col-md-5');
+        $(this).parent().removeClass('col-md-6');
+        $(this).parent().removeClass('col-md-7');
+        $(this).parent().removeClass('col-md-8');
+        $(this).parent().removeClass('col-md-9');
+        $(this).parent().removeClass('col-md-10');
+        $(this).parent().removeClass('col-md-11');
+        $(this).parent().removeClass('col-md-12');
+        $(this).parent().addClass('col-md-' + ui.size.width / 50);
+        currentWidth = ui.size.width;
+        console.log(currentWidth / 50);
+      }
+    }
+  });
+} );
+$('.resizable').show();*/
+</script>
+<!--/ jqueryui: resizable -->
+
+<!--/ Updatable landing page for authorized users -->
+<?php endif;?>

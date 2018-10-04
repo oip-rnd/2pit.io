@@ -1,0 +1,128 @@
+
+<!-- Card -->
+<div class="card testimonial-card">
+
+    <!-- Background color -->
+    <div class="card-up indigo lighten-1">
+    </div>
+
+    <!-- Avatar -->
+	    <a class="avatar mx-auto white file-field" id="photo_upload">
+	    	<img src="<?php echo $this->basePath('/photos/'.$viewData['photo_link_id'])?>" class="rounded-circle" id="photo">
+	    </a>
+
+    <div class="card-body">
+
+           <section class="section feature-box wow fadeIn" data-wow-delay="0.3s">
+<?php foreach ($content['feature-box'] as $paragraph) : ?>
+		<?php if (array_key_exists('a', $paragraph)) : ?>
+					<a 
+						href="<?php echo $paragraph['a']['href']?>" 
+						<?php if (array_key_exists('class', $paragraph['a'])) echo 'class="'.$paragraph['a']['class'].'"' ?>
+						<?php if (array_key_exists('id', $paragraph['a'])) echo 'id="'.$paragraph['a']['id'].'"' ?>
+					>
+		<?php elseif (array_key_exists('button', $paragraph)) : ?>
+					<button type="button" 
+						<?php if (array_key_exists('class', $paragraph['button'])) echo 'class="'.$paragraph['button']['class'].'"' ?>
+						<?php if (array_key_exists('id', $paragraph['button'])) echo 'id="'.$paragraph['button']['id'].'"' ?>
+					>
+		<?php else : ?>
+					<<?php echo $paragraph['type']?> <?php if (array_key_exists('class', $paragraph)) echo 'class="'.$paragraph['class'].'"' ?>>
+		<?php endif;?>
+		<?php if (array_key_exists('text', $paragraph)) : ?>
+			<?php echo $context->localize($paragraph['text'], $locale) ?>
+		<?php endif;?>
+		<?php if (array_key_exists('a', $paragraph)) : ?>
+					</a>
+		<?php elseif (array_key_exists('button', $paragraph)) : ?>
+					</button>
+		<?php else : ?>
+					</<?php echo $paragraph['type']?>>
+		<?php endif;?>
+<?php endforeach;?>
+           </section>
+	<hr>
+					<div class="row">
+
+<?php foreach ($content['detail']['properties'] as $inputId => $property) : ?>
+  <?php $disabled = true ?>
+  <?php if (!$property['protected']) : ?>
+						<div class="<?php echo (array_key_exists('class',$property)) ? $property['class'] : 'col-md-6' ?>">
+							<div class="form-group">
+
+				<?php if ($property['type'] == 'select') : ?>
+                                <label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+								<select id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="mdb-select validate profile_input <?php if ($property['focused']) echo 'profile_input_focused' ?>" <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?>>
+									<option value=""><?php echo $this->translate('Please choose', 'ppit-core', $context->getLocale()) ?></option>
+					<?php foreach ($property['modalities'] as $modalityId => $modality) : ?>
+									<option value="<?php echo $modalityId ?>" <?php if ($viewData[$inputId] == $modalityId) echo 'selected="selected"' ?>><?php echo $context->localize($modality, $locale) ?></option>
+					<?php endforeach;?>
+								</select>
+
+     			<?php elseif ($property['type'] == 'radio') : ?>
+                                <label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+								<input type="radio" id="<?php echo $inputId ?>" name="<?php echo $property['property_id'] ?>" class="form-control validate with-gap profile_input <?php if ($property['focused']) echo 'profile_input_focused' ?>" value="<?php echo $property['value'] ?>" <?php if ($disabled) echo 'disabled="disabled"' ?> <?php if ($viewData[$inputId]) echo 'checked="checked"' ?> />
+
+     			<?php elseif ($property['type'] == 'checkbox') : ?>
+                                <label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+								<input type="checkbox" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate profile_input <?php if ($property['focused']) echo 'profile_input_focused' ?>" value="<?php echo $property['value'] ?>" <?php if ($disabled) echo 'disabled="disabled"' ?> <?php if ($viewData[$inputId]) echo 'checked="checked"' ?> />
+
+				<?php elseif ($property['type'] == 'textarea') : ?>
+                                <label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+								<textarea rows="3" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate profile_input <?php if ($property['focused']) echo 'profile_input_focused' ?>" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?>><?php echo $viewData[$inputId] ?></textarea>
+
+				<?php elseif ($property['type'] == 'file') : ?>
+								<div class="file-field">
+									<div class="btn btn-primary btn-sm float-left ">
+										<span><?php if ($property['mandatory']) echo '* ' ?><?php echo $this->translate('Choose file', 'ppit-core', $context->getLocale()) ?></span>
+										<input type="file" id="<?php $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate profile_input <?php if ($property['focused']) echo 'profile_input_focused' ?>" <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value=" value="<?php echo $viewData[$inputId] ?>">
+									</div>
+									<div class="file-path-wrapper">
+										<input class="file-path validate profile_input <?php if ($property['focused']) echo 'profile_input_focused' ?>" type="text" placeholder="<?php echo $context->localize($property['labels'], $locale) ?>" >
+									</div>
+								</div>
+
+     			<?php elseif ($property['type'] == 'email') : ?>
+                                <label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+								<input type="email" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate profile_input <?php if ($property['focused']) echo 'profile_input_focused' ?>" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>" />
+
+     			<?php elseif ($property['type'] == 'keywords') : ?>
+								<input type="text" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control mdb-autocomplete profile_input <?php if ($property['focused']) echo 'profile_input_focused' ?>" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>">
+
+     			<?php elseif (in_array($property['type'], ['input', 'phone'])) : ?>
+                                <label for="<?php echo $inputId ?>"><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+								<input type="text" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate profile_input <?php if ($property['focused']) echo 'profile_input_focused' ?>" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>" />
+
+     			<?php elseif ($property['type'] == 'separation') : ?>
+     							<hr>
+
+     			<?php elseif ($property['type'] == 'chips') : ?>
+					<?php $currentSkills = explode(',', $viewData[$inputId]) ?>
+					        	<div class="text-center">
+					<?php foreach ($property['repository'] as $entryId => $entry) : ?>
+                      <?php if (in_array($entryId, $currentSkills)) : ?>
+									<input type="hidden" id="<?php echo $inputId.'-'.$entryId ?>" name="<?php echo $inputId.'-'.$entryId ?>" value="<?php echo in_array($entryId, $currentSkills) ? 1 : 0 ?>" />
+									<span id="search-<?php echo $inputId ?>-<?php echo $entryId ?>" class="chip <?php echo $entry['color'] ?> white-text search-<?php echo $inputId ?> <?php if (!in_array($entryId, $currentSkills)) echo 'search-'.$inputId.'-hidden' ?>">
+										<?php echo $context->localize($entry['labels'], $locale) ?>
+									    &nbsp;<a><i id="chip-<?php echo $inputId ?>-<?php echo $entryId ?>" class="profile_search_close search-<?php echo $inputId ?>-close fa fa-times" style="color: red"></i></a>
+									</span>
+                      <?php endif;?>
+					<?php endforeach;?>
+								</div>
+
+     			<?php else : ?>
+								<span class="font-weight-bold"><?php echo $context->localize($property['labels'], $locale) ?></span>
+
+				<?php endif;?>
+							</div>
+						</div>
+  <?php endif;?>
+<?php endforeach;?>
+					</div>
+                    <div class="row">
+<?php foreach ($content['detail']['actions'] as $actionId => $action) : ?>
+            <a class="btn btn-secondary btn-rounded" id="button_<?php echo $actionId ?>"><?php echo $context->localize($content['detail']['actions'][$actionId]['labels']) ?></a>
+<?php endforeach;?>
+                    </div>
+			</div>
+		</div>

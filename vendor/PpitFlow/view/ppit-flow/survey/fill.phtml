@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<?php if (array_key_exists('analytics-id', $content['header'])) : ?>
+<!-- Google Analytics -->
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', '<?php echo $content['header']['analytics-id']?>', 'auto');
+ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+<?php endif;?>
+
+    <title><?php echo $context->localize($content['header']['title'], $locale) ?></title>
+    <meta charset="utf-8">
+	<meta name="description" content="<?php echo $context->localize($content['header']['description'], $locale) ?>">
+	<meta name="robots" content="index, follow">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <!-- Font Awesome -->
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">    <!-- Bootstrap core CSS -->
+    <link href="<?php echo $this->basePath('MDB Pro/css/bootstrap.min.css" rel="stylesheet') ?>">
+    <!-- Material Design Bootstrap -->
+    <link href="<?php echo $this->basePath('MDB Pro/css/mdb.min.css" rel="stylesheet') ?>">
+    <!-- Your custom styles (optional) -->
+    <link href="<?php echo $this->basePath('MDB Pro/css/style.css" rel="stylesheet') ?>">
+
+    <link rel="stylesheet" href="<?php echo $this->basePath('medium-editor-master/dist/css/medium-editor.css') ?>">
+    <link rel="stylesheet" href="<?php echo $this->basePath('medium-editor-master/dist/css/themes/default.css" id="medium-editor-theme') ?>">
+
+<style>
+html,
+body,
+header,
+#intro {
+    height: 70%;
+}
+
+#intro {
+    background: url("<?php echo $this->basePath($content['header']['background_image']['src']) ?>")no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+@include media-breakpoint-up(sm) {
+  html {
+    font-size: 16px;
+  }
+}
+
+@include media-breakpoint-up(md) {
+  html {
+    font-size: 20px;
+  }
+}
+
+@include media-breakpoint-up(lg) {
+  html {
+    font-size: 28px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+    <!--Main Navigation-->
+    <header>
+
+        <!--Navbar-->
+        <nav class="navbar navbar-expand-lg navbar-dark fixed-top scrolling-navbar">
+            <div class="container">
+
+                <!-- Navbar brand -->
+				<a href="<?php echo $this->url($content['header']['logo']['href'], $content['header']['logo']['params']) ?>" class="navbar-brand">
+					<img 
+						src="<?php echo $this->basePath($content['header']['logo']['src']) ?>"
+						<?php if (array_key_exists('height', $content['header']['logo'])) echo 'height="'.$content['header']['logo']['height'].'"' ?>
+						<?php if (array_key_exists('width', $content['header']['logo'])) echo 'width="'.$content['header']['logo']['width'].'"' ?>
+						alt="<?php echo $content['header']['logo']['alt'] ?>"
+					/>
+				</a>
+
+                <!-- Collapse button -->
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav" aria-controls="basicExampleNav"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Collapsible content -->
+                <div class="collapse navbar-collapse" id="basicExampleNav">
+                    
+                    <!-- Links -->
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?php echo $this->url($content['header']['logo']['href'], $content['header']['logo']['params']) ?>"><?php echo $this->translate('Home', 'ppit-core', $context->getLocale()) ?></a>
+                        </li>
+                        <li class="nav-item">
+<?php if ($locale == 'fr_FR') : ?>
+							<a class="nav-link" href="<?php echo $this->url('survey/fill', ['place_identifier' => $place_identifier, 'id' => $id]) ?>?hash=<?php echo $token ?>&survey=<?php echo $survey ?>&locale=en_US">EN</a>
+<?php else : ?>
+							<a class="nav-link" href="<?php echo $this->url('survey/fill', ['place_identifier' => $place_identifier, 'id' => $id]) ?>?hash=<?php echo $token ?>&survey=<?php echo $survey ?>&locale=fr_FR">FR</a>
+<?php endif;?>
+                        </li>
+                    </ul>
+                </div>
+                <!-- Collapsible content -->
+
+            </div>
+        </nav>
+        <!--/.Navbar-->    
+ 
+<!--Mask-->
+<div id="intro" class="view h-100"> 
+	<div class="d-block h-100 w-lg-100 <?php echo $content['header']['background_image']['mask'] ?>">
+    	<div class="full-bg-img flex-center">
+
+            <div class="col-md-12 justify-content-center text-center">
+<?php if ($message || $error) : ?>
+					<h3 class="h3-responsive white-text my-4">
+						<?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?>.<br>Nous vous remercions de votre confiance.
+					</h3>
+<?php else : ?>
+	<?php foreach ($content['intro'] as $paragraphId => $paragraph) : ?>
+		<?php if (array_key_exists('a', $paragraph)) : ?>
+					<a 
+						href="<?php echo $this->url('landing/template2') ?><?php echo $paragraph['a']['href']?>" 
+						<?php if (array_key_exists('class', $paragraph['a'])) echo 'class="'.$paragraph['a']['class'].'"' ?>
+						<?php if (array_key_exists('id', $paragraph['a'])) echo 'id="'.$paragraph['a']['id'].'"' ?>
+					>
+		<?php elseif (array_key_exists('button', $paragraph)) : ?>
+					<button type="button" 
+						<?php if (array_key_exists('class', $paragraph['button'])) echo 'class="'.$paragraph['button']['class'].'"' ?>
+						<?php if (array_key_exists('id', $paragraph['button'])) echo 'id="'.$paragraph['button']['id'].'"' ?>
+					>
+		<?php else : ?>
+					<<?php echo $paragraph['type']?> class="editable <?php if (array_key_exists('class', $paragraph)) echo $paragraph['class'] ?>" id="<?php echo $paragraphId ?>/text<?php if (array_key_exists('text', $paragraph)) echo '/'.$context->getLocaleFor($paragraph['text']) ?>">
+		<?php endif;?>
+		<?php if (array_key_exists('text', $paragraph)) : ?>
+			<?php echo $context->localize($paragraph['text'], $locale) ?>
+		<?php endif;?>
+		<?php if (array_key_exists('a', $paragraph)) : ?>
+					</a>
+		<?php elseif (array_key_exists('button', $paragraph)) : ?>
+					</button>
+		<?php else : ?>
+					</<?php echo $paragraph['type']?>>
+		<?php endif;?>
+	<?php endforeach;?>
+<?php endif;?>
+	        </div>
+        </div>
+    </div>
+</div>
+<!--/.Mask-->
+           
+    </header>
+    <!--Main Navigation-->
+
+    <!--Main layout-->
+    <main>
+        <div class="container" name="descr" id="descr">
+        	<br>
+	
+	<section class="section pb-5 wow fadeIn" data-wow-delay="0.3s" id="survey">
+		<div class="row">
+<?php foreach ($content['form']['introduction'] as $paragraph) : ?>
+		<?php if (array_key_exists('a', $paragraph)) : ?>
+					<a 
+						href="<?php echo $paragraph['a']['href']?>" 
+						<?php if (array_key_exists('class', $paragraph['a'])) echo 'class="'.$paragraph['a']['class'].'"' ?>
+						<?php if (array_key_exists('id', $paragraph['a'])) echo 'id="'.$paragraph['a']['id'].'"' ?>
+					>
+		<?php elseif (array_key_exists('button', $paragraph)) : ?>
+					<button type="button" 
+						<?php if (array_key_exists('class', $paragraph['button'])) echo 'class="'.$paragraph['button']['class'].'"' ?>
+						<?php if (array_key_exists('id', $paragraph['button'])) echo 'id="'.$paragraph['button']['id'].'"' ?>
+					>
+		<?php else : ?>
+					<<?php echo $paragraph['type']?> <?php if (array_key_exists('class', $paragraph)) echo 'class="'.$paragraph['class'].'"' ?>>
+		<?php endif;?>
+		<?php if (array_key_exists('text', $paragraph)) : ?>
+			<?php echo $context->localize($paragraph['text'], $locale) ?>
+		<?php endif;?>
+		<?php if (array_key_exists('a', $paragraph)) : ?>
+					</a>
+		<?php elseif (array_key_exists('button', $paragraph)) : ?>
+					</button>
+		<?php else : ?>
+					</<?php echo $paragraph['type']?>>
+		<?php endif;?>
+<?php endforeach;?>
+		</div>
+		
+		<div class="row">
+
+			<!--Grid column-->
+			<div class="col-md-8 col-xl-9">
+				<form action="<?php echo $this->url('survey/fill', ['place_identifier' => $place_identifier, 'id' => $id]) ?>?hash=<?php echo $token ?>&survey=<?php echo $survey ?>" method="post">
+
+<?php if ($message) : ?>
+				<p class="alert alert-success section-description">
+					<?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?>. Nous vous remercions de votre confiance.
+				</p>
+				<p class="section-description">
+					<a href="<?php echo $this->url('home') ?>" class="btn btn-light-blue btn-rounded">Accueil</a>
+				</p>
+<?php elseif ($error) : ?>
+				<p class="alert alert-danger section-description">
+					<?php echo $this->translate('An error has occurred, please try again later', 'ppit-core', $context->getLocale()) ?><br>
+					<?php echo $this->translate('Technical information: ', 'ppit-core', $context->getLocale()).$error[0].' '.$error[1] ?>
+				</p>
+				<p class="section-description">
+					<a href="<?php echo $this->url('home') ?>" class="btn btn-light-blue btn-rounded">Accueil</a>
+				</p>
+<?php endif ?>
+
+<?php if (!$message) : ?>
+					<div class="row">
+
+	 <?php foreach ($content['form']['inputs'] as $inputId => $property) : ?>
+	 	<?php $disabled = $message || $error || $id && !$property['updatable'] ?>
+						<div class="<?php echo (array_key_exists('class',$property)) ? $property['class'] : 'col-md-6' ?>">
+							<div class="md-form">
+
+				<?php if ($property['type'] == 'select') : ?>
+								<select id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="mdb-select validate" <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?>>
+									<option value=""><?php echo $this->translate('Please choose', 'ppit-core', $context->getLocale()) ?></option>
+					<?php foreach ($property['modalities'] as $modalityId => $modality) : ?>
+									<option value="<?php echo $modalityId ?>" <?php if ($viewData[$inputId] == $modalityId) echo 'selected="selected"' ?>><?php echo $context->localize($modality, $locale) ?></option>
+					<?php endforeach;?>
+								</select>
+								<label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+     			<?php elseif ($property['type'] == 'radio') : ?>
+								<input type="radio" id="<?php echo $inputId ?>" name="<?php echo $property['property_id'] ?>" class="form-control validate with-gap " value="<?php echo $property['value'] ?>" <?php if ($disabled) echo 'disabled="disabled"' ?> <?php if ($viewData[$inputId]) echo 'checked="checked"' ?> />
+								<label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+     			<?php elseif ($property['type'] == 'checkbox') : ?>
+								<input type="checkbox" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate" value="<?php echo $property['value'] ?>" <?php if ($disabled) echo 'disabled="disabled"' ?> <?php if ($viewData[$inputId]) echo 'checked="checked"' ?> />
+								<label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+				<?php elseif ($property['type'] == 'textarea') : ?>
+								<textarea rows="3" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?>><?php echo $viewData[$inputId] ?></textarea>
+								<label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+				<?php elseif ($property['type'] == 'file') : ?>
+								<div class="file-field">
+									<div class="btn btn-primary btn-sm float-left ">
+										<span><?php if ($property['mandatory']) echo '* ' ?><?php echo $this->translate('Choose file', 'ppit-core', $context->getLocale()) ?></span>
+										<input type="file" id="<?php $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate" <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value=" value="<?php echo $viewData[$inputId] ?>">
+									</div>
+									<div class="file-path-wrapper">
+										<input class="file-path validate" type="text" placeholder="<?php echo $context->localize($property['labels'], $locale) ?>" >
+									</div>
+								</div>
+
+     			<?php elseif ($property['type'] == 'email') : ?>
+								<input type="email" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>" />
+								<label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+     			<?php elseif ($property['type'] == 'input') : ?>
+								<input type="text" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>" />
+								<label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+     			<?php elseif ($property['type'] == 'separation') : ?>
+     							<hr>
+
+     			<?php else : ?>
+								<span class="font-weight-bold"><?php echo $context->localize($property['labels'], $locale) ?></span>
+
+				<?php endif;?>
+							</div>
+						</div>
+	<?php endforeach;?>
+					</div>
+
+	<?php if (!$message && !$error) : ?>
+					<div class="center-on-small-only">
+						<button class="btn btn-light-blue btn-rounded" type="submit"><?php echo $context->localize($content['form']['submit']['labels'], $locale) ?></button>
+					</div>
+	<?php endif;?>
+<?php endif;?>	
+				</form>
+			</div>
+			<!--Grid column-->
+
+<?php if (array_key_exists('contact_section', $content)) : ?>
+			<!--Grid column-->
+			<div class="col-md-4 col-xl-3">
+				<ul class="contact-icons">
+	<?php if (array_key_exists('location', $content['contact_section'])) : ?>
+					<li><i class="fa fa-map-marker fa-2x"></i>
+						<p><?php echo $context->localize($content['contact_section']['location']['label'], $locale) ?></p>
+					</li>
+	<?php endif;?>
+
+	<?php if (array_key_exists('phone', $content['contact_section'])) : ?>
+					<li><i class="fa fa-phone fa-2x"></i>
+						<p><?php echo $context->localize($content['contact_section']['phone']['label'], $locale) ?></p>
+					</li>
+	<?php endif;?>
+
+	<?php if (array_key_exists('email', $content['contact_section'])) : ?>
+					<li><i class="fa fa-envelope fa-2x"></i>
+						<p><?php echo $context->localize($content['contact_section']['email']['label'], $locale) ?></p>
+					</li>
+	<?php endif;?>
+				</ul>
+			</div>
+			<!--Grid column-->
+<?php endif;?>
+		</div>
+	</section> 
+	<!--Section: Contact v.2-->
+
+        </div>
+
+   <!--Footer-->
+    <footer class="page-footer center-on-small-only mt-5">
+
+        <!--Footer Links-->
+        <div class="container">
+            <div class="row">
+
+                <!--First column-->
+                <div class="col-md-3">
+                    <h5 class="title">Ressources </h5>
+                </div>
+                <!--/.First column-->
+
+                <hr class="w-100 clearfix d-md-none">
+
+                <!--Second column-->
+                <div class="col-md-2 ml-auto">
+                    <ul>
+                        <li><a href="#!">Blog</a></li>
+                    </ul>
+                </div>
+                <!--/.Second column-->
+
+            </div>
+        </div>
+
+        <!--Copyright-->
+        <div class="footer-copyright">
+            <div class="container-fluid">
+                © 2018 Copyright: <a href="http://www.flowux.io"> Flow UX </a>
+
+            </div>
+        </div>
+        <!--/.Copyright-->
+
+    </footer>
+    </main>
+    <!--Main layout-->
+</body>
+    	
+    <!-- SCRIPTS -->
+    <!-- Font Awesome -->
+    <!-- JQuery -->
+    <script type="text/javascript" src="<?php echo $this->basePath('MDB Pro/js/jquery-3.2.1.min.js') ?>"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="<?php echo $this->basePath('MDB Pro/js/popper.min.js') ?>"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="<?php echo $this->basePath('MDB Pro/js/bootstrap.min.js') ?>"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="<?php echo $this->basePath('MDB Pro/js/mdb.min.js') ?>"></script>
+
+<script type="text/javascript">
+// Material Select Initialization
+new WOW().init();
+$(document).ready(function() {
+   $('.mdb-select').material_select();
+});
+
+<?php if ($message) : ?>
+ga('send', 'event', '<?php echo (array_key_exists('campaign', $content['header'])) ? $content['header']['campaign'] : $place_identifier ?>', 'submit', 'landing_template2#survey', 1);
+<?php endif;?>
+
+$('#a_survey').click(function () {
+<?php if (array_key_exists('analytics-id', $content['header'])) : ?>
+	ga('send', 'event', '<?php echo (array_key_exists('campaign', $content['header'])) ? $content['header']['campaign'] : $place_identifier ?>', 'click', 'landing_template2#survey', 1);
+<?php endif;?>
+	$(location).attr('href', '#descr');
+});
+</script>
+<?php if ($context->hasRole('sales_manager')) : ?>
+<script src="<?php echo $this->basePath('medium-editor-master/dist/js/medium-editor.js') ?>"></script>
+<script>
+	//Returns a function, that, as long as it continues to be invoked, will not
+	//be triggered. The function will be called after it stops being called for
+	//N milliseconds. If `immediate` is passed, trigger the function on the
+	//leading edge, instead of the trailing.
+	function debounce(func, wait, immediate) {
+		var timeout;
+		return function() {
+			var context = this, args = arguments;
+			var later = function() {
+				timeout = null;
+				if (!immediate) func.apply(context, args);
+			};
+			var callNow = immediate && !timeout;
+			clearTimeout(timeout);
+			timeout = setTimeout(later, wait);
+			if (callNow) func.apply(context, args);
+		};
+	};
+	var editor = new MediumEditor('.editable', {
+        buttonLabels: 'fontawesome'
+    });
+    function triggerAutoSave(event, editable) {
+    	var xhttp = new XMLHttpRequest();
+    	xhttp.open("POST", '<?php echo $this->url('config/v1', ['identifier' => $place_identifier.'_landing']) ?>', true);
+    	xhttp.onreadystatechange = function() {
+    		if (xhttp.readyState == 4 && xhttp.status == 200) {
+    		}
+    	}
+        var content = { content: {} };
+        content.content['intro/' + editable.id] = editable.innerHTML;
+    	xhttp.send(JSON.stringify(content));
+    }
+    var throttledAutoSave = debounce(triggerAutoSave, 1000);
+    editor.subscribe('editableInput', throttledAutoSave);
+</script>
+<?php endif;?>
+</html>

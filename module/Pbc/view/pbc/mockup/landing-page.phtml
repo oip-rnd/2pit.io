@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en" class="full-height">
+<head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>ProBono Corpo</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="<?php echo $this->basePath('/font-awesome-4.7.0/css/font-awesome.min.css') ?>">
+
+    <!-- Bootstrap core CSS -->
+    <link href="<?php echo $this->basePath('MDB Pro/css/bootstrap.min.css" rel="stylesheet') ?>">
+
+    <!-- Material Design Bootstrap -->
+    <link href="<?php echo $this->basePath('MDB Pro/css/mdb.min.css" rel="stylesheet') ?>">
+
+    <!-- Your custom styles (optional) -->
+    <link href="<?php echo $this->basePath('MDB Pro/css/style.css" rel="stylesheet') ?>">
+
+    <style>
+        
+        .top-nav-collapse {
+            background-color: #9da4b1 !important; 
+        }
+        .navbar:not(.top-nav-collapse) {
+            background: transparent !important;
+        }
+        @media (max-width: 768px) {
+            .navbar:not(.top-nav-collapse) {
+                background: #9da4b1 !important;
+            } 
+        }
+        @media (max-width: 740px) {
+            .full-height,
+            .full-height body,
+            .full-height header,
+            .full-height header .view {
+                height: 700px; 
+            } 
+        }
+        footer.page-footer {
+            background-color: #9da4b1;
+        }   
+         
+.form-elegant .font-small {
+  font-size: 0.8rem; }
+
+.form-elegant .z-depth-1a {
+  -webkit-box-shadow: 0 2px 5px 0 rgba(55, 161, 255, 0.26), 0 4px 12px 0 rgba(121, 155, 254, 0.25);
+  box-shadow: 0 2px 5px 0 rgba(55, 161, 255, 0.26), 0 4px 12px 0 rgba(121, 155, 254, 0.25); }
+
+.form-elegant .z-depth-1-half,
+.form-elegant .btn:hover {
+  -webkit-box-shadow: 0 5px 11px 0 rgba(85, 182, 255, 0.28), 0 4px 15px 0 rgba(36, 133, 255, 0.15);
+  box-shadow: 0 5px 11px 0 rgba(85, 182, 255, 0.28), 0 4px 15px 0 rgba(36, 133, 255, 0.15); }
+
+.chip.chip-md {
+    height: 42px;
+    line-height: 42px;
+    border-radius: 21px;
+}
+.chip.chip-md img {
+    height: 42px;
+    width: 42px;
+}
+.chip.chip-md .close {
+    height: 42px;
+    line-height: 42px;
+    border-radius: 21px;
+}
+
+.chip.chip-lg {
+    height: 52px;
+    line-height: 52px;
+    border-radius: 26px;
+}
+.chip.chip-lg img {
+    height: 52px;
+    width: 52px;
+}
+.chip.chip-lg .close {
+    height: 52px;
+    line-height: 52px;
+    border-radius: 26px;
+}
+                   
+    </style>
+</head>
+<body>
+
+    <!--Main Navigation-->
+    <header>
+
+        <!--Navbar-->
+        <nav class="navbar navbar-expand-lg navbar-dark fixed-top scrolling-navbar">
+            <div class="container">
+				<a href="<?php echo $this->url('mockup/landingPage') ?>" class="navbar-brand"><img height="<?php echo $context->getConfig('bootstrap4')['logo-height'] ?>" src="<?php echo $this->basePath('/logos/'.$context->getInstance()->caption.'/'.$context->getConfig('bootstrap4')['logo']) ?>" alt="<?php echo $context->getInstance()->caption ?> logo" /></a>
+                <a href="<?php echo $this->url('mockup/landingPage') ?>" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-7" aria-controls="navbarSupportedContent-7" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </a>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent-7">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#"><i class="fa fa-user"></i> S'enregistrer</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Intro Section -->
+        <div class="view hm-purple-slight jarallax" data-jarallax='{"speed": 0.2}' style="background-image: url('https://mdbootstrap.com/img/Photos/Others/gradient2.png');">
+            <div class="full-bg-img">
+                <div class="container flex-center">
+                    <div class="row pt-5 mt-3">
+                        <div class="col-md-12 wow fadeIn mb-3">
+
+<section class="form-elegant">
+
+    <!--Form without header-->
+    <div class="card">
+
+        <div class="card-body mx-4">
+
+            <div class="text-center">
+                <h3 class="dark-grey-text"><strong>Je recherche une compétence</strong></h3>
+            </div>
+            	<h3>
+<?php $i=0; foreach ($context->getConfig('pbc/skills') as $skillId => $skill) : ?>
+	<?php if ($counters[$i % count($counters)]) : ?>
+					<a href="<?php echo $this->url('mockup/result').'?skills='.$skillId ?>" class="chip chip-lg <?php echo $context->getConfig('pbc/skillColors')[$skillId] ?> white-text">
+					    <?php echo $context->localize($skill) ?>&nbsp;&nbsp;<span class="badge badge-pill red"><?php echo $counters[$i % count($counters)] ?></span>
+					</a>
+	<?php endif;?>
+<?php $i++; endforeach;?>
+				</h3>
+
+            <div class="md-form">
+                <input type="text" id="search-input" class="form-control">
+                <label for="search-input"><i class="fa fa-search"></i></label>
+            </div>
+
+            <div class="text-center mb-3">
+                <a id="search-button" href="#" type="button" class="btn blue-gradient btn-block btn-rounded z-depth-1a">Lancer la recherche</a>
+            </div>
+
+            <div class="text-center">&nbsp;</div>
+
+            <div class="text-center">
+                <a href="#contributor"><strong>J'ai des compétences à proposer</strong></a>
+            </div>
+        </div>
+    </div>
+    <!--/Form without header-->
+
+</section>
+                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </header>
+    <!--Main Navigation-->
+
+    
+    <!--Main Layout-->
+    <main>
+    
+        <div class="container" id="main">
+ 
+            <!--Section: Contact v.2-->
+            <section class="section pb-5 wow fadeIn" data-wow-delay="0.3s">
+
+                <!--Section heading-->
+                <h2 id="contributor">&nbsp;</h2>
+                <h2 class="section-heading h1 pt-4">J'ai des compétences à proposer</h2>
+                <!--Section description-->
+                <p class="section-description">Génial ! Nous vous remercions et serons heureux de vous accueillir dans la communauté. Nous vous invitons à vous <a href="#">enregistrer en ligne</a>. Vous pourrez importer vos compétences depuis ACE et définir vos préférences : localisation, plages horaires de disponibilité.... </p>
+                <p class="section-description">Si vous souhaitez des précisions sur <em>ProBono Corpo</em>, vous pouvez nous contacter :</p>
+
+                <div class="row">
+
+                    <!--Grid column-->
+                    <div class="col-md-8 col-xl-9">
+                        <form>
+
+                            <!--Grid row-->
+                            <div class="row">
+
+                                <!--Grid column-->
+                                <div class="col-md-6">
+                                    <div class="md-form">
+                                        <div class="md-form">
+                                            <input type="text" id="contact-name" class="form-control">
+                                            <label for="contact-name" class="">Votre nom</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Grid column-->
+
+                                <!--Grid column-->
+                                <div class="col-md-6">
+                                    <div class="md-form">
+                                        <div class="md-form">
+                                            <input type="text" id="contact-email" class="form-control">
+                                            <label for="contact-email" class="">Votre email</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Grid column-->
+
+                            </div>
+                            <!--Grid row-->
+
+                            <!--Grid row-->
+                            <div class="row">
+
+                                <!--Grid column-->
+                                <div class="col-md-12">
+
+                                    <div class="md-form">
+                                        <textarea type="text" id="contact-message" class="md-textarea"></textarea>
+                                        <label for="contact-message">Votre question</label>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <!--Grid row-->
+
+                        </form>
+
+                        <div class="center-on-small-only">
+                            <a class="btn btn-light-blue btn-rounded">Soumettre</a>
+                        </div>
+                    </div>
+                    <!--Grid column-->
+
+                    <!--Grid column-->
+                    <div class="col-md-4 col-xl-3">
+                        <ul class="contact-icons">
+                            <li><i class="fa fa-map-marker fa-2x"></i>
+                                <p>Paris La Défense, France</p>
+                            </li>
+
+                            <li><i class="fa fa-phone fa-2x"></i>
+                                <p>01 02 03 04 05</p>
+                            </li>
+
+                            <li><i class="fa fa-envelope fa-2x"></i>
+                                <p>contact-probono@socgen.com</p>
+                            </li>
+                        </ul>
+                    </div>
+                    <!--Grid column-->
+
+                </div>
+
+            </section> 
+            <!--Section: Contact v.2-->
+            
+        </div>
+    
+    </main>
+    <!--Main Layout-->
+    
+   
+    <!--Footer-->
+    <footer class="page-footer center-on-small-only mt-5">
+
+        <!--Footer Links-->
+        <div class="container">
+            <div class="row">
+
+                <!--First column-->
+                <div class="col-md-3">
+                    <h5 class="title">Ressources </h5>
+                </div>
+                <!--/.First column-->
+
+                <hr class="w-100 clearfix d-md-none">
+
+                <!--Second column-->
+                <div class="col-md-2 ml-auto">
+                    <ul>
+                        <li><a href="#!">Blog ProBonoCorpo</a></li>
+                    </ul>
+                </div>
+                <!--/.Second column-->
+
+                <hr class="w-100 clearfix d-md-none">
+
+                <!--Third column-->
+                <div class="col-md-2 ml-auto">
+                    <ul>
+                        <li><a href="#!">Culture & Conduct</a></li>
+                    </ul>
+                </div>
+                <!--/.Third column-->
+
+                <hr class="w-100 clearfix d-md-none">
+
+                <!--Fourth column-->
+                <div class="col-md-2 ml-auto">
+                    <ul>
+                        <li><a href="#!">ACE</a></li>
+                    </ul>
+                </div>
+                <!--/.Fourth column-->
+
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="container">
+            <!--Grid row-->
+            <div class="row mb-3">
+
+                <!--First column-->
+                <div class="col-md-12">
+
+                    <ul class="list-unstyled d-flex justify-content-center mb-0 py-4">
+                        <li><a class="icons-sm tw-ic"><i class="fa fa-twitter white-text fa-lg"> </i></a></li>
+                        <li><a class="icons-sm li-ic"><i class="fa fa-linkedin white-text fa-lg"> </i></a></li>
+                    </ul>
+
+                </div>
+                <!--/First column-->
+            </div>
+            <!--/Grid row-->
+        </div>
+        <!--/.Footer Links-->
+
+        <!--Copyright-->
+        <div class="footer-copyright">
+            <div class="container-fluid">
+                © 2018 Copyright: <a href="http://www.flowux.io"> SOCIETE GENERALE </a>
+
+            </div>
+        </div>
+        <!--/.Copyright-->
+
+    </footer>
+    <!--/.Footer-->
+
+    <!-- SCRIPTS -->
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="<?php echo $this->basePath('MDB Pro/js/jquery-3.2.1.min.js') ?>"></script>
+
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="<?php echo $this->basePath('MDB Pro/js/popper.min.js') ?>"></script>
+
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="<?php echo $this->basePath('MDB Pro/js/bootstrap.min.js') ?>"></script>
+
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="<?php echo $this->basePath('MDB Pro/js/mdb.min.js') ?>"></script>
+
+    <script>
+        new WOW().init();
+
+        $('#search-button').click(function () {
+            location.href = '<?php echo $this->url('mockup/result') ?>' + '?skills=' + $('#search-input').val();
+        });
+    </script>
+</body>
+</html>

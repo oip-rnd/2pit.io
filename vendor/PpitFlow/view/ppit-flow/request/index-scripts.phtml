@@ -1,0 +1,347 @@
+<script>
+
+// Requests
+
+var mode = 'Public';
+
+<?php foreach ($index['navbar'] as $navId => $navItem) : ?>
+
+<!-- Mode change -->
+
+  <?php if ($navItem['type'] == 'mode') : ?>
+
+$('#aMode<?php echo $navItem['value'] ?>').click(function () {
+  $('.aMode').removeClass('active');
+  $('#aMode<?php echo $navItem['value'] ?>').addClass('active');
+  mode = '<?php echo $navItem['value'] ?>';
+  resetHomeSearch();
+  showList();
+});
+
+if (mode == '<?php echo $navItem['value'] ?>') $('#aMode<?php echo $navItem['value'] ?>').addClass('active');
+
+<!-- Search -->
+
+<?php elseif ($navItem['type'] == 'search') : ?>
+  <?php
+  $propertyId = $navItem['property'];
+  $property = $detail['properties'][$propertyId];
+  ?>
+
+  <?php if ($property['type'] == 'chips') : ?>
+
+//Skills search
+var homeSearch_<?php echo $propertyId ?> = {
+  <?php $first = true; foreach ($context->getConfig($property['repository']) as $entryId => $entry) : ?>
+    <?php 
+    if (!$first) echo ',';
+    $first = false;
+    ?>
+  "<?php echo $entryId ?>": "<?php echo $context->localize($entry['labels'], $locale) ?>"
+  <?php endforeach;?>
+};
+
+$('.homeSearch').hide();
+
+$('#homeSearch-<?php echo $propertyId ?>').mdb_autocomplete({
+  data: homeSearch_<?php echo $propertyId ?>
+});
+
+$('#homeSearch-<?php echo $propertyId ?>').change(function () {
+  $('.aMode').removeClass('active');
+  $('#aModePublic').addClass('active');
+  mode = 'Public';
+  var matched;
+  setTimeout(function () {
+    for (id in homeSearch_<?php echo $propertyId ?>) {
+      if (homeSearch_<?php echo $propertyId ?>[id] == $('#homeSearch-<?php echo $propertyId ?>').val()) {
+        $('#skill-' + id).val(1);
+        $('#homeSearch-' + id).show();
+        $('#homeSearch-<?php echo $propertyId ?>').val('');
+        break;
+      }
+    }
+    showList();
+  }, 600);
+});
+
+$('.homeSearchClose').click(function () {
+<?php foreach ($context->getConfig($property['repository']) as $entryId => $entry) : ?>
+if ($(this).attr('id').split('-')[1] == '<?php echo $entryId ?>') $('#skill-<?php echo $entryId ?>').val(0);
+<?php endforeach;?>
+$(this).parent().parent().hide();
+showList();
+});
+
+    <?php endif; ?>
+  <?php endif; ?>
+<?php endforeach; ?>
+
+function resetHomeSearch() {
+  $('.homeSearchValue').val(0);
+  $('.homeSearch').hide();
+}
+  
+$('.aDetailAction').click(function () {
+  var request_id = $(this).attr('id').split('-')[1];
+  xhttp.open('GET', '<?php echo $this->url('request/detailv2') ?>/' + request_id, true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      $('#modalRequestDetailTitle').html('<?php echo $this->translate('Request detail', 'ppit-flow', $locale) ?>');
+      $('#modalRequestDetailContent').html(xhttp.responseText);
+      $('#modalRequestDetailForm').modal('show');
+    }
+  };
+  xhttp.send();
+});
+
+function showList() {
+  var skills = '', first = true;
+  for (id in homeSearch_property_2) {
+    if ($('#skill-' + id).val() == 1) {
+      if (!first) skills += ',';
+      skills += id;
+      first = false;
+    }
+  }
+  var xhttp = new XMLHttpRequest();
+  var route = '<?php echo $this->url('request/list') ?>?mode=' + mode + '&skills=' + skills;
+
+<?php foreach ($filters as $filterId => $predicate) : ?>
+  route += '&' + '<?php echo $filterId ?>' + '=' + '<?php echo $predicate ?>';
+<?php endforeach; ?>
+
+  xhttp.open('GET', route, true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      document.getElementById('requests').innerHTML = xhttp.responseText;
+
+      <?php $action = $detail['OwnerActions']['update'] ?>
+      $('.aUpdateAction').click(function () {
+        var request_id = $(this).attr('id').split('-')[1];
+    	location.href = '<?php echo $this->url('request/fill')?>/' + request_id;
+      });
+
+<?php foreach ($detail['OwnerActions'] as $action_id => $action) : ?>
+  <?php if ($action_id == 'consultFeedback') : ?>
+
+      $('.aOwnerAction-<?php echo $action_id ?>').click(function () {
+        var request_id = $(this).attr('id').split('-')[2];
+        $('#modalShowProfileTitle').html('<?php echo $context->localize($action['labels'], $locale) ?>');
+        xhttp.open('GET', '<?php echo $this->url('request/consultFeedback') ?>/' + request_id, true);
+        xhttp.onload = function () {
+          if (xhttp.readyState == 4 && xhttp.status == 200) {
+            $('#modalShowProfileContent').html(xhttp.responseText);
+            $('#modalShowProfileForm').modal('show');
+          }
+        };
+        xhttp.send();
+      });
+ 
+  <?php else : ?>
+
+      $('.aOwnerAction-<?php echo $action_id ?>').click(function () {
+        var action = $(this).attr('id').split('-')[1];
+        var request_id = $(this).attr('id').split('-')[2];
+        $('#modalRequestActionTitle').html('<?php echo $context->localize($action['labels'], $locale) ?>');
+        xhttp.open('GET', '<?php echo $this->url('request/detailv2') ?>/' + request_id, true);
+        xhttp.onload = function () {
+          if (xhttp.readyState == 4 && xhttp.status == 200) {
+            $('#modalRequestActionContent').html(xhttp.responseText);
+            $('#buttonRequestAction').html('<?php echo $context->localize($action['labels'], $locale) ?>');
+            $('#buttonRequestAction').unbind();
+            $('#buttonRequestAction').click(function () {
+              var xhttp = new XMLHttpRequest();
+              xhttp.open('POST', '<?php echo $this->url('request/'.$action_id) ?>/' + request_id, true);
+              xhttp.onload = function () {
+                if (xhttp.readyState == 4) {
+                  if (xhttp.status == 200) {
+                    toastr.success('<h4 class="text-center"><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h4>');
+                    showList();
+                  }
+                  else technicalError();
+                }
+              };
+              xhttp.send();  
+            });
+
+            $('#modalRequestActionForm').modal('show');
+          }
+        };
+        xhttp.send();
+      });
+
+  <?php endif;?>
+<?php endforeach;?>
+
+      $('.aMatchingDetailAction').click(function () {
+        var request_id = $(this).attr('id').split('-')[1];
+        var account_id = $(this).attr('id').split('-')[2];
+        var xhttp = new XMLHttpRequest();
+        xhttp.open('GET', '<?php echo $this->url('profile/detail') ?>/' + request_id + '/' + account_id, true);
+        xhttp.onload = function () {
+          if (xhttp.readyState == 4 && xhttp.status == 200) {
+            $('#modalShowProfileTitle').html('<?php echo $this->translate('Profile', 'ppit-flow', $locale) ?>');
+            $('#modalShowProfileContent').html(xhttp.responseText);
+            $('.dataProtected').hide();
+            $('#modalShowProfileForm').modal('show');
+          }
+        };
+        xhttp.send();
+      });
+
+      $('.aMatchingSearchAction').click(function () {
+        var id = $(this).attr('id').split('-')[1];
+        var xhttp = new XMLHttpRequest();
+        xhttp.open('GET', '<?php echo $this->url('profile/list') ?>/' + id, true);
+        xhttp.onload = function () {
+          if (xhttp.readyState == 4 && xhttp.status == 200) {
+            $('#modalShowProfileTitle').html('<?php echo $this->translate('Profile', 'ppit-flow', $locale) ?>');
+            $('#modalShowProfileContent').html(xhttp.responseText);
+            $('.dataProtected').hide();
+            $('.buttonContact').click(function () {
+              var account_id = $(this).attr('id').split('-')[1];
+              var xhttp = new XMLHttpRequest();
+              xhttp.open('POST', '<?php echo $this->url('request/contact') ?>/' + id + '?accounts=' + account_id, true);
+              xhttp.onload = function () {
+                if (xhttp.readyState == 4) {
+                  if (xhttp.status == 200) {
+                      showList();
+                  }
+                  else technicalError;
+                }
+              };
+              xhttp.send();
+            });
+            $('#modalShowProfileForm').modal('show');
+          }
+        };
+        xhttp.send();
+      });
+
+<?php foreach ($detail['MatchingActions'] as $action_id => $action) : ?>
+	
+  <?php if ($action_id == 'feedback') : ?>
+      $('.aMatchingAction-<?php echo $action_id ?>').click(function () {
+        var request_id = $(this).attr('id').split('-')[2];
+        var account_id = $(this).attr('id').split('-')[3];
+        location.href = '<?php echo $this->url('request/feedback')?>/' + request_id + '?contributor=' + account_id;
+      });
+
+  <?php else : ?>
+      $('.aMatchingAction-<?php echo $action_id ?>').click(function () {
+        var action = $(this).attr('id').split('-')[1];
+        var request_id = $(this).attr('id').split('-')[2];
+        var account_id = $(this).attr('id').split('-')[3];
+        $('#modalRequestActionTitle').html('<?php echo $context->localize($action['labels'], $locale) ?>');
+        xhttp.open('GET', '<?php echo $this->url('profile/detail') ?>/' + request_id + '/' + account_id + '?actions=' + action, true);
+        xhttp.onload = function () {
+          if (xhttp.readyState == 4 && xhttp.status == 200) {
+            $('#modalRequestActionContent').html(xhttp.responseText);
+            $('#buttonRequestAction').html('<?php echo $context->localize($action['labels'], $locale) ?>');
+            $('#buttonRequestAction').unbind();
+            $('#buttonRequestAction').click(function () {
+              var xhttp = new XMLHttpRequest();
+              xhttp.open('POST', '<?php echo $this->url('request/'.$action_id) ?>/' + request_id + '?accounts=' + account_id, true);
+              xhttp.onload = function () {
+                if (xhttp.readyState == 4) {
+                  if (xhttp.status == 200) {
+                    toastr.success('<h4 class="text-center"><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h4>');
+                    showList();
+                  }
+                  else technicalError();
+                }
+              };
+              xhttp.send();  
+            });
+
+            $('#modalRequestActionForm').modal('show');
+          }
+        };
+        xhttp.send();
+      });
+  <?php endif;?>
+<?php endforeach;?>
+
+<?php foreach ($detail['ContributorActions'] as $action_id => $action) : ?>
+
+	<?php if ($action_id == 'feedback') : ?>
+      $('.aContributorAction-<?php echo $action_id ?>').click(function () {
+        var request_id = $(this).attr('id').split('-')[2];
+        var account_id = $(this).attr('id').split('-')[3];
+        location.href = '<?php echo $this->url('request/feedback')?>/' + request_id + '?contributor=' + account_id;
+      });
+
+    <?php elseif ($action_id == 'consultFeedback') : ?>
+
+      $('.aContributorAction-<?php echo $action_id ?>').click(function () {
+        var request_id = $(this).attr('id').split('-')[2];
+        $('#modalShowProfileTitle').html('<?php echo $context->localize($action['labels'], $locale) ?>');
+        xhttp.open('GET', '<?php echo $this->url('request/consultFeedback') ?>/' + request_id, true);
+        xhttp.onload = function () {
+          if (xhttp.readyState == 4 && xhttp.status == 200) {
+            $('#modalShowProfileContent').html(xhttp.responseText);
+            $('#modalShowProfileForm').modal('show');
+          }
+        };
+        xhttp.send();
+      });
+
+  	<?php else : ?>
+      $('.aContributorAction-<?php echo $action_id ?>').click(function () {
+          var action = $(this).attr('id').split('-')[1];
+          var request_id = $(this).attr('id').split('-')[2];
+          $('#modalRequestActionTitle').html('<?php echo $context->localize($action['labels'], $locale) ?>');
+          xhttp.open('GET', '<?php echo $this->url('request/detailv2') ?>/' + request_id, true);
+          xhttp.onload = function () {
+            if (xhttp.readyState == 4 && xhttp.status == 200) {
+              $('#modalRequestActionContent').html(xhttp.responseText);
+              $('#buttonRequestAction').html('<?php echo $context->localize($action['labels'], $locale) ?>');
+              $('#buttonRequestAction').unbind();
+              $('#buttonRequestAction').click(function () {
+                var xhttp = new XMLHttpRequest();
+                xhttp.open('POST', '<?php echo $this->url('request/'.$action_id) ?>/' + request_id, true);
+                xhttp.onload = function () {
+                  if (xhttp.readyState == 4) {
+                    if (xhttp.status == 200) {
+                      toastr.success('<h4 class="text-center"><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h4>');
+                      showList();
+                    }
+                    else technicalError();
+                  }
+                };
+                xhttp.send();  
+              });
+
+              $('#modalRequestActionForm').modal('show');
+            }
+          };
+          xhttp.send();
+      });
+    <?php endif;?>
+<?php endforeach;?>
+
+    }
+  };
+  xhttp.send();
+}
+
+showList();
+
+// Tooltips
+
+$(function () {
+$('[data-toggle="tooltip"]').tooltip()
+})
+
+<?php foreach ($tooltips as $itemId => $tooltip) : ?>
+$('<?php echo $itemId ?>').attr('data-toggle', 'tooltip');
+$('<?php echo $itemId ?>').addClass('red-tooltip');
+$('<?php echo $itemId ?>').attr('data-placement', '<?php echo (array_key_exists('data-placement', $tooltip)) ? $tooltip['data-placement'] : 'right' ?>');
+$('<?php echo $itemId ?>').attr('title', '<?php echo $context->localize($tooltip['title'], $locale) ?>');
+<?php endforeach;?>
+
+function technicalError() {
+  toastr.error('<h4 class="text-center"><?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?></h4>');  
+}
+</script>

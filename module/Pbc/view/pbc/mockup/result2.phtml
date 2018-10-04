@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<title><?php echo $context->localize($content['header']['title'], $locale) ?></title>
+	<meta charset="utf-8">
+	<meta name="robots" content="index, follow">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">    <!-- Bootstrap core CSS -->
+	<link href="<?php echo $this->basePath('MDB-Pro/css/bootstrap.min.css" rel="stylesheet') ?>">
+
+	<!-- Material Design Bootstrap -->
+	<link href="<?php echo $this->basePath('MDB-Pro/css/mdb.min.css" rel="stylesheet') ?>">
+	<link href="<?php echo $this->basePath('MDB-Pro/css/style.css" rel="stylesheet') ?>">
+	
+	<!-- medium editor -->
+	<link rel="stylesheet" href="<?php echo $this->basePath('medium-editor-master/dist/css/medium-editor.css') ?>">
+	<link rel="stylesheet" href="<?php echo $this->basePath('medium-editor-master/dist/css/themes/default.css" id="medium-editor-theme') ?>">
+	
+	<!-- jquery-ui -->
+	<link href="<?php echo $this->basePath('jquery-ui-1.12.1/jquery-ui.min.css" rel="stylesheet') ?>">
+
+    <!-- Custom styles -->
+	<style>
+	html,
+	body,
+	header,
+	#intro {
+	  height: 75%;
+	}
+	
+	#intro {
+	  background: url("<?php echo $this->basePath($context->localize($content['header']['background_image']['src'])) ?>") no-repeat;
+	  -webkit-background-size: cover;
+	  -moz-background-size: cover;
+	  -o-background-size: cover;
+	  background-size: cover;
+	}
+	
+	@include media-breakpoint-up(sm) {
+	  html {
+	    font-size: 16px;
+	  }
+	}
+	
+	@include media-breakpoint-up(md) {
+	  html {
+	    font-size: 20px;
+	  }
+	}
+	
+	@include media-breakpoint-up(lg) {
+	  html {
+	    font-size: 28px;
+	  }
+	}
+	
+    .card {
+      font-weight: 300;
+    }
+	.portlet {
+	  margin: 0 1em 1em 0;
+	  padding: 0.3em;
+	}
+	.portlet-header {
+	  padding: 0.2em 0.3em;
+	  margin-bottom: 0.5em;
+	  position: relative;
+	}
+	.portlet-toggle {
+	  position: absolute;
+	  top: 50%;
+	  right: 0;
+	  margin-top: -8px;
+	}
+	.portlet-content {
+	  padding: 0.4em;
+	}
+	.portlet-placeholder {
+	  border: 1px dotted black;
+	  margin: 0 1em 1em 0;
+	  height: 50px;
+	}
+	
+	.resizable { font-size: 16px; text-align: center; margin: 0; }
+	</style>
+</head>
+
+<body>
+
+    <!--Main Navigation-->
+    <header>
+
+<?php //echo $this->partial('/partials/navbar.phtml'); ?>
+ 
+<!--Mask-->
+<div id="intro" class="view h-100"> 
+	<div class="d-block h-100 w-lg-100 <?php echo $content['header']['background_image']['mask'] ?>">
+    	<div class="full-bg-img flex-center">
+            <div class="col-md-12 justify-content-center text-center">
+	        </div>
+        </div>
+    </div>
+</div>
+<!--/.Mask-->
+            
+    </header>
+    <!--Main Navigation-->
+
+  <!--Main layout-->
+  <main>
+    <div class="container">
+		
+      <!--Section: Products v.3-->
+      <section class="magazine-section mb-4 my-5">
+<ul class="nav grey lighten-4 md-pills pills-primary nav-justified">
+    <li class="nav-item">
+        <a class="nav-link active" href="#!">Profils et projets</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#!">Contributeurs</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#!">Demandes en cours</a>
+    </li>
+</ul>
+  <p>&nbsp;</p>
+
+        <!--Grid row-->
+        <div class="row wow fadeIn" data-wow-delay="0.3s">
+
+<?php foreach ($accounts as $account) : ?>
+  <?php if (current($account['featured'])['type'] == 'project') : ?>
+          <!--Grid column-->
+          <div class="col-lg-3 col-md-12 mb-4">
+ <div class="card">
+
+  <!-- Card image -->
+  <img class="card-img-top" src="<?php echo current($account['featured'])['image'] ?>" alt="Card image cap">
+
+  <!-- Card content -->
+  <div class="card-body text-center">
+                     <!--Name-->
+                      <h4 class="mt-1">
+                          <strong><?php echo $account['n_first'] ?></strong>
+                      </h4>
+
+    <?php foreach ($account['featured'] as $featureId => $feature) : ?>
+
+      <?php if ($feature['type'] == 'project') : ?>
+      <!-- Featured news -->
+      <div class="single-news mb-3">
+
+        <!-- Image -->
+<!--        <div class="view overlay rounded z-depth-2 mb-4">
+          <img class="img-fluid" src="https://mdbootstrap.com/img/Photos/Others/images/86.jpg" alt="Sample image">
+          <a>
+            <div class="mask rgba-white-slight"></div>
+          </a>
+        </div> -->
+
+        <!-- Grid row -->
+        <div class="row mb-3">
+
+          <!-- Grid column -->
+          <div class="col-12 text-left">
+
+            <!-- Badge -->
+            <a href="<?php echo $this->url('mockup/file') ?>"><span class="badge deep-orange">Projet</span></a>
+
+          </div>
+          <!-- Grid column -->
+
+        </div>
+        <!-- Grid row -->
+
+        <!-- Title -->
+        <div class="d-flex justify-content-between">
+          <div class="col-11 text-left pl-0 mb-3">
+            <?php echo $feature['text'] ?>
+          </div>
+          <a href="<?php echo $this->url('mockup/file') ?>"><i class="fa fa-angle-double-right"></i></a>
+        </div>
+
+      </div>
+      <!-- Featured news -->
+      <?php endif;?>
+
+    <?php endforeach;?>
+
+                    </div>
+                  </div>
+              <!--Card-->
+      
+          </div>
+          <!--Grid column-->
+  <?php else : ?>
+	        <!--Grid column-->
+	        <div class="col-lg-3 col-md-12 mb-4">
+	    
+	            <!--Card-->
+	            <div class="card testimonial-card">
+	    
+	                <!--Background color-->
+	                <div class="card-up info-color"></div>
+	    
+	                <!--Avatar-->
+	                <div class="avatar mx-auto white">
+	                    <img src="<?php echo $account['photo_link_id'] ?>" class="rounded-circle img-fluid">
+	                </div>
+	    
+	                <div class="card-body">
+	                    <!--Name-->
+	                    <h4 class="mt-1">
+	                        <strong><?php echo $account['n_first'] ?></strong>
+	                    </h4>
+
+      <!-- Small news -->
+      <div class="single-news mb-3">
+
+        <!-- Title -->
+        <div class="d-flex justify-content-between">
+          <div class="text-truncate text-left pl-0">
+	<?php foreach ($account['json_property_1'] as $skillId => $skill) : ?>
+						<span class="chip chip-lg <?php echo $context->getConfig('pbc/skillColors')[$skillId] ?> white-text">
+						    <?php echo $context->localize($context->getConfig('pbc/skills')[$skillId]) ?>
+						</span>
+	<?php endforeach;?>
+          </div>
+        </div>
+
+      </div>
+      <!-- Small news -->
+
+    <?php foreach ($account['featured'] as $featureId => $feature) : ?>
+
+      <?php if ($feature['type'] == 'project') : ?>
+      <!-- Featured news -->
+      <div class="single-news mb-3">
+
+        <!-- Image -->
+<!--        <div class="view overlay rounded z-depth-2 mb-4">
+          <img class="img-fluid" src="https://mdbootstrap.com/img/Photos/Others/images/86.jpg" alt="Sample image">
+          <a>
+            <div class="mask rgba-white-slight"></div>
+          </a>
+        </div> -->
+
+        <!-- Grid row -->
+        <div class="row mb-3">
+
+          <!-- Grid column -->
+          <div class="col-12 text-left">
+
+            <!-- Badge -->
+            <a href="<?php echo $this->url('mockup/file') ?>"><span class="badge deep-orange">Projet</span></a>
+
+          </div>
+          <!-- Grid column -->
+
+        </div>
+        <!-- Grid row -->
+
+        <!-- Title -->
+        <div class="d-flex justify-content-between">
+          <div class="col-11 text-left pl-0 mb-3">
+            <?php echo $feature['text'] ?>
+          </div>
+          <a href="<?php echo $this->url('mockup/file') ?>"><i class="fa fa-angle-double-right"></i></a>
+        </div>
+
+      </div>
+      <!-- Featured news -->
+
+      <?php elseif ($feature['type'] == 'desire') : ?>
+
+      <!-- Small news -->
+      <div class="single-news mb-3">
+
+        <!-- Grid row -->
+        <div class="row mb-3">
+
+          <!-- Grid column -->
+          <div class="col-12 text-left">
+
+            <!-- Badge -->
+            <a href="<?php echo $this->url('mockup/file') ?>"><span class="badge success-color">Contribution</span></a>
+
+          </div>
+          <!-- Grid column -->
+
+        </div>
+        <!-- Grid row -->
+
+        <!-- Title -->
+        <div class="d-flex justify-content-between">
+          <div class="col-11 text-left pl-0 mb-3">
+            <?php echo $feature['text'] ?>
+          </div>
+          <a href="<?php echo $this->url('mockup/file') ?>"><i class="fa fa-angle-double-right"></i></a>
+        </div>
+
+      </div>
+      <!-- Small news -->
+
+      <?php else : ?>
+      <!-- Small news -->
+      <div class="single-news mb-3">
+
+        <!-- Grid row -->
+        <div class="row mb-3">
+
+          <!-- Grid column -->
+          <div class="col-12 text-left">
+
+            <!-- Badge -->
+            <a href="<?php echo $this->url('mockup/file') ?>"><span class="badge pink">Demande</span></a>
+
+          </div>
+          <!-- Grid column -->
+
+        </div>
+        <!-- Grid row -->
+
+        <!-- Title -->
+        <div class="d-flex justify-content-between">
+          <div class="col-11 text-left pl-0 mb-3">
+            <?php echo $feature['text'] ?>
+          </div>
+          <a href="<?php echo $this->url('mockup/file') ?>"><i class="fa fa-angle-double-right"></i></a>
+        </div>
+
+      </div>
+      <!-- Small news -->
+      <?php endif;?>
+
+    <?php endforeach;?>
+
+                    </div>
+	                </div>
+	            <!--Card-->
+	    
+	        </div>
+	        <!--Grid column-->
+  <?php endif?>
+<?php endforeach;?>
+
+        </div>
+        <!--Grid row-->
+
+      </section>
+      <!--Section: Products v.3-->
+
+    </div>
+  </main>
+  <!--Main layout-->
+
+    <!--Footer-->
+    <footer class="page-footer center-on-small-only mt-5">
+
+      <!--Footer Links-->
+      <div class="container">
+        <div class="row">
+
+          <!--First column-->
+          <div class="col-md-3">
+            <h5 class="title">Ressources </h5>
+          </div>
+          <!--/First column-->
+
+          <hr class="w-100 clearfix d-md-none">
+
+          <!--Second column-->
+          <div class="col-md-2 ml-auto">
+            <ul>
+              <li><a href="#!">Blog</a></li>
+            </ul>
+          </div>
+          <!--/Second column-->
+
+        </div>
+      </div>
+
+      <!--Copyright-->
+      <div class="footer-copyright">
+        <div class="container-fluid">
+          © 2018 Copyright: <a href="https://github.com/2pit-io/PpitCore/blob/master/license.txt"> 2pit.io </a>
+        </div>
+      </div>
+      <!--/Copyright-->
+
+    </footer>
+    <!--/ Footer -->
+
+</body>
+    
+<!-- SCRIPTS -->
+<!-- Font Awesome -->
+<!-- JQuery -->
+<script type="text/javascript" src="<?php echo $this->basePath('MDB-Pro/js/jquery-3.3.1.min.js') ?>"></script>
+<!-- Bootstrap tooltips -->
+<script type="text/javascript" src="<?php echo $this->basePath('MDB-Pro/js/popper.min.js') ?>"></script>
+<!-- Bootstrap core JavaScript -->
+<script type="text/javascript" src="<?php echo $this->basePath('MDB-Pro/js/bootstrap.min.js') ?>"></script>
+<!-- MDB core JavaScript -->
+<script type="text/javascript" src="<?php echo $this->basePath('MDB-Pro/js/mdb.min.js') ?>"></script>
+
+<script type="text/javascript">
+// Material Select Initialization
+new WOW().init();
+$(document).ready(function() {
+   $('.mdb-select').material_select();
+});
+</script>
+
+</html>

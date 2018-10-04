@@ -1,0 +1,213 @@
+<?php foreach ($content['data'] as $requestId => $request) : ?>
+  
+  <div class="media d-block d-md-flex my-5">
+  <?php if ($content['card']['display']['type'] == 'avatar') : ?>
+    <img  class="card-img-64 rounded-circle d-flex mx-auto mb-3" src="<?php echo $this->basePath('photos/'.(($request['photo_link_id']) ? $request['photo_link_id'] : 'no-photo.png')) ?>" width="40" height="40" alt="Sample image" />
+  <?php elseif ($content['card']['display']['type'] == 'image') : ?>
+    <?php if (array_key_exists($request['category'], $content['card']['display']['class'])) : ?>
+    <i class="<?php echo $content['card']['display']['class'][$request['category']] ?>"></i>
+    <?php else : ?>
+    <i class="fa fa-hands-calendar-alt fa-3x red-text"></i>
+    <?php endif;?>
+  <?php endif;?>
+    <div class="media-body text-md-left ml-md-3">
+      
+      <div class="progress md-progress" style="height: 15px">
+        <div class="progress-bar <?php echo $content['status'][$request['status']]['color'] ?>" role="progressbar" style="width: <?php echo $content['status'][$request['status']]['value'] ?>%; height: 15px" aria-valuenow="<?php echo $content['status'][$request['status']]['value'] ?>" aria-valuemin="0" aria-valuemax="100"><?php echo $context->localize($content['status'][$request['status']]['labels'], $locale) ?></div>
+      </div>
+
+      <div class="grey-text font-weight-bold">
+        <span class="h5"><?php echo $request['n_first'] ?></span>&nbsp;&nbsp;|&nbsp;&nbsp;
+        <?php echo $request['caption'] ?>&nbsp;&nbsp;
+
+<!-- Current user connected on this event -->
+    <?php if ($request['role'] == 'requestor') : ?>
+        <span class="badge badge-info"><?php echo $context->localize($content['card']['roles']['requestor']['labels'], $locale) ?></span>&nbsp;&nbsp;
+    <?php elseif ($request['role'] == 'contributor') : ?>
+        <span class="badge badge-info"><?php echo $context->localize($content['card']['roles']['contributor']['labels'], $locale) ?></span>&nbsp;&nbsp;
+    <?php endif;?>
+
+        <a class="text-secondary aDetailAction" id="aDetailAction-<?php echo $requestId ?>"><i class="fa fa-search mr-1"></i></a>
+
+      </div>
+      
+      <div class="">
+
+  <?php $first = true ?>
+  
+  <?php if ($mode == 'Owner' && $request['status'] == 'new') : ?>
+    <?php 
+    $first = false;
+    $action = $content['actions']['Owner']['update'];
+    ?>
+        <a class="text-secondary font-weight-bold aUpdateAction" id="aUpdateAction-<?php echo $requestId ?>">
+    <?php if (array_key_exists('icon', $action)) : ?>
+          <i class="far fa-<?php echo $action['icon'] ?> mr-1"></i>
+    <?php endif;?>
+          <?php echo $context->localize($action['labels'], $locale) ?>
+        </a>
+  <?php endif;?>
+  
+  <?php foreach ($content['data'][$requestId][$mode.'Actions'] as $actionId => $action) : ?>
+
+    <?php 
+    if (!$first) echo '&nbsp;&nbsp;|&nbsp;&nbsp;';
+    $first = false;
+    ?>
+        <a class="text-secondary font-weight-bold a<?php echo $mode ?>Action a<?php echo $mode ?>Action-<?php echo $actionId ?>" id="a<?php echo $mode ?>Action-<?php echo $actionId ?>-<?php echo $requestId ?>">
+    <?php if (array_key_exists('icon', $action)) : ?>
+          <i class="far fa-<?php echo $action['icon'] ?> mr-1"></i>
+    <?php endif;?>
+          <?php echo $context->localize($action['labels'], $locale) ?>
+        </a>
+
+  <?php endforeach;?>
+
+    </div>
+
+      <div>&nbsp;</div>
+
+    <div class="md-3 grey-text">
+
+<?php $first = true; foreach ($content['card']['properties'] as $inputId => $property) : ?>
+  <?php if ($property['type'] != 'chips') : ?>
+
+    <?php if ($request[$inputId]) : ?>
+      <?php 
+      if (!$first) echo '&nbsp;&nbsp;|&nbsp;&nbsp;';
+      $first = false;
+      ?>
+      <strong><?php echo $context->localize($property['labels'], $locale) ?>:</strong>
+
+      <?php if ($property['type'] == 'select') : ?>
+      <?php echo $context->localize($property['modalities'][$request[$inputId]], $locale) ?>
+
+      <?php elseif ($property['type'] == 'textarea') : ?>
+      <?php echo $request[$inputId] ?>
+
+      <?php elseif ($property['type'] == 'email') : ?>
+      <a href="mailto:<?php echo $request[$inputId] ?>"><?php echo $request[$inputId] ?></a>
+
+      <?php elseif ($property['type'] == 'date') : ?>
+      <?php echo $context->decodeDate($request[$inputId]) ?>
+
+      <?php elseif ($property['type'] == 'time') : ?>
+      <?php echo $request[$inputId] ?>
+
+      <?php elseif ($property['type'] == 'input') : ?>
+      <?php echo $request[$inputId] ?>
+  
+      <?php elseif ($property['type'] == 'separation') : ?>
+      <hr>
+
+      <?php endif;?>
+    <?php endif;?>
+  <?php endif;?>
+<?php endforeach;?>
+    </div>
+    
+<?php foreach ($content['card']['properties'] as $inputId => $property) : ?>
+  <?php if ($property['type'] == 'chips') : ?>
+
+    <?php $currentSkills = ($request[$inputId]) ? explode(',', $request[$inputId]) : [] ?>
+    <div class="text-center">
+    <?php foreach ($currentSkills as $entryId) : ?>
+      <?php $entry = $property['repository'][$entryId] ?>
+      <span class="chip <?php echo $entry['color'] ?> white-text">
+        <?php echo $context->localize($entry['labels'], $locale) ?>
+      </span>
+    <?php endforeach;?>
+    </div>
+
+  <?php endif;?>
+<?php endforeach;?>
+
+<?php if ($mode == 'Owner') : ?>
+      <div>&nbsp;</div>
+	  <div class="card-header border-0 font-weight-bold font-small d-flex justify-content-between py-1">
+	    <p class="mr-4 mb-0">Profils correspondants</p>
+	    <ul class="list-unstyled list-inline mb-0">
+	      <li class="list-inline-item"><a class="text-secondary mr-3 aMatchingSearchAction" id="aMatchingSearchAction-<?php echo $requestId ?>"><i class="fa fa-plus mr-1"></i><?php echo $this->translate('Search for profiles', 'ppit-flow', $context->getLocale()) ?></a>
+	    </ul>
+	  </div>
+
+  <?php foreach ($request['matched_accounts'] as $account_id => $account) : ?>
+  <div class="media mt-4 px-1">
+    <img  class="card-img-32 rounded-circle d-flex mx-auto mb-3" src="<?php echo $this->basePath('photos/'.(($account['photo_link_id']) ? $account['photo_link_id'] : 'no-photo.png')) ?>" width="40" height="40" alt="Sample image" />
+    <div class="media-body text-center text-md-left ml-md-3">
+      <h6 class="mt-0 grey-text">
+        <span class="font-weight-bold">
+          <?php echo $account['n_fn'] ?>
+        </span>&nbsp;&nbsp;
+        <a class="text-secondary font-small aMatchingDetailAction" id="aMatchingDetailAction-<?php echo $requestId ?>-<?php echo $account_id ?>"><i class="fa fa-search mr-1"></i></a>
+
+<!-- Feedback given -->
+    <?php if (array_key_exists($request['account_id'], $request['feedbacks']) && array_key_exists($account['id'], $request['feedbacks'][$request['account_id']])) : ?>
+        <span class="badge badge-success"><?php echo $this->translate('Feedback given', 'ppit-flow', $context->getLocale()) ?></span>
+    <?php endif;?>
+
+<!-- Feedback received -->
+    <?php if (array_key_exists($account['id'], $request['feedbacks']) && array_key_exists($request['account_id'], $request['feedbacks'][$account['id']])) : ?>
+        <span class="badge badge-success"><?php echo $this->translate('Feedback received', 'ppit-flow', $context->getLocale()) ?></span>
+    <?php endif;?>
+
+    <?php if (array_key_exists('action', $request['matching_log'][$account['id']]) && $request['matching_log'][$account['id']]['action'] == 'propose') : ?>
+
+    <?php 
+    $datetime1 = date_create($request['matching_log'][$account['id']]['date']);
+    $datetime2 = date_create(date('Y-m-d'));
+    $age = date_diff($datetime1, $datetime2)->format("%a");
+    ?>
+        <span class="badge <?php echo ($age > 5) ? 'badge-danger pending_contact' : 'badge-warning' ?>"><?php echo $this->translate('To be contacted', 'ppit-flow', $context->getLocale()) ?></span>
+    <?php elseif (array_key_exists('action', $request['matching_log'][$account['id']]) && $request['matching_log'][$account['id']]['action'] == 'accept') : ?>
+      <?php if ($request['status'] == 'realized') : ?>
+        <span class="badge badge-danger"><?php echo $this->translate('Feedback expected', 'ppit-flow', $context->getLocale()) ?></span>
+      <?php else : ?>
+        <span class="badge badge-success"><?php echo $this->translate('Accepted', 'ppit-flow', $context->getLocale()) ?></span>
+      <?php endif;?>
+    <?php endif;?>
+    <?php if ($account['email']) : ?>
+        &nbsp;&nbsp;<a class="text-secondary" href="mailto:<?php echo $account['email'] ?>?subject=probono corpo - <?php echo $request['caption'] ?>"><i class="far fa-envelope"></i></a>
+    <?php endif;?>
+    <?php if ($account['tel_work']) : ?>
+        &nbsp;&nbsp;<a class="text-secondary" href="tel:<?php echo $account['tel_work'] ?>"><i class="fa fa-mobile-alt"></i></a>
+    <?php endif;?>
+      </h6>
+
+      <div class="">
+    <?php $first = true; foreach ($account['actions'] as $actionId => $action) : ?>
+
+      <?php 
+      if (!$first) echo '&nbsp;&nbsp;|&nbsp;&nbsp;';
+      $first = false;
+      ?>
+        <a class="text-secondary font-weight-bold font-small aMatchingAction aMatchingAction-<?php echo $actionId ?>" id="aMatchingAction-<?php echo $actionId ?>-<?php echo $requestId ?>-<?php echo $account_id ?>">
+      <?php if (array_key_exists('icon', $content['actions']['Matching'][$actionId])) : ?>
+          <i class="far fa-<?php echo $content['actions']['Matching'][$actionId]['icon'] ?> mr-1"></i>
+      <?php endif;?>
+          <?php echo $context->localize($content['actions']['Matching'][$actionId]['labels']) ?>
+        </a>
+        
+    <?php endforeach;?>
+      </div>
+    </div>
+  </div>
+  <?php endforeach;?>
+<?php endif;?>
+    </div>
+  </div>
+  <hr>
+  
+<?php endforeach ?>
+
+</section>
+<!-- Section: Blog v.1 -->
+      
+</div>
+<!--Bottom Table UI-->
+
+    </div>
+    <!--/.Card content-->
+
+</div>
+<!--/.Card-->

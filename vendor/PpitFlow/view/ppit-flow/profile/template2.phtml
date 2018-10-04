@@ -1,0 +1,302 @@
+    <!--Main layout-->
+    <main>
+        <div class="container" name="descr" id="descr">
+   
+      <section class="mb-4 my-3">
+        <div class="row justify-content-center p-2 mb-2">
+          <div class="col-md-8">
+      
+<ul class="nav grey lighten-4 md-pills pills-secondary nav-justified">
+    <li class="nav-item">
+        <a class="nav-link" href="<?php echo $this->url('profile/home') ?>"><?php echo $this->translate('Current requests', 'ppit-flow', $context->getLocale())?></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" href="<?php echo $this->url('profile/template2') ?>"><?php echo $this->translate('My profile', 'ppit-flow', $context->getLocale())?></a>
+    </li>
+</ul>
+          </div>
+        </div>
+      </section>
+
+  <section class="section pb-5" data-wow-delay="0.3s" id="survey">
+    
+    <div class="row d-flex justify-content-center">
+
+      <!--Grid column-->
+      <div class="col-md-7">
+        <div id="requests"></div>
+      </div>
+
+      <div class="col-md-5">
+
+<!-- Card -->
+<div class="card testimonial-card">
+
+    <!-- Bacground color -->
+    <div class="card-up indigo lighten-1">
+    </div>
+
+    <!-- Avatar -->
+	    <a class="avatar mx-auto white file-field" id="photo_upload">
+	    	<img src="<?php echo $this->basePath('/photos/'.$viewData['photo_link_id'])?>" class="rounded-circle" id="photo">
+	    	<input type="file" id="photo_path">
+	    </a>
+
+    <div class="card-body">
+
+           <section class="section feature-box" data-wow-delay="0.3s">
+<?php foreach ($content['feature-box'] as $paragraph) : ?>
+		<?php if (array_key_exists('a', $paragraph)) : ?>
+					<a 
+						href="<?php echo $paragraph['a']['href']?>" 
+						<?php if (array_key_exists('class', $paragraph['a'])) echo 'class="'.$paragraph['a']['class'].'"' ?>
+						<?php if (array_key_exists('id', $paragraph['a'])) echo 'id="'.$paragraph['a']['id'].'"' ?>
+					>
+		<?php elseif (array_key_exists('button', $paragraph)) : ?>
+					<button type="button" 
+						<?php if (array_key_exists('class', $paragraph['button'])) echo 'class="'.$paragraph['button']['class'].'"' ?>
+						<?php if (array_key_exists('id', $paragraph['button'])) echo 'id="'.$paragraph['button']['id'].'"' ?>
+					>
+		<?php else : ?>
+					<<?php echo $paragraph['type']?> <?php if (array_key_exists('class', $paragraph)) echo 'class="'.$paragraph['class'].'"' ?>>
+		<?php endif;?>
+		<?php if (array_key_exists('text', $paragraph)) : ?>
+			<?php echo $context->localize($paragraph['text'], $locale) ?>
+		<?php endif;?>
+		<?php if (array_key_exists('a', $paragraph)) : ?>
+					</a>
+		<?php elseif (array_key_exists('button', $paragraph)) : ?>
+					</button>
+		<?php else : ?>
+					</<?php echo $paragraph['type']?>>
+		<?php endif;?>
+<?php endforeach;?>
+           </section>
+	<hr>
+				<form action="<?php echo $this->url('profile/template2') ?>" method="post">
+
+<?php if ($error) : ?>
+				<p class="alert alert-danger section-description">
+					<?php echo $this->translate('An error has occurred, please try again later', 'ppit-core', $context->getLocale()) ?><br>
+					<?php echo $this->translate('Technical information: ', 'ppit-core', $context->getLocale()).$error[0].' '.$error[1] ?>
+				</p>
+				<p class="section-description">
+					<a href="<?php echo $this->url('home') ?>" class="btn btn-light-blue btn-rounded">Accueil</a>
+				</p>
+<?php endif ?>
+
+					<div class="row">
+
+ <?php foreach ($content['form']['inputs'] as $inputId => $property) : ?>
+ 	<?php $disabled = true ?>
+						<div class="<?php echo (array_key_exists('class',$property)) ? $property['class'] : 'col-md-6' ?>">
+							<div class="md-form">
+
+				<?php if ($property['type'] == 'select') : ?>
+								<select id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="mdb-select validate profile_input <?php if ($property['focused']) echo 'profile_input_focused' ?>" <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?>>
+									<option value=""><?php echo $this->translate('Please choose', 'ppit-core', $context->getLocale()) ?></option>
+					<?php foreach ($property['modalities'] as $modalityId => $modality) : ?>
+									<option value="<?php echo $modalityId ?>" <?php if ($viewData[$inputId] == $modalityId) echo 'selected="selected"' ?>><?php echo $context->localize($modality, $locale) ?></option>
+					<?php endforeach;?>
+								</select>
+								<label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+     			<?php elseif ($property['type'] == 'radio') : ?>
+								<input type="radio" id="<?php echo $inputId ?>" name="<?php echo $property['property_id'] ?>" class="form-control validate with-gap profile_input <?php if ($property['focused']) echo 'profile_input_focused' ?>" value="<?php echo $property['value'] ?>" <?php if ($disabled) echo 'disabled="disabled"' ?> <?php if ($viewData[$inputId]) echo 'checked="checked"' ?> />
+								<label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+     			<?php elseif ($property['type'] == 'checkbox') : ?>
+								<input type="checkbox" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate profile_input <?php if ($property['focused']) echo 'profile_input_focused' ?>" value="<?php echo $property['value'] ?>" <?php if ($disabled) echo 'disabled="disabled"' ?> <?php if ($viewData[$inputId]) echo 'checked="checked"' ?> />
+								<label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+				<?php elseif ($property['type'] == 'textarea') : ?>
+								<textarea rows="3" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate profile_input <?php if ($property['focused']) echo 'profile_input_focused' ?>" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?>><?php echo $viewData[$inputId] ?></textarea>
+								<label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+				<?php elseif ($property['type'] == 'file') : ?>
+								<div class="file-field">
+									<div class="btn btn-primary btn-sm float-left ">
+										<span><?php if ($property['mandatory']) echo '* ' ?><?php echo $this->translate('Choose file', 'ppit-core', $context->getLocale()) ?></span>
+										<input type="file" id="<?php $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate profile_input <?php if ($property['focused']) echo 'profile_input_focused' ?>" <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value=" value="<?php echo $viewData[$inputId] ?>">
+									</div>
+									<div class="file-path-wrapper">
+										<input class="file-path validate profile_input <?php if ($property['focused']) echo 'profile_input_focused' ?>" type="text" placeholder="<?php echo $context->localize($property['labels'], $locale) ?>" >
+									</div>
+								</div>
+
+     			<?php elseif ($property['type'] == 'email') : ?>
+								<input type="email" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate profile_input <?php if ($property['focused']) echo 'profile_input_focused' ?>" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>" />
+								<label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+     			<?php elseif ($property['type'] == 'keywords') : ?>
+								<input type="text" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control mdb-autocomplete profile_input <?php if ($property['focused']) echo 'profile_input_focused' ?>" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>">
+                                <label for="<?php echo $inputId ?>" class="disabled"><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+     			<?php elseif (in_array($property['type'], ['input', 'phone'])) : ?>
+								<input type="text" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate profile_input <?php if ($property['focused']) echo 'profile_input_focused' ?>" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>" />
+								<label for="<?php echo $inputId ?>" class="disabled"><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+     			<?php elseif ($property['type'] == 'separation') : ?>
+     							<hr>
+
+     			<?php elseif ($property['type'] == 'chips') : ?>
+					<?php $currentSkills = explode(',', $viewData[$inputId]) ?>
+					        	<div class="text-center">
+					<?php foreach ($property['repository'] as $entryId => $entry) : ?>
+									<input type="hidden" id="<?php echo $inputId.'-'.$entryId ?>" name="<?php echo $inputId.'-'.$entryId ?>" value="<?php echo in_array($entryId, $currentSkills) ? 1 : 0 ?>" />
+									<span id="search-<?php echo $inputId ?>-<?php echo $entryId ?>" class="chip <?php echo $entry['color'] ?> white-text search-<?php echo $inputId ?> <?php if (!in_array($entryId, $currentSkills)) echo 'search-'.$inputId.'-hidden' ?>">
+										<?php echo $context->localize($entry['labels'], $locale) ?>
+									    &nbsp;<a><i id="chip-<?php echo $inputId ?>-<?php echo $entryId ?>" class="profile_search_close search-<?php echo $inputId ?>-close fa fa-times" style="color: red"></i></a>
+									</span>
+					<?php endforeach;?>
+								</div>
+
+     			<?php else : ?>
+								<span class="font-weight-bold"><?php echo $context->localize($property['labels'], $locale) ?></span>
+
+				<?php endif;?>
+							</div>
+						</div>
+<?php endforeach;?>
+					</div>
+
+					<div class="center-on-small-only">
+						<button class="btn btn-warning btn-rounded" type="submit" id="submit_button"><?php echo $context->localize($content['form']['submit']['labels'], $locale) ?></button>
+                        <a class="btn btn-secondary btn-rounded" id="enabler_button"><?php echo $context->localize($content['form']['update']['labels'], $locale) ?></a>
+					</div>
+				</form>
+			</div>
+			<!--Grid column-->
+		</div>
+		<br>
+
+<!-- Card -->	
+
+        </div>
+    </div>
+    <br>
+    
+    <div class="row">
+<?php foreach ($content['form']['legal'] as $paragraph) : ?>
+    <?php if (array_key_exists('a', $paragraph)) : ?>
+          <a 
+            href="<?php echo $paragraph['a']['href']?>" 
+            <?php if (array_key_exists('class', $paragraph['a'])) echo 'class="'.$paragraph['a']['class'].'"' ?>
+            <?php if (array_key_exists('id', $paragraph['a'])) echo 'id="'.$paragraph['a']['id'].'"' ?>
+          >
+    <?php elseif (array_key_exists('button', $paragraph)) : ?>
+          <button type="button" 
+            <?php if (array_key_exists('class', $paragraph['button'])) echo 'class="'.$paragraph['button']['class'].'"' ?>
+            <?php if (array_key_exists('id', $paragraph['button'])) echo 'id="'.$paragraph['button']['id'].'"' ?>
+          >
+    <?php else : ?>
+          <<?php echo $paragraph['type']?> <?php if (array_key_exists('class', $paragraph)) echo 'class="'.$paragraph['class'].'"' ?>>
+    <?php endif;?>
+    <?php if (array_key_exists('text', $paragraph)) : ?>
+      <?php echo $context->localize($paragraph['text'], $locale) ?>
+    <?php endif;?>
+    <?php if (array_key_exists('a', $paragraph)) : ?>
+          </a>
+    <?php elseif (array_key_exists('button', $paragraph)) : ?>
+          </button>
+    <?php else : ?>
+          </<?php echo $paragraph['type']?>>
+    <?php endif;?>
+<?php endforeach;?>
+    </div>
+
+  </section> 
+  <!--Section: Contact v.2-->
+
+</div>
+  
+<div class="modal fade" id="modalShowProfileForm" tabindex="-1" role="dialog" aria-labelledby="modalShowProfileLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+              <div class="modal-header text-center">
+                  <h4 class="modal-title w-100 font-weight-bold" id="modalShowProfileTitle"></h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body mx-3">
+                  <div id="modalShowProfileContent"></div>
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+
+            <button type="button" class="btn btn-link" data-dismiss="modal" aria-label="Close">
+              <?php echo $this->translate('Close', 'ppit-core', $context->getLocale()) ?>
+            </button>
+              </div>
+        </div>
+    </div>
+</div>
+
+<!-- Requests -->
+  
+<div class="modal fade" id="modalRequestActionForm" tabindex="-1" role="dialog" aria-labelledby="modalRequestActionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+              <div class="modal-header text-center">
+                  <h4 class="modal-title w-100 font-weight-bold" id="modalRequestActionTitle"></h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body mx-3">
+                  <div id="modalRequestActionContent"></div>
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+
+            <a class="btn btn-warning btn-rounded" id="buttonRequestAction"></a>
+            <button type="button" class="btn btn-link" data-dismiss="modal" aria-label="Close">
+              <?php echo $this->translate('Close', 'ppit-core', $context->getLocale()) ?>
+            </button>
+              </div>
+        </div>
+    </div>
+</div>
+ 
+<div class="modal fade" id="modalRequestDetailForm" tabindex="-1" role="dialog" aria-labelledby="modalRequestDetailLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+              <div class="modal-header text-center">
+                  <h4 class="modal-title w-100 font-weight-bold" id="modalRequestDetailTitle"></h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body mx-3">
+                  <div id="modalRequestDetailContent"></div>
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+
+            <button type="button" class="btn btn-link" data-dismiss="modal" aria-label="Close">
+              <?php echo $this->translate('Close', 'ppit-core', $context->getLocale()) ?>
+            </button>
+              </div>
+        </div>
+    </div>
+</div>
+ 
+<div class="modal fade" id="modalRequestUpdateForm" tabindex="-1" role="dialog" aria-labelledby="modalRequestUpdateLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+              <div class="modal-header text-center">
+                  <h4 class="modal-title w-100 font-weight-bold" id="modalRequestUpdateTitle"></h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body mx-3">
+                  <div id="modalRequestUpdateContent"></div>
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+
+            <button type="button" class="btn btn-link" data-dismiss="modal" aria-label="Close">
+              <?php echo $this->translate('Close', 'ppit-core', $context->getLocale()) ?>
+            </button>
+              </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,88 @@
+<script>
+
+toastr.options = {
+  "positionClass": "toast-top-full-width",
+}
+
+// Profile search
+var homeSearchSkills = {
+<?php $first = true; foreach ($context->getConfig('matching/skills') as $entryId => $entry) : ?>
+<?php 
+if (!$first) echo ',';
+$first = false;
+?>
+  "<?php echo $entryId ?>": "<?php echo $context->localize($entry['labels'], $locale) ?>"
+<?php endforeach;?>
+};
+
+$('.home_search').hide();
+
+$('#home_search_skill').mdb_autocomplete({
+  data: homeSearchSkills
+});
+
+  $('#home_search_skill').change(function () {
+      var matched;
+      setTimeout(function () {
+          for (id in homeSearchSkills) {
+            if (homeSearchSkills[id] == $('#home_search_skill').val()) {
+              $('#skill-' + id).val(1);
+              $('#home_search-' + id).show();
+              $('#home_search_skill').val('');
+              break;
+            }
+          }
+          showDashboard();
+      }, 600);
+  });
+
+  $('.home_search_close').click(function () {
+  <?php foreach ($context->getConfig('matching/skills') as $entryId => $entry) : ?>
+    if ($(this).attr('id').split('-')[1] == '<?php echo $entryId ?>') $('#skill-<?php echo $entryId ?>').val(0);
+  <?php endforeach;?>
+    $(this).parent().parent().hide();
+    showDashboard();
+  });
+
+// Profile detail
+function showProfile(id) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.open('GET', '<?php echo $this->url('profile/profile') ?>/' + id, true);
+    xhttp.onload = function () {
+      if (xhttp.readyState == 4 && xhttp.status == 200) $('#show_profile_content').html(xhttp.responseText);
+      else toastr.error('<h4 class="text-center"><?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?></h4>');
+    };
+    xhttp.send();
+}
+
+$('.link_profile').click(function () {
+    var id = $(this).attr('id').split('-')[1];
+    showProfile(id);
+    $('#modalShowProfileForm').modal('show');
+});
+
+// Requests
+function showDashboard() {
+    var skills = '', first = true;
+    for (id in homeSearchSkills) {
+      if ($('#skill-' + id).val() == 1) {
+        if (!first) skills += ',';
+        skills += id;
+        first = false;
+      }
+    }
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.open('GET', '<?php echo $this->url('request/home') ?>?skills=' + skills, true);
+    xhttp.onload = function () {
+      if (xhttp.readyState == 4 && xhttp.status == 200) {
+        $('#requests').html(xhttp.responseText);
+      }
+    };
+    xhttp.send();
+}
+
+showDashboard();
+$('#multi-item-example').hide();
+
+</script>

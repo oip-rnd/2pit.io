@@ -1,0 +1,30 @@
+<?php 
+if (array_key_exists($xmlMessage->type, $context->getConfig('commitmentMessage')['importTypes'])) {
+	header('Content-Type: text/csv; charset=utf-8');
+	header("Content-disposition: filename=osi-".$xmlMessage->id.".csv");
+	echo "\xEF\xBB\xBF";
+	$first = true;
+	foreach (json_decode($xmlMessage->content, true) as $row) {
+		if ($first) {
+			$first = false;
+			foreach ($row as $id => $unused) {
+				echo $id.';';
+			}
+			echo "\n";
+		}
+		foreach ($row as $id => $propertyValue) {
+			echo $propertyValue.';';
+		}
+		echo "\n";
+	}
+}
+elseif ($xmlMessage->format == 'XML') {
+	header('Content-Type: text/xml; charset=utf-8');
+	header("Content-disposition: filename=message-".$xmlMessage->id.".xml");
+	echo $xmlMessage->content;
+}
+else {
+	header('Content-Type: application/json; charset=utf-8');
+	header("Content-disposition: filename=message-".$xmlMessage->id.".txt");
+	echo $xmlMessage->content;
+}

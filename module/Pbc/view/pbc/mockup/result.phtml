@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>ProBono Corpo</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="<?php echo $this->basePath('/font-awesome-4.7.0/css/font-awesome.min.css') ?>">
+
+    <!-- Bootstrap core CSS -->
+    <link href="<?php echo $this->basePath('MDB Pro/css/bootstrap.min.css" rel="stylesheet') ?>">
+
+    <!-- Material Design Bootstrap -->
+    <link href="<?php echo $this->basePath('MDB Pro/css/mdb.min.css" rel="stylesheet') ?>">
+
+    <!-- Your custom styles (optional) -->
+    <link href="<?php echo $this->basePath('MDB Pro/css/style.css" rel="stylesheet') ?>">
+
+
+    <style>
+        
+        .top-nav-collapse {
+            background-color: #9da4b1 !important; 
+        }
+        .navbar:not(.top-nav-collapse) {
+            background: transparent !important;
+        }
+        @media (max-width: 768px) {
+            .navbar:not(.top-nav-collapse) {
+                background: #9da4b1 !important;
+            } 
+        }
+        @media (max-width: 740px) {
+            .full-height,
+            .full-height body,
+            .full-height header,
+            .full-height header .view {
+                height: 700px; 
+            } 
+        }
+        footer.page-footer {
+            background-color: #9da4b1;
+        }
+           
+    </style>
+</head>
+
+<body>
+
+    <!--Main Navigation-->
+    <header>
+
+        <!--Navbar-->
+        <nav class="navbar navbar-expand-lg navbar-dark fixed-top scrolling-navbar">
+            <div class="container">
+				<a href="<?php echo $this->url('mockup/landingPage') ?>" class="navbar-brand"><img height="<?php echo $context->getConfig('bootstrap4')['logo-height'] ?>" src="<?php echo $this->basePath('/logos/'.$context->getInstance()->caption.'/'.$context->getConfig('bootstrap4')['logo']) ?>" alt="<?php echo $context->getInstance()->caption ?> logo" /></a>
+                <a href="<?php echo $this->url('mockup/landingPage') ?>" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-7" aria-controls="navbarSupportedContent-7" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </a>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent-7">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#"><i class="fa fa-user"></i> S'enregistrer</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+    </header>
+    <!--Main Navigation-->
+
+
+  <!--Main layout-->
+  <main>
+    <div class="container">
+<br><br><br>
+
+      <!--Navbar-->
+      <nav class="navbar navbar-expand-lg mdb-color lighten-3 mt-3 mb-5">
+
+        <div class="dropdown">
+			<button id="skill-button" type="button" class="btn <?php echo $skillsText ? 'btn-secondary' : 'btn-outline-secondary' ?> waves-effect dropdown-toggle" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown"><?php echo ($skillsText) ? $skillsText : 'Compétences' ?></button>
+		    <div class="dropdown-menu" aria-labelledby="skill-button">
+<?php foreach ($context->getConfig('pbc/skills') as $skillId => $skill) : ?>
+				<input type="hidden" id="skill-<?php echo $skillId ?>-value" value="<?php echo (in_array($skillId, $skills)) ? 1 : 0 ?>" />
+		        <a id="skill-<?php echo $skillId ?>" class="dropdown-item skill-item <?php if (in_array($skillId, $skills)) echo 'active' ?>" href="#"><?php echo $context->localize($skill) ?></a>
+<?php endforeach;?>
+		    </div>
+		</div>
+
+		<button id="begin" type="button" class="btn btn-outline-secondary waves-effect datepicker">Besoin entre le...</button>
+		<button id="end" type="button" class="btn btn-outline-secondary waves-effect datepicker">et le...</button>
+
+        <div class="dropdown">
+			<button id="location-button" type="button" class="btn <?php echo $locationsText ? 'btn-secondary' : 'btn-outline-secondary' ?> waves-effect dropdown-toggle" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown"><?php echo ($locationsText) ? $locationsText : 'Localisations' ?></button>
+		    <div class="dropdown-menu" aria-labelledby="location-button">
+<?php foreach ($context->getConfig('pbc/locations') as $locationId => $location) : ?>
+				<input type="hidden" id="location-<?php echo $locationId ?>-value" value="<?php echo (in_array($locationId, $locations)) ? 1 : 0 ?>" />
+		        <a id="location-<?php echo $locationId ?>" class="dropdown-item location-item <?php if (in_array($locationId, $locations)) echo 'active' ?>" href="#"><?php echo $context->localize($location) ?></a>
+<?php endforeach;?>
+		    </div>
+		</div>
+
+      </nav>
+      <!--/.Navbar-->
+
+		
+      <!--Section: Products v.3-->
+      <section class="text-center mb-4">
+
+        <!--Grid row-->
+        <div class="row wow fadeIn">
+
+<?php foreach ($accounts as $account) : ?>
+	        <!--Grid column-->
+	        <div class="col-lg-4 col-md-12 mb-4">
+	    
+	            <!--Card-->
+	            <a href="<?php echo $this->url('mockup/file') ?>" class="card testimonial-card">
+	    
+	                <!--Background color-->
+	                <div class="card-up info-color"></div>
+	    
+	                <!--Avatar-->
+	                <div class="avatar mx-auto white">
+	                    <img src="https://mdbootstrap.com/img/Photos/Avatars/<?php echo $account['photo_link_id'] ?>" class="rounded-circle img-fluid">
+	                </div>
+	    
+	                <div class="card-body">
+	                    <!--Name-->
+	                    <h4 class="mt-1">
+	                        <strong><?php echo $account['n_first'] ?></strong>
+	                    </h4>
+	                    <hr>
+	                    <!--Quotation-->
+	<?php foreach ($account['json_property_1'] as $skillId => $skill) : ?>
+						<span class="chip chip-lg <?php echo $context->getConfig('pbc/skillColors')[$skillId] ?> white-text">
+						    <?php echo $context->localize($context->getConfig('pbc/skills')[$skillId]) ?>&nbsp;&nbsp;<span class="badge badge-pill red"><?php echo $skill ?></span>
+						</span>
+	<?php endforeach;?>
+	                </div>
+	    
+	            </a>
+	            <!--Card-->
+	    
+	        </div>
+	        <!--Grid column-->
+<?php endforeach;?>
+
+        </div>
+        <!--Grid row-->
+
+      </section>
+      <!--Section: Products v.3-->
+
+    </div>
+  </main>
+  <!--Main layout-->
+  
+    <!--Footer-->
+    <footer class="page-footer center-on-small-only mt-5">
+
+        <!--Footer Links-->
+        <div class="container">
+            <div class="row">
+
+                <!--First column-->
+                <div class="col-md-3">
+                    <h5 class="title">Ressources </h5>
+                </div>
+                <!--/.First column-->
+
+                <hr class="w-100 clearfix d-md-none">
+
+                <!--Second column-->
+                <div class="col-md-2 ml-auto">
+                    <ul>
+                        <li><a href="#!">Blog ProBonoCorpo</a></li>
+                    </ul>
+                </div>
+                <!--/.Second column-->
+
+                <hr class="w-100 clearfix d-md-none">
+
+                <!--Third column-->
+                <div class="col-md-2 ml-auto">
+                    <ul>
+                        <li><a href="#!">Culture & Conduct</a></li>
+                    </ul>
+                </div>
+                <!--/.Third column-->
+
+                <hr class="w-100 clearfix d-md-none">
+
+                <!--Fourth column-->
+                <div class="col-md-2 ml-auto">
+                    <ul>
+                        <li><a href="#!">ACE</a></li>
+                    </ul>
+                </div>
+                <!--/.Fourth column-->
+
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="container">
+            <!--Grid row-->
+            <div class="row mb-3">
+
+                <!--First column-->
+                <div class="col-md-12">
+
+                    <ul class="list-unstyled d-flex justify-content-center mb-0 py-4">
+                        <li><a class="icons-sm tw-ic"><i class="fa fa-twitter white-text fa-lg"> </i></a></li>
+                        <li><a class="icons-sm li-ic"><i class="fa fa-linkedin white-text fa-lg"> </i></a></li>
+                    </ul>
+
+                </div>
+                <!--/First column-->
+            </div>
+            <!--/Grid row-->
+        </div>
+        <!--/.Footer Links-->
+
+        <!--Copyright-->
+        <div class="footer-copyright">
+            <div class="container-fluid">
+                © 2018 Copyright: <a href="http://www.flowux.io"> SOCIETE GENERALE </a>
+
+            </div>
+        </div>
+        <!--/.Copyright-->
+
+    </footer>
+    <!--/.Footer-->
+
+    <!-- SCRIPTS -->
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="<?php echo $this->basePath('MDB Pro/js/jquery-3.2.1.min.js') ?>"></script>
+
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="<?php echo $this->basePath('MDB Pro/js/popper.min.js') ?>"></script>
+
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="<?php echo $this->basePath('MDB Pro/js/bootstrap.min.js') ?>"></script>
+
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="<?php echo $this->basePath('MDB Pro/js/mdb.min.js') ?>"></script>
+
+  <!-- Initializations -->
+  <script type="text/javascript">
+    // Animations initialization
+    new WOW().init();
+  </script>
+
+
+<script>
+//Get the elements
+var from_input = $('#begin').pickadate({
+	format: 'dd/mm/yyyy',
+}),
+    from_picker = from_input.pickadate('picker')
+var to_input = $('#end').pickadate({
+	format: 'dd/mm/yyyy',
+}),
+    to_picker = to_input.pickadate('picker')
+
+// Check if there’s a “from” or “to” date to start with and if so, set their appropriate properties.
+if ( from_picker.get('value') ) {
+    to_picker.set('min', from_picker.get('select'))
+}
+if ( to_picker.get('value') ) {
+    from_picker.set('max', to_picker.get('select'))
+}
+
+// Apply event listeners in case of setting new “from” / “to” limits to have them update on the other end. If ‘clear’ button is pressed, reset the value.
+from_picker.on('set', function(event) {
+    if ( event.select ) {
+        to_picker.set('min', from_picker.get('select'))
+        if (from_picker.get('value')) {
+	        $('#begin').text('Besoin entre le ' + from_picker.get('value'));
+	    	$('#begin').removeClass('btn-outline-secondary').addClass('btn-secondary');
+        }
+    }
+    else if ( 'clear' in event ) {
+        to_picker.set('min', false)
+    }
+})
+to_picker.on('set', function(event) {
+    if ( event.select ) {
+        from_picker.set('max', to_picker.get('select'))
+		if (to_picker.get('value')) {
+			$('#end').text('Et le ' + to_picker.get('value'));
+			$('#end').removeClass('btn-outline-secondary').addClass('btn-secondary');
+		}
+    }
+    else if ( 'clear' in event ) {
+        from_picker.set('max', false)
+    }
+})
+
+$('.skill-item').click(function () {
+	var skill = $(this).attr('id') + '-value', value = $('#' + skill).val();
+	if ($('#' + skill).val() == '0') {
+		$('#' + skill).val('1');
+		$(this).addClass('active');
+	}
+	else {
+		$('#' + skill).val('0');
+		$(this).removeClass('active');
+	}
+	$('#skill-button').text('');
+	var first = true;
+<?php foreach ($context->getConfig('pbc/skills') as $skillId => $skill) : ?>
+	if ($('#skill-<?php echo $skillId ?>-value').val() == 1) {
+		if (!first) $('#skill-button').text($('#skill-button').text() + ', ');
+		first = false;
+		$('#skill-button').text($('#skill-button').text() + '<?php echo $context->localize($context->getConfig('pbc/skills')[$skillId]) ?>');
+	}
+<?php endforeach;?>
+	if ($('#skill-button').text() == '') {
+		$('#skill-button').text('Compétences');
+		$('#skill-button').removeClass('btn-secondary').addClass('btn-outline-secondary');
+	}
+	else {
+		$('#skill-button').removeClass('btn-outline-secondary').addClass('btn-secondary');
+	}
+});
+
+$('.location-item').click(function () {
+	var location = $(this).attr('id') + '-value', value = $('#' + location).val();
+	if ($('#' + location).val() == '0') {
+		$('#' + location).val('1');
+		$(this).addClass('active');
+	}
+	else {
+		$('#' + location).val('0');
+		$(this).removeClass('active');
+	}
+	$('#location-button').text('');
+	var first = true;
+<?php foreach ($context->getConfig('pbc/locations') as $locationId => $location) : ?>
+	if ($('#location-<?php echo $locationId ?>-value').val() == 1) {
+		if (!first) $('#location-button').text($('#location-button').text() + ', ');
+		first = false;
+		$('#location-button').text($('#location-button').text() + '<?php echo $context->localize($context->getConfig('pbc/locations')[$locationId]) ?>');
+	}
+<?php endforeach;?>
+	if ($('#location-button').text() == '') {
+		$('#location-button').text('Localisations');
+		$('#location-button').removeClass('btn-secondary').addClass('btn-outline-secondary');
+	}
+	else {
+		$('#location-button').removeClass('btn-outline-secondary').addClass('btn-secondary');
+	}
+});
+
+$(document).ready(function() {
+	// Initialize Material Select
+	$('.mdb-select').material_select();
+});
+
+$('#update').on('click', function() {
+	// This will select 2nd option
+	$('.select-dropdown li:eq( 2 )').trigger('click');
+});
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,105 @@
+
+<?php $nbSlides = (int) count($accounts) ?>
+
+<?php if ($nbSlides == 0) : ?>
+  <h5 class="text-center my-3"><?php echo $this->translate('No item found matching your request', 'ppit-flow', $context->getLocale()) ?></h5>
+
+<?php else : ?>
+
+<!--Carousel Wrapper-->
+<div id="multi-item-example" class="carousel slide carousel-multi-item" data-ride="carousel">
+
+    <!--Controls-->
+    <div class="controls-top">
+        <a class="btn-floating" href="#multi-item-example" data-slide="prev"><i class="fa fa-chevron-left"></i></a>
+        <a class="btn-floating" href="#multi-item-example" data-slide="next"><i class="fa fa-chevron-right"></i></a>
+    </div>
+    <!--/.Controls-->
+
+    <!--Slides-->
+    <div class="carousel-inner" role="listbox">
+
+<?php $i = 0; foreach ($accounts as $accountId => $account) : ?>
+
+       <div class="carousel-item <?php if ($i == 0) echo 'active' ?>">
+
+          <!--Grid column-->
+          <div class="col-md-12">
+
+<!-- Card -->
+<div class="card card-cascade narrower">
+
+  <!-- Card image -->
+  <div class="view view-cascade gradient-card-header blue">
+    <a class="link_profile" id="link_profile-<?php echo $accountId ?>">
+	  <!-- Title -->
+	  <h2 class="card-header-title mb-0">
+        <img class="rounded-circle" src="<?php echo $this->basePath('photos/'.(($account['photo_link_id']) ? $account['photo_link_id'] : 'no-photo.png')) ?>" width="100" height="100" alt="Sample image" />
+        <?php echo $account['n_first'] ?>
+      </h2>
+	  <!-- Subtitle -->
+	  <p class="card-header-subtitle mb-0"><?php echo $account['profile_tiny_5'] ?></p>
+    </a>
+  </div>
+
+  <!-- Card content -->
+  <div class="card-body card-body-cascade text-center">
+
+<?php foreach ($content['list']['properties'] as $propertyId => $property) : ?>
+  <?php if ($account[$propertyId]) : ?>
+
+    <div>
+ 
+    <?php if ($property['type'] == 'select') : ?>
+      <div class="text-left mb-3 grey-text <?php if ($property['protected']) echo 'dataProtected'?>">
+        <span class="font-weight-bold"><?php echo $context->localize($property['labels'], $locale) ?></span>: <?php echo $context->localize($property['modalities'][$account[$propertyId]], $locale) ?>
+      </div>
+
+    <?php elseif ($property['type'] == 'separation') : ?>
+        <hr>
+
+    <?php elseif ($property['type'] == 'chips') : ?>
+      <div class="text-center mb-3 grey-text <?php if ($property['protected']) echo 'dataProtected'?>">
+      <?php foreach (explode(',', $account[$propertyId]) as $skillId) : ?>
+        <?php if (array_key_exists($skillId, $context->getConfig('matching/skills'))) : ?>
+        <span class="chip chip-lg <?php echo $context->getConfig('matching/skills')[$skillId]['color'] ?> white-text">
+        <?php echo $context->localize($description['properties'][$propertyId]['modalities'][$skillId]) ?>
+        </span>
+        <?php endif;?>
+      <?php endforeach;?>
+      </div>
+
+    <?php else : ?>
+      <div class="text-left mb-3 grey-text <?php if ($property['protected']) echo 'dataProtected'?>">
+        <span class="font-weight-bold"><?php echo $context->localize($property['labels'], $locale) ?></span>: <?php echo $account[$propertyId] ?>
+      </div>
+
+    <?php endif;?>
+
+    </div>
+
+  <?php endif;?>
+<?php endforeach;?>
+
+      <div class="text-center mb-3 grey-text">
+        <a class="btn btn-secondary btn-rounded buttonContact" id="buttonContact-<?php echo $accountId ?>"><?php echo $this->translate('Contact', 'ppit-flow', $context->getLocale()) ?></a>
+      </div>
+  </div>
+</div>
+<!-- Card -->
+
+         </div>
+         <!--Grid column-->
+
+       </div>
+  
+<?php $i++; endforeach;?>
+
+    </div>
+    <!--/.Slides-->
+
+</div>
+<!--/.Carousel Wrapper-->
+
+<?php endif;?>
+ 

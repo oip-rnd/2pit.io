@@ -1,0 +1,99 @@
+
+<!--Card-->
+<div class="card card-cascade narrower">
+
+    <!--Card header-->
+    <div class="view py-3 gradient-card-header info-color-dark mx-4 d-flex justify-content-between align-items-center">
+
+      <span class="white-text mx-3"><?php echo $context->localize($content['matched_accounts']['title']) ?></span>
+
+    </div>
+    <!--/Card header-->
+
+    <!--Card content-->
+    <div class="card-body">
+
+      <div class="table-responsive" id="table_list">
+<table class="table">
+    <thead>
+        <tr>
+            <th>&nbsp;</th>
+
+<?php foreach ($content['matched_accounts']['properties'] as $propertyId => $property) : ?>
+            <th class="th-lg"><?php echo $context->localize($property['labels']) ?></th>
+<?php endforeach;?>
+
+            <th>&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
+<?php foreach ($viewData['matched_accounts'] as $itemId => $item) : ?>
+        <tr>
+            <td class="text-center">
+              <button type="button" class="btn-rounded btn-sm btn-secondary button_detail_contact" id="button_detail_contact-<?php echo $itemId ?>">
+                <i class="fa fa-search-plus"></i>
+              </button>
+            </td>
+
+  <?php foreach ($content['matched_accounts']['properties'] as $propertyId => $property) : ?>
+    <?php if ($property['type'] == 'select') : ?>
+            <td><?php if ($item[$propertyId]) echo $context->localize($properties[$propertyId]['modalities'][$item[$propertyId]]) ?></td>
+
+        <?php elseif ($property['type'] == 'multiselect') : ?>
+          <?php $list = explode(',', $item[$propertyId]) ?>
+            <td>
+              <?php 
+              $first = true; 
+              foreach ($list as $value) {
+                if (!$first) echo '<br>';
+                $first = false;
+                if (array_key_exists($value, $properties[$propertyId]['modalities'])) echo $context->localize($properties[$propertyId]['modalities'][$value]);
+              }
+              ?>
+            </td>
+
+    <?php elseif ($property['type'] == 'email') : ?>
+            <td><a class="text-secondary" href="mailto:<?php echo $item[$propertyId] ?>?subject=<?php echo $context->localize($content['matched_accounts']['contact_subject']) ?>"><?php echo $item[$propertyId] ?></a></td>
+
+    <?php elseif ($property['type'] == 'date') : ?>
+            <td><?php echo $context->decodeDate($item[$propertyId]) ?></td>
+
+    <?php elseif ($property['type'] == 'number') : ?>
+            <td><?php echo $context->formatNumber($item[$propertyId], 2) ?></td>
+
+    <?php else : ?>
+            <td><?php echo $item[$propertyId] ?></td>
+
+        <?php endif;?>
+  <?php endforeach;?>
+
+            <td class="text-center">
+  <?php if (array_key_exists($viewData['owner_id'], $viewData['feedbacks'])) : ?>
+                <span class="badge badge-success"><?php echo $this->translate('Feedback given', 'ppit-flow', $context->getLocale()) ?></span>
+  <?php elseif ($viewData['matching_log'][$itemId]['action'] == 'propose') : ?>
+  <?php 
+  $datetime1 = date_create($viewData['matching_log'][$itemId]['date']);
+  $datetime2 = date_create(date('Y-m-d'));
+  $age = date_diff($datetime1, $datetime2)->format("%a");
+  ?>
+                <span class="badge <?php echo ($age > 5) ? 'badge-danger pending_contact' : 'badge-warning' ?>"><?php echo $this->translate('To be contacted', 'ppit-flow', $context->getLocale()) ?></span>
+  <?php elseif ($viewData['matching_log'][$itemId]['action'] == 'accept') : ?>
+    <?php if ($viewData['request_status'] == 'realized') : ?>
+                <span class="badge badge-danger"><?php echo $this->translate('Feedback expected', 'ppit-flow', $context->getLocale()) ?></span>
+    <?php else : ?>
+                <span class="badge badge-success"><?php echo $this->translate('Accepted', 'ppit-flow', $context->getLocale()) ?></span>
+    <?php endif;?>
+  <?php endif;?>
+            </td>
+        </tr>
+<?php endforeach ?>
+    </tbody>
+</table>
+      </div>
+
+    </div>
+    <!--/.Card content-->
+
+</div>
+<!--/.Card-->
+ 

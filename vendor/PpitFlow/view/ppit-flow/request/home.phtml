@@ -1,0 +1,134 @@
+    <div class="container">
+		
+      <!--Section: Products v.3-->
+      <section>
+
+<?php $nbSlides = ceil(count($content['data']) / 3) ?>
+
+<!--Carousel Wrapper-->
+<div id="carousel_request" class="carousel slide carousel-multi-item" data-ride="carousel">
+
+    <!--Controls-->
+    <div class="controls-top">
+        <a class="btn-floating" href="#carousel_request" data-slide="prev"><i class="fa fa-chevron-left"></i></a>
+        <a class="btn-floating" href="#carousel_request" data-slide="next"><i class="fa fa-chevron-right"></i></a>
+    </div>
+    <!--/.Controls-->
+
+    <!--Indicators-->
+    <ol class="carousel-indicators">
+<?php for ($i = 0; $i < $nbSlides; $i++) : ?>
+        <li data-target="#carousel_request" data-slide-to="<?php echo $i ?>" <?php if ($i == 0) echo 'class="active"' ?>></li>
+<?php endfor?>
+    </ol>
+    <!--/.Indicators-->
+
+    <!--Slides-->
+    <div class="carousel-inner" role="listbox">
+
+<?php $i = 0; foreach ($content['data'] as $requestId => $request) : ?>
+
+  <?php if ($i % 3 == 0) : ?>
+       <div class="carousel-item <?php if ($i == 0) echo 'active' ?>">
+
+          <!--Grid column-->
+          <div class="col-md-4">
+  <?php else : ?>
+
+          <!--Grid column-->
+          <div class="col-md-4 clearfix d-none d-md-block">
+  <?php endif;?>
+
+<!-- Card -->
+<div class="card card-cascade narrower">
+
+  <!-- Card image -->
+  <div class="view view-cascade gradient-card-header blue">
+    <a class="link_profile text-white" href="<?php echo $this->url('request/detail', ['id' => $requestId]) ?>">
+	  <!-- Title -->
+      <img class="" src="<?php echo $this->basePath('photos/'.(($request['photo_link_id']) ? $request['photo_link_id'] : 'no-photo.png')) ?>" width="40" height="40" alt="Sample image" />
+	  <h3 class="card-header-title mb-0"><?php echo $request['n_first'] ?></h3>
+      <div class="card-header-title text-truncate" style="text-overflow: ellipsis"><?php echo $request['caption'] ?></div>
+    </a>
+  </div>
+
+  <!-- Card content -->
+  <div class="card-body card-body-cascade text-center">
+<?php foreach ($content['card']['properties'] as $inputId => $property) : ?>
+  <?php if ($property['type'] == 'chips') : ?>
+
+    <?php $currentSkills = ($request[$inputId]) ? explode(',', $request[$inputId]) : [] ?>
+    <div class="text-center">
+    <?php foreach ($currentSkills as $entryId) : ?>
+      <?php $entry = $property['repository'][$entryId] ?>
+      <span class="chip <?php echo $entry['color'] ?> white-text">
+        <?php echo $context->localize($entry['labels'], $locale) ?>
+      </span>
+    <?php endforeach;?>
+    </div>
+    
+  <?php else : ?>
+
+    <p class="card-text">
+      <strong><?php echo $context->localize($property['labels'], $locale) ?>:</strong>
+
+    <?php if ($property['type'] == 'select') : ?>
+      <?php echo $context->localize($property['modalities'][$request[$inputId]], $locale) ?>
+
+    <?php elseif ($property['type'] == 'textarea') : ?>
+      <?php echo $request[$inputId] ?>
+
+    <?php elseif ($property['type'] == 'email') : ?>
+      <a href="mailto:<?php echo $request[$inputId] ?>"><?php echo $request[$inputId] ?></a>
+
+    <?php elseif ($property['type'] == 'date') : ?>
+      <?php echo $context->decodeDate($request[$inputId]) ?>
+
+    <?php elseif ($property['type'] == 'time') : ?>
+      <?php echo $request[$inputId] ?>
+
+    <?php elseif ($property['type'] == 'input') : ?>
+      <?php echo $request[$inputId] ?>
+  
+    <?php elseif ($property['type'] == 'separation') : ?>
+      <hr>
+
+    <?php endif;?>
+    </p>
+    
+  <?php endif;?>
+<?php endforeach;?>
+
+<?php if ($request['amContributor']) : ?>
+    <div class="badge badge-success"><?php echo $this->translate('I contribute', 'ppit-flow', $context->getLocale()) ?></div>
+<?php endif;?>
+
+  </div>
+
+</div>
+<!-- Card -->
+         </div>
+         <!--Grid column-->
+
+  <?php if ($i % 3 == 2) : ?>
+       </div>
+  <?php endif;?>
+  
+<?php $i++; endforeach;?>
+
+<?php if ($i % 3 != 0) : ?>
+       </div>
+<?php endif;?>
+
+    </div>
+    <!--/.Slides-->
+
+</div>
+<!--/.Carousel Wrapper-->
+
+      </section>
+      <!--Section: Products v.3-->
+
+    </div>
+<!-- Container --> 
+ 

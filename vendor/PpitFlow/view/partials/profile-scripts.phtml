@@ -1,0 +1,128 @@
+<script>
+
+// Profile form
+
+function uploadAvatar() {
+    var formData = new FormData();
+    var fileSelect = document.getElementById('photo_path');
+    if (fileSelect) {
+      var files = fileSelect.files;
+      for (var i = 0; i < files.length; i++) {
+        var file = files[i];
+        formData.append('photo_path', file, file.name);
+      }
+    }
+
+    var xhttp = new XMLHttpRequest();
+    xhttp = new XMLHttpRequest();
+    xhttp.open("POST", '<?php echo $this->url('profile/photoUpload', ['id' => $account_id]) ?>', true);
+    xhttp.onreadystatechange = function() {
+      if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+      if (xhttp.readyState == 4 && xhttp.status == 200) {
+        $('#photo').attr('src', '<?php echo $this->basePath('/photos/') ?>' + xhttp.responseText + '?random=' + (new Date()).getTime());
+      }
+    }
+    xhttp.send(formData);
+}
+
+// ships management
+
+function manageChips () {
+
+<?php foreach ($profileForm['inputs'] as $inputId => $property) : ?>
+  <?php if ($property['type'] == 'chips') : ?>
+
+  var <?php echo $inputId ?> = {
+    <?php $first = true; foreach ($property['repository'] as $entryId => $entry) : ?>
+      <?php 
+      if (!$first) echo ',';
+      $first = false;
+      ?>
+    "<?php echo $entryId ?>": "<?php echo $context->localize($entry['labels'], $locale) ?>"
+    <?php endforeach;?>
+  };
+
+  $('.search-<?php echo $inputId ?>-hidden').hide();
+
+  $('#<?php echo $property['trigger'] ?>').mdb_autocomplete({
+      data: <?php echo $inputId ?>
+  });
+
+  $('#<?php echo $property['trigger'] ?>').change(function () {
+      var matched;
+      setTimeout(function () {
+          for (id in <?php echo $inputId ?>) {
+            if (<?php echo $inputId ?>[id] == $('#<?php echo $property['trigger'] ?>').val()) {
+              $('#<?php echo $inputId ?>-' + id).val(1);
+              $('#search-<?php echo $inputId ?>-' + id).show();
+              $('#<?php echo $property['trigger'] ?>').val('');
+              break;
+            }
+          }
+      }, 600);
+  });
+
+  $('.search-<?php echo $inputId ?>-close').click(function () {
+  <?php foreach ($property['repository'] as $entryId => $entry) : ?>
+    if ($(this).attr('id').split('-')[2] == '<?php echo $entryId ?>') $('#<?php echo $inputId ?>-<?php echo $entryId ?>').val(0);
+  <?php endforeach;?>
+  $(this).parent().parent().hide();
+  });
+  
+  <?php endif;?>
+<?php endforeach;?>
+
+}
+
+// Update profile
+
+function updateProfile() {
+    var xhttp = new XMLHttpRequest(), formData = new FormData();
+<?php foreach ($profileForm['inputs'] as $inputId => $property) : ?>
+    formData.append('<?php echo $inputId ?>', $('#<?php echo $inputId ?>').val());
+  <?php if ($property['type'] == 'chips') : ?>
+  	<?php foreach ($property['repository'] as $entryId => $entry) : ?>
+    if ($('#<?php echo $inputId ?>-<?php echo $entryId ?>').val() == 1) {
+      formData.append('<?php echo $inputId ?>-<?php echo $entryId ?>', 1);
+      console.log('<?php echo $inputId ?>-<?php echo $entryId ?>' + ' == 1');
+    }
+    <?php endforeach;?>
+  <?php endif; ?>
+<?php endforeach;?>
+    xhttp.open('POST', '<?php echo $this->url('profile/update', ['account_id' => $account_id]) ?>', true);
+    xhttp.onload = function () {
+      if (xhttp.readyState == 4 && xhttp.status == 200) {
+        toastr.success("<?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?>");
+        $('#modalProfileInputs').html(xhttp.responseText);
+        connectProfileForm();
+      }
+      else toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+    };
+    xhttp.send(formData);
+}
+
+// Connect profile form
+
+function connectProfileForm() {
+
+  // Upload the photo
+  $('#photo_upload').change(uploadAvatar);
+
+  // Manage ships
+  manageChips();
+
+  // Enable input and focus
+  $('.profile_input').attr('disabled', false);
+  $('.filled').focus();
+  $('.profile_input_focused').focus();
+
+  // Submit the update form
+  var form = document.getElementById('profileForm');
+  form.onsubmit = function(event) {
+    event.preventDefault();
+    updateProfile();
+  }
+    
+}
+
+</script>
