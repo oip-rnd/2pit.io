@@ -1,0 +1,285 @@
+<!-- 
+/**
+ * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
+ *
+ * @link      https://github.com/p-pit/PpitCore
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
+ */
+-->
+
+<div class="col-md-12">
+
+<!-- Actions -->
+	<div>
+		<button type="button" class="btn btn-default" title="<?php echo $this->translate('Export', 'ppit-core', $context->getLocale()) ?>" id="export-button">
+			<span class="glyphicon glyphicon-cloud-download"></span>
+			<span><?php echo $this->translate('Export', 'ppit-core', $context->getLocale())?></span>
+		</button>
+<?php if ($context->isDemoModeActive()) : ?>
+		<a class="tip" href="#" title="<?php echo $context->getConfig('demo')['core_account/search/export'][$context->getLocale()] ?>">
+		    <img src="<?php echo $this->basePath('img/tip.png') ?>" width="20" />
+		</a>
+<?php endif;?>
+		<button type="button" class="btn btn-default" title="<?php echo $this->translate('CSV export', 'ppit-core', $context->getLocale()) ?>" id="csv-button">
+			<span class="glyphicon glyphicon-cloud-download"></span>
+			<span><?php echo $this->translate('CSV export', 'ppit-core', $context->getLocale())?></span>
+		</button>
+	</div>
+	<div>&nbsp;</div>
+	
+	<div style="overflow-x:auto;">
+		<table class="table table-striped ppit_index">
+			<tr>
+				<th>&nbsp;</th>
+				<th>&nbsp;</th>
+	
+<?php $first = true; foreach ($listPage['properties'] as $propertyId => $options) : ?>
+	<?php $property = $configProperties[$propertyId] ?>
+
+				<th align="center">
+	<?php $label = $context->localize($property['labels']) ?>
+	<?php if ($label) : ?>
+					<button type="button" class="btn btn-default btn-xs ppit-sort-anchor" id="<?php echo $propertyId ?>-anchor">
+						<span><?php echo $label ?></span>
+<?php if ($major == $propertyId) : ?>
+						<span class="glyphicon glyphicon-triangle-<?php echo ($dir == 'ASC') ? 'top' : 'bottom' ?>"></span>
+<?php endif ?>
+					</button>
+		<?php if ($first && $context->isDemoModeActive()) : ?>
+					<a class="tip" href="#" title="<?php echo $context->getConfig('demo')['core_account/list/ordering'][$context->getLocale()] ?>">
+					    <img src="<?php echo $this->basePath('img/tip.png') ?>" width="20" />
+					</a>
+		<?php $first=false; endif;?>
+	<?php endif;?>
+				</th>
+<?php endforeach;?>
+			</tr>
+	
+			<tr>
+				<td>
+					<input type="checkbox" class="account-checkbox" id="account-checkbox" title="<?php echo $this->translate('Check all', 'ppit-core', $context->getLocale()) ?>"></input>
+<?php if ($context->isDemoModeActive()) : ?>
+					<br>
+					<a class="tip" href="#" title="<?php echo $context->getConfig('demo')['core_account/list/checkAll'][$context->getLocale()] ?>">
+					    <img src="<?php echo $this->basePath('img/tip.png') ?>" width="20" />
+					</a>
+					<br>
+<?php endif;?>
+				</td>
+	
+				<td style="text-align: center">
+					<button type="button" class="btn btn-default index-btn account-group-anchor" title="<?php echo $this->translate('Grouped actions', 'ppit-core', $context->getLocale())?>" id="account-group-anchor" disabled="disabled">
+						<span class="glyphicon glyphicon-list-alt" id="group-glyphicon"></span>
+					</button>
+<?php if ($context->isDemoModeActive()) : ?>
+					<br>
+					<a class="tip" href="#" title="<?php echo $context->getConfig('demo')['core_account/list/groupedActions'][$context->getLocale()] ?>">
+					    <img src="<?php echo $this->basePath('img/tip.png') ?>" width="20" />
+					</a>
+<?php endif;?>
+				</td>
+			
+				<td>
+					<button type="button" class="btn btn-default index-btn account-detail-anchor" title="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale())?>" id="account-detail-anchor_0">
+						<span class="glyphicon glyphicon-plus" id="add-glyphicon"></span>
+					</button>
+<?php if ($context->isDemoModeActive()) : ?>
+					<a class="tip" href="#" title="<?php echo $context->getConfig('demo')['core_account/list'.(($type == 'p-pit-studies') ? '/'.$type : '').'/add'][$context->getLocale()] ?>">
+					    <img src="<?php echo $this->basePath('img/tip.png') ?>" width="20" />
+					</a>
+<?php endif;?>
+				</td>
+		
+				<td colspan="5">&nbsp;</td>
+			</tr>
+
+			<tr class="detail-row" id="detail-row_0" rowspan="2"><td colspan="99"><div class="col-md-6 ppit-panel" id="detail-div_0"></div></td></tr>
+			<tr class="invisible"><td colspan="99"></td></tr>
+		
+			<input type="hidden" id="account-number" value="<?php echo count($accounts) ?>" />
+	
+<?php $i = 0; foreach ($accounts as $account) : ?>
+	
+			<input type="hidden"  id="account_<?php echo $i ?>" value="<?php echo $account->id ?>" />
+		
+			<tr class="account">
+				<td>
+					<input type="checkbox" class="account-checkbox" id="account-checkbox_<?php echo $i ?>"></input>
+				</td>
+			
+				<td style="text-align: center">
+					<button type="button" class="btn btn-default index-btn account-detail-anchor" title="<?php echo $this->translate('Detail', 'ppit-core', $context->getLocale())?>" id="account-detail-anchor_<?php echo $account->id ?>">
+						<span class="glyphicon glyphicon-zoom-in" id="<?php echo $account->id ?>-glyphicon"></span>
+					</button>
+<?php if ($i == 0 && $context->isDemoModeActive()) : ?>
+					<a class="tip" href="#" title="<?php echo $context->getConfig('demo')['core_account/list'.(($type == 'p-pit-studies') ? '/'.$type : '').'/detail'][$context->getLocale()] ?>">
+					    <img src="<?php echo $this->basePath('img/tip.png') ?>" width="20" />
+					</a>
+<?php endif;?>
+				</td>
+
+<?php foreach ($listPage['properties'] as $propertyId => $property) : ?>
+	<?php 
+	$backgroundColor = null;
+	$color = null;
+	foreach ($property['options'] as $optionId => $option) {
+		if ($optionId == 'background-color') {
+			foreach ($option as $colorId => $predicates) {
+				$matches = true;
+				foreach ($predicates as $predicatePropertyId => $value) {
+					if (!in_array($account->properties[$predicatePropertyId], explode(',', $value))) {
+						$matches = false;
+						break;
+					}
+				}
+				if ($matches) {
+					$backgroundColor = $colorId;
+					break;
+				}
+			}
+		}
+		elseif ($optionId == 'color') {
+			foreach ($option as $colorId => $predicates) {
+				$matches = true;
+				foreach ($predicates as $predicatePropertyId => $value) {
+					if (!in_array($account->properties[$predicatePropertyId], explode(',', $value))) {
+						$matches = false;
+						break;
+					}
+				}
+				if ($matches) {
+					$color = $colorId;
+					break;
+				}
+			}
+		}
+	}
+	?>
+			
+		<?php if ($propertyId == 'place_id') : ?>
+				<td><?php if ($account->properties[$propertyId]) echo $places[$account->properties[$propertyId]]->caption ?></td>
+	
+		<?php elseif ($propertyId == 'name') : ?>
+				<th style=" <?php if ($backgroundColor) echo 'font-weight: bold; background-color: '.$backgroundColor.';' ?> <?php if ($color) echo 'color: '.$color.';' ?>"><?php echo $account->name ?></th>
+	
+		<?php elseif ($propertyId == 'n_fn') : ?>
+				<td style="<?php if ($backgroundColor) echo 'font-weight: bold; background-color: '.$backgroundColor.';' ?> <?php if ($color) echo 'color: '.$color.';' ?>"><?php echo $account->n_fn ?></td>
+	
+		<?php elseif ($property['type'] == 'text') : ?>
+				<td><?php echo $account->properties[$propertyId] ?></td>
+	
+		<?php elseif (in_array($property['type'], ['select', 'computed'])) : ?>
+			<?php if (array_key_exists('rendering', $property['options']) && $property['options']['rendering'] == 'image') : ?>
+				<td style="text-align: center">
+					<?php $label = (array_key_exists($account->properties[$propertyId], $property['modalities'])) ? $property['modalities'][$account->properties[$propertyId]][$context->getLocale()] : $account->properties[$propertyId] ?>
+					<img height="20" src="<?php echo $this->basePath('/img'.(($type) ? '/'.$type : '').'/'.$account->properties[$propertyId].'.png') ?>" title="<?php echo $label ?>" alt="<?php echo $label ?>" /><br>
+				</td>
+			<?php else : ?>
+				<td style="; <?php if ($backgroundColor) echo 'font-weight: bold; background-color: '.$backgroundColor.';' ?>"><?php if ($account->properties[$propertyId]) echo $context->localize($property['modalities'][$account->properties[$propertyId]]) ?></td>
+			<?php endif;?>
+	
+		<?php elseif ($property['type'] == 'multiselect') : ?>
+			<?php
+			$captions = array();
+			foreach (explode(',', $account->properties[$propertyId]) as $modalityId) {
+				if (array_key_exists($modalityId, $property['modalities'])) $captions[] = $context->localize($property['modalities'][$modalityId]);
+			}
+			?>
+				<td><?php echo implode(', ', $captions) ?></td>
+	
+		<?php elseif ($property['type'] == 'date') : ?>
+				<td><?php echo $context->decodeDate($account->properties[$propertyId]) ?></td>
+	
+		<?php elseif ($property['type'] == 'datetime') : ?>
+				<td><?php echo $context->decodeDate(substr($account->properties[$propertyId], 0, 10)).' '.substr($account->properties[$propertyId], 11, 8) ?></td>
+	
+		<?php elseif ($property['type'] == 'photo') : ?>
+				<td>
+					<span class="info">
+						<img height="40" src="<?php echo $this->basePath('photos/'.(($account->photo_link_id) ? $account->photo_link_id :  $account->contact_1_id.'.jpg')) ?>"/>
+						<span><img height="150" src="<?php echo $this->basePath('photos/'.(($account->photo_link_id) ? $account->photo_link_id :  $account->contact_1_id.'.jpg')) ?>"/></span>
+					</span>
+				</td>
+	
+		<?php else : ?>
+
+			<?php if (array_key_exists('rendering', $property['options']) && $property['options']['rendering'] == 'phone') : ?>
+				<td>
+					<a href="tel:<?php echo $account->properties[$propertyId] ?>"><?php echo $account->properties[$propertyId] ?></a>
+				</td>
+
+			<?php else : ?>
+				<td><?php echo $account->properties[$propertyId] ?></td>
+			<?php endif;?>
+		
+		<?php endif;?>
+		
+	<?php endforeach;?>
+			</tr>
+		
+			<tr class="detail-row" id="detail-row_<?php echo $account->id ?>" rowspan="2"><td colspan="99"><div class="col-md-6 ppit-panel" id="detail-div_<?php echo $account->id ?>"></div></td></tr>
+			<tr class="invisible"><td colspan="99"></td></tr>
+	
+<?php $i++; endforeach; ?>
+
+			<tr>
+				<td>
+					<input type="checkbox" class="account-checkbox" id="down-account-checkbox"></input>
+				</td>
+		
+				<td style="text-align: center">
+					<button type="button" class="btn btn-default index-btn account-group-anchor" title="<?php echo $this->translate('Grouped actions', 'ppit-core', $context->getLocale())?>" id="account-down-group-anchor" disabled="disabled">
+						<span class="glyphicon glyphicon-list-alt" id="down-group-glyphicon"></span>
+					</button>
+				</td>
+
+<?php if (count($accounts) == '50') : ?>
+				<td style="text-align: center">
+					<button type="button" class="btn btn-default index-btn" title="<?php echo $this->translate('Display the entire list', 'ppit-core', $context->getLocale())?>" id="account-more-anchor">
+						<span class="glyphicon glyphicon-option-horizontal" id="more-glyphicon"></span>
+					</button>
+				</td>
+<?php else : ?>
+				<td>&nbsp;</td>
+<?php endif;?>
+				<td colspan="<?php echo count($listPage['properties']) ?>">&nbsp;</td>
+			</tr>
+
+	<tr>
+		<th>&nbsp;</th>
+		<th>&nbsp;</th>
+<?php foreach ($listPage['properties'] as $propertyId => $unused) : ?>
+	<?php $property = $configProperties[$propertyId] ?>
+		<th>
+	<?php if ($propertyId == $major) : ?>
+			<?php echo $this->translate('Number', 'ppit-core', $context->getLocale()) ?>:&nbsp;<?php echo $count.'<br>' ?>
+			<?php if ($sum) echo $this->translate('Sum', 'ppit-core', $context->getLocale()).':&nbsp;'.$sum.'<br>' ?>
+			<?php if ($average) echo $this->translate('Average', 'ppit-core', $context->getLocale()).':&nbsp;'.$average ?>
+
+		<?php if ($distribution) : ?>
+			<select id="select-distribution">
+			<?php foreach ($distribution as $modality => $value) : ?>
+				<?php 
+				if ($propertyId == 'place_id') if ($modality) $label = $places[$modality]->caption; else $label = '';
+				else $label = ($modality) ? $property['modalities'][$modality][$context->getLocale()] : '';
+				?>
+				<option value="<?php echo $modality ?>"><?php echo $label ?></option>
+			<?php endforeach;?>
+			</select>
+			&nbsp;
+			<?php foreach ($distribution as $modality => $value) : ?>
+			<span class="distribution" id="distribution_<?php echo $modality ?>"><?php echo $value ?>&nbsp;/&nbsp;<?php echo $count ?>&nbsp;=&nbsp;<?php echo round($value / $count * 100, 1) ?>%</span>
+			<?php endforeach;?>
+		<?php endif;?>
+	<?php else : ?>
+			&nbsp;
+	<?php endif;?>
+		</th>
+<?php endforeach;?>
+	</tr>
+
+		</table>
+	</div>
+</div>
+	

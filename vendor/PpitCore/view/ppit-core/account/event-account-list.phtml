@@ -1,0 +1,108 @@
+<!-- 
+/**
+ * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
+ *
+ * @link      https://github.com/p-pit/PpitCore
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
+ */
+-->
+
+<div class="col-md-12">
+	
+	<div style="overflow-x:auto;">
+		<table class="table table-striped ppit_index">
+			<tr>
+				<th>&nbsp;</th>
+	
+<?php $first = true; foreach ($eventAccountListPage['properties'] as $propertyId => $options) : ?>
+	<?php $property = $configProperties[$propertyId] ?>
+
+				<th align="center">
+	<?php $label = $context->localize($property['labels']) ?>
+	<?php if ($label) : ?>
+					<button type="button" class="btn btn-default btn-xs ppit-sort-account-anchor" id="<?php echo $propertyId ?>-account-anchor">
+						<span><?php echo $label ?></span>
+<?php if ($major == $propertyId) : ?>
+						<span class="glyphicon glyphicon-triangle-account-<?php echo ($dir == 'ASC') ? 'top' : 'bottom' ?>"></span>
+<?php endif ?>
+					</button>
+	<?php endif;?>
+				</th>
+<?php endforeach;?>
+			</tr>
+		
+			<input type="hidden" id="account-number" value="<?php echo count($accounts) ?>" />
+	
+<?php $i = 0; foreach ($accounts as $account) : ?>
+	
+			<input type="hidden"  id="account_<?php echo $i ?>" value="<?php echo $account->id ?>" />
+		
+			<tr class="account">
+				<td>
+					<input type="checkbox" class="account-checkbox" id="account-checkbox_<?php echo $i ?>"></input>
+				</td>
+
+	<?php foreach ($eventAccountListPage['properties'] as $propertyId => $options) : ?>
+	<?php
+	$property = $context->getConfig('core_account/generic/property/'.$propertyId);
+	if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
+	$color = null;
+	if (array_key_exists('color', $options) && array_key_exists($account->status, $options['color'])) {
+		$backgroundColor = $options['color'][$account->status];
+	}
+	else $backgroundColor = null;
+	?>
+			
+		<?php if ($propertyId == 'place_id') : ?>
+				<td><?php if ($account->properties[$propertyId]) echo $places[$account->properties[$propertyId]]->caption ?></td>
+	
+		<?php elseif ($property['type'] == 'text') : ?>
+				<td><?php echo $account->properties[$propertyId] ?></td>
+	
+		<?php elseif ($property['type'] == 'select') : ?>
+			<?php if (array_key_exists('rendering', $options) && $options['rendering'] == 'image') : ?>
+				<td style="text-align: center">
+					<?php $label = (array_key_exists($account->properties[$propertyId], $property['modalities'])) ? $property['modalities'][$account->properties[$propertyId]][$context->getLocale()] : $account->properties[$propertyId] ?>
+					<img height="20" src="<?php echo $this->basePath('/img'.(($type) ? '/'.$type : '').'/'.$account->properties[$propertyId].'.png') ?>" title="<?php echo $label ?>" alt="<?php echo $label ?>" /><br>
+				</td>
+			<?php else : ?>
+				<td style="; <?php if ($backgroundColor) echo 'font-weight: bold; background-color: '.$backgroundColor.';' ?>"><?php if ($account->properties[$propertyId]) echo $property['modalities'][$account->properties[$propertyId]][$context->getLocale()] ?></td>
+			<?php endif;?>
+	
+		<?php elseif ($property['type'] == 'date') : ?>
+				<td><?php echo $context->decodeDate($account->properties[$propertyId]) ?></td>
+	
+		<?php elseif ($property['type'] == 'datetime') : ?>
+				<td><?php echo $context->decodeDate(substr($account->properties[$propertyId], 0, 10)).' '.substr($account->properties[$propertyId], 11, 8) ?></td>
+	
+		<?php elseif ($property['type'] == 'photo') : ?>
+				<td>
+					<span class="info">
+						<img height="40" src="<?php echo $this->basePath('photos/'.(($account->photo_link_id) ? $account->photo_link_id :  $account->contact_1_id.'.jpg')) ?>"/>
+						<span><img height="150" src="<?php echo $this->basePath('photos/'.(($account->photo_link_id) ? $account->photo_link_id :  $account->contact_1_id.'.jpg')) ?>"/></span>
+					</span>
+				</td>
+	
+		<?php else : ?>
+
+			<?php if (array_key_exists('rendering', $options) && $options['rendering'] == 'phone') : ?>
+				<td>
+					<a href="tel:<?php echo $account->properties[$propertyId] ?>"><?php echo $account->properties[$propertyId] ?></a>
+				</td>
+
+			<?php else : ?>
+				<td><?php echo $account->properties[$propertyId] ?></td>
+			<?php endif;?>
+		
+		<?php endif;?>
+		
+	<?php endforeach;?>
+			</tr>
+<?php $i++; endforeach; ?>
+
+	<tr>
+		</table>
+	</div>
+</div>
+	

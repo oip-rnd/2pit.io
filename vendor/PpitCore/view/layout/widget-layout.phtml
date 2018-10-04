@@ -1,0 +1,74 @@
+<?php
+	$children = $this->viewModel()->getCurrent()->getChildren();
+	$child = $children[0];
+	$description = (isset($child->description) ? $child->description : null)
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    
+    <meta charset="utf-8">
+        <?php echo $this->headTitle()->setSeparator('')->setAutoEscape(false) ?>
+<?php if ($description) : ?>
+		<meta name="description" content="<?php echo $description ?>">
+<?php endif;?>
+<?php if (isset($child->robots)) : ?>
+		<meta name="robots" content="<?php echo $child->robots ?>">
+<?php else : ?>
+		<meta name="robots" content="noindex, nofollow">
+<?php endif;?>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css">
+
+    <!-- Bootstrap core CSS -->
+    <link href="<?php echo $this->basePath('mdb-free/css/bootstrap.min.css" rel="stylesheet') ?>">
+
+    <!-- Material Design Bootstrap -->
+    <link href="<?php echo $this->basePath('mdb-free/css/mdb.min.css" rel="stylesheet') ?>">
+
+    <!-- Your custom styles (optional) -->
+    <link href="<?php echo $this->basePath('mdb-free/css/style.css" rel="stylesheet') ?>">
+
+	<link rel="stylesheet" href="<?php echo $this->basePath('/jquery-ui-1.11.4/jquery-ui.css') ?>">
+	<link rel='stylesheet' href="<?php echo $this->basePath('/fullcalendar/fullcalendar.css') ?>" />
+	<link rel='stylesheet' href="<?php echo $this->basePath('/css/flipclock.css') ?>" />
+
+    <!-- SCRIPTS -->
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="<?php echo $this->basePath('mdb-free/js/jquery-2.2.3.min.js') ?>"></script>
+
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="<?php echo $this->basePath('mdb-free/js/tether.min.js') ?>"></script>
+
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="<?php echo $this->basePath('mdb-free/js/bootstrap.min.js') ?>"></script>
+
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="<?php echo $this->basePath('mdb-free/js/mdb.min.js') ?>"></script>
+
+	<script src="<?php echo $this->basePath('/js/jquery.min.js') ?>"></script>
+	<script src="<?php echo $this->basePath('/jquery-ui-1.11.4/jquery-ui.js') ?>"></script>
+	<script src="<?php echo $this->basePath("ckeditor/ckeditor.js") ?>"></script>
+	<script src="<?php echo $this->basePath('/js/moment-with-locales.min.js') ?>"></script>
+	<script src="<?php echo $this->basePath('/fullcalendar/fullcalendar.js') ?>"></script>
+	<script src="<?php echo $this->basePath('/js/flipclock.min.js') ?>"></script>
+
+</head>
+
+<body>
+
+<?php echo $this->content; ?>
+	
+	<!--Footer-->
+	<footer class="page-footer primary-color-dark center-on-small-only">
+	</footer>
+	<!--/.Footer-->
+
+</body>
+
+</html>

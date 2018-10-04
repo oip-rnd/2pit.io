@@ -1,0 +1,45 @@
+<?php 
+$properties = $content['description']['properties'];
+?>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+	            <input type="checkbox" id="checkbox">
+	            <label for="checkbox" class="label-table"></label>
+            </th>
+<?php foreach ($content['description']['list']['properties'] as $propertyId => $options) : ?>
+	<?php $property = $properties[$propertyId] ?>
+            <th class="th-lg"><?php echo $context->localize($property['labels']) ?></th>
+<?php endforeach;?>
+        </tr>
+    </thead>
+    <tbody>
+<?php foreach ($content['data'] as $item) : ?>
+        <tr>
+            <th scope="row">
+                <input type="checkbox" id="checkbox_<?php echo $item['id'] ?>">
+                <label for="checkbox_<?php echo $item['id'] ?>" class="label-table"></label>
+            </th>
+
+	<?php foreach ($content['description']['list']['properties'] as $propertyId => $options) : ?>
+		<?php $property = $properties[$propertyId] ?>
+
+		<?php if ($property['type'] == 'select') : ?>
+            <td><?php if ($item[$propertyId]) echo $context->localize($properties[$propertyId]['modalities'][$item[$propertyId]]) ?></td>
+
+		<?php elseif ($property['type'] == 'date') : ?>
+            <td><?php echo $context->decodeDate($item[$propertyId]) ?></td>
+
+		<?php elseif ($property['type'] == 'number') : ?>
+            <td><?php echo $context->formatNumber($item[$propertyId], 2) ?></td>
+
+		<?php else : ?>
+            <td><?php echo $item[$propertyId] ?></td>
+
+        <?php endif;?>
+	<?php endforeach;?>
+        </tr>
+<?php endforeach ?>
+    </tbody>
+</table>

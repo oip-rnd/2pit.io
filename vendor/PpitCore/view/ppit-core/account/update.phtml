@@ -1,0 +1,438 @@
+<style>
+table.structured-data {
+	font-size: 0.83em;
+	border-width:1px; 
+ 	border-style:solid; 
+	border-color:gray;
+}
+table.structured-data caption { 
+	font-size:1.5em; 
+	padding:1em 0 0.5em 1em;
+}
+table.structured-data th {
+	color: #666;
+//    font-size:0.83em;
+	text-align: center;
+	border-width:1px; 
+ 	border-style:solid; 
+	border-color:gray;
+	background-color:#DDD;
+}
+
+table.structured-data td {
+	color: #666;
+//	font-size: 0.83em;
+	border-width:1px; 
+ 	border-style:solid; 
+	border-color:gray;
+}
+
+table.structured-data td.subject {
+	font-weight: bold;
+}
+
+table.structured-data tr.period {
+	background-color:#DDD;
+}
+</style>
+<h4 style="text-align: center">
+	<strong><?php echo $detailPage['title'][$context->getLocale()] ?></strong>
+</h4>
+
+<?php if ($account->id) : ?>
+		<button type="button" class="btn btn-default action-btn" id="account-update-anchor" title="<?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?>">
+			<span class="glyphicon glyphicon-edit"></span>
+		</button>
+
+		<button type="button" class="btn btn-default action-btn" id="account-delete-anchor" title="<?php echo $this->translate('Delete', 'ppit-core', $context->getLocale()) ?>" <?php if (!$account->isDeletable()) echo 'disabled="disabled"' ?>>
+			<span class="glyphicon glyphicon-trash"></span>
+		</button>
+
+		<a href="<?php echo $this->url('account/indexCard', array('id' => $account->id, 'type' => $type)) ?>" target="_blank" title="<?php echo $this->translate('Print the index card', 'ppit-commitment', $context->getLocale()) ?>">
+			<span class="glyphicon glyphicon-print"></span>
+		</a>
+<?php endif;?>
+
+<!-- Form header -->
+<?php echo $this->partial('/partials/form-header', array(
+		'update_time' => $account->update_time,
+		'message' => $message,
+		'error' => $error,
+		'csrfForm' => $csrfForm,
+		'context' => $context,
+));
+?>
+
+<!-- Currently updated by anyone else -->
+<?php if ($action == 'update' && $account->currently_updated_by && $account->currently_updated_by != $context->getFormatedName()) : ?>
+				<div class="alert alert-danger" style="text-align: center">
+					<strong><?php echo sprintf($this->translate('This account is currently updated by %s. Please check with him/her before submitting.', 'ppit-core', $context->getLocale()), $account->currently_updated_by) ?></strong>
+				</div>
+<?php endif;?>
+
+<?php if (!$account->id) : ?>
+		    <div class="form-group">
+				<div class="col-sm-5">&nbsp;</div>
+				<div class="col-sm-7">
+					<input name="submit" type="submit" id="up-submit-button" class="btn btn-warning" value="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale()) ?>">
+<?php if ($context->isDemoModeActive()) : ?>
+					<a class="tip" href="#" title="<?php echo $context->getConfig('demo')['core_account/add'.(($type) ? '/'.$type : '')][$context->getLocale()] ?>">
+					    <img src="<?php echo $this->basePath('img/tip.png') ?>" width="20" />
+					</a>
+<?php endif;?>
+				</div>
+			</div>
+
+<?php elseif ($action == 'update') : ?>
+		    <div class="form-group">
+				<div class="col-sm-5">&nbsp;</div>
+				<div class="col-sm-7">
+					<input name="submit" type="submit" id="up-submit-button" class="btn btn-warning" value="<?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?>">
+				</div>
+			</div>
+
+<?php elseif ($action == 'delete') : ?>
+		    <div class="form-group">
+				<div class="col-sm-5">&nbsp;</div>
+				<div class="col-sm-7">
+					<input name="submit" type="submit" id="up-submit-button" class="btn btn-danger" value="<?php echo $this->translate('Delete', 'ppit-core', $context->getLocale()) ?>">
+				</div>
+			</div>
+<?php endif;?>
+
+<?php 
+if ($account->id && $action != 'update' || $message == 'OK') $isDisabled = true; else $isDisabled = false;
+?>
+		<input type="hidden" id="passphrase" />
+<?php foreach ($updatePage as $propertyId => $property) : ?>
+	<?php 
+	if ($property['options'] && array_key_exists('readonly', $property['options']) && $property['options']['readonly']) $readonly = true;
+	elseif ($propertyId == 'identifier' && $internalIdentifier) $readonly = true;
+	else $readonly = false;
+	?>
+	<?php if ($property['type'] == 'title') : ?>
+		<hr>
+		<h5 style="text-align: center"><?php echo $property['labels'][$context->getLocale()] ?></h5>
+		<div>&nbsp;</div>
+		<?php elseif ($property['type'] != 'structure') : ?>
+		  <?php if (!array_key_exists('readonly', $property['options']) || !$property['options']['readonly'] || $account->properties[$propertyId]) : ?>
+		<div class="form-group" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_' : '').$propertyId ?>_group">
+			<?php if (in_array($property['type'], array('key_value', 'array'))) : ?>
+			<label class="col-sm-5 control-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $property['labels'][$context->getLocale()] ?></label>
+			<div class="col-sm-12">
+			<?php else : ?>
+			<label class="col-sm-5 control-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels']) ?></label>
+			<?php endif;?>
+
+			<?php if ($propertyId == 'name') : ?>
+			<div class="col-sm-7">
+				<input class="form-control" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" value="<?php echo $account->name ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+			</div>
+
+			<?php elseif ($propertyId == 'n_first') : ?>
+			<div class="col-sm-7">
+				<input class="form-control" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" value="<?php echo $account->contact_1->n_first ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+			</div>
+			
+			<?php elseif ($propertyId == 'n_last') : ?>
+			<div class="col-sm-7">
+				<input class="form-control" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" value="<?php echo $account->contact_1->n_last ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+			</div>
+			
+			<?php elseif ($propertyId == 'email') : ?>
+			<div class="col-sm-7">
+				<input class="form-control" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" value="<?php echo $account->contact_1->email ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+			</div>
+			
+			<?php elseif ($propertyId == 'tel_work') : ?>
+			<div class="col-sm-7">
+				<input class="form-control" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" value="<?php echo $account->contact_1->tel_work ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+			</div>
+			
+			<?php elseif ($propertyId == 'tel_cell') : ?>
+			<div class="col-sm-7">
+				<input class="form-control" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" value="<?php echo $account->contact_1->tel_cell ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+			</div>
+			
+			<?php elseif ($propertyId == 'birth_date') : ?>
+			<div class="col-sm-7">
+				<input type="hidden" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
+				<input class="form-control" id="input_<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php echo $context->decodeDate($account->contact_1->birth_date) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+			</div>
+
+			<?php elseif ($propertyId == 'place_id') : ?>
+			<div class="col-sm-7">
+				<select class="form-control" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
+	    			<option />
+			<?php foreach ($places as $place) : ?>
+	    			<option value="<?php echo $place->id ?>" <?php if ($account->properties[$propertyId] == $place->id) echo 'selected="selected"' ?>><?php echo $place->caption ?></option>
+			<?php endforeach;?>
+				</select>
+			</div>
+
+			<?php elseif ($property['type'] == 'input') : ?>
+			<div class="col-sm-7">
+				<input class="form-control" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" value="<?php echo $account->properties[$propertyId] ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+			</div>
+
+			<?php elseif ($propertyId == 'closing_date') : ?>
+			<div class="col-sm-7">
+				<input type="hidden" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
+				<input class="form-control" id="input_<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php echo $context->decodeDate($account->closing_date) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+			</div>
+				
+			<?php elseif ($property['type'] == 'date') : ?>
+			<div class="col-sm-7">
+				<input type="hidden" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
+				<input class="form-control" id="input_<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php echo $context->decodeDate($account->properties[$propertyId]) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+			</div>
+
+			<?php elseif ($property['type'] == 'time') : ?>
+			<div class="col-sm-7">
+				<input class="form-control time" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" value="<?php echo $account->properties[$propertyId] ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+			</div>
+				
+			<?php elseif ($property['type'] == 'datetime') : ?>
+			<div class="col-sm-4">
+				<input type="hidden" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
+				<input class="form-control" id="input_<?php echo $propertyId ?>" value="<?php echo $context->decodeDate(substr($account->properties[$propertyId], 0, 10)) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+			</div>
+			<div class="col-sm-3">
+				<input class="form-control time" id="<?php echo $propertyId ?>-time" value="<?php echo substr($account->properties[$propertyId], 11, 8) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+			</div>
+
+			<?php elseif ($property['type'] == 'number') : ?>
+			<div class="col-sm-7">
+				<input type="hidden" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
+				<input class="form-control" id="input_<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php echo $context->formatFloat($account->properties[$propertyId], 2) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+			</div>
+
+			<?php elseif ($property['type'] == 'textarea') : ?>
+			<div class="col-sm-7">
+				<textarea class="form-control" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>><?php echo $account->properties[$propertyId] ?></textarea>
+			</div>
+
+			<?php elseif ($property['type'] == 'log') : ?>
+			<div class="col-sm-7">
+				<textarea class="form-control" id="<?php echo $propertyId ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>></textarea>
+			</div>
+
+			<?php elseif ($property['type'] == 'multiselect') : ?>
+				<?php $values = explode(',', $account->properties[$propertyId]) ?>
+			<div class="col-sm-7">
+				<select class="update_selectpicker" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" multiple <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
+	    			<option />
+				<?php foreach ($property['modalities'] as $key => $labels) : ?>
+	    			<option value="<?php echo $key ?>" <?php if (in_array($key, $values)) echo 'selected="selected"' ?>><?php echo $context->localize($labels) ?></option>
+				<?php endforeach;?>
+				</select>
+			</div>
+
+			<?php elseif (in_array($property['type'], ['select', 'computed'])) : ?>
+				<?php 
+				$multiple = array_key_exists('multiple', $property) && $property['multiple'];
+				$values = explode(',', $account->properties[$propertyId]);
+				?>
+			<div class="col-sm-7">
+				<select class="<?php echo ($multiple) ? 'update_selectpicker' : 'form-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if ($multiple) echo 'multiple' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
+	    			<option />
+				<?php foreach ($property['modalities'] as $key => $labels) : ?>
+	    			<option value="<?php echo $key ?>" <?php if (in_array($key, $values)) echo 'selected="selected"' ?>><?php echo $context->localize($labels) ?></option>
+				<?php endforeach;?>
+				</select>
+			</div>
+
+			<?php elseif ($property['type'] == 'photo') : ?>
+			<div class="col-sm-7">
+
+<!-- Photo -->
+				<img height="150" src="<?php echo $this->basePath('photos/'.(($account->photo_link_id) ? $account->photo_link_id :  $account->contact_1_id.'.jpg')) ?>"/>
+			</div>
+
+<!-- Key-value -->
+
+			<?php elseif ($property['type'] == 'key_value') : ?>
+			<div class="col-sm-7">
+				<table class="table structured-data">
+				<?php foreach ($property['properties'] as $key => $unused) : ?>
+					<?php if (array_key_exists($key, $account->properties[$propertyId])) : ?>
+					<tr>
+						<th><?php echo $key ?></th>
+						<td><?php echo $account->properties[$propertyId][$key] ?></td>
+					</tr>
+					<?php endif;?>
+				<?php endforeach;?>
+				</table>
+			</div>
+
+			<?php elseif ($property['type'] == 'array') : ?>
+			<div class="col-sm-7">
+				<table class="table structured-data">
+					<tr>
+				<?php foreach ($property['properties'] as $key => $unused) : ?>
+						<th><?php echo $key ?></th>
+				<?php endforeach;?>
+					</tr>
+				<?php foreach ($account->properties[$propertyId] as $row) : ?>
+					<tr>
+					<?php foreach ($property['properties'] as $key => $unused) : ?>
+						<?php $value = (array_key_exists($key, $row)) ? $row[$key] : '' ?>
+						<td><?php echo (is_array($value)) ? implode(',', $value) : $value ?></td>
+					<?php endforeach;?>
+					</tr>
+				<?php endforeach;?>
+				</table>
+			</div>
+
+<!-- Structured data -->
+
+			<?php elseif (false) : // ($property['type'] == 'structured') : ?>
+			<div class="col-sm-7">
+				<?php foreach ($account->properties[$propertyId] as $itemId => $item) : ?>
+					<?php if (is_array($item)) : ?>
+				<table class="table structured-data">
+						<?php reset($item); ?>
+					<tr>
+							<?php foreach (current($item) as $cellId => $cell) : ?>
+						<th><?php echo $cellId ?></th>
+							<?php endforeach;?>
+					</tr>
+						<?php foreach ($item as $row) : ?>
+					<tr>
+							<?php foreach ($row as $cellId => $cell) : ?>
+						<td><?php echo $cell ?></td>
+							<?php endforeach;?>
+					</tr>
+						<?php endforeach;?>
+				</table>
+					<?php else : ?>
+				<div>&nbsp;</div>
+				<table class="table structured-data">
+					<tr><th><?php echo $itemId ?></th></tr>
+					<tr><td><?php echo $item ?></td></tr>
+				</table>
+					<?php endif;?>
+				<?php endforeach;?>
+			</div>
+	
+			<?php else : ?>
+			<div class="col-sm-7">
+				<input class="form-control" id="<?php echo $propertyId ?>" value=" " <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+			</div>
+
+			<?php endif;?>
+			<div class="col-sm-12"><p class="help-block" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_' : '').$propertyId ?>_error"></p></div>
+		</div>
+
+			<?php if ($property['type'] == 'photo' && !$isDisabled && !$readonly) : ?>
+	    <div class="photo-group">
+			<label class="col-sm-5 control-label"></label>
+			<div class="col-sm-7">
+				<input type="file" id="<?php echo $propertyId ?>" class="form-control" />
+			</div>
+		</div>
+		<div>&nbsp;</div>
+
+			<?php elseif ($property['type'] == 'log' && $account->properties[$propertyId]) : ?>
+<!-- Display the history -->
+		<div id="<?php echo $propertyId ?>-history-panel" class="panel panel-default">
+			<div class="panel-body">
+				<?php foreach ($account->properties[$propertyId] as $comment) : ?>
+				<div class="row">
+					<div class="col-md-12">
+						<strong><?php echo $context->decodeDate(substr($comment['time'], 0, 10)).substr($comment['time'], 10) ?>:</strong>&nbsp;
+						<?php if (array_key_exists('status', $comment)) echo $context->getconfig('core_account/'.$type.'/property/'.'statuses')[$comment['status']]['labels'][$context->getLocale()] ?>&nbsp;
+						(<?php echo $comment['n_fn'] ?>)
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-2" align="right">&nbsp;</div>
+					<div class="col-md-10"><em><?php echo $comment['comment'] ?></em></div>
+				</div>
+				<?php endforeach;?>
+			</div>
+		</div>
+		<div>&nbsp;</div>
+		<div>
+			<?php endif; ?>
+		  <?php endif;?>
+
+<!-- Structure -->
+
+		<?php elseif ($property['type'] == 'structure') : ?>
+		<hr>
+		<h5 style="text-align: center"><?php echo $context->localize($property['labels']) ?></h5>
+		<div>&nbsp;</div>
+		<div class="form-group" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_' : '').$propertyId ?>_group">
+			<?php for ($i = 0; $i < $property['max_occurences']; $i++) : ?>
+				<?php foreach ($property['fields'] as $fieldId => $field) : ?>
+			<label class="col-sm-6 control-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $context->localize($field['labels']) ?></label>
+			<div class="col-sm-6">
+				<?php 
+				$value = (array_key_exists($i, $account->properties[$propertyId]) && array_key_exists($fieldId, $account->properties[$propertyId][$i])) ? $account->properties[$propertyId][$i][$fieldId] : '';
+				$id = $propertyId.'_'.$fieldId.'_'.$i;
+				?>
+
+				<?php if ($field['type'] == 'input') : ?>
+				<input class="form-control" id="<?php echo $id ?>" value="<?php echo $value ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?> />
+						
+				<?php elseif ($field['type'] == 'date') : ?>
+				<input type="hidden" id="<?php echo $id ?>" />
+				<input class="form-control" id="input_<?php echo $id ?>" value="<?php echo $context->decodeDate($value) ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?> />
+		
+				<?php elseif ($field['type'] == 'time') : ?>
+				<input class="form-control time" id="<?php echo $id ?>" value="<?php echo $value ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?> />
+		
+				<?php elseif ($field['type'] == 'number') : ?>
+				<input type="hidden" id="<?php echo $id ?>" />
+				<input class="form-control" id="input_<?php echo $id ?>" value="<?php echo $context->formatFloat($value, 2) ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?> />
+		
+				<?php elseif ($field['type'] == 'textarea') : ?>
+				<textarea class="form-control" id="<?php echo $id ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?>><?php echo $value ?></textarea>
+		
+				<?php elseif ($field['type'] == 'log') : ?>
+				<textarea class="form-control" id="<?php echo $id ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?>></textarea>
+		
+				<?php elseif ($field['type'] == 'select') : ?>
+				<select class="form-control" id="<?php echo $id ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?>>
+	    			<option />
+					<?php foreach ($field['modalities'] as $key => $labels) : ?>
+	    			<option value="<?php echo $key ?>" <?php if ($value == $key) echo 'selected="selected"' ?>><?php echo $labels[$context->getLocale()] ?></option>
+					<?php endforeach;?>
+				</select>
+						
+				<?php endif;?>
+			</div>
+				<?php endforeach;?>
+			<?php endfor;?>
+		</div>
+		<hr>
+	<?php endif;?>
+<?php endforeach;?>
+
+<?php if (!$account->id) : ?>
+		    <div class="form-group">
+				<div class="col-sm-5">&nbsp;</div>
+				<div class="col-sm-7">
+					<input name="submit" type="submit" id="submit-button" class="btn btn-warning" value="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale()) ?>">
+				</div>
+			</div>
+
+<?php elseif ($action == 'update') : ?>
+		    <div class="form-group">
+				<div class="col-sm-5">&nbsp;</div>
+				<div class="col-sm-7">
+					<input name="submit" type="submit" id="submit-button" class="btn btn-warning" value="<?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?>">
+				</div>
+			</div>
+
+<?php elseif ($action == 'delete') : ?>
+		    <div class="form-group">
+				<div class="col-sm-5">&nbsp;</div>
+				<div class="col-sm-7">
+					<input name="submit" type="submit" id="submit-button" class="btn btn-danger" value="<?php echo $this->translate('Delete', 'ppit-core', $context->getLocale()) ?>">
+				</div>
+			</div>
+<?php endif;?>
+		
+		</form>

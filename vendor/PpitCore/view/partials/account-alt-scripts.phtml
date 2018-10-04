@@ -1,0 +1,1177 @@
+/**
+ * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
+ *
+ * @link      https://github.com/p-pit/PpitCore
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
+ */
+
+var criterion = '<?php echo $context->getConfig('core_account/'.$type)['order'] ?>', dir = 'ASC';
+
+function accountGetParams() {
+
+	var params = '?', todo = true;
+
+<?php foreach ($searchPage['properties'] as $propertyId => $options) : ?>
+	<?php 
+	$property = $context->getConfig('core_account/'.$type.'/property/'.$propertyId);
+	if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
+	if (array_key_exists('type', $options)) $display_type = $options['type'];
+	elseif (array_key_exists('type', $property)) $display_type = $property['type'];
+	?>
+
+	<?php if ($propertyId == 'availability') : ?>
+
+  var <?php echo $propertyId ?> = $('#search-<?php echo $propertyId ?>').val();
+  if (<?php echo $propertyId ?>.length >= 2) { params += '<?php echo $propertyId ?>=' + <?php echo $propertyId ?> + '&'; todo = false; }
+  
+  var min_<?php echo $propertyId ?> = $('#search_min-<?php echo $propertyId ?>').val();
+  if (min_<?php echo $propertyId ?>) min_<?php echo $propertyId ?> = encodeDate(min_<?php echo $propertyId ?>);
+  if (min_<?php echo $propertyId ?>.length >= 2) { params += 'min_<?php echo $propertyId ?>=' + min_<?php echo $propertyId ?> + '&'; todo = false; }
+
+  var max_<?php echo $propertyId ?> = $('#search_max-<?php echo $propertyId ?>').val();
+  if (max_<?php echo $propertyId ?>) max_<?php echo $propertyId ?> = encodeDate(max_<?php echo $propertyId ?>);
+  if (max_<?php echo $propertyId ?>.length >= 2) { params += 'max_<?php echo $propertyId ?>=' + max_<?php echo $propertyId ?> + '&'; todo = false; }
+
+	<?php elseif (in_array($display_type, array('date', 'time', 'datetime', 'number'))) : ?>
+
+  var checked = $('#search_check_value-<?php echo $propertyId ?>').val();
+  
+  var min_<?php echo $propertyId ?> = $('#search_min-<?php echo $propertyId ?>').val();
+  if (min_<?php echo $propertyId ?>) min_<?php echo $propertyId ?> = encodeDate(min_<?php echo $propertyId ?>);
+  if (min_<?php echo $propertyId ?>.length >= 2 || checked == '1') { params += 'min_<?php echo $propertyId ?>=' + min_<?php echo $propertyId ?> + '&'; todo = false; }
+
+  var max_<?php echo $propertyId ?> = $('#search_max-<?php echo $propertyId ?>').val();
+  if (max_<?php echo $propertyId ?>) max_<?php echo $propertyId ?> = encodeDate(max_<?php echo $propertyId ?>);
+  if (max_<?php echo $propertyId ?>.length >= 2 || checked == '1') { params += 'max_<?php echo $propertyId ?>=' + max_<?php echo $propertyId ?> + '&'; todo = false; }
+
+	<?php elseif (in_array($display_type, ['select', 'multiselect'])) : ?>
+
+  var <?php echo $propertyId ?> = $('#search-<?php echo $propertyId ?>').val();
+  var checked = $('#search_check_value-<?php echo $propertyId ?>').val();
+  if (checked == '1') { params += '<?php echo $propertyId ?>=' + <?php echo $propertyId ?> + '&'; todo = false; }
+
+	<?php elseif ($display_type == 'boolean') : ?>
+
+  if (document.getElementById('search-<?php echo $propertyId ?>').checked) var <?php echo $propertyId ?> = '*';
+  else var <?php echo $propertyId ?> = '';
+  if (max_<?php echo $propertyId ?>.length >= 2) { params += '<?php echo $propertyId ?>=' + <?php echo $propertyId ?> + '&'; todo = false; }
+	
+	<?php else : ?>
+
+  var <?php echo $propertyId ?> = $('#search-<?php echo $propertyId ?>').val();
+  var checked = $('#search_check_value-<?php echo $propertyId ?>').val();
+  if (<?php echo $propertyId ?>.length >= 2 || checked == '1') { params += '<?php echo $propertyId ?>=' + <?php echo $propertyId ?> + '&'; todo = false; }
+	
+	<?php endif;?>
+
+<?php endforeach;?>
+
+	<?php
+	$todoTitle = (isset ($searchPage['todoTitle']) ? $searchPage['todoTitle'][$context->getLocale()] : $this->translate('active', 'ppit-core', $context->getLocale()));
+	$searchTitle = (isset ($searchPage['searchTitle']) ? $searchPage['searchTitle'][$context->getLocale()] : $this->translate('search', 'ppit-core', $context->getLocale()));
+	?>
+	$('#mode-text').text((todo) ? '<?php echo $todoTitle ?>' : '<?php echo $searchTitle ?>');
+//	if (!todo) $('#limit').val('');
+
+	return params;
+}
+
+// Export the list
+function exportAccountList() {
+
+	var params = accountGetParams();
+	document.location.href = '<?php echo $this->url('account/export', array('entry' => $entry, 'type' => $type)) ?>' + params;
+}
+
+function csvAccountList() {
+
+	var params = accountGetParams();
+	document.location.href = '<?php echo $this->url('account/exportCsv', array('entry' => $entry, 'type' => $type)) ?>' + params;
+}
+
+// Load the list
+function getAccountList(params) {		
+
+  // Execute the ajax request
+  route = '<?php echo $this->url('account/listAlt', array('entry' => $entry, 'type' => $type)) ?>' + params + '&major=' + criterion + ((dir =='ASC') ? '&dir=ASC' : '&dir=DESC') + '&limit=' + $('#limit').val();
+  xhttp = new XMLHttpRequest();
+  xhttp.open("GET", route, true);
+  xhttp.onreadystatechange = function() {
+    if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+    if (xhttp.readyState == 4) {
+      if (xhttp.status == 200) {
+        $('#list-panel').html(xhttp.responseText);
+			
+        // Connect the sort anchors
+        $('.sort_anchor').click(function () {
+          criterion = $(this).attr('id').split('-')[0];
+          ascCriterion = $('.sort_anchor_up').attr('id');
+          descCriterion = $('.sort_anchor_down').attr('id');
+          if (criterion + '-anchor' == ascCriterion) dir = 'DESC';
+          else if (criterion + '-anchor' == descCriterion) dir = 'ASC';
+          else dir = 'ASC';
+          getAccountList(accountGetParams());
+        });
+
+        // Connect the more anchor
+        $('#account-more-anchor').click(function () {
+          $('#limit').val('');
+          getAccountList(accountGetParams());
+        });
+
+        // Able the group action button
+        $('.account-checkbox').click(function () {
+          $('.account-group-anchor').removeAttr('disabled');
+        });
+
+        // Connect the check all checkbox
+        $('#account-checkbox').click(function () {
+          var current = document.getElementById('account-checkbox').checked;
+          var accountNumber = $('#account-number').val();
+          document.getElementById('down-account-checkbox').checked = (current) ? true : false;
+          for (i = 0; i < accountNumber; i++) {
+            document.getElementById('account-checkbox_' + i).checked = (current) ? true : false;
+          }
+        });
+
+        $('#down-account-checkbox').click(function () {
+          var current = document.getElementById('down-account-checkbox').checked;
+          var accountNumber = $('#account-number').val();
+          document.getElementById('account-checkbox').checked = (current) ? true : false;
+          for (i = 0; i < accountNumber; i++) {
+            document.getElementById('account-checkbox_' + i).checked = (current) ? true : false;
+          }
+        });
+			
+        // Connect the grouped actions anchors
+        $('.account-group-anchor').each(function () {
+          $(this).click(function () {
+            getAccountGroup();
+          });
+        });
+
+        // Connect the detail anchors
+        $('.account-detail-anchor').each(function () {
+          $(this).click(function () {
+            var id = $(this).attr('id').split('_')[1];
+            getDetail(id);
+            $(this).removeClass("btn-outline-primary").addClass("btn-primary");
+          });
+        });
+
+        // Connect the distribution anchor
+        $('.distribution').hide();
+        var distributionValue = $('#select-distribution').val();
+        $('#distribution_' + distributionValue).show();
+        $('#select-distribution').change(function () {
+          $('.distribution').hide();
+          var distributionValue = $('#select-distribution').val();
+          $('#distribution_' + distributionValue).show();
+        });
+  
+        $('[data-toggle="tooltip"]').tooltip()
+      }
+    }
+  }
+  xhttp.send();
+}
+
+$('#modalForm').on('hidden.bs.modal', function (e) {
+  $('.account-detail-anchor').addClass("btn-outline-primary").removeClass("btn-primary");
+})
+
+function connectAuditPanel()
+{
+	$('#audit-panel').hide();
+	$('#audit-label').click(function () {
+		if ($('#audit-label').text() == '<?php echo $this->translate('Show', 'ppit-core', $context->getLocale()) ?>') {
+			$('#audit-panel').show();
+			$('#audit-label').text('<?php echo $this->translate('Mask', 'ppit-core', $context->getLocale()) ?>');
+		}
+		else {
+			$('#audit-panel').hide();
+			$('#audit-label').text('<?php echo $this->translate('Show', 'ppit-core', $context->getLocale()) ?>');
+		}
+	});
+}
+
+// Account creation, removal, updating and detail
+
+<?php 
+$properties = array();
+
+foreach ($updatePage as $propertyId => $property) {
+
+	if ($property['options'] && array_key_exists('readonly', $property['options']) && $property['options']['readonly']) $readonly = true;
+	elseif ($propertyId == 'identifier' && $internalIdentifier) $readonly = true;
+	else $readonly = false;
+
+	if (!$readonly && $property['type'] != 'title') {
+		if ($property['type'] == 'number') $properties[$propertyId] = array('type' => $property['type'], 'mandatory' => $property['options']['mandatory'], 'minValue' => $property['minValue'], 'maxValue' => $property['maxValue']);
+		elseif ($property['type'] == 'datetime') {
+			$properties[$propertyId] = array('type' => 'date', 'mandatory' => $property['options']['mandatory']);
+			$properties[$propertyId.'-time'] = array('type' => 'time', 'mandatory' => $property['options']['mandatory']);
+		}
+		elseif ($property['type'] == 'structure') {
+			for ($i = 0; $i < $property['max_occurences']; $i++) {
+				foreach ($property['fields'] as $fieldId => $field) {
+					if ($field['type'] == 'number') $properties[$propertyId.'_'.$fieldId.'_'.$i] = array('type' => $field['type'], 'mandatory' => false, 'minValue' => $field['minValue'], 'maxValue' => $field['maxValue']);
+					else $properties[$propertyId.'_'.$fieldId.'_'.$i] = array('type' => $field['type'], 'mandatory' => false, 'maxSize' => ($field['type'] == 'textarea') ? 2047 : 255);
+				}
+			}
+		}
+		else $properties[$propertyId] = array('type' => $property['type'], 'mandatory' => (array_key_exists('mandatory', $property['options'])) ? $property['options']['mandatory'] : false, 'maxSize' => ($property['type'] == 'textarea' || $property['type'] == 'log') ? 2047 : 255);
+	}
+}
+
+$properties['update_time'] = array('type' => 'hidden');
+echo $this->partial('/partials/check-update-properties', array('entity' => 'Account', 'context' => $context, 'properties' => $properties)) 
+?>
+
+function postForm(id, action)
+{
+  // Check validity
+  var validity = checkAccountUpdateProperties(id);
+  if (validity) {
+
+    // Create a new FormData object.
+    var formData = new FormData();
+
+    // Get the properties values
+<?php foreach ($properties as $propertyId => $property) : ?>
+  <?php if (in_array($property['type'], array('input', 'date', 'time', 'textarea', 'log', 'select', 'multiselect', 'number', 'email', 'phone', 'hidden'))) : ?>
+    formData.append('<?php echo $propertyId ?>', $('#<?php echo $propertyId ?>').val());
+
+  <?php elseif ($property['type'] == 'checkbox') : ?>
+    formData.append('<?php echo $propertyId ?>', ((document.getElementById('<?php echo $propertyId ?>').checked) ? 1 : 0));
+
+  <?php elseif ($property['type'] == 'photo') : ?>
+    var fileSelect = document.getElementById('<?php echo $propertyId ?>');
+    if (fileSelect) {
+      var files = fileSelect.files;
+      for (var i = 0; i < files.length; i++) {
+        var file = files[i];
+        formData.append('<?php echo $propertyId ?>', file, file.name);
+      }
+    }
+
+  <?php endif ?>
+<?php endforeach ?>
+
+    var xhttp = new XMLHttpRequest();
+    var route, target;
+    route = '<?php echo $this->url('account/updateAlt') ?>/' + id + '<?php echo (($type) ? '/'.$type : '') ?>' + '?act=' + action;
+    xhttp.open('POST', route, true);
+    xhttp.onload = function () {
+      if (xhttp.readyState == 4) {
+        if (xhttp.status == 200) {
+          getAccountList(accountGetParams());
+          $('#account-update-panel').html(xhttp.responseText);
+          $('[data-toggle="tooltip"]').tooltip();
+        }
+        else {
+          console.log(xhttp.status + ' ' + xhttp.statusText);
+          toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+        }
+      }
+    };
+    xhttp.send(formData);
+  }
+  else return false;
+}
+
+function getUpdate(id, action) {
+
+  var xhttp = new XMLHttpRequest();
+  var route = '<?php echo $this->url('account/updateAlt') ?>/' + id + '<?php echo (($type) ? '/'.$type : '') ?>';
+  if (action) route += '?act=' + action;
+
+  xhttp.open('GET', route, true);
+  xhttp.onreadystatechange = function() {
+    if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+    if (xhttp.readyState == 4) {
+      if (xhttp.status == 200) {
+        $('#account-update-panel').html(xhttp.responseText);
+        if (id == 0) $('#status').val('<?php echo $status ?>');
+        if (id) {
+          $('#account-update-anchor').click(function () { 
+            $('[data-toggle="tooltip"]').tooltip('hide');
+            getUpdate(id, 'update'); 
+          });
+          $('#account-delete-anchor').click(function () { 
+            $('[data-toggle="tooltip"]').tooltip('hide');
+            getUpdate(id, 'delete'); 
+          });
+          $('#up-cancel-button').click(function () { getUpdate(id, ''); });
+          $('#cancel-button').click(function () { getUpdate(id, ''); });
+        }
+        else $('#account-add-anchor').click(function () { 
+          $('[data-toggle="tooltip"]').tooltip('hide');
+          getUpdate(id, 'add'); 
+        });
+      
+        $('.update_date').datepicker();
+        $('.update_time').timepicker({ 'timeFormat':'H:i:s', 'step': 15, 'scrollDefault': 'now' });
+        $('.update_selectpicker').selectpicker();
+
+        $('#up-submit-button').click(function () { 
+          postForm(id, action); 
+        });
+        $('#submit-button').click(function () {
+          postForm(id, action);
+        });
+                
+//        $('#modalFormLabel').html($('#caption_' + id).val());
+
+        $('[data-toggle="tooltip"]').tooltip();
+      }
+      else {
+	    console.log(xhttp.status + ' ' + xhttp.statusText);
+        toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+      }
+    }
+  }
+  xhttp.send();
+}
+
+function getDetail(id) {
+
+	var xhttp = new XMLHttpRequest();
+	var route = '<?php echo $this->url('account/detailAlt', array('type' => $type)) ?>/' + id;
+
+	xhttp.open('GET', route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4) {
+		  if (xhttp.status == 200) {
+			$('#modalForm').html(xhttp.responseText);
+            connectAuditPanel();
+            getUpdate(id, '');
+
+            $('#contact_1-tab').addClass('active');
+
+  <?php foreach ($detailPage['tabs'] as $tabId => $unused) : ?>
+
+            $('#<?php echo $tabId ?>-tab').click(function () {
+              $('.account-detail-nav-link').removeClass('active');
+              $('#<?php echo $tabId ?>-tab').addClass('active');
+
+    <?php if ($tabId == 'contact_1') : ?>
+              getUpdate(id, '');
+
+    <?php elseif ($tabId == 'user') : ?>
+              getUserUpdate(id, '');
+
+    <?php else : ?>
+              get<?php echo $tabId ?>Update(id, '');
+
+    <?php endif;?>
+            });
+
+  <?php endforeach;?>
+
+            $('#modalForm').modal('toggle');
+          }
+          else {
+            console.log(xhttp.status + ' ' + xhttp.statusText);
+            toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+          }
+		}
+	}
+	xhttp.send();
+}
+
+// Contact creation and updating
+
+<?php 
+$properties = array();
+
+foreach ($updateContactPage as $propertyId => $options) {
+  $property = $vcardProperties[$propertyId];
+  $properties[$propertyId] = array('type' => $property['type'], 'mandatory' => $options['mandatory'], 'maxSize' => ($property['type'] == 'textarea' || $property['type'] == 'log') ? 2047 : 255);
+}
+$properties['update_time'] = array('type' => 'hidden');
+echo $this->partial('/partials/check-update-properties', array('entity' => 'Contact', 'context' => $context, 'properties' => $properties)) 
+?>
+
+<?php foreach (array('contact_1', 'user', 'contact_2', 'contact_3', 'contact_4') as $contactNumber) : ?>
+
+function post<?php echo $contactNumber ?>Form(id, action)
+{
+  // Check validity
+  var validity = checkContactUpdateProperties(id);
+  if (validity) {
+
+    // Create a new FormData object.
+    var formData = new FormData();
+
+    // Get the properties values
+<?php foreach ($properties as $propertyId => $property) : ?>
+  <?php if (in_array($property['type'], array('input', 'date', 'time', 'textarea', 'log', 'select', 'multiselect', 'number', 'email', 'phone', 'hidden'))) : ?>
+    formData.append('<?php echo $propertyId ?>', $('#<?php echo $propertyId ?>').val());
+
+  <?php elseif ($property['type'] == 'checkbox') : ?>
+    formData.append('<?php echo $propertyId ?>', ((document.getElementById('<?php echo $propertyId ?>').checked) ? 1 : 0));
+
+  <?php elseif ($property['type'] == 'photo') : ?>
+    var fileSelect = document.getElementById('<?php echo $propertyId ?>');
+    if (fileSelect) {
+      var files = fileSelect.files;
+      for (var i = 0; i < files.length; i++) {
+        var file = files[i];
+        formData.append('<?php echo $propertyId ?>', file, file.name);
+      }
+    }
+
+  <?php endif ?>
+<?php endforeach ?>
+
+    var xhttp = new XMLHttpRequest();
+    var route, target;
+    route = '<?php echo $this->url('account/updateContactAlt', array('type' => $type, 'contactNumber' => $contactNumber)) ?>/' + id;
+    if (action) route += '/' + action;
+    xhttp.open('POST', route, true);
+    xhttp.onload = function () {
+      if (xhttp.readyState == 4) {
+        if (xhttp.status == 200) {
+          $('#account-update-panel').html(xhttp.responseText);
+          $('[data-toggle="tooltip"]').tooltip();
+        }
+        else {
+          console.log(xhttp.status + ' ' + xhttp.statusText);
+          toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+        }
+      }
+    };
+    xhttp.send(formData);
+  }
+  else return false;
+}
+
+function get<?php echo $contactNumber ?>Update(id, action) {
+
+  var xhttp = new XMLHttpRequest();
+  var route = '<?php echo $this->url('account/updateContactAlt', array('type' => $type, 'contactNumber' => $contactNumber)) ?>/' + id;
+  if (action) route += '/' + action;
+
+  xhttp.open('GET', route, true);
+  xhttp.onreadystatechange = function() {
+    if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+    if (xhttp.readyState == 4) {
+      if (xhttp.status == 200) {
+        $('#account-update-panel').html(xhttp.responseText);
+        if (id) {
+          $('#contact-update-anchor').click(function () { 
+            $('[data-toggle="tooltip"]').tooltip('hide');
+            get<?php echo $contactNumber ?>Update(id, 'update');
+          });
+          $('#contact-delete-anchor').click(function () {
+            $('[data-toggle="tooltip"]').tooltip('hide');
+            get<?php echo $contactNumber ?>Update(id, 'delete');
+          });
+          $('#up-cancel-button').click(function () { getUpdate(id, ''); });
+          $('#cancel-button').click(function () { getUpdate(id, ''); });
+        }
+        else $('#contact-add-anchor').click(function () {
+            $('[data-toggle="tooltip"]').tooltip('hide');
+          get<?php echo $contactNumber ?>Update(id, 'add');
+        });
+      
+        $('.update_date').datepicker();
+        $('.update_time').timepicker({ 'timeFormat':'H:i:s', 'step': 15, 'scrollDefault': 'now' });
+        $('.update_selectpicker').selectpicker();
+
+        $('#up-submit-button').click(function () { 
+          post<?php echo $contactNumber ?>Form(id, action); 
+        });
+        $('#submit-button').click(function () {
+          post<?php echo $contactNumber ?>Form(id, action);
+        });
+        $('[data-toggle="tooltip"]').tooltip();
+      }
+      else {
+      console.log(xhttp.status + ' ' + xhttp.statusText);
+        toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+      }
+    }
+  }
+  xhttp.send();
+}
+
+<?php endforeach;?>
+
+// Grouped actions
+
+function connectAddToGroupForm()
+{
+	var accountNumber = $('#group-nb-account').val(), accounts = '';
+	first = true;
+	for (i = 0, j = 0; i < accountNumber; i++) {
+		if (!first) accounts += ',';
+		first = false;
+		accounts += $('#group-account_' + i).val();
+		j++;
+	}
+
+	var formData = new FormData();
+	formData.append('group_id', $('#group_id').val());
+
+	var xhttp = new XMLHttpRequest();
+	var route = '<?php echo $this->url('account/addToGroup') ?>' + '?accounts=' + accounts;
+	xhttp = new XMLHttpRequest();
+	xhttp.open("POST", route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4 && xhttp.status == 200) {
+			document.getElementById('add-to-group-panel').innerHTML = xhttp.responseText;
+		}
+	}
+	xhttp.send(formData);
+}
+
+function addToGroup() 
+{
+	var accountNumber = $('#group-nb-account').val(), accounts = '';
+	first = true;
+	for (i = 0, j = 0; i < accountNumber; i++) {
+		if (!first) accounts += ',';
+		first = false;
+		accounts += $('#group-account_' + i).val();
+		j++;
+	}
+
+	var xhttp = new XMLHttpRequest();
+	xhttp = new XMLHttpRequest();
+	xhttp.open("GET", '<?php echo $this->url('account/addToGroup') ?>' + '?accounts=' + accounts, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4 && xhttp.status == 200) {
+			document.getElementById('add-to-group-panel').innerHTML = xhttp.responseText;
+			$('#add-to-group-alert').hide();
+			$('#add-to-group-button').click(function () {
+				$('#add-to-group-button').removeClass('btn-default').addClass('btn-warning');
+				$('#add-to-group-alert').show();
+				$('#add-to-group-button').click(function () { connectAddToGroupForm(); });
+			});
+		}
+	}
+	xhttp.send();
+}
+
+// SendMessage
+
+<?php 
+$properties = array();
+$properties['mask_recipients'] = array('type' => 'checkbox');
+$properties['template_id'] = array('type' => 'select', 'mandatory' => true);
+if ($templates) foreach ($templates as $templateId => $template) {
+	$properties[$templateId.'_subject'] = array('type' => 'input', 'mandatory' => 'true', 'maxSize' => 255);
+	$properties[$templateId.'_text'] = array('type' => 'ckeditor', 'mandatory' => 'true', 'maxSize' => 65535);
+}
+$properties['attachment'] = array('type' => 'select', 'mandatory' => false);
+$properties['update_time'] = array('type' => 'hidden');
+echo $this->partial('/partials/check-update-properties', array('entity' => 'Mail', 'context' => $context, 'properties' => $properties)) 
+?>
+
+function connectSendMessageForm(id)
+{
+<?php foreach ($properties as $propertyId => $property) : ?>
+	<?php if ($property['type'] == 'date') : ?>
+		$('#input_<?php echo $propertyId ?>').datepicker();
+	<?php elseif ($property['type'] == 'time') : ?>
+		$('#<?php echo $propertyId ?>').timepicker({ 'timeFormat': 'H:i:s' });
+	<?php endif;?>
+<?php endforeach ?>
+
+	var form = document.getElementById('ppit-form');
+	
+	// Check validity
+	var validity = checkMailUpdateProperties(id);
+
+	if (validity) {
+		
+		// Create a new FormData object.
+		var formData = new FormData();
+	
+		var accountNumber = $('#group-nb-account').val();
+		for (i = 0; i < accountNumber; i++) {
+			formData.append('account_' + i, $('#group-account_' + i).val());
+		}
+		formData.append('nb-account', accountNumber);
+			
+		// Get the properties values
+<?php foreach ($properties as $propertyId => $property) : ?>
+	<?php if (in_array($property['type'], array('input', 'date', 'time', 'textarea', 'log', 'select', 'multiselect', 'number', 'email', 'phone', 'hidden'))) : ?>
+		formData.append('<?php echo $propertyId ?>', document.getElementById('<?php echo $propertyId ?>').value);
+
+	<?php elseif ($property['type'] == 'checkbox') : ?>
+		formData.append('<?php echo $propertyId ?>', ((document.getElementById('<?php echo $propertyId ?>').checked) ? 1 : 0));
+
+	<?php elseif ($property['type'] == 'ckeditor') : ?>
+		formData.append('<?php echo $propertyId ?>', CKEDITOR.instances.<?php echo $propertyId ?>.getData());
+
+	<?php endif ?>
+
+<?php endforeach ?>
+	
+		var xhttp = new XMLHttpRequest();
+		var route = '<?php echo $this->url('account/sendMessage') ?>';
+	
+		// Execute the ajax request
+		xhttp = new XMLHttpRequest();
+		xhttp.open("POST", route, true);
+		xhttp.onreadystatechange = function() {
+				if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+			if (xhttp.readyState == 4) {
+		<?php if (!$context->getConfig()['isTraceActive']) : ?>
+				if (xhttp.status == 200) {
+		<?php endif;?>
+	
+				document.getElementById('send-message-panel').innerHTML = xhttp.responseText;
+				showTemplate();
+				
+				$(function () {
+				    $('.tip').tooltip({
+				        content: function () {
+				            return $(this).prop('title');
+				        }
+				    });
+				});
+				
+				connectRemoveIcon('remove-anchor', 'update_panel');
+		<?php if (!$context->getConfig()['isTraceActive']) : ?>
+				}
+		<?php endif;?>
+			}
+		}
+		xhttp.send(formData);
+	}
+	else return false;
+}
+
+function getSendMessageForm() {
+	$('#send-message-button').removeClass('btn-default').addClass('btn-warning');
+	$('#send-message-alert').show();
+	$('#send-message-button').click(function () { connectSendMessageForm(); });
+}
+
+function showTemplate() {
+	templateId = $('#template_id').val();
+	$('.email-template').hide();
+	$('#email-template_' + templateId).show();
+}
+
+function getSendMessage() {
+
+	var xhttp = new XMLHttpRequest();
+	var route = '<?php echo $this->url('account/sendMessage') ?>';
+
+	// Execute the ajax request
+	xhttp = new XMLHttpRequest();
+	xhttp.open("GET", route, true);
+	xhttp.onreadystatechange = function() {
+			if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4) {
+	<?php if (!$context->getConfig()['isTraceActive']) : ?>
+			if (xhttp.status == 200) {
+	<?php endif;?>
+
+			document.getElementById('send-message-panel').innerHTML = xhttp.responseText;
+<?php foreach ($properties as $propertyId => $property) : ?>
+	<?php if ($property['type'] == 'ckeditor') : ?>
+			CKEDITOR.replace('<?php echo $propertyId ?>');
+	<?php endif;?>
+<?php endforeach;?>
+			
+			$(function () {
+			    $('.tip').tooltip({
+			        content: function () {
+			            return $(this).prop('title');
+			        }
+			    });
+			});
+
+			connectRemoveIcon('remove-anchor', 'update_panel');
+			showTemplate();
+			$('#template_id').change(showTemplate);
+			$('#attachment').change(function () {
+				if ($('#attachment').val()) $('#attachment_link').html('<a class="glyphicon glyphicon-paperclip" href="<?php echo $this->url('account/dropboxLink', array(), array('force_canonical' => true)) ?>/' + $('#attachment').val() + '" target="_blank"></a>'); 
+				else $('#attachment_link').html('');
+			});
+			$('#send-message-alert').hide();
+			$('#send-message-button').click(function () { getSendMessageForm(); });
+			
+	<?php if (!$context->getConfig()['isTraceActive']) : ?>
+			}
+	<?php endif;?>
+		}
+	}
+	xhttp.send();
+}
+
+// Request password
+
+function connectPasswordRequestForm()
+{
+	var form = document.getElementById('ppit-form');
+	var formData = new FormData();
+	var accountNumber = $('#account-number').val();
+	for (i = 0, j = 0; i < accountNumber; i++) {
+		if (document.getElementById('account-checkbox_' + i).checked) {
+			formData.append('account_' + j, $('#account_' + i).val());
+			j++;
+		}
+	}
+	formData.append('nb-account', j);
+
+	var xhttp = new XMLHttpRequest();
+	var route = '<?php echo $this->url('account/passwordRequest') ?>';
+
+	// Execute the ajax request
+	xhttp = new XMLHttpRequest();
+	xhttp.open("POST", route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4) {
+			document.getElementById('password-request-panel').innerHTML = xhttp.responseText;
+		}
+	}
+	xhttp.send(formData);
+}
+
+function getRequestPasswordForm() {
+	$('#password-request-button').removeClass('btn-default').addClass('btn-warning');
+	$('#password-request-alert').show();
+	$('#password-request-button').click(function () { connectPasswordRequestForm(); });
+}
+
+function getPasswordRequest() {
+
+	var xhttp = new XMLHttpRequest();
+	var route = '<?php echo $this->url('account/passwordRequest') ?>';
+
+	// Execute the ajax request
+	xhttp = new XMLHttpRequest();
+	xhttp.open("GET", route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4) {
+			document.getElementById('password-request-panel').innerHTML = xhttp.responseText;
+			$('#password-request-alert').hide();
+			$('#password-request-button').click(function () { getRequestPasswordForm(); });
+			
+		}
+	}
+	xhttp.send();
+}
+
+
+// Grouped actions
+
+<?php 
+$properties = array();
+
+foreach ($groupUpdatePage as $propertyId => $property) {
+	if ((!$property['options'] || !array_key_exists('readonly', $property['options']) || !$property['options']['readonly']) && $property['type'] != 'title') {
+		$properties[$propertyId] = array('type' => $property['type'], 'mandatory' => false, 'maxSize' => ($property['type'] == 'textarea' || $property['type'] == 'log') ? 2047 : 255);
+	}
+}
+echo $this->partial('/partials/check-update-properties', array('entity' => 'Group', 'context' => $context, 'properties' => $properties)) 
+?>
+
+function postGroup()
+{
+<?php foreach ($properties as $propertyId => $property) : ?>
+	<?php if (in_array($property['type'], ['date', 'datetime'])) : ?>
+		$('#input_<?php echo $propertyId ?>').datepicker();
+	<?php elseif ($property['type'] == 'time') : ?>
+		$('#<?php echo $propertyId ?>').timepicker({ 'timeFormat': 'H:i:s' });
+	<?php endif;?>
+
+	<?php 
+	if (in_array($property['type'], ['date', 'datetime', 'number'])) $inputId = 'input_'.$propertyId;
+	else $inputId = $propertyId;
+	?>
+	$('#<?php echo $inputId ?>').change(function() {
+		document.getElementById('<?php echo $propertyId ?>_check').checked = true;
+	});
+	$('#<?php echo $inputId ?>').keyup(function() {
+		document.getElementById('<?php echo $propertyId ?>_check').checked = true;
+	});
+<?php endforeach ?>
+
+	var form = document.getElementById('group-form');
+	form.onsubmit = function(event) {
+		event.preventDefault();
+	
+		// Check validity
+		var validity;
+		validity = checkGroupUpdateProperties();
+
+		if (validity) {
+		
+			// Create a new FormData object.
+			var formData = new FormData();
+			formData.append('csrf', $('#csrf').val());
+			formData.append('action', 'update');
+			var nbAccount = $('#group-nb-account').val();
+			formData.append('nb-account', nbAccount);
+			for (i = 0; i < nbAccount; i++) formData.append('account_' + i, $('#group-account_' + i).val());
+			
+			// Get the properties values
+<?php foreach ($properties as $propertyId => $property) : ?>
+	<?php if (in_array($property['type'], array('input', 'date', 'datetime', 'time', 'textarea', 'log', 'select', 'multiselect', 'number', 'email', 'phone', 'hidden'))) : ?>
+			formData.append('<?php echo $propertyId ?>', document.getElementById('<?php echo $propertyId ?>').value);
+			formData.append('<?php echo $propertyId ?>_check', ((document.getElementById('<?php echo $propertyId ?>_check').checked) ? 1 : 0));
+
+	<?php elseif ($property['type'] == 'checkbox') : ?>
+			formData.append('<?php echo $propertyId ?>', ((document.getElementById('<?php echo $propertyId ?>').checked) ? 1 : 0));
+
+	<?php endif ?>
+
+<?php endforeach ?>
+			formData.append('update_time', document.getElementById('update_time').value);
+
+			var xhttp = new XMLHttpRequest();
+			var route, target;
+			route = '<?php echo $this->url('account/groupAlt', array('type' => $type)) ?>';
+			xhttp.open('POST', route, true);
+			xhttp.onload = function () {
+				if (xhttp.readyState == 4 <?php if (!$context->getConfig()['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+					document.getElementById('detail-div_0').innerHTML = xhttp.responseText;
+				}
+				connectRemoveIcon('remove-anchor', 'detail-div_0');
+			};
+			xhttp.send(formData);
+		}
+		else return false;
+	}
+}
+
+function getAccountGroup() {
+
+	// Ensure the target is displayed
+	$('#detail-row_0').show();
+	$(location).attr('hash', 'detail-row_0');
+
+	// Disabled the list checkboxes
+	$('.account-checkbox').attr('disabled', 'disabled');
+	var route = '<?php echo $this->url('account/groupAlt', array('type' => $type)) ?>';
+	var formData = new FormData();
+
+	var accountNumber = $('#account-number').val();
+	for (i = 0, j = 0; i < accountNumber; i++) {
+		if (document.getElementById('account-checkbox_' + i).checked) {
+			formData.append('account_' + j, $('#account_' + i).val());
+			j++;
+		}
+	}
+	formData.append('nb-account', j);
+
+	// Execute the ajax request
+	xhttp = new XMLHttpRequest();
+	xhttp.open("POST", route, true);
+	xhttp.onreadystatechange = function() {
+			if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4) {
+	<?php if (!$context->getConfig()['isTraceActive']) : ?>
+			if (xhttp.status == 200) {
+	<?php endif;?>
+
+			document.getElementById('detail-div_0').innerHTML = xhttp.responseText;
+			postGroup();
+			selectTest();
+			addToGroup();
+			getSendMessage();
+			
+<?php if ($context->hasRole('admin')) : ?>
+			getPasswordRequest(false);
+<?php endif;?>
+
+			$(function () {
+			    $('.tip').tooltip({
+			        content: function () {
+			            return $(this).prop('title');
+			        }
+			    });
+			});
+			
+			connectRemoveIcon('remove-anchor', 'update_panel');
+
+			$('.group-panel').hide();
+			$('#update-tab').addClass('active');
+			$('#update-panel').show();
+			
+			$('#update-tab').click(function () {
+				$('.group-tab').removeClass('active');
+				$('#update-tab').addClass('active');
+				$('.group-panel').hide();
+				$('#update-panel').show();
+			});
+			
+			$('#invite-to-test-tab').click(function () {
+				$('.group-tab').removeClass('active');
+				$('#invite-to-test-tab').addClass('active');
+				$('.group-panel').hide();
+				$('#invite-to-test-panel').show();
+			});
+			
+			$('#add-to-group-tab').click(function () {
+				$('.group-tab').removeClass('active');
+				$('#add-to-group-tab').addClass('active');
+				$('.group-panel').hide();
+				$('#add-to-group-panel').show();
+			});
+			
+			$('#send-message-tab').click(function () {
+				$('.group-tab').removeClass('active');
+				$('#send-message-tab').addClass('active');
+				$('.group-panel').hide();
+				$('#send-message-panel').show();
+			});
+			
+			$('#password-request-tab').click(function () {
+				$('.group-tab').removeClass('active');
+				$('#password-request-tab').addClass('active');
+				$('.group-panel').hide();
+				$('#password-request-panel').show();
+			});
+
+	<?php if (!$context->getConfig()['isTraceActive']) : ?>
+			}
+	<?php endif;?>
+		}
+	}
+	xhttp.send(formData);
+
+	// Highlight the clicked button (and only it in its class)
+	$('.index-btn').removeClass("btn-primary").addClass("btn-default");
+	$('.account-group-anchor').removeClass("btn-default").addClass("btn-primary");
+}
+
+function getAccountSearch()
+{
+  // Process request formatting the search engine
+  var xhttp = new XMLHttpRequest();
+  xhttp.open("GET", '<?php echo $this->url('account/searchAlt', array('entry' => $entry, 'type' => $type)) ?>?');
+  xhttp.onreadystatechange = function() {
+    if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+    if (xhttp.readyState == 4) {
+      if (xhttp.status == 200) {
+    
+        // Update the DOM with the request html content
+        $('#index_panel').html(xhttp.responseText);
+
+<?php $todoTitle = (isset ($searchPage['todoTitle']) ? $context->localize($searchPage['todoTitle']) : $this->translate('active', 'ppit-core', $context->getLocale())); ?>
+        $('#mode-text').text('<?php echo $todoTitle ?>');
+    
+        $('#export-button').click(function () { exportAccountList(); });
+        $('#csv-button').click(function () { csvAccountList(); });
+  
+        // Connect the erase button that reset all the search engine inputs and checks and refresh the list
+        $('#erase-button').click(function() {
+          $('.search_input').val('');
+          $('.search_selectpicker').selectpicker('deselectAll');
+          $('.search_check_value').val('0');
+          $('.search_check').removeClass('btn-secondary').addClass('btn-default').removeClass('active');
+          $('#erase-button').removeClass('btn-success').addClass('btn-default');
+          $('#erase-button').attr('disabled', 'disabled');
+          getAccountList(accountGetParams());
+        });
+   
+        $('.search_selectpicker').selectpicker('deselectAll');
+        
+        // Connect the date picker on date inputs
+        $('.search_input_date').datepicker();
+   
+        // Trigger the change event on date inputs and refresh the list
+        $('.search_input_date').change(function () {
+          var propertyId = $(this).attr('id').split('-')[1];
+          $('#erase-button').removeClass('btn-default').addClass('btn-success');
+          $('#erase-button').attr('disabled', false);
+          $('#search_check-' + propertyId).removeClass('btn-default').addClass('btn-secondary').addClass('active');
+          $('#search_check_value-' + propertyId).val('1');
+          getAccountList(accountGetParams());
+        }); 
+   
+        // Trigger the change event on select inputs and refresh the list
+        $('.search_input_select').change(function () {
+          var propertyId = $(this).attr('id').split('-')[1];
+          $('#erase-button').removeClass('btn-default').addClass('btn-success');
+          $('#erase-button').attr('disabled', false);
+          $('#search_check-' + propertyId).removeClass('btn-default').addClass('btn-secondary').addClass('active');
+          $('#search_check_value-' + propertyId).val('1');
+          getAccountList(accountGetParams());
+        }); 
+
+        // Trigger the keyup event on text inputs and refresh the list
+        $('.search_input_text').keyup(function () {
+          var propertyId = $(this).attr('id').split('-')[1];
+          $('#erase-button').removeClass('btn-default').addClass('btn-success');
+          $('#erase-button').attr('disabled', false);
+          $('#search_check-' + propertyId).removeClass('btn-default').addClass('btn-secondary').addClass('active');
+          $('#search_check_value-' + propertyId).val('1');
+          getAccountList(accountGetParams());
+        });
+
+        // Trigger the click event on per-property checks (allowing to search on empty values) and refresh the list
+        $('.search_check').click(function() {
+          $('#erase-button').removeClass('btn-default').addClass('btn-success');
+          $('#erase-button').attr('disabled', false);
+          var propertyId = $(this).attr('id').split('-')[1], check = 'search_check_value-' + propertyId;
+          if ($('#' + check).val() == '1') {
+            $(this).removeClass('btn-secondary').addClass('btn-default').removeClass('active');
+            $('#' + check).val('0');
+            $('#search-' + propertyId).val('');
+          }
+          else {
+            $(this).removeClass('btn-default').addClass('btn-secondary').addClass('active');
+            $('#' + check).val('1');
+          }
+          getAccountList(accountGetParams());
+        });
+  
+        // Retrieve and show the initial list
+        getAccountList(accountGetParams());
+      }
+    }
+  }
+  xhttp.send();
+}
+
+function activateAccount() {
+ 
+    // Connect buttons and links at the search engine
+    getAccountSearch();
+}
+
+/////////////////////////////
+// Commitment update panel //
+/////////////////////////////
+
+<?php
+$properties = array();
+$properties['commitment-type'] = array('type' => 'select', 'mandatory' => 'true', 'maxSize' => 255);
+if ($type == 'p-pit-studies') {
+	foreach ($context->getConfig('commitment/update'.(($type) ? '/'.$type : '')) as $propertyId => $options) {
+		$property = $context->getConfig('commitment'.(($type) ? '/'.$type : ''))['properties'][$propertyId];
+		if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
+		$properties['commitment-'.$propertyId] = array('type' => $property['type'], 'mandatory' => $options['mandatory'], 'maxSize' => ($property['type'] == 'textarea' || $property['type'] == 'log') ? 2047 : 255);
+	}
+}
+
+$properties['update_time'] = array('type' => 'hidden');
+
+echo $this->partial('/partials/check-update-properties', array('entity' => 'Commitment', 'context' => $context, 'properties' => $properties)) 
+?>
+
+function connectCommitmentUpdateForm(id, action, params)
+{
+
+	if (action == 'update') $('#commitment-update-anchor').removeClass('btn-default').addClass('btn-primary');
+	if (action == 'delete') $('#commitment-delete-anchor').removeClass('btn-default').addClass('btn-primary');
+
+<?php foreach ($properties as $property_id => $property) : ?>
+	<?php if (in_array($property['type'], ['date', 'datetime'])) : ?>
+		$('#input_<?php echo $property_id ?>').datepicker();
+	<?php elseif ($property['type'] == 'time') : ?>
+		$('#<?php echo $propertyId ?>').timepicker({ 'timeFormat': 'H:i:s' });
+	<?php endif;?>
+<?php endforeach ?>
+
+	var form = document.getElementById('commitment-form');
+	form.onsubmit = function(event) {
+		
+		event.preventDefault();
+	
+		// Check validity
+		var validity = checkCommitmentUpdateProperties(id);
+		if (validity) {
+		
+			// Create a new FormData object.
+			var formData = new FormData();
+			
+			// Get the properties values
+<?php foreach ($properties as $propertyId => $property) : ?>
+
+	<?php if (in_array($property['type'], array('input', 'date', 'datetime', 'time', 'textarea', 'log', 'select', 'multiselect', 'number', 'email', 'phone', 'hidden'))) : ?>
+				formData.append('<?php echo $propertyId ?>', document.getElementById('<?php echo $propertyId ?>').value);
+
+	<?php elseif ($property['type'] == 'checkbox') : ?>
+				formData.append('<?php echo $propertyId ?>', ((document.getElementById('<?php echo $propertyId ?>').checked) ? 1 : 0));
+
+	<?php elseif ($property['type'] == 'file') : ?>
+				var fileSelect = document.getElementById('order_form');
+				if (fileSelect) {
+					var files = fileSelect.files;
+					for (var i = 0; i < files.length; i++) {
+						var file = files[i];
+						formData.append('order_form', file, file.name);
+					}
+				}
+
+	<?php endif ?>
+
+<?php endforeach ?>
+
+			var xhttp = new XMLHttpRequest();
+			var route, target;
+			route = '<?php echo $this->url('commitment/update', array('type' => ($type) ? $type : 'generic')) ?>/' + id;
+			if (action) route += '/' + action;
+			route += params;
+			target = 'commitment-update-panel';
+			xhttp.open('POST', route, true);
+			// Set up a handler for when the request finishes.
+			xhttp.onload = function () {
+				if (xhttp.readyState == 4 <?php if (!$context->getConfig()['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+
+<?php if ($context->getConfig()['isTraceActive']) : ?>
+					console.log('post, route = ' + route);
+					console.log(xhttp.responseText);
+<?php endif;?>
+					document.getElementById(target).innerHTML = xhttp.responseText;
+				}
+			};
+			xhttp.send(formData);
+		}
+		else return false;
+	}
+}
+
+function getCommitmentUpdate(id, action, params) {
+
+	var xhttp = new XMLHttpRequest();
+	var route = '<?php echo $this->url('commitment/update', array('type' => ($type) ? $type : 'generic')) ?>/' + id;
+	if (action) route += '/' + action;
+	route += params;
+	xhttp.open('GET', route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.readyState == 4) {
+<?php if (!$context->getConfig()['isTraceActive']) : ?>
+			if (xhttp.status == 200) {
+<?php endif;?>
+			document.getElementById('commitment-update-panel').innerHTML = xhttp.responseText;
+			
+			$(function () {
+			    $('.tip').tooltip({
+			        content: function () {
+			            return $(this).prop('title');
+			        }
+			    });
+			});
+
+			if (id) {
+				$('#commitment-update-anchor').click(function () { getCommitmentUpdate(id, 'update'); });
+				$('#commitment-delete-anchor').click(function () { getCommitmentUpdate(id, 'delete'); });
+			}
+			else $('#commitment-add-anchor').click(function () { getCommitmentUpdate(id, 'add'); });
+			
+			connectCommitmentUpdateForm(id, action, params);
+<?php if (!$context->getConfig()['isTraceActive']) : ?>
+			}
+<?php endif;?>
+		}
+	}
+	xhttp.send();
+}

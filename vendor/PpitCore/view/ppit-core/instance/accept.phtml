@@ -1,0 +1,121 @@
+<!-- 
+/**
+ * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
+ *
+ * @link      https://github.com/p-pit/PpitCore
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
+ */
+-->
+
+<!-- Load the common form javascript functions -->
+<?php echo $this->partial('/partials/common-form-js.phtml'); ?>
+
+<?php
+$title = $this->translate('P-Pit', 'ppit-core', $context->getLocale());
+$this->headTitle($title);
+echo $this->partial('/partials/header');
+?>
+
+<!-- Front product 1 -->
+<div class="row">
+
+    <div class="col-md-6 col-md-offset-3">
+        <div class="panel panel-default">
+            <div class="panel-heading front-page" style="background:  <?php echo $context->getConfig('styleSheet')['panelHeadingBackground'] ?>; color: <?php echo $context->getConfig('styleSheet')['panelHeadingColor'] ?>">
+                <div><?php echo $this->translate('Ethical charter', 'ppit-core', $context->getLocale()) ?></div>
+            </div>
+            <div class="panel-body">
+       			<div>
+
+<!-- Form header -->
+<?php echo $this->partial('/partials/form-header', array(
+		'update_time' => $instance->update_time,
+		'message' => $message,
+		'error' => $error,
+		'csrfForm' => $csrfForm,
+		'context' => $context,
+));
+?>
+<?php if ($message != "OK") : ?>
+					    <div class="form-group">
+							<label class="col-sm-5 control-label"><?php echo $this->translate('I accept the charter', 'ppit-core', $context->getLocale())?></label>
+							<div class="col-sm-7">
+								<input type="checkbox" id="accept" class="form-control" value="1">
+							</div>
+						</div>
+		
+					    <div class="form-group">
+							<div class="col-sm-5">&nbsp;</div>
+							<div class="col-sm-7">
+								<input name="submit" type="submit" id="up-submit-button" class="btn btn-warning" value="<?php echo $this->translate('Accept', 'ppit-core', $context->getLocale()) ?>">
+							</div>
+						</div>
+<?php else : ?>
+						<div style="text-align: center"><a href="<?php echo $this->url('home') ?>"><?php echo $this->translate('Home', 'ppit-core', $context->getLocale()) ?></a></div>
+<?php endif;?>
+		
+					</form>
+
+<!-- Display the document -->
+
+<?php for ($i = 0; $i < count($document->parts); $i++) : ?>
+	<?php $documentPart = $document->parts[$i]; ?>
+
+					<div id="document_part_panel_<?php echo $documentPart->id ?>">
+	
+	<?php
+	if ($context->getLocale() == $document->locale_1 && $documentPart->image_locale_1) $image = $documentPart->image_locale_1;
+	elseif ($context->getLocale() == $document->locale_2 && $documentPart->image_locale_2) $image = $documentPart->image_locale_2;
+	else $image = $documentPart->image;
+	?>
+	<?php if ($image) : ?>
+						<div align="center">
+		<?php if (array_key_exists('href', $image)) : ?>
+							<a href="<?php echo $image['href'] ?>" <?php if (array_key_exists('target', $image)) echo 'target="'.$image['target'].'"' ?>>
+		<?php endif;?>
+								<img 
+		<?php foreach ($image as $attr => $value) : ?>
+			<?php if ($attr == 'src') : ?>
+				<?php if (is_array($value)) $value = $value[rand(0, count($value)-1)]?>
+									src="<?php echo $this->basePath($value) ?>"
+			<?php elseif ($attr != 'href' && $attr != 'target') : ?>
+									<?php echo $attr ?>="<?php echo $value ?>"
+			<?php endif;?>
+		<?php endforeach;?>
+								/>
+		<?php if (array_key_exists('href', $image)) : ?>
+							</a>
+		<?php endif;?>
+						</div>
+	<?php endif;?>
+			
+	<?php
+	if ($context->getLocale() == $document->locale_1 && $documentPart->content_locale_1) $content = $documentPart->content_locale_1;
+	elseif ($context->getLocale() == $document->locale_2 && $documentPart->content_locale_2) $content = $documentPart->content_locale_2;
+	else $content = $documentPart->content;
+	?>
+						<div><?php echo $documentPart->content ?></div>
+					</div>
+					</div>
+<?php endfor;?>
+				</div>
+            </div>
+        </div>
+	</div>
+</div>
+
+<script>
+
+<?php if ($fqdn == 'www.p-pit.fr') : ?>
+<!-- Google analytics -->
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-82264844-1', 'auto');
+ga('send', 'pageview');
+<?php endif;?>
+
+</script>

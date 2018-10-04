@@ -1,0 +1,84 @@
+<!-- 
+/**
+ * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
+ *
+ * @link      https://github.com/p-pit/PpitCore
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
+ */
+-->
+
+<?php
+$this->headTitle($title);
+echo $this->partial('/partials/header');
+?>
+
+<div>&nbsp;</div>
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+
+		<div class="panel panel-default">
+            <div class="panel-heading" style="background: <?php echo $context->getConfig('styleSheet')['panelHeadingBackground'] ?>; color: <?php echo $context->getConfig('styleSheet')['panelHeadingColor'] ?>">
+				<strong><?php echo $this->translate('Login', 'ppit-core', 'fr_FR');?></strong>
+            </div>
+           	<div class="panel-body">
+
+<!-- Form header -->
+<?php echo $this->partial('/partials/form-header') ?>
+
+<?php if ($message == 'OK') $isDisabled = true; else $isDisabled = false; ?>
+
+<!--  Authentication error -->
+<?php if ($error == 'Authentication') : ?>
+				<div class="alert alert-danger" style="text-align: center">
+					<strong><?php echo $this->translate('Authentication failed. Please try again.', 'ppit-core', 'fr_FR') ?></strong>
+				</div>
+<?php endif;?>
+
+<!--  Access suspended error -->
+<?php if ($error == 'Suspended') : ?>
+				<div class="alert alert-danger" style="text-align: center">
+					<strong><?php echo $this->translate('The access to the service is unavailable for the moment. Please contact the support.', 'ppit-core', 'fr_FR') ?></strong>
+				</div>
+<?php endif;?>
+				
+<!-- identity -->
+				<div class="form-group" id="identity_group">
+					<label class="col-sm-5 control-label">* <?php echo $this->translate('Identifier', 'ppit-core', $context->getLocale()) ?></label>
+					<div class="col-sm-7">
+						<input id="identity" name="identity" class="form-control" <?php if (isset($isDisabled) && $isDisabled) echo 'disabled ="disabled"' ?>>
+					</div>
+					<div class="col-sm-12"><p class="help-block" id="identity_error"></p></div>
+				</div>
+
+<!-- credential -->
+				<div class="form-group" id="credential_group">
+					<label class="col-sm-5 control-label">* <?php echo $this->translate('Password', 'ppit-core', $context->getLocale()) ?></label>
+					<div class="col-sm-7">
+						<input type="password" name="credential" id="credential" class="form-control" <?php if (isset($isDisabled) && $isDisabled) echo 'disabled ="disabled"' ?>>
+					</div>
+					<div class="col-sm-12"><p class="help-block" id="credential_error"></p></div>
+				</div>
+
+<?php if ($this->redirect): ?>
+		            <input id="redirect" type="hidden" name="redirect" value="<?php echo $this->escapeHtml($this->redirect) ?>" />
+<?php endif ?>
+
+<!-- Form footer -->
+
+<!-- Submit button -->
+				    <div class="form-group">
+						<div class="col-sm-5">&nbsp;</div>
+						<div class="col-sm-7">
+							<input name="submit" type="submit" id="submit-button" class="btn btn-primary" value="<?php echo $this->translate('Submit', 'ppit-core', $context->getLocale()) ?>">
+							&nbsp;&nbsp;
+							<a href="<?php echo $this->url('user/lostPassword', array('instance_caption' => $context->getInstance()->caption)) ?>" rel="nofollow">
+								<?php echo $this->translate('Lost password', 'ppit-core', $context->getLocale()) ?>
+							</a>
+						</div>
+					</div>
+				</form>
+   			</div>
+		</div>
+	</div>
+</div>

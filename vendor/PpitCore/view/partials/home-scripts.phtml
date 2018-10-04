@@ -1,0 +1,158 @@
+var viewBeginDate = '<?php echo date('Y-m-d') ?>';
+
+function getEvents() {
+
+	$('#calendar').fullCalendar('removeEvents');
+
+	// Execute the ajax request
+	xhttp = new XMLHttpRequest();
+	xhttp.open("GET", $('#events-route').val() + '?begin=' + viewBeginDate, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4) {
+	<?php if (!$config['isTraceActive']) : ?>
+			if (xhttp.status == 200) {
+	<?php endif;?>
+			obj = jQuery.parseJSON(xhttp.responseText);
+
+			jQuery.each(obj.planning, function (name, value) {
+				var color = 'lightBlue', textColor = 'black';			
+<?php foreach ($context->getConfig('commitmentEvent/p-pit-studies')['category'] as $categoryId => $category) : ?>
+	<?php foreach ($category['color'] as $color => $unused) : ?>
+				if (value.properties['category'] == '<?php echo $categoryId ?>') {
+					color = '<?php echo $color ?>';
+					textColor = 'white';
+				}
+	<?php endforeach;?>
+<?php endforeach;?>
+
+				var title = '';
+				if (value.properties['property_3']) title += value.properties['property_3'];
+				if (value.properties['property_3'] && value.properties['caption']) title += ' - ';
+				if (value.properties['caption']) title += value.properties['caption'];
+				if (value.properties['location']) title += ' (' + value.properties['location'] + ')';
+				var event={
+					id:value.id,
+					allDay: (value.properties['begin_time'] == '00:00:00' && value.properties['end_time'] == '00:00:00') ? true : false,
+					title: title,
+					color: color,
+					textColor: textColor,
+					start:  $.fullCalendar.moment(value.properties['begin_date'] + ' ' + value.properties['begin_time']), 
+					end:  $.fullCalendar.moment(value.properties['end_date'] + ' ' + value.properties['end_time'])
+				};
+				$('#calendar').fullCalendar('renderEvent', event, true);
+			});
+
+			jQuery.each(obj.events, function (name, value) {
+				var color = 'lightBlue', textColor = 'black';			
+<?php foreach ($context->getConfig('commitmentEvent/p-pit-studies')['category'] as $categoryId => $category) : ?>
+	<?php foreach ($category['color'] as $color => $unused) : ?>
+				if (value.category == '<?php echo $categoryId ?>') {
+					color = '<?php echo $color ?>';
+					textColor = 'white';
+				}
+	<?php endforeach;?>
+<?php endforeach;?>
+
+				var event={
+					id:value.id,
+					allDay: true,
+					title: value.title + ' (' + value.location + ')',
+					color: color,
+					textColor: textColor,
+					start:  $.fullCalendar.moment(value.begin_time), 
+					end:  $.fullCalendar.moment(value.end_time)
+				};
+				$('#calendar').fullCalendar('renderEvent', event, true);
+			});
+<?php if (!$config['isTraceActive']) : ?>
+			}
+<?php endif;?>
+		}
+	}
+	xhttp.send();
+}
+
+function createCalendar(print) {
+	var minTime = (print) ? '08:00:00' : '00:00:00';
+    $('#calendar').fullCalendar({
+    	lang: '<?php echo substr($context->getLocale(), 0, 2) ?>',
+    	height: 650,
+        defaultView: 'agendaWeek',
+        scrollTime: '08:00:00',
+        minTime: minTime,
+        businessHours: {
+		   	dow: [ 1, 2, 3, 4, 5, 6], // Monday - Thursday
+		    start: '08:00',
+		    end: '18:00'
+	    },
+		customButtons: {
+	        myCustomButton: {
+	            text: '<?php echo $this->translate('Printable', 'ppit-document', $context->getLocale()) ?>',
+	            click: function() {
+	                window.open('<?php echo $this->url('public/communityPrint', array('identifier' => $identifier, 'place_identifier' => $place_identifier, 'subject_id' => $subject_id)) ?>');
+			    }
+			}
+		},
+    	header: {
+			left: 'prev,next today myCustomButton',
+			center: 'title',
+			right: 'month,agendaWeek,agendaDay'
+		}
+    });
+
+	$('.fc-prev-button').click(function(){
+		var dateTime = new Date(viewBeginDate).getTime();
+		var endTime = dateTime - 60*60*24*7*1000;
+		viewBeginDate = new Date(endTime).toISOString().slice(0, 10);
+		getEvents();
+	});
+	
+	$('.fc-next-button').click(function(){
+		var dateTime = new Date(viewBeginDate).getTime();
+		var endTime = dateTime + 60*60*24*7*1000;
+		viewBeginDate = new Date(endTime).toISOString().slice(0, 10);
+		getEvents();
+	});
+	  
+	getEvents();
+}
+
+function showStatic(route, target) {
+	// Execute the ajax request
+	var xhttp = new XMLHttpRequest();
+	xhttp.open("GET", route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4) {
+	<?php if (!$config['isTraceActive']) : ?>
+			if (xhttp.status == 200) {
+	<?php endif;?>
+			document.getElementById(target).innerHTML = xhttp.responseText;
+<?php if (!$config['isTraceActive']) : ?>
+			}
+<?php endif;?>
+		}
+	}
+	xhttp.send();
+}
+
+function showCalendar(route, target) {
+	// Execute the ajax request
+	var xhttp = new XMLHttpRequest();
+	xhttp.open("GET", route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4) {
+	<?php if (!$config['isTraceActive']) : ?>
+			if (xhttp.status == 200) {
+	<?php endif;?>
+			document.getElementById(target).innerHTML = xhttp.responseText;
+			createCalendar(false);
+<?php if (!$config['isTraceActive']) : ?>
+			}
+<?php endif;?>
+		}
+	}
+	xhttp.send();
+}

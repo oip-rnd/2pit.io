@@ -1,0 +1,115 @@
+	<!--Footer-->
+	<footer class="page-footer <?php echo $context->getConfig('bootstrap4')['footer'] ?>">
+	
+	    <!--Footer Links-->
+	    <div class="container">
+	        <div class="row">
+	
+	            <!--First column-->
+	            <div class="col-md-6">
+	                <h5 class="title"><?php echo $this->translate('Resources', 'ppit-core', $context->getLocale()) ?></h5>
+	                <ul>
+	                	<li>
+							<a href="<?php echo $this->url('instance/legalNotices') ?>" rel="follow">Mentions légales</a>
+	                	</li>
+	                </ul>
+	            </div>
+	            <!--/.First column-->
+	
+	            <!--Second column-->
+<!--	            <div class="col-md-6">
+	                <h5 class="title"><?php echo $this->translate('Resources', 'ppit-core', $context->getLocale()) ?></h5>
+	                <ul>
+	                    <li><a href="<?php //echo $this->url('public/displayBlog', array('directory' => 'blog', 'name' => key($context->getConfig('ppitDocument')['pages']['blog']))) ?>">Blog</a></li>
+	                    <li><a href="https://github.com/2pit-io/2pit.io" target='_blank'>Developer community</a></li>
+	                </ul> -->
+	            </div>
+	            <!--/.Second column-->
+	        </div>
+	    </div>
+	    <!--/.Footer Links-->
+	
+	    <!--Copyright-->
+	    <div class="footer-copyright">
+	        <div class="container-fluid">
+	            <?php echo (isset($links)) ? $links['copyright'] : '' ?>
+	
+	        </div>
+	    </div>
+	    <!--/.Copyright-->
+	
+	</footer>
+	<!--/.Footer-->
+
+</body>
+
+    <!-- SCRIPTS -->
+	
+    <!-- Font Awesome -->
+	<script defer src="<?php echo $this->basePath('/js/fontawesome-all.js') ?>"></script>
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="<?php echo $this->basePath('mdb-free/js/jquery-2.2.3.min.js') ?>"></script>
+
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="<?php echo $this->basePath('mdb-free/js/tether.min.js') ?>"></script>
+
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="<?php echo $this->basePath('mdb-free/js/bootstrap.min.js') ?>"></script>
+
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="<?php echo $this->basePath('mdb-free/js/mdb.min.js') ?>"></script>
+
+	<script src="<?php echo $this->basePath('/js/jquery.min.js') ?>"></script>
+	<script src="<?php echo $this->basePath('/jquery-ui-1.11.4/jquery-ui.js') ?>"></script>
+	<script src="<?php echo $this->basePath("ckeditor/ckeditor.js") ?>"></script>
+	<script src="<?php echo $this->basePath('/js/moment-with-locales.min.js') ?>"></script>
+	<script src="<?php echo $this->basePath('/fullcalendar/fullcalendar.js') ?>"></script>
+	<script src="<?php echo $this->basePath('/fullcalendar/lang-all.js') ?>"></script>
+	<script src="<?php echo $this->basePath('/js/flipclock.min.js') ?>"></script>
+
+<script>
+$('#modalLoginForm').on('hide.bs.modal', function () { 
+    $('.login_input').val('');
+});
+
+$('#modalRegisterForm').on('hide.bs.modal', function () { 
+    $('.register_input').val('');
+});
+
+function login() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.open('GET', '<?php echo $this->url('user/v1') ?>?request=login', true);
+  xhttp.setRequestHeader("Authorization", "Basic " + btoa($('#identity').val() + ':' + $('#credential').val()));
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      document.location.href = '<?php echo $this->url('home') ?>';
+    }
+    else toastr.error('<?php echo $this->translate('Invalid authentication', 'ppit-core', $context->getLocale()) ?>');
+  };
+  xhttp.send();
+}
+
+var form = document.getElementById('login-form');
+form.onsubmit = function(event) {
+  event.preventDefault();
+  login();
+}
+
+function logout() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.open('GET', '<?php echo $this->url('user/v1') ?>?request=logout', true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      document.location.href = '<?php echo $this->url('home') ?>';
+    }
+  };
+  xhttp.send();
+}
+
+var form = document.getElementById('logout-form');
+form.onsubmit = function(event) {
+  event.preventDefault();
+  logout();
+}
+</script>

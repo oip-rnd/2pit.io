@@ -1,0 +1,450 @@
+/**
+ * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
+ *
+ * @link      https://github.com/p-pit/PpitCore
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
+ */
+
+function connectRemoveIcon(id, target)
+{
+	$('#' + id).click(function () {
+		$('#' + target).hide();
+		filterUserList();
+	});
+}
+
+function userGetParams() {
+
+	var params = '?', todo = true;
+
+<?php foreach ($context->getConfig('coreUser/search')['main'] as $propertyId => $rendering) : ?>
+
+	<?php if ($rendering == 'range') : ?>
+	
+	var min_<?php echo $propertyId ?> = $('#search_min_<?php echo $propertyId ?>').val();
+	if (min_<?php echo $propertyId ?>) min_<?php echo $propertyId ?> = encodeDate(min_<?php echo $propertyId ?>);
+	if (min_<?php echo $propertyId ?>.length >= 2) { params += 'min_<?php echo $propertyId ?>=' + min_<?php echo $propertyId ?> + '&'; todo = false; }
+
+	var max_<?php echo $propertyId ?> = $('#search_max_<?php echo $propertyId ?>').val();
+	if (max_<?php echo $propertyId ?>) max_<?php echo $propertyId ?> = encodeDate(max_<?php echo $propertyId ?>);
+	if (max_<?php echo $propertyId ?>.length >= 2) { params += 'max_<?php echo $propertyId ?>=' + max_<?php echo $propertyId ?> + '&'; todo = false; }
+
+	<?php elseif ($rendering == 'select') : ?>
+
+	var <?php echo $propertyId ?> = $('#search_<?php echo $propertyId ?>').val();
+	if (<?php echo $propertyId ?>) { params += '<?php echo $propertyId ?>=' + <?php echo $propertyId ?> + '&'; todo = false; }
+
+	<?php else : ?>
+
+	var <?php echo $propertyId ?> = $('#search_<?php echo $propertyId ?>').val();
+	if (<?php echo $propertyId ?>.length >= 2) { params += '<?php echo $propertyId ?>=' + <?php echo $propertyId ?> + '&'; todo = false; }
+
+	<?php endif;?>
+
+<?php endforeach;?>
+
+	<?php
+	$todoTitle = $context->getConfig('coreUser/search')['todoTitle'][$context->getLocale()];
+	$searchTitle = $context->getConfig('coreUser/search')['searchTitle'][$context->getLocale()];
+	?>
+	$('#mode-text').text((todo) ? '<?php echo $todoTitle ?>' : '<?php echo $searchTitle ?>');
+
+	return params;
+}
+
+// Export the list
+function exportUserList() {
+
+	var params = userGetParams();
+	document.location.href = '<?php echo $this->url('user/export', array('app' => $app)) ?>' + params;
+}
+
+function eraseUserSearch() {
+
+<?php foreach ($context->getConfig('coreUser/search')['main'] as $propertyId => $rendering) : ?>
+
+	<?php if ($rendering == 'range') : ?>
+	$('#search_min_<?php echo $propertyId ?>').val('');
+	$('#search_max_<?php echo $propertyId ?>').val('');
+
+	<?php else : ?>
+	$('#search_<?php echo $propertyId ?>').val('');
+	
+	<?php endif;?>
+
+<?php endforeach;?>
+
+	getUserList(userGetParams(), 'identifier', 'ASC');
+}
+
+function sortUserList(criterion) {
+	var dir;
+	ascCriterion = $('.glyphicon-triangle-top').first().parent().attr('id');
+	descCriterion = $('.glyphicon-triangle-bottom').first().parent().attr('id');
+	if (criterion + '-anchor' == ascCriterion) dir = 'DESC'; else dir = 'ASC';
+	getUserList(criterion, dir);
+}
+
+function filterUserList() {
+
+	ascCriterion = $('.glyphicon-triangle-top').first().parent().attr('id');
+	descCriterion = $('.glyphicon-triangle-bottom').first().parent().attr('id');
+	if (ascCriterion) {
+		criterion = ascCriterion.split('-')[0];
+		dir = 'ASC';
+	}
+	else if (descCriterion) {
+		criterion = descCriterion.split('-')[0];
+		dir = 'DESC';
+	}
+	else {
+		criterion = 'n_fn';
+		dir = 'ASC';
+	}
+	getUserList(userGetParams(), criterion, dir);
+}
+
+function connectUserSearchInputs() {
+
+	$('#export-button').click(function () { exportUserList(); });
+	
+	$('#erase-button').unbind();
+	$('#erase-button').click(function () { eraseUserSearch(); });
+
+<?php foreach ($context->getConfig('coreUser/search')['main'] as $propertyId => $rendering) : ?>
+
+	<?php if ($rendering == 'range') : ?>
+	$('#search_min_<?php echo $propertyId ?>').keyup(function () { filterUserList(); });
+	$('#search_max_<?php echo $propertyId ?>').keyup(function () { filterUserList(); });
+
+		<?php if ($context->getConfig('coreUser')['properties'][$propertyId]['type'] == 'date') : ?>
+	$("#search_min_<?php echo $propertyId ?>").datepicker();
+	$("#search_max_<?php echo $propertyId ?>").datepicker();
+	$('#search_min_<?php echo $propertyId ?>').change(function () { filterUserList(); });
+	$('#search_max_<?php echo $propertyId ?>').change(function () { filterUserList(); });
+		<?php endif;?>
+	
+	<?php elseif ($rendering == 'select') : ?>
+		$('#search_<?php echo $propertyId ?>').change(function () { filterUserList(); });
+	
+	<?php else : ?>
+		$('#search_<?php echo $propertyId ?>').keyup(function () { filterUserList(); });
+
+		<?php if ($context->getConfig('coreUser')['properties'][$propertyId]['type'] == 'date') : ?>
+	$("#search_<?php echo $propertyId ?>").datepicker();
+	$('#search_<?php echo $propertyId ?>').change(function () { filterUserList(); });
+		<?php endif;?>
+
+	<?php endif;?>
+
+<?php endforeach;?>
+}
+
+// Load the list
+function getUserList(params, major, dir) {		
+
+	// Execute the ajax request
+	route = '<?php echo $this->url('user/list', array('app' => $app)) ?>' + params + '?major=' + major + ((dir =='ASC') ? '&dir=ASC' : '&dir=DESC');
+ 	xhttp = new XMLHttpRequest();
+	xhttp.open("GET", route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.readyState == 4 <?php if (!$config['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+			document.getElementById('user-list-panel').innerHTML = xhttp.responseText;
+			// Connect the sort anchors
+			$('.ppit-sort-anchor').each(function () {
+				$(this).click(function () {
+					sortUserList($(this).attr('id').split('-')[0]);
+				});
+			});
+
+			// Connect the add anchor
+			$('#user-add-anchor').click(function () {
+				showUserDetail('0', 'update');
+			});
+			
+			// Connect the detail anchors
+			$('.user-detail-anchor').each(function () {
+				$(this).click(function () {
+					showUserDetail($(this).attr('id').split('_')[1], 'update');
+				});
+			});
+		}
+	}
+	xhttp.send();
+}
+
+function showUserDetail(id, action)
+{
+	$('#form_action').show();
+	$(location).attr('hash', 'order_form');
+
+	// Execute the ajax request
+	xhttp = new XMLHttpRequest();
+	var route;
+	if (action == 'update') route = '<?php echo $this->url('user/update', ['app' => $app]) ?>/' + id;
+	else if (action == 'revoke') route = '<?php echo $this->url('user/revoke') ?>/' + id;
+	else if (action == 'delete') route = '<?php echo $this->url('user/delete') ?>/' + id;
+//	else if (action == 'passwordRequest') route = '<?php echo $this->url('user/passwordRequest') ?>/' + id;
+	else if (action == 'generatePassword') route = '<?php echo $this->url('user/generatePassword') ?>/' + id;
+
+	xhttp.open("GET", route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.readyState == 4 <?php if (!$config['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+			document.getElementById('form_action').innerHTML = xhttp.responseText;
+
+			// Connect the revoke anchor
+			$('#revoke-anchor').click(function () {
+				showUserDetail(id, 'revoke');
+			});
+
+			// Connect the delete anchor
+			$('#delete-anchor').click(function () {
+				showUserDetail(id, 'delete');
+			});
+
+			// Connect the password request anchor
+/*			$('#passwordRequest-anchor').click(function () {
+				showUserDetail(id, 'passwordRequest');
+			});*/
+
+			// Connect the generate password request anchor
+			$('#generatePassword-anchor').click(function () {
+				showUserDetail(id, 'generatePassword');
+			});
+			
+			connectRemoveIcon('remove-anchor', 'form_action');
+			if (action == 'update') connectUserUpdateForm(id);
+			else if (action == 'revoke') connectUserRevokeForm(id);
+			else if (action == 'delete') connectUserDeleteForm(id);
+//			else if (action == 'passwordRequest') connectUserPasswordRequestForm(id);
+			else if (action == 'generatePassword') connectUserGeneratePasswordForm(id);
+		}
+	}
+	xhttp.send();
+}
+
+// Update action
+<?php 
+$properties = array();
+$properties['locale'] = array('type' => 'select', 'mandatory' => false);
+$properties['is_notified'] = array('type' => 'checkbox');
+
+foreach ($context->getConfig('perimeters') as $applicationId => $application) {
+	if ($applicationId == 'p-pit-admin') {
+		foreach ($places as $place) {
+			$properties['place_'.$place->id] = array('type' => 'checkbox');
+		}
+	}
+	else {
+		foreach ($application as $specificationId => $specification) {
+			foreach ($context->getConfig($specification)['modalities'] as $modalityId => $unused) {
+				$properties[$specificationId.'_'.$modalityId] = array('type' => 'checkbox');
+			}
+		}
+	}
+}
+
+if ($context->hasRole('admin')) {
+	foreach ($apps as $appId => $unused) {
+		$properties['application_'.$appId] = array('type' => 'checkbox');
+		foreach ($context->getConfig('manageable_roles') as $roleId) {
+			$properties['role_'.$roleId] = array('type' => 'checkbox');
+		}
+	}
+}
+$properties['email'] = array('type' => 'email', 'mandatory' => true);
+$properties['n_first'] = array('type' => 'input', 'mandatory' => true, 'maxSize' => 255);
+$properties['n_last'] = array('type' => 'input', 'mandatory' => true, 'maxSize' => 255);
+$properties['n_title'] = array('type' => 'input', 'mandatory' => false, 'maxSize' => 255);
+$properties['username'] = array('type' => 'input', 'mandatory' => false, 'maxSize' => 255);
+$properties['update_time'] = array('type' => 'hidden');
+echo $this->partial('/partials/check-update-properties', array('entity' => 'User', 'context' => $context, 'properties' => $properties)) 
+?>
+
+function connectUserUpdateForm(id)
+{
+<?php foreach ($properties as $property_id => $property) : ?>
+	<?php if ($property['type'] == 'date') : ?>
+		$('#input_<?php echo $property_id ?>').datepicker();
+	<?php endif;?>
+<?php endforeach ?>
+
+	var form = document.getElementById('ppit-form');
+	form.onsubmit = function(event) {
+		
+		event.preventDefault();
+	
+		// Check validity
+		var validity = checkUserUpdateProperties();
+	
+		if (validity) {
+		
+			// Create a new FormData object.
+			var formData = new FormData();
+			
+			// Get the properties values
+<?php foreach ($properties as $propertyId => $property) : ?>
+	<?php if ($property['type'] == 'checkbox') : ?>
+				if (document.getElementById('<?php echo $propertyId ?>').checked) {
+	<?php endif;?>
+				formData.append('<?php echo $propertyId ?>', document.getElementById('<?php echo $propertyId ?>').value);
+	<?php if ($property['type'] == 'checkbox') : ?>
+				}
+	<?php endif;?>
+<?php endforeach ?>
+			
+			var xhttp = new XMLHttpRequest();
+			var route = '<?php echo $this->url('user/update', ['app' => $app]) ?>/' + id;
+			xhttp.open('POST', route, true);
+			// Set up a handler for when the request finishes.
+			xhttp.onload = function () {
+				if (xhttp.readyState == 4 <?php if (!$context->getConfig()['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+					document.getElementById('form_action').innerHTML = xhttp.responseText;
+					filterUserList();
+					connectRemoveIcon('remove-anchor', 'form_action');
+				}
+			};
+			xhttp.send(formData);
+		}
+		else return false;
+	}
+}
+
+// Revoke action
+function connectUserRevokeForm(id)
+{
+	var form = document.getElementById('ppit-form');
+	form.onsubmit = function(event) {
+		
+		event.preventDefault();
+	
+		// Create a new FormData object.
+		var formData = new FormData();
+		
+		// Get the properties values
+		formData.append('state', ((document.getElementById('state').checked) ? 1 : 0));
+		formData.append('update_time', document.getElementById('update_time').value);
+		
+		var xhttp = new XMLHttpRequest();
+		var route = '<?php echo $this->url('user/revoke') ?>/' + id;
+		xhttp.open('POST', route, true);
+		// Set up a handler for when the request finishes.
+		xhttp.onload = function () {
+			if (xhttp.readyState == 4 <?php if (!$context->getConfig()['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+				document.getElementById('form_action').innerHTML = xhttp.responseText;
+				filterUserList();
+				connectRemoveIcon('remove-anchor', 'form_action');
+			}
+		}
+		xhttp.send(formData);
+	}
+}
+
+// Delete action
+function connectUserDeleteForm(id)
+{
+	var form = document.getElementById('ppit-form');
+	form.onsubmit = function(event) {
+		
+		event.preventDefault();
+	
+		// Create a new FormData object.
+		var formData = new FormData();
+		
+		// Get the properties values
+		formData.append('update_time', document.getElementById('update_time').value);
+		
+		var xhttp = new XMLHttpRequest();
+		var route = '<?php echo $this->url('user/delete') ?>/' + id;
+		xhttp.open('POST', route, true);
+		// Set up a handler for when the request finishes.
+		xhttp.onload = function () {
+			if (xhttp.readyState == 4 <?php if (!$context->getConfig()['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+				document.getElementById('form_action').innerHTML = xhttp.responseText;
+				filterUserList('ASC');
+
+				connectRemoveIcon('remove-anchor', 'form_action');
+			}
+		};
+		xhttp.send(formData);
+	}
+}
+
+// Password request action
+/*function connectUserPasswordRequestForm(id)
+{
+	var form = document.getElementById('ppit-form');
+	form.onsubmit = function(event) {
+		
+		event.preventDefault();
+	
+		// Create a new FormData object.
+		var formData = new FormData();
+		
+		// Get the properties values
+		formData.append('update_time', document.getElementById('update_time').value);
+		
+		var xhttp = new XMLHttpRequest();
+		var route = '<?php echo $this->url('user/passwordRequest') ?>/' + id;
+		xhttp.open('POST', route, true);
+		// Set up a handler for when the request finishes.
+		xhttp.onload = function () {
+			if (xhttp.readyState == 4 <?php if (!$context->getConfig()['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+				document.getElementById('form_action').innerHTML = xhttp.responseText;
+				filterUserList();
+
+				connectRemoveIcon('remove-anchor', 'form_action');
+			}
+		};
+		xhttp.send(formData);
+	}
+}*/
+
+// Password request action
+function connectUserGeneratePasswordForm(id)
+{
+	var form = document.getElementById('ppit-form');
+	form.onsubmit = function(event) {
+		
+		event.preventDefault();
+	
+		// Create a new FormData object.
+		var formData = new FormData();
+		
+		// Get the properties values
+		formData.append('new_password', document.getElementById('new_password').value);
+		formData.append('update_time', document.getElementById('update_time').value);
+		
+		var xhttp = new XMLHttpRequest();
+		var route = '<?php echo $this->url('user/generatePassword') ?>/' + id;
+		xhttp.open('POST', route, true);
+		// Set up a handler for when the request finishes.
+		xhttp.onload = function () {
+			if (xhttp.readyState == 4 <?php if (!$context->getConfig()['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+				document.getElementById('form_action').innerHTML = xhttp.responseText;
+				filterUserList();
+
+				connectRemoveIcon('remove-anchor', 'form_action');
+			}
+		};
+		xhttp.send(formData);
+	}
+}
+
+function activateUser() {
+	// Load the search panel and highlight the menu entry
+	loadPanel('index_action', '<?php echo $this->url('user/search') ?>');
+	$('.menu-btn').removeClass("btn-primary").addClass("btn-default");
+	$('#user-anchor').removeClass("btn-default").addClass("btn-primary");
+
+	<?php
+	$todoTitle = $context->getConfig('coreUser/search')['todoTitle'][$context->getLocale()];
+	?>
+	$('#mode-text').text('<?php echo $todoTitle ?>');
+		
+	// Connect the search inputs
+	connectUserSearchInputs();
+
+	getUserList('?', 'n_fn', 'ASC');
+}

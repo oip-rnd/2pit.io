@@ -1,0 +1,189 @@
+<!-- 
+/**
+ * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
+ *
+ * @link      https://github.com/p-pit/PpitCore
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
+ */
+-->
+
+<style>
+{
+    .large
+    {
+        display: none;
+    }
+}
+</style>
+
+<?php foreach ($indicators as $indicatorId => $indicator) : ?>
+    <div>&nbsp;</div>
+	<div style="font-weight: bold">
+		<?php echo $indicator['label'][$context->getLocale()] ?>
+		<select id="select-aggregate_<?php echo $indicatorId ?>">
+			<option value="count"><?php echo $this->translate('Count', 'ppit-core', $context->getLocale()) ?></option>
+			<option value="sum"><?php echo $this->translate('Sum', 'ppit-core', $context->getLocale()) ?></option>
+			<option value="average"><?php echo $this->translate('Average', 'ppit-core', $context->getLocale()) ?></option>
+		</select>
+		&nbsp;&nbsp;
+		<span class="aggregate" id="count_<?php echo $indicatorId ?>"><?php echo $indicator['count'] ?></span>
+		<span class="aggregate" id="sum_<?php echo $indicatorId ?>"><?php echo $indicator['sum'] ?></span>
+		<span class="aggregate" id="average_<?php echo $indicatorId ?>"><?php echo $indicator['average'] ?></span>
+	</div>
+<?php endforeach;?>
+
+<div class="col-md-12">
+<!--
+<h4>KPIs</h4>
+<?php foreach ($indicators as $indicatorId => $indicator) : ?>
+	<?php
+	$property = $context->getConfig('event'.(($type) ? '/'.$type : ''))['properties'][$indicator['modality']];
+	if ($property['type'] == 'specific') $property = $context->getConfig($property['definition']);
+	?>
+	<h5>
+		<button type="button" class="btn btn-default btn-xs indicator-anchor" id="indicator-anchor_<?php echo $indicatorId ?>">
+			<span class="glyphicon glyphicon-triangle-right" id="indicator-glyphicon_<?php echo $indicatorId ?>"></span>
+		</button>
+		<?php echo $indicator['label'][$context->getLocale()] ?>:
+		<?php $sum = 0; foreach ($indicator['modalities'] as $modality => $value) $sum += $value; ?>
+	
+	<?php if ($indicator['aggregation'] == 'sum') : ?>	
+		<?php echo $sum ?>
+	
+	<?php elseif ($indicator['aggregation'] == 'average') : ?>	
+		<?php echo round($sum / count($indicator['modalities']), 1) ?>
+		
+	<?php endif;?>
+	</h5>
+
+	<div class="panel panel-default" class="indicator-panel" id="indicator-panel_<?php echo $indicatorId ?>">
+	
+		<div><strong><?php echo $property['labels'][$context->getLocale()] ?></strong></div>
+	<?php foreach ($indicator['modalities'] as $modality => $value) : ?>
+		<?php if ($value) : ?>
+		<div><?php echo $modality ?><?php if ($indicator['aggregation'] == 'average') echo ': '.$value ?></div>
+		<?php endif;?>
+		
+	<?php endforeach;?>
+	
+	</div>
+<?php endforeach;?>
+</div> -->
+
+<!-- Actions -->
+	<div>
+    	<button type="button" class="btn btn-default" title="<?php echo $this->translate('Export', 'ppit-core', $context->getLocale()) ?>" id="export-button">
+			<span class="glyphicon glyphicon-cloud-download"></span>
+			<span><?php echo $this->translate('Export', 'ppit-core', $context->getLocale())?></span>
+		</button>
+<?php if ($context->isDemoModeActive()) : ?>
+				<a class="tip" href="#" title="<?php echo $context->getConfig('demo')['event/search/export'][$context->getLocale()] ?>">
+				    <img src="<?php echo $this->basePath('img/tip.png') ?>" width="20" />
+				</a>
+<?php endif;?>
+    </div>    
+	<div>&nbsp;</div>
+
+	<div style="overflow-x:auto;">
+<table class="ppit_index" cellspacing="0" cellpadding="0" >
+	<tr>
+
+<?php $first = true; foreach ($context->getConfig('event/list'.(($type) ? '/'.$type : '')) as $propertyId => $parameters) : ?>
+	<?php 
+	$property = $context->getConfig('event'.(($type) ? '/'.$type : ''))['properties'][$propertyId];
+	if ($property['type'] == 'specific') $property = $context->getConfig($property['definition']);
+	?>
+		<?php 
+		$media = array_key_exists('media', $parameters) ? $parameters['media'] : null;
+		$rendering = $parameters['rendering'];
+		?>
+		<?php if ($property) : ?>
+		<th class="<?php echo $media ?>" style="text-align: center">
+
+			<?php if ($personnalize) : ?>
+			<button type="button" class="btn btn-default btn-xs minus-anchor" id="<?php echo $propertyId ?>-minus-anchor">
+				<span class="glyphicon glyphicon-minus ?>"></span>
+			</button>
+			<br>
+			<?php endif ?>
+			
+			<?php $label = (array_key_exists('short', $property)) ? $property['short'][$context->getLocale()] : $property['labels'][$context->getLocale()] ?>
+			<?php if ($label) : ?>
+			<span><?php echo $label ?></span>
+		<?php if ($first && $context->isDemoModeActive()) : ?>
+			<a class="tip" href="#" title="<?php echo $context->getConfig('demo')['event/list/ordering'][$context->getLocale()] ?>">
+			    <img src="<?php echo $this->basePath('img/tip.png') ?>" width="20" />
+			</a>
+		<?php $first=false; endif;?>
+			<?php endif;?>
+		</th>
+		<?php endif;?>
+<?php endforeach;?>
+
+		<th>&nbsp;</th>
+	</tr>
+	
+	<tr class="event">
+		<td colspan="<?php echo count($context->getConfig('event/list'.(($type) ? '/'.$type : ''))) ?>">
+			<button type="button" class="btn btn-default index-btn event-group-anchor active" aria-pressed="true" title="<?php echo $this->translate('Grouped actions', 'ppit-core', $context->getLocale())?>" id="event-group-anchor">
+				<span class="glyphicon glyphicon-list-alt" id="group-glyphicon"></span>
+			</button>
+<?php if ($context->isDemoModeActive()) : ?>
+			<a class="tip" href="#" title="<?php echo $context->getConfig('demo')['event/group'][$context->getLocale()] ?>">
+			    <img src="<?php echo $this->basePath('img/tip.png') ?>" width="20" />
+			</a>
+<?php endif;?>
+	</tr>
+	
+	<tr class="detail-row" id="detail-row_0" rowspan="2"><td colspan="99"><div class="col-md-6 col-md-offset-3 ppit-panel" id="detail-div_0"></div></td></tr>
+	<tr class="invisible"><td colspan="99"></td></tr>
+
+<?php for($i = 0; $i < 16; $i++) : ?>
+	
+	<tr class="event">
+
+	<?php $j = 0; foreach ($context->getConfig('event/list'.(($type) ? '/'.$type : '')) as $propertyId => $parameters) : ?>
+		<?php 
+		$property = $context->getConfig('event'.(($type) ? '/'.$type : ''))['properties'][$propertyId];
+		if ($property['type'] == 'specific') $property = $context->getConfig($property['definition']);
+		?>
+
+			<?php 
+			$parameters = $context->getConfig('event/list'.(($type) ? '/'.$type : ''))[$propertyId];
+			$media = array_key_exists('media', $parameters) ? $parameters['media'] : null;
+			$rendering = $parameters['rendering'];
+			$property = $context->getConfig('event'.(($type) ? '/'.$type : ''))['properties'][$propertyId];
+			if ($property['type'] == 'specific') $property = $context->getConfig($property['definition']);
+			?>
+			<?php if ($property) : ?>
+		
+				<?php if ($rendering == 'date') : ?>
+			<td class="<?php echo $media ?>"><input class="input_cell" size="8" id="input_cell_<?php echo $i?>_<?php echo $j ?>" /></td>
+	
+				<?php elseif ($rendering == 'time') : ?>
+			<td class="<?php echo $media ?>"><input class="input_cell" size="8" id="input_cell_<?php echo $i?>_<?php echo $j ?>" /></td>
+	
+				<?php elseif ($rendering == 'number') : ?>
+			<td class="<?php echo $media ?>"><input class="input_cell" size="8" id="input_cell_<?php echo $i?>_<?php echo $j ?>" /></td>
+	
+				<?php elseif ($rendering =='select') : ?>
+			<td class="<?php echo $media ?>"><input class="input_cell" size="8" id="input_cell_<?php echo $i?>_<?php echo $j ?>" /></td>
+	
+				<?php else : ?>
+			<td class="<?php echo $media ?>"><input class="input_cell" size="8" id="input_cell_<?php echo $i?>_<?php echo $j ?>" /></td>
+	
+				<?php endif;?>
+	
+			<?php endif;?>
+
+	<?php $j++; endforeach;?>
+	</tr>
+	
+	<tr class="detail-row" id="detail-row_<?php echo $i ?>" rowspan="2"><td colspan="99"><div class="col-md-6 col-md-offset-3 ppit-panel" id="detail-div_<?php echo $i ?>"></div></td></tr>
+	<tr class="invisible"><td colspan="99"></td></tr>
+	
+<?php endfor; ?>
+
+</table>
+	</div>

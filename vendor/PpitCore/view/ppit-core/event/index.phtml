@@ -1,0 +1,63 @@
+<!-- 
+/**
+ * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
+ *
+ * @link      https://github.com/p-pit/PpitCore
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
+ */
+-->
+
+<!-- Load the common form javascript functions -->
+<?php echo $this->partial('/partials/common-form-js.phtml'); ?>
+
+<?php
+$title = $context->localize($context->getConfig('event/index'.(($type) ? '/'.$type : ''))['title']);
+$this->headTitle($title);
+echo $this->partial('/partials/header');
+?>
+	<div>&nbsp;</div>
+	<div class="row" id="main_menu" >
+
+<?php foreach ($context->getConfig('menus/'.(($app) ? $app : 'synapps'))['entries'] as $entryId => $entryDef) : ?>
+	<?php if (array_key_exists('type', $entryDef['params']) && $type == $entryDef['params']['type'] && (!array_key_exists('category', $entryDef['params']) || $category == $entryDef['params']['category'])) $color = 'btn-primary'; else $color = 'btn-default' ?>
+	<?php if ($context->isAllowed($entryDef['route'])) : ?>
+		<div class="col-md-2">
+			<button type="button" class="btn menu-btn <?php echo $color ?>" style="width:100%; text-align: left" id="<?php echo $entryId ?>-anchor">
+			<?php if (array_key_exists('glyphicon', $entryDef)) : ?>
+				<span class="glyphicon <?php echo $entryDef['glyphicon'] ?>"></span>
+			<?php endif;?>
+				<?php echo $entryDef['label'][$context->getLocale()] ?>
+			</button>
+		</div>
+	<?php endif ?>
+<?php endforeach;?>
+
+	</div>
+	<div>&nbsp;</div>
+
+	<!-- Main panel -->
+<div class="row">
+	<div class="col-md-12 ppit-panel" id="index_action"></div>
+</div
+
+<div>&nbsp;</div>
+
+<!-- MDB core JavaScript -->
+<script type="text/javascript" src="<?php echo $this->basePath('mdb-free/js/mdb.min.js') ?>"></script>
+
+<script>
+
+<?php
+if ($app == 'p-pit-learning') echo $this->partial('/partials/event-scripts-learning');
+else echo $this->partial('/partials/event-scripts');
+echo $this->partial('/partials/ppit-controller') 
+?>
+
+<?php foreach ($context->getConfig('menus/'.(($app) ? $app : 'synapps'))['entries'] as $entryId => $entryDef) : ?>
+$('#<?php echo $entryId ?>-anchor').click(function () { $(location).attr('href', '<?php echo $this->url($entryDef['route'], $entryDef['params']); if (array_key_exists('urlParams', $entryDef)) echo $entryDef['urlParams']; ?>'); });
+<?php endforeach;?>
+
+activateEvent();
+
+</script>

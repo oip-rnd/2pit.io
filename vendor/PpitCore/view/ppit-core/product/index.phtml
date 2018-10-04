@@ -1,0 +1,57 @@
+<!-- Load the common form javascript functions -->
+<?php echo $this->partial('/partials/common-form-js.phtml'); ?>
+
+<?php
+$title = $context->getConfig('ppitProduct/index')['title'][$context->getLocale()];
+$this->headTitle($title);
+echo $this->partial('/partials/header');
+?>
+	
+	<div>&nbsp;</div>
+	
+	<div class="row" id="main_menu">
+
+<?php foreach ($context->getConfig('menus/p-pit-engagements')['entries'] as $entryId => $entryDef) : ?>
+
+		<div class="col-md-2">
+	<?php if ($entryId == 'product'.(($type) ? '_'.$type : '')) $color = 'btn-primary'; else $color = 'btn-default' ?>
+	<?php if ($context->isAllowed($entryDef['route'])) : ?>
+			<button type="button" class="btn <?php echo $color ?> menu-btn" style="width:100%; text-align: left" id="<?php echo $entryId ?>-anchor">
+		<?php if (array_key_exists('glyphicon', $entryDef)) : ?>
+				<span class="glyphicon <?php echo $entryDef['glyphicon'] ?>"></span>
+		<?php endif;?>
+				<?php echo $entryDef['label'][$context->getLocale()] ?>
+			</button>
+	<?php endif ?>
+		</div>
+
+<?php endforeach;?>
+	</div>
+
+	<div>&nbsp;</div>
+
+	<!-- Main panel -->
+	<div class="row">
+	    <div class="col-md-6 ppit-panel" id="search_panel"></div>
+		<div class="col-md-6 ppit-panel" id="form_panel"></div>
+	</div>
+	
+	<!-- Login -->
+	<div class="row">
+	    <div class="col-md-6 col-md-offset-3 ppit-panel" id="login-panel">
+		</div>
+	</div>
+
+<script>
+
+<?php echo $this->partial('/partials/product-scripts') ?>
+<?php echo $this->partial('/partials/option-scripts') ?>
+<?php echo $this->partial('/partials/ppit-controller') ?>
+
+<?php foreach ($context->getConfig('menus/p-pit-engagements')['entries'] as $entryId => $entryDef) : ?>
+$('#<?php echo $entryId ?>-anchor').click(function () { $(location).attr('href', '<?php echo $this->url($entryDef['route'], $entryDef['params']) ?>'); });
+<?php endforeach;?>
+
+activateProduct('<?php echo $type ?>');
+
+</script>
