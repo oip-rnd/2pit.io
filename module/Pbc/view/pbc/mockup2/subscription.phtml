@@ -1,0 +1,60 @@
+<?php $data = $content['data'] ?>
+<form action="<?php echo $this->url('mockup2/subscription', []) ?>" method="post">
+<?php if ($message) : ?>
+				<p class="alert alert-success section-description">
+					<?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?>. Nous vous remercions de votre confiance.
+				</p>
+<?php else : ?>
+				<p>
+Une fois ce fomulaire soumis, Votre demande est transmise aux contributeurs (3 maximum) que vous avez sélectionnés.<br>Vous êtes mis en relation avec le premier contributeur qui l'accepte.
+				</p>
+<?php endif ?>
+				<p>
+<?php foreach ($content['accounts'] as $account) : ?>
+					<div class="chip chip-md">
+					    <img src="<?php echo $this->basePath('photos/'.$account['photo_link_id']) ?>" alt="Contributeur" /> <?php echo $account['n_first'] ?>
+					</div>
+<?php endforeach;?>
+				</p>
+				<div class="modal-body mx-3">
+					<div class="md-form mb-5">
+						<input type="text" id="n_last" name="n_last" class="form-control validate" required <?php if ($message) echo 'disabled="disabled"' ?> value="<?php echo $data['n_last'] ?>">
+						<label for="n_last" data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" class="<?php if ($message) echo 'disabled' ?>">* Votre nom</label>
+					</div>
+					<div class="md-form mb-5">
+						<input type="text" id="n_first" name="n_first" class="form-control validate" required <?php if ($message) echo 'disabled="disabled"' ?> value="<?php echo $data['n_first'] ?>">
+						<label for="n_first" data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" class="<?php if ($message) echo 'disabled' ?>">* Votre prénom</label>
+					</div>
+					<div class="md-form mb-5">
+						<i class="fa fa-envelope prefix"></i>
+						<input type="email" id="email" name="email" class="form-control required validate" <?php if ($message) echo 'disabled="disabled"' ?> value="<?php echo $data['email'] ?>">
+						<label for="email" data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" class="<?php if ($message) echo 'disabled' ?>">* Votre email</label>
+					</div>
+					<div class="md-form mb-5">
+						<i class="fa fa-phone prefix"></i>
+						<input type="text" id="tel_work" name="tel_work" class="form-control validate" <?php if ($message) echo 'disabled="disabled"' ?> value="<?php echo $data['tel_work'] ?>">
+						<label for="tel_work" data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" class="<?php if ($message) echo 'disabled' ?>">Votre téléphone</label>
+					</div>
+					<h5 class="section-heading">Votre demande</h5>
+					<div class="md-form mb-5">
+						<div class="form-check mb-4">
+						    <input name="group2" type="radio" class="form-check-input with-gap" id="radioWithGap4" checked="checked">
+						    <label class="form-check-label" for="radioWithGap4">Coup de pouce</label>
+						</div>
+						
+						<div class="form-check mb-4">
+						    <input name="group2" type="radio" class="form-check-input with-gap" id="radioWithGap5">
+						    <label class="form-check-label" for="radioWithGap5">Coup de main</label>
+						</div>
+						
+						<div class="form-check">
+						    <input name="group2" type="radio" class="form-check-input with-gap" id="radioWithGap6">
+						    <label class="form-check-label" for="radioWithGap6">Coup de boost</label>
+						</div>
+					</div>
+					<div class="md-form mb-5">
+							<textarea type="text" id="coment" class="md-textarea"></textarea>
+							<label for="comment">Description</label>
+					</div>
+				</div>
+</form>

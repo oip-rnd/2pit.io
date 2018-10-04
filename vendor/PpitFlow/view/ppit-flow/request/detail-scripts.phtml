@@ -1,0 +1,338 @@
+<script>
+
+toastr.options = {
+  "positionClass": "toast-top-full-width",
+}
+
+<?php if ($message == 'OK') : ?>
+toastr.success('<h4 class="text-center"><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h4>')
+<?php endif;?>
+
+// Tooltips Initialization
+$(function () {
+$('[data-toggle="tooltip"]').tooltip()
+})
+
+<?php foreach ($tooltips as $itemId => $tooltip) : ?>
+$('<?php echo $itemId ?>').attr('data-toggle', 'tooltip');
+$('<?php echo $itemId ?>').addClass('red-tooltip');
+$('<?php echo $itemId ?>').attr('data-placement', '<?php echo (array_key_exists('data-placement', $tooltip)) ? $tooltip['data-placement'] : 'right' ?>');
+$('<?php echo $itemId ?>').attr('title', '<?php echo $context->localize($tooltip['title'], $locale) ?>');
+<?php endforeach;?>
+
+<?php foreach ($detail['properties'] as $inputId => $property) : ?>
+  <?php if ($property['type'] == 'chips') : ?>
+  var <?php echo $inputId ?> = {
+  <?php $first = true; foreach ($property['repository'] as $entryId => $entry) : ?>
+  <?php 
+  if (!$first) echo ',';
+  $first = false;
+   ?>
+    "<?php echo $entryId ?>": "<?php echo $context->localize($entry['labels'], $locale) ?>"
+  <?php endforeach;?>
+  };
+
+    $('.search-<?php echo $inputId ?>-hidden').hide();
+    <?php endif;?>
+<?php endforeach;?>
+
+// Update
+
+$('#button_up-update').click(function() {
+  location.href = '<?php echo $this->url('request/fill', ['id' => $id]) ?>'
+});
+
+$('#button_down-update').click(function() {
+  location.href = '<?php echo $this->url('request/fill', ['id' => $id]) ?>'
+});
+
+// Realize
+function completeRequest() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.open("POST", '<?php echo $this->url('request/complete', ['id' => $id]) ?>', true);
+  xhttp.onreadystatechange = function() {
+    if (xhttp.readyState == 4) {
+      if (xhttp.status == 200) toastr.success('<h4 class="text-center"><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h4>');
+      else technicalError();
+      $('#button_up-update').hide();
+      $('#button_down-update').hide();
+      $('#button_up-cancel').hide();
+      $('#button_down-cancel').hide();
+      $('#button_up-complete').hide();
+      $('#button_down-complete').hide();
+    }
+  }
+  xhttp.send();
+}
+
+function confirmCompleteRequest() {
+  $('#button_up-complete').removeClass('btn-secondary').addClass('btn-warning');
+  $('#button_down-complete').removeClass('btn-secondary').addClass('btn-warning');
+  toastr.warning('<h4 class="text-center"><?php echo $this->translate('Please confirm the completion', 'ppit-flow', $context->getLocale()) ?></h4>');
+  $('#button_up-complete').unbind().click(completeRequest);
+  $('#button_down-complete').unbind().click(completeRequest);
+}
+
+$('#button_up-complete').click(confirmCompleteRequest);
+$('#button_down-complete').click(confirmCompleteRequest);
+
+// Cancel
+function cancelRequest() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.open("POST", '<?php echo $this->url('request/cancel', ['id' => $id]) ?>', true);
+  xhttp.onreadystatechange = function() {
+    if (xhttp.readyState == 4) {
+      if (xhttp.status == 200) toastr.success('<h4 class="text-center"><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h4>');
+      else technicalError();
+      $('#button_up-update').hide();
+      $('#button_down-update').hide();
+      $('#button_up-cancel').hide();
+      $('#button_down-cancel').hide();
+      $('#button_up-complete').hide();
+      $('#button_down-complete').hide();
+    }
+  }
+  xhttp.send();
+}
+
+function confirmCancelRequest() {
+  $('#button_up-cancel').removeClass('btn-secondary').addClass('btn-warning');
+  $('#button_down-cancel').removeClass('btn-secondary').addClass('btn-warning');
+  toastr.warning('<h4 class="text-center"><?php echo $this->translate('Please confirm the cancellation', 'ppit-flow', $context->getLocale()) ?></h4>');
+  $('#button_up-cancel').unbind().click(cancelRequest);
+  $('#button_down-cancel').unbind().click(cancelRequest);
+}
+
+$('#button_up-cancel').click(confirmCancelRequest);
+$('#button_down-cancel').click(confirmCancelRequest);
+
+// Contributors profile
+
+function showContributors() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.open('GET', '<?php echo $this->url('profile/list', ['request_id' => $id]) ?>', true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      $('#contributors').html(xhttp.responseText);
+      $('.link_profile').click(function () {
+        var account_id = $(this).attr('id').split('-')[1];
+        showProfile(account_id);
+        $('#modalShowProfileForm').modal('show');
+      });
+    }
+  };
+  xhttp.send();
+}
+
+// Requestor profile
+
+function showRequestorProfile() {
+var xhttp = new XMLHttpRequest();
+xhttp.open('GET', '<?php echo $this->url('profile/profile', ['account_id' => $account_id]) ?>', true);
+xhttp.onload = function () {
+ if (xhttp.readyState == 4 && xhttp.status == 200) {
+   $('#requestor_profile').html(xhttp.responseText);
+ }
+};
+xhttp.send();
+}
+
+<?php if ($mode == 'Owner') : ?>
+
+<?php if (in_array($status, ['new', 'connected'])) : ?>
+showContributors();
+<?php endif;?>
+
+// Linked accounts list
+
+function showAccountList() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.open('GET', '<?php echo $this->url('request/accountList', ['id' => $id]) ?>', true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4) {
+      if (xhttp.status == 200) {
+        $('#matched_accounts').html(xhttp.responseText);
+        $('.button_detail_contact').click(function () {
+          var account_id = $(this).attr('id').split('-')[1];
+          showProfile(account_id);
+          $('#modalShowProfileForm').modal('show');
+        });
+      }
+      else technicalError();
+    }
+  };
+  xhttp.send();
+}
+
+showAccountList();
+
+// Accounts
+
+function showProfile(account_id) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.open('GET', '<?php echo $this->url('profile/profile') ?>/' + account_id + '?request=' + '<?php echo $id ?>', true);
+    xhttp.onload = function () {
+      if (xhttp.readyState == 4 && xhttp.status == 200) {
+          $('#show_profile_content').html(xhttp.responseText);
+	
+	      // Contact other profile => Add to the matched accounts in the request
+	      $('#button_contact').unbind();
+	      $('#button_contact').click(function () {
+	        var xhttp = new XMLHttpRequest();
+	        xhttp.open('POST', '<?php echo $this->url('request/contact', ['id' => $id]) ?>?accounts=' + account_id, true);
+	        xhttp.onload = function () {
+	          if (xhttp.readyState == 4) {
+	            if (xhttp.status == 200) {
+	              if (xhttp.status == 200) toastr.success('<h4 class="text-center"><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h4>');
+	              showProfile(account_id);
+//	              showContributors();
+	              showAccountList();
+	            }
+	            else technicalError();
+	          }
+	        };
+	        xhttp.send();  
+	      });
+	
+	      // Abandon other profile => Remove from matched accounts in the request
+	      $('#button_abandon').unbind();
+	      $('#button_abandon').click(function () {
+	        var xhttp = new XMLHttpRequest();
+	        xhttp.open('POST', '<?php echo $this->url('request/abandon', ['id' => $id]) ?>?accounts=' + account_id, true);
+	        xhttp.onload = function () {
+	          if (xhttp.readyState == 4) {
+	            if (xhttp.status == 200) {
+	              if (xhttp.status == 200) toastr.success('<h4 class="text-center"><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h4>');
+	              showProfile(account_id);
+//	              showContributors();
+	              showAccountList();
+	            }
+	            else technicalError();
+	          }
+	        };
+	        xhttp.send();  
+	      });
+	
+	      // Accept a proposition => Adjust the account status in the request
+	      $('#button_accept').unbind();
+	      $('#button_accept').click(function () {
+	        var xhttp = new XMLHttpRequest();
+	        xhttp.open('POST', '<?php echo $this->url('request/accept', ['id' => $id]) ?>?accounts=' + account_id, true);
+	        xhttp.onload = function () {
+	          if (xhttp.readyState == 4) {
+	            if (xhttp.status == 200) {
+	              if (xhttp.status == 200) toastr.success('<h4 class="text-center"><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h4>');
+	              showProfile(account_id);
+//	              showContributors();
+	              showAccountList();
+	            }
+	            else technicalError();
+	          }
+	        };
+	        xhttp.send();  
+	      });
+	
+	      // Decline a proposition => Remove from matched accounts in the request
+	      $('#button_decline').unbind();
+	      $('#button_decline').click(function () {
+	        var xhttp = new XMLHttpRequest();
+	        xhttp.open('POST', '<?php echo $this->url('request/decline', ['id' => $id]) ?>?accounts=' + account_id, true);
+	        xhttp.onload = function () {
+	          if (xhttp.readyState == 4) {
+	            if (xhttp.status == 200) {
+	              if (xhttp.status == 200) toastr.success('<h4 class="text-center"><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h4>');
+	              showProfile(account_id);
+//	              showContributors();
+	              showAccountList();
+	            }
+	            else technicalError();
+	          }
+	        };
+	        xhttp.send();  
+	      });
+	
+	      // Give a feedback as a requestor
+	      $('#button_feedback').click(function() {
+	        location.href = '<?php echo $this->url('request/feedback', ['id' => $id]) ?>?contributor=' + account_id;
+	      });
+      }
+      else technicalError();
+    };
+    xhttp.send();
+}
+
+<?php else : ?>
+
+// Public mode (contributor to propose)
+
+showRequestorProfile();
+$('#matched_accounts').hide();
+
+// Propose my profile => Add to matched accounts in the request
+
+function proposeRequest() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.open('POST', '<?php echo $this->url('request/propose', ['id' => $id]) ?>?accounts=' + '<?php echo $my_account_id ?>', true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4) {
+      if (xhttp.status == 200) {
+        if (xhttp.status == 200) toastr.success('<h4 class="text-center"><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h4>');
+        $('#button_up-propose').hide();
+        $('#button_down-propose').hide();
+      }
+      else technicalError();
+    }
+  };
+  xhttp.send();  
+}
+
+function confirmProposeRequest() {
+  $('#button_up-propose').removeClass('btn-secondary').addClass('btn-warning');
+  $('#button_down-propose').removeClass('btn-secondary').addClass('btn-warning');
+  toastr.warning('<h4 class="text-center"><?php echo $this->translate('Please confirm the proposal', 'ppit-flow', $context->getLocale()) ?></h4>');
+  $('#button_up-propose').unbind().click(proposeRequest);
+  $('#button_down-propose').unbind().click(proposeRequest);
+}
+
+$('#button_up-propose').click(confirmProposeRequest);
+$('#button_down-propose').click(confirmProposeRequest);
+
+// Give a feedback as a contributor => Add to matched accounts in the request
+
+$('#button_up-feedback').click(function() {
+  	location.href = '<?php echo $this->url('request/feedback', ['id' => $id]) ?>';
+});
+
+$('#button_down-feedback').click(function () {
+  	location.href = '<?php echo $this->url('request/feedback', ['id' => $id]) ?>';
+});
+
+<?php endif;?>
+
+// Both requestor and contributor
+
+// Consult feedbacks
+
+function consultFeedback() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.open('GET', '<?php echo $this->url('request/consultFeedback', ['id' => $id]) ?>', true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4) {
+      if (xhttp.status == 200) {
+        $('#consult_feedback_content').html(xhttp.responseText);
+        $('#modalConsultFeedbackForm').modal('show');
+      }
+      else technicalError();
+    }
+  };
+  xhttp.send();
+}
+
+$('#button_up-consult_feedback').click(consultFeedback);
+$('#button_down-consult_feedback').click(consultFeedback);
+
+function technicalError() {
+  toastr.error('<h4 class="text-center"><?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?></h4>');  
+}
+
+</script>

@@ -1,0 +1,329 @@
+
+        <!--Navbar-->
+<?php
+if (array_key_exists('navbar', $header)) {
+	$navbarClass = $header['navbar']['class']; 
+	$navbarAccount = $header['navbar']['account']; 
+}
+else {
+	$navbarClass = 'navbar navbar-expand-lg fixed-top scrolling-navbar navbar-transparent';
+	$navbarAccount = true; 
+}
+?>
+        <nav class="<?php echo $navbarClass ?>">
+            <div class="container">
+
+                <!-- Navbar brand -->
+				<a href="<?php echo $this->url($header['logo']['href'], $header['logo']['params']) ?>" class="navbar-brand">
+					<img 
+						src="<?php echo $this->basePath($header['logo']['src']) ?>"
+						<?php if (array_key_exists('height', $header['logo'])) echo 'height="'.$header['logo']['height'].'"' ?>
+						<?php if (array_key_exists('width', $header['logo'])) echo 'width="'.$header['logo']['width'].'"' ?>
+						alt="<?php echo $header['logo']['alt'] ?>"
+					/>
+				</a>
+
+                <!-- Collapse button -->
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav" aria-controls="basicExampleNav"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Collapsible content -->
+                <div class="collapse navbar-collapse" id="basicExampleNav">
+                </div>
+                
+<?php if ($navbarAccount) : ?>
+                <!-- Collapsible content -->
+                    <!-- Links -->
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+					        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+<?php if ($context->isAuthenticated()) : ?>
+                              <img src="<?php echo $this->basePath('/photos/'.$photo_link_id).'?random='.time() ?>" height="40" class="rounded-circle z-depth-0" alt="avatar image">
+<?php else : ?>
+                              <i class="fa fa-user"></i>
+                              <span class="clearfix d-none d-sm-inline-block"><?php echo $this->translate('Account', 'ppit-core', $locale)?></span>
+<?php endif;?>
+					        </a>
+					        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+<?php if ($context->isAuthenticated()) : ?>
+                              <a class="dropdown-item" data-toggle="modal" data-target="#modalProfileForm"><?php echo $this->translate('My profile', 'ppit-core', $locale)?></a>
+                              <a class="dropdown-item" data-toggle="modal" data-target="#modalLogoutForm"><?php echo $this->translate('Logout', 'ppit-core', $locale)?></a>
+<?php else : ?>
+                              <a class="dropdown-item" data-toggle="modal" id="login-anchor" data-target="#modalLoginForm"><?php echo $this->translate('Login', 'ppit-core', $locale)?></a>
+                              <a class="dropdown-item" data-toggle="modal" data-target="#modalRegisterForm"><?php echo $this->translate('Register', 'ppit-core', $locale)?></a>
+<?php endif;?>
+					        </div>
+                        </li>
+                    </ul>
+                    <!-- Links -->
+<?php endif;?>
+            </div>
+        </nav>
+        <!--/.Navbar-->    
+
+<div class="modal fade" id="modalLoginForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('Login', 'ppit-core', $locale) ?></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="login-form">
+            	<span id="login-csrf"></span>
+	            <div class="modal-body mx-3">
+	                <div class="md-form mb-5">
+	                    <i class="fa fa-envelope prefix grey-text"></i>
+	                    <input type="text" id="identity" class="form-control validate modal_input" required="required">
+	                    <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="identity"><?php echo $this->translate('Email', 'ppit-core', $locale) ?></label>
+	                </div>
+	
+	                <div class="md-form mb-4">
+	                    <i class="fa fa-lock prefix grey-text"></i>
+	                    <input type="password" id="credential" class="form-control validate modal_input" required="required">
+	                    <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="credential"><?php echo $this->translate('Password', 'ppit-core', $locale) ?></label>
+	                </div>
+	
+	            </div>
+	            <div class="modal-footer d-flex justify-content-center">
+	              <button type="submit" class="btn btn-primary" id="login-button"><?php echo $this->translate('Login', 'ppit-core', $locale) ?></button>
+                  <a id="lost_password_anchor"><?php echo $this->translate('Lost password?', 'ppit-core', $locale) ?></a>
+	            </div>
+	        </form>
+        </div>
+    </div>
+</div>
+  
+<div class="modal fade" id="modalLostPasswordForm" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('Lost password', 'ppit-core', $locale) ?></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="lost-password-form">
+              <span id="login-csrf"></span>
+              <div class="modal-body mx-3">
+                  <div class="md-form mb-5">
+                      <i class="fa fa-envelope prefix grey-text"></i>
+                      <input type="email" id="lost_password-identity" class="form-control validate modal_input" required="required">
+                      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="lost_password-identity"><?php echo $this->translate('Email', 'ppit-core', $locale) ?></label>
+                  </div>
+  
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary"><?php echo $this->translate('Send', 'ppit-core', $locale) ?></button>
+              </div>
+          </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalInitPasswordForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('New password', 'ppit-core', $locale) ?></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="init-password-form">
+              <div class="modal-body mx-3">
+                  <div class="md-form mb-5">
+                      <input type="email" id="init_password-identity" class="form-control validate modal_input" required="required">
+                      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="init_password-identity">* <?php echo $this->translate('Email', 'ppit-core', $locale) ?></label>
+                  </div>
+                    
+                  <div class="md-form mb-4">
+                      <input type="password" id="init_password-password" class="form-control validate modal_input" required="required">
+                      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="lost_password-password">* <?php echo $this->translate('Choose a password', 'ppit-core', $locale) ?></label>
+                  </div>
+  
+                  <div class="md-form mb-4">
+                      <input type="password" id="init_password-password2" class="form-control validate modal_input" required="required">
+                      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="lost_password-password2">* <?php echo $this->translate('Confirm the password', 'ppit-core', $locale) ?></label>
+                  </div>
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+                  <button type="submit" class="btn btn-primary"><?php echo $this->translate('Submit', 'ppit-core', $locale) ?></button>
+              </div>
+            </form>
+        </div>
+    </div>
+</div>
+  
+<div class="modal fade" id="modalRequestActivationForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('Request a new activation link', 'ppit-core', $locale) ?></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="request-activation-form">
+              <span id="login-csrf"></span>
+              <div class="modal-body mx-3">
+                  <div class="md-form mb-5">
+                      <i class="fa fa-envelope prefix grey-text"></i>
+                      <input type="email" id="request_activation-identity" class="form-control validate modal_input" required="required">
+<!--                      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="request_activation-identity"><?php echo $this->translate('Email', 'ppit-core', $locale) ?></label> -->
+                  </div>
+  
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary"><?php echo $this->translate('Send', 'ppit-core', $locale) ?></button>
+              </div>
+          </form>
+        </div>
+    </div>
+</div>
+  
+<div class="modal fade" id="modalValidateCharterForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('Subscribe to the charter', 'ppit-core', $locale) ?></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="validate-charter-form">
+              <div class="modal-body mx-3">
+                  <div id="charter_content"></div>
+                  <div class="md-form mb-5">
+                      <input class="form-check-input" type="checkbox" id="charter_checked" class="form-control modal_input">
+                      <label for="charter_checked"><?php echo $this->translate('I subscribe to the charter', 'ppit-core', $locale) ?></label>
+                  </div>
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary" id="validate-charter-button"><?php echo $this->translate('Validate', 'ppit-core', $locale) ?></button>
+              </div>
+          </form>
+        </div>
+    </div>
+</div>
+  
+<div class="modal fade" id="modalValidateGtouForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('Validate the General Terms Of Use', 'ppit-core', $locale) ?></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="validate-gtou-form">
+              <div class="modal-body mx-3">
+                  <div id="gtou_content"></div>
+                  <div class="md-form mb-5">
+                      <input class="form-check-input" type="checkbox" id="gtou_checked" class="form-control modal_input">
+                      <label for="gtou_checked"><?php echo $this->translate('I accept the General Terms Of Use', 'ppit-core', $locale) ?></label>
+                  </div>
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary" id="validate-gtou-button"><?php echo $this->translate('Validate', 'ppit-core', $locale) ?></button>
+              </div>
+          </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalRegisterForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('Register', 'ppit-core', $locale) ?></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="register-form">
+	            <div class="modal-body mx-3">
+	                <div class="md-form mb-3">
+	                    <input type="email" id="register-email" class="form-control validate modal_input" required="required">
+	                    <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="register-email">* <?php echo $this->translate('Email', 'ppit-core', $locale) ?></label>
+	                </div>
+	
+	                <div class="md-form mb-3">
+	                    <input type="text" id="register-n_first" class="form-control validate modal_input" required="required">
+	                    <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="register-n_first">* <?php echo $this->translate('First name', 'ppit-core', $locale) ?></label>
+	                </div>
+	
+	                <div class="md-form mb-3">
+	                    <input type="text" id="register-n_last" class="form-control validate modal_input" required="required">
+	                    <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="register-n_last">* <?php echo $this->translate('Last name', 'ppit-core', $locale) ?></label>
+	                </div>
+	
+	                <div class="md-form mb-3">
+	                    <input type="password" id="register-password" class="form-control validate modal_input" required="required">
+	                    <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="register-password">* <?php echo $this->translate('Choose a password', 'ppit-core', $locale) ?></label>
+	                </div>
+	
+	                <div class="md-form mb-3">
+	                    <input type="password" id="register-password2" class="form-control validate modal_input" required="required">
+	                    <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="register-password2">* <?php echo $this->translate('Confirm the password', 'ppit-core', $locale) ?></label>
+	                </div>
+
+                    <?php $origin = $context->getConfig('core_account/'.$accountType.'/property/origine') ?>  
+                    <div class="md-form mb-3">
+                      <select id="origine" class="mdb-select validate modal_input" required="required">
+                        <option></option>
+<?php foreach ($origin['modalities'] as $modalityId => $modality) : ?>
+                        <option value="<?php echo $modalityId ?>"><?php echo $context->localize($modality, $locale) ?></option>
+<?php endforeach;?>
+                      </select>
+                      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="origine">* <?php echo $this->translate('How did you know us?', $locale) ?></label>
+                    </div>
+	            </div>
+	            <div class="modal-footer d-flex justify-content-center">
+	                <button type="submit" class="btn btn-primary" id="register-button"><?php echo $this->translate('Validate and register', 'ppit-core', $locale) ?></button>
+	            </div>
+            </form>
+        </div>
+    </div>
+</div>
+  
+<div class="modal fade" id="modalLogoutForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        	<form id="logout-form">
+	            <div class="modal-header text-center">
+	                <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('Logout', 'ppit-core', $locale) ?></h4>
+	                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	                    <span aria-hidden="true">&times;</span>
+	                </button>
+	            </div>
+	            <div class="modal-footer d-flex justify-content-center">
+	                <button class="btn btn-primary" id="logout-button"><?php echo $this->translate('Confirm logout', 'ppit-core', $locale) ?></button>
+	            </div>
+			</form>
+        </div>
+    </div>
+</div>
+  
+<div class="modal fade" id="modalProfileForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <form id="profileForm">
+        <div class="modal-header text-center">
+          <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('Manage my profile', 'ppit-flow', $locale) ?></h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div id="modalProfileInputs"></div>
+        <div class="modal-footer d-flex justify-content-center">
+          <button type="submit" class="btn btn-secondary btn-rounded"><?php echo $this->translate('Update', 'ppit-core', $locale) ?></button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+ 

@@ -1,0 +1,102 @@
+
+<!-- Card -->
+<div class="card card-cascade narrower">
+
+  <!-- Card image -->
+  <div class="view view-cascade gradient-card-header blue">
+    <!-- Title -->
+    <h2 class="card-header-title mb-0">
+      <img class="rounded-circle" src="<?php echo $this->basePath('photos/'.(($viewData['photo_link_id']) ? $viewData['photo_link_id'] : 'no-photo.png')) ?>" width="100" height="100" alt="Sample image" />
+      <?php echo $viewData['n_first'] ?>
+    </h2>
+    <!-- Subtitle -->
+    <h5 class="card-header-subtitle mb-0"><?php echo $viewData['caption'] ?></h5>
+  </div>
+
+  <!-- Card content -->
+  <div class="card-body card-body-cascade text-center">
+
+ <?php foreach ($content['detail']['properties'] as $inputId => $property) : ?>
+	<?php $disabled = false ?>
+              <div class="<?php echo (array_key_exists('class',$property)) ? $property['class'] : 'col-md-6' ?>">
+					<div class="md-form">
+
+				<?php if ($property['type'] == 'select') : ?>
+						<select id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="mdb-select validate" <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?>>
+							<option value=""><?php echo $this->translate('Please choose', 'ppit-core', $context->getLocale()) ?></option>
+					<?php foreach ($property['modalities'] as $modalityId => $modality) : ?>
+							<option value="<?php echo $modalityId ?>" <?php if ($viewData[$inputId] == $modalityId) echo 'selected="selected"' ?>><?php echo $context->localize($modality, $locale) ?></option>
+					<?php endforeach;?>
+						</select>
+						<label for="<?php echo $inputId ?>" class=""><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+     			<?php elseif ($property['type'] == 'radio') : ?>
+						<input type="radio" id="<?php echo $inputId ?>" name="<?php echo $property['property_id'] ?>" class="form-control validate with-gap" value="<?php echo $property['value'] ?>" <?php if ($disabled) echo 'disabled="disabled"' ?> <?php if ($viewData[$inputId]) echo 'checked="checked"' ?> />
+						<label for="<?php echo $inputId ?>" class=""><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+     			<?php elseif ($property['type'] == 'checkbox') : ?>
+						<input type="checkbox" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate" value="<?php echo $property['value'] ?>" <?php if ($disabled) echo 'disabled="disabled"' ?> <?php if ($viewData[$inputId]) echo 'checked="checked"' ?> />
+						<label for="<?php echo $inputId ?>" class=""><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+				<?php elseif ($property['type'] == 'textarea') : ?>
+						<textarea rows="<?php echo $property['rows']?>" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?>><?php echo $viewData[$inputId] ?></textarea>
+						<label for="<?php echo $inputId ?>" class=""><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+				<?php elseif ($property['type'] == 'file') : ?>
+						<div class="file-field">
+							<div class="btn btn-primary btn-sm float-left ">
+								<span><?php echo $this->translate('Choose file', 'ppit-core', $context->getLocale()) ?></span>
+								<input type="file" id="<?php $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate" <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value=" value="<?php echo $viewData[$inputId] ?>">
+							</div>
+							<div class="file-path-wrapper">
+								<input class="file-path validate" type="text" placeholder="<?php echo $context->localize($property['labels'], $locale) ?>" >
+							</div>
+						</div>
+
+     			<?php elseif ($property['type'] == 'email') : ?>
+						<input type="email" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>" />
+						<label for="<?php echo $inputId ?>" class=""><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+     			<?php elseif ($property['type'] == 'keywords') : ?>
+						<input type="text" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control mdb-autocomplete" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>">
+						<label for="<?php echo $inputId ?>" class=""><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+     			<?php elseif ($property['type'] == 'date') : ?>
+						<input type="text" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control datepicker" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $context->decodeDate($viewData[$inputId]) ?>" />
+						<label for="<?php echo $inputId ?>" class=""><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+     			<?php elseif ($property['type'] == 'time') : ?>
+						<input type="text" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control timepicker" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>" />
+						<label for="<?php echo $inputId ?>" class=""><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+     			<?php elseif ($property['type'] == 'input') : ?>
+						<input type="text" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>" />
+						<label for="<?php echo $inputId ?>" class=""><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+     			<?php elseif ($property['type'] == 'separation') : ?>
+     					<hr>
+
+     			<?php elseif ($property['type'] == 'chips') : ?>
+					<?php $currentSkills = explode(',', $viewData[$inputId]) ?>
+			        	<div class="text-center">
+					<?php foreach ($property['repository'] as $entryId => $entry) : ?>
+							<input type="hidden" id="<?php echo $inputId.'-'.$entryId ?>" name="<?php echo $inputId.'-'.$entryId ?>" value="<?php echo in_array($entryId, $currentSkills) ? 1 : 0 ?>" />
+							<span id="search-<?php echo $inputId ?>-<?php echo $entryId ?>" class="chip <?php echo $entry['color'] ?> white-text search-<?php echo $inputId ?> <?php if (!in_array($entryId, $currentSkills)) echo 'search-'.$inputId.'-hidden' ?>">
+								<?php echo $context->localize($entry['labels'], $locale) ?>
+                      <?php if (!$disabled) : ?>
+							    &nbsp;<a><i id="chip-<?php echo $inputId ?>-<?php echo $entryId ?>" class="search-<?php echo $inputId ?>-close fa fa-times" style="color: red"></i></a>
+                      <?php endif;?>
+							</span>
+					<?php endforeach;?>
+						</div>
+
+     			<?php else : ?>
+						<span id='<?php echo $inputId ?>'></span>
+
+				<?php endif;?>
+					</div>
+                </div>
+<?php endforeach;?>
+
+</div> 
+  

@@ -1,0 +1,13 @@
+{
+    "name": "2pit-io/2pit-user",
+    "description": "2pit project's User module",
+    "license": "GPL-3.0-or-later",
+    "keywords": [
+        "2pit",
+        "user module"
+    ],
+    "homepage": "https://github.com/2pit-io/2pit.io",
+    "require": {
+        "php": "^5.3.3 || ^7.0"
+    }
+}

@@ -1,0 +1,186 @@
+    <!--Main layout-->
+    <main>
+<form action="<?php echo $this->url('request/fill', ['id' => $id]) ?>?locale=<?php echo $locale ?>" method="post">
+<div class="container" name="descr" id="descr">
+	<br>
+	<section class="section feature-box wow fadeIn" data-wow-delay="0.3s">
+<?php if ($id) : ?>
+      <h3 class="font-weight-bold text-center h3 my-5"><?php echo $this->translate('View/update a request', 'ppit-flow', $context->getLocale()) ?></h3>
+<?php else : ?>
+      <h3 class="font-weight-bold text-center h3 my-5"><?php echo $this->translate('Submit a new request', 'ppit-flow', $context->getLocale()) ?></h3>
+<?php endif;?>
+   	</section>
+
+	<section class="section pb-5 wow fadeIn" data-wow-delay="0.3s">
+
+		<!--Grid column-->
+		<div class="col-md-12">
+	
+			<div class="row">
+<?php foreach ($content['form']['introduction'] as $paragraph) : ?>
+	<?php if (array_key_exists('a', $paragraph)) : ?>
+				<a 
+					href="<?php echo $paragraph['a']['href']?>" 
+					<?php if (array_key_exists('class', $paragraph['a'])) echo 'class="'.$paragraph['a']['class'].'"' ?>
+					<?php if (array_key_exists('id', $paragraph['a'])) echo 'id="'.$paragraph['a']['id'].'"' ?>
+				>
+	<?php elseif (array_key_exists('button', $paragraph)) : ?>
+				<button type="button" 
+					<?php if (array_key_exists('class', $paragraph['button'])) echo 'class="'.$paragraph['button']['class'].'"' ?>
+					<?php if (array_key_exists('id', $paragraph['button'])) echo 'id="'.$paragraph['button']['id'].'"' ?>
+				>
+	<?php else : ?>
+				<<?php echo $paragraph['type']?> <?php if (array_key_exists('class', $paragraph)) echo 'class="'.$paragraph['class'].'"' ?>>
+	<?php endif;?>
+	<?php if (array_key_exists('text', $paragraph)) : ?>
+				<?php echo $context->localize($paragraph['text'], $locale) ?>
+	<?php endif;?>
+	<?php if (array_key_exists('a', $paragraph)) : ?>
+				</a>
+	<?php elseif (array_key_exists('button', $paragraph)) : ?>
+				</button>
+	<?php else : ?>
+				</<?php echo $paragraph['type']?>>
+	<?php endif;?>
+<?php endforeach;?>
+			</div>
+
+			<div class="row">
+<?php if ($content['form']['options']['examples']) : ?>
+				<div class="col-md-6">&nbsp;</div>
+				<div class="col-md-6"><a class="btn btn-secondary btn-sm" id="other-example"><?php echo $this->translate('Other example', 'ppit-flow', $locale) ?></a></div>
+<?php endif;?>
+
+ <?php foreach ($content['form']['inputs'] as $inputId => $property) : ?>
+ 	<?php $disabled = $message || $error || $id && !$property['updatable'] ?>
+				<div class="<?php echo (array_key_exists('class',$property)) ? $property['class'] : 'col-md-6' ?>">
+					<div class="md-form">
+
+				<?php if ($property['type'] == 'select') : ?>
+						<select id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="mdb-select validate" <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?>>
+							<option value=""><?php echo $this->translate('Please choose', 'ppit-core', $context->getLocale()) ?></option>
+					<?php foreach ($property['modalities'] as $modalityId => $modality) : ?>
+							<option value="<?php echo $modalityId ?>" <?php if ($viewData[$inputId] == $modalityId) echo 'selected="selected"' ?>><?php echo $context->localize($modality, $locale) ?></option>
+					<?php endforeach;?>
+						</select>
+						<label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+     			<?php elseif ($property['type'] == 'radio') : ?>
+						<input type="radio" id="<?php echo $inputId ?>" name="<?php echo $property['property_id'] ?>" class="form-control validate with-gap" value="<?php echo $property['value'] ?>" <?php if ($disabled) echo 'disabled="disabled"' ?> <?php if ($viewData[$inputId]) echo 'checked="checked"' ?> />
+						<label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+     			<?php elseif ($property['type'] == 'checkbox') : ?>
+						<input type="checkbox" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate" value="<?php echo $property['value'] ?>" <?php if ($disabled) echo 'disabled="disabled"' ?> <?php if ($viewData[$inputId]) echo 'checked="checked"' ?> />
+						<label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+				<?php elseif ($property['type'] == 'textarea') : ?>
+						<textarea rows="<?php echo $property['rows']?>" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?>><?php echo $viewData[$inputId] ?></textarea>
+						<label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+				<?php elseif ($property['type'] == 'file') : ?>
+						<div class="file-field">
+							<div class="btn btn-primary btn-sm float-left ">
+								<span><?php if ($property['mandatory']) echo '* ' ?><?php echo $this->translate('Choose file', 'ppit-core', $context->getLocale()) ?></span>
+								<input type="file" id="<?php $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate" <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value=" value="<?php echo $viewData[$inputId] ?>">
+							</div>
+							<div class="file-path-wrapper">
+								<input class="file-path validate" type="text" placeholder="<?php echo $context->localize($property['labels'], $locale) ?>" >
+							</div>
+						</div>
+
+     			<?php elseif ($property['type'] == 'email') : ?>
+						<input type="email" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>" />
+						<label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+     			<?php elseif ($property['type'] == 'keywords') : ?>
+						<input type="text" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control mdb-autocomplete" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>">
+						<label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+     			<?php elseif ($property['type'] == 'date') : ?>
+						<input type="text" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control datepicker" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $context->decodeDate($viewData[$inputId]) ?>" />
+						<label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+     			<?php elseif ($property['type'] == 'time') : ?>
+						<input type="text" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control timepicker" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>" />
+						<label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+     			<?php elseif ($property['type'] == 'input') : ?>
+						<input type="text" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>" />
+						<label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+                <?php elseif ($property['type'] == 'empty') : ?>
+                        <br>
+
+     			<?php elseif ($property['type'] == 'separation') : ?>
+     					<hr>
+
+     			<?php elseif ($property['type'] == 'chips') : ?>
+					<?php $currentSkills = explode(',', $viewData[$inputId]) ?>
+			        	<div class="text-center">
+					<?php foreach ($property['repository'] as $entryId => $entry) : ?>
+							<input type="hidden" id="<?php echo $inputId.'-'.$entryId ?>" name="<?php echo $inputId.'-'.$entryId ?>" value="<?php echo in_array($entryId, $currentSkills) ? 1 : 0 ?>" />
+							<span id="search-<?php echo $inputId ?>-<?php echo $entryId ?>" class="chip <?php echo $entry['color'] ?> white-text search-<?php echo $inputId ?> <?php if (!in_array($entryId, $currentSkills)) echo 'search-'.$inputId.'-hidden' ?>">
+								<?php echo $context->localize($entry['labels'], $locale) ?>
+                      <?php if (!$disabled) : ?>
+							    &nbsp;<a><i id="chip-<?php echo $inputId ?>-<?php echo $entryId ?>" class="search-<?php echo $inputId ?>-close fa fa-times" style="color: red"></i></a>
+                      <?php endif;?>
+							</span>
+					<?php endforeach;?>
+						</div>
+
+     			<?php else : ?>
+						<span id='<?php echo $inputId ?>'></span>
+
+				<?php endif;?>
+					</div>
+				</div>
+<?php endforeach;?>
+			</div>
+
+			<div class="row">
+
+				<div class="center-on-small-only">
+<?php if (!$message && !$error) : ?>
+					<button class="btn btn-secondary btn-rounded" type="submit"><?php echo $context->localize($content['form']['submit']['labels'], $locale) ?></button>&nbsp;&nbsp;
+<?php endif;?>
+                    <a href="<?php echo $this->url('profile/template2') ?>" class=""><?php echo $this->translate('Cancel', 'ppit-core', $context->getLocale()) ?></a>
+				</div>
+			</div>
+	    </div>
+		<!--Grid column-->
+	</section> 
+
+	<section class="section pb-5 wow fadeIn" data-wow-delay="0.3s">
+		<br>
+		<div class="row">
+<?php foreach ($content['form']['legal'] as $paragraph) : ?>
+		<?php if (array_key_exists('a', $paragraph)) : ?>
+					<a 
+						href="<?php echo $paragraph['a']['href']?>" 
+						<?php if (array_key_exists('class', $paragraph['a'])) echo 'class="'.$paragraph['a']['class'].'"' ?>
+						<?php if (array_key_exists('id', $paragraph['a'])) echo 'id="'.$paragraph['a']['id'].'"' ?>
+					>
+		<?php elseif (array_key_exists('button', $paragraph)) : ?>
+					<button type="button" 
+						<?php if (array_key_exists('class', $paragraph['button'])) echo 'class="'.$paragraph['button']['class'].'"' ?>
+						<?php if (array_key_exists('id', $paragraph['button'])) echo 'id="'.$paragraph['button']['id'].'"' ?>
+					>
+		<?php else : ?>
+					<<?php echo $paragraph['type']?> <?php if (array_key_exists('class', $paragraph)) echo 'class="'.$paragraph['class'].'"' ?>>
+		<?php endif;?>
+		<?php if (array_key_exists('text', $paragraph)) : ?>
+			<?php echo $context->localize($paragraph['text'], $locale) ?>
+		<?php endif;?>
+		<?php if (array_key_exists('a', $paragraph)) : ?>
+					</a>
+		<?php elseif (array_key_exists('button', $paragraph)) : ?>
+					</button>
+		<?php else : ?>
+					</<?php echo $paragraph['type']?>>
+		<?php endif;?>
+<?php endforeach;?>
+		</div>
+	</section> 
+
+	</div>
+</form>

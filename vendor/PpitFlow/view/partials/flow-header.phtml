@@ -1,0 +1,119 @@
+<head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="robots" content="noindex, nofollow">
+    <title>ProBono Corpo</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="<?php echo $this->basePath('MDB Pro/css/bootstrap.min.css" rel="stylesheet') ?>">
+
+    <!-- Material Design Bootstrap -->
+    <link href="<?php echo $this->basePath('MDB Pro/css/mdb.min.css" rel="stylesheet') ?>">
+
+    <!-- Your custom styles (optional) -->
+    <link href="<?php echo $this->basePath('MDB Pro/css/style.css" rel="stylesheet') ?>">
+
+    <style>
+        
+        .top-nav-collapse {
+            background-color: #9da4b1 !important; 
+        }
+        .navbar:not(.top-nav-collapse) {
+            background: !important;
+        }
+        @media (max-width: 768px) {
+            .navbar:not(.top-nav-collapse) {
+                background: #9da4b1 !important;
+            } 
+        }
+        @media (max-width: 740px) {
+            .full-height,
+            .full-height body,
+            .full-height header,
+            .full-height header .view {
+                height: 700px; 
+            } 
+        }
+        footer.page-footer {
+//            background-color: #9da4b1;
+        }   
+ 
+body {
+//background-color: #eee;
+}
+         
+.form-elegant .font-small {
+  font-size: 0.8rem; }
+
+.form-elegant .z-depth-1a {
+  -webkit-box-shadow: 0 2px 5px 0 rgba(55, 161, 255, 0.26), 0 4px 12px 0 rgba(121, 155, 254, 0.25);
+  box-shadow: 0 2px 5px 0 rgba(55, 161, 255, 0.26), 0 4px 12px 0 rgba(121, 155, 254, 0.25); }
+
+.form-elegant .z-depth-1-half,
+.form-elegant .btn:hover {
+  -webkit-box-shadow: 0 5px 11px 0 rgba(85, 182, 255, 0.28), 0 4px 15px 0 rgba(36, 133, 255, 0.15);
+  box-shadow: 0 5px 11px 0 rgba(85, 182, 255, 0.28), 0 4px 15px 0 rgba(36, 133, 255, 0.15); }
+
+.chip.chip-md {
+    height: 42px;
+    line-height: 42px;
+    border-radius: 21px;
+}
+.chip.chip-md img {
+    height: 42px;
+    width: 42px;
+}
+.chip.chip-md .close {
+    height: 42px;
+    line-height: 42px;
+    border-radius: 21px;
+}
+
+.chip.chip-lg {
+    height: 52px;
+    line-height: 52px;
+    border-radius: 26px;
+}
+.chip.chip-lg img {
+    height: 52px;
+    width: 52px;
+}
+.chip.chip-lg .close {
+    height: 52px;
+    line-height: 52px;
+    border-radius: 26px;
+}
+                   
+    </style>
+</head>
+<body class="fixed-sn light-blue-skin">
+
+    <!--Main Navigation-->
+    <header>
+ 
+        <!--Navbar-->
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+				<a href="<?php echo $this->url('pbcPublic/landing') ?>" class="navbar-brand"><img height="<?php echo $context->getConfig('bootstrap4')['logo-height'] ?>" src="<?php echo $this->basePath('/logos/'.$context->getInstance()->caption.'/'.$context->getConfig('bootstrap4')['logo']) ?>" alt="<?php echo $context->getInstance()->caption ?> logo" /></a>
+                <a href="<?php echo $this->url('mockup2/landingPage') ?>" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-7" aria-controls="navbarSupportedContent-7" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </a>
+			     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-7" aria-controls="navbarSupportedContent-7" aria-expanded="false" aria-label="Toggle navigation">
+			        <span class="navbar-toggler-icon"></span>
+			      </button>
+			      <div class="collapse navbar-collapse" id="navbarSupportedContent-7">
+					<ul class="nav navbar-nav nav-flex-icons ml-auto">
+					    <li class="nav-item">
+					        <a class="nav-link">
+					            <i class="fa fa-user"></i>
+					            <span class="clearfix d-none d-sm-inline-block">Mon profil</span>
+					        </a>
+					    </li>
+					</ul>
+			    </div>
+            </div>
+        </nav>
+
+    </header>

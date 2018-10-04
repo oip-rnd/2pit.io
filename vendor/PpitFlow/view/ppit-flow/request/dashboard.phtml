@@ -1,0 +1,108 @@
+
+<!--Card-->
+<div class="card card-cascade narrower">
+
+    <!--Card header-->
+    <div class="view py-3 gradient-card-header info-color-dark mx-4 d-flex justify-content-between align-items-center">
+
+  <div>
+  </div>
+
+  <h3><a href="" class="white-text mx-3"><?php echo $this->translate('Current requests', 'ppit-flow', $context->getLocale()) ?></a></h3>
+
+  <div>
+  </div>
+
+    </div>
+    <!--/Card header-->
+
+    <!--Card content-->
+    <div class="card-body">
+
+      <div class="table-responsive" id="table_list">
+<?php 
+$properties = $content['description']['properties'];
+?>
+<table class="table">
+    <thead>
+        <tr>
+            <th>&nbsp;</th>
+
+<?php foreach ($content['description']['list'] as $propertyId => $options) : ?>
+	<?php $property = $properties[$propertyId] ?>
+            <th class="th-lg"><?php echo $context->localize($property['labels']) ?></th>
+<?php endforeach;?>
+        </tr>
+    </thead>
+    <tbody>
+<?php foreach ($content['data'] as $itemId => $item) : ?>
+        <tr>
+           <td>
+          <a type="button" class="btn-rounded btn-sm btn-secondary" href="<?php echo $this->url('request/detail', ['id' => $itemId]) ?>">
+              <i class="fa fa-plus mt-0"></i>
+          </a>
+          </td>
+
+	<?php foreach ($content['description']['list'] as $propertyId => $options) : ?>
+		<?php $property = $properties[$propertyId] ?>
+        <?php if ($propertyId == 'matched_accounts') : ?>
+          <?php 
+          $ids = explode(',', $item[$propertyId]);
+          $first = true; 
+          ?>
+            <td>
+          <?php foreach ($ids as $id) : ?>
+              <?php
+              if (!$first) echo '<br>';
+              $first = false;
+              ?>
+              <button type="button" class="btn-rounded btn-sm btn-secondary button_remove_contact" id="button_remove_contact-<?php echo $id ?>-<?php echo $itemId ?>">
+                <i class="fa fa-minus-square"></i>
+              </button>
+              <a class="text-secondary link_profile" id="link_profile-<?php echo $id ?>-<?php echo $itemId ?>">
+                <?php if ($item[$propertyId]) echo $context->localize($properties[$propertyId]['modalities'][$id]) ?>
+              </a>
+          <?php endforeach;?>
+            </td>
+
+		<?php elseif ($property['type'] == 'select') : ?>
+            <td><?php if ($item[$propertyId]) echo $context->localize($properties[$propertyId]['modalities'][$item[$propertyId]]) ?></td>
+
+        <?php elseif ($property['type'] == 'multiselect') : ?>
+          <?php $list = explode(',', $item[$propertyId]) ?>
+            <td>
+              <?php 
+              $first = true; 
+              foreach ($list as $value) {
+                if (!$first) echo '<br>';
+                $first = false;
+                if (array_key_exists($value, $properties[$propertyId]['modalities'])) echo $context->localize($properties[$propertyId]['modalities'][$value]);
+              }
+              ?>
+            </td>
+
+		<?php elseif ($property['type'] == 'date') : ?>
+            <td><?php echo $context->decodeDate($item[$propertyId]) ?></td>
+
+		<?php elseif ($property['type'] == 'number') : ?>
+            <td><?php echo $context->formatNumber($item[$propertyId], 2) ?></td>
+
+		<?php else : ?>
+            <td><?php echo $item[$propertyId] ?></td>
+
+        <?php endif;?>
+	<?php endforeach;?>
+        </tr>
+<?php endforeach ?>
+    </tbody>
+</table>
+      </div>
+      
+</div>
+<!--Bottom Table UI-->
+
+    </div>
+    <!--/.Card content-->
+
+</div>
+<!--/.Card-->

@@ -1,0 +1,138 @@
+<script>
+
+// Upload the photo
+$('#photo_upload').change(function () {
+ 	var formData = new FormData();
+ 	var fileSelect = document.getElementById('photo_path');
+ 	if (fileSelect) {
+ 		var files = fileSelect.files;
+ 		for (var i = 0; i < files.length; i++) {
+ 			var file = files[i];
+ 			formData.append('photo_path', file, file.name);
+ 		}
+ 	}
+
+ 	var xhttp = new XMLHttpRequest();
+ 	xhttp = new XMLHttpRequest();
+ 	xhttp.open("POST", '<?php echo $this->url('profile/photoUpload', ['id' => $account_id]) ?>', true);
+ 	xhttp.onreadystatechange = function() {
+ 		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+ 		if (xhttp.readyState == 4 && xhttp.status == 200) {
+ 			$('#photo').attr('src', '<?php echo $this->basePath('/photos/') ?>' + xhttp.responseText + '?random=' + (new Date()).getTime());
+ 		}
+ 	}
+ 	xhttp.send(formData);
+ });
+ 
+// Enable the form
+$('.profile_search_close').hide();
+$('#submit_button').hide();
+$('#enabler_button').click(function () {
+  $('.profile_input').attr('disabled', false);
+  $('.profile_search_close').show();
+  $('#submit_button').show();
+  $('#enabler_button').hide();
+  $('.profile_input_focused').focus();
+});
+
+// Submit the form
+
+<?php foreach ($form['inputs'] as $inputId => $property) : ?>
+	<?php if ($property['type'] == 'chips') : ?>
+	var <?php echo $inputId ?> = {
+	<?php $first = true; foreach ($property['repository'] as $entryId => $entry) : ?>
+	<?php 
+	if (!$first) echo ',';
+	$first = false;
+	 ?>
+	 	"<?php echo $entryId ?>": "<?php echo $context->localize($entry['labels'], $locale) ?>"
+	<?php endforeach;?>
+	};
+
+  $('.search-<?php echo $inputId ?>-hidden').hide();
+
+  $('#<?php echo $property['trigger'] ?>').mdb_autocomplete({
+      data: <?php echo $inputId ?>
+  });
+
+  $('#<?php echo $property['trigger'] ?>').change(function () {
+      var matched;
+      setTimeout(function () {
+	        for (id in <?php echo $inputId ?>) {
+	        	if (<?php echo $inputId ?>[id] == $('#<?php echo $property['trigger'] ?>').val()) {
+		        	$('#<?php echo $inputId ?>-' + id).val(1);
+		        	$('#search-<?php echo $inputId ?>-' + id).show();
+		        	$('#<?php echo $property['trigger'] ?>').val('');
+		        	break;
+	        	}
+	        }
+      }, 600);
+  });
+
+  $('.search-<?php echo $inputId ?>-close').click(function () {
+	<?php foreach ($property['repository'] as $entryId => $entry) : ?>
+  	if ($(this).attr('id').split('-')[2] == '<?php echo $entryId ?>') $('#<?php echo $inputId ?>-<?php echo $entryId ?>').val(0);
+	<?php endforeach;?>
+	$(this).parent().parent().hide();
+  });
+  <?php endif;?>
+<?php endforeach;?>
+
+<?php if ($message) : ?>
+toastr.success('<?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?>');
+<?php endif;?>
+
+//Tooltips Initialization
+$(function () {
+$('[data-toggle="tooltip"]').tooltip()
+})
+
+<?php foreach ($tooltips as $itemId => $tooltip) : ?>
+$('<?php echo $itemId ?>').attr('data-toggle', 'tooltip');
+$('<?php echo $itemId ?>').addClass('red-tooltip');
+$('<?php echo $itemId ?>').attr('data-placement', '<?php echo (array_key_exists('data-placement', $tooltip)) ? $tooltip['data-placement'] : 'right' ?>');
+$('<?php echo $itemId ?>').attr('title', '<?php echo $context->localize($tooltip['title'], $locale) ?>');
+<?php endforeach;?>
+
+// Profile
+/*
+function showProfile(id) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.open('GET', '<?php //echo $this->url('profile/profile') ?>/' + id, true);
+    xhttp.onload = function () {
+      if (xhttp.readyState == 4 && xhttp.status == 200) $('#show_profile_content').html(xhttp.responseText);
+      else technicalError;
+
+      // Add the other profile to my profile matched accounts
+      $('#button_contact').unbind();
+      $('#button_contact').click(function () {
+        var xhttp = new XMLHttpRequest();
+        xhttp.open('GET', '<?php //echo $this->url('profile/contact') ?>/' + id, true);
+        xhttp.onload = function () {
+          if (xhttp.readyState == 4 && xhttp.status == 200) {
+            showProfile(id);
+          }
+        };
+        xhttp.send();  
+      });
+    };
+    xhttp.send();
+}
+
+function removeProfile(account_id, request_id) {
+  addRequestToBasket(request_id);
+  var xhttp = new XMLHttpRequest();
+  xhttp.open('GET', '<?php //echo $this->url('profile/removeContact') ?>/' + account_id, true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      showDashboard();
+    }
+  };
+  xhttp.send();  
+  removeRequestFromBasket(request_id);
+}*/
+
+function technicalError() {
+  toastr.error('<h4 class="text-center"><?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?></h4>');  
+}
+</script>

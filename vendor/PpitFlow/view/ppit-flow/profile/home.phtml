@@ -1,0 +1,176 @@
+  <!--Main layout-->
+  <main>
+    
+    <div class="container">
+    
+      <section class="mb-4 my-3">
+        <div class="row justify-content-center p-2">
+          <div class="col-md-8">
+      
+<ul class="nav grey lighten-4 md-pills pills-secondary nav-justified">
+    <li class="nav-item">
+        <a class="nav-link active" href="<?php echo $this->url('profile/home') ?>"><?php echo $this->translate('Current requests', 'ppit-flow', $context->getLocale())?></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="<?php echo $this->url('profile/template2') ?>"><?php echo $this->translate('My profile', 'ppit-flow', $context->getLocale())?></a>
+    </li>
+</ul>
+          </div>
+        </div>
+      </section>
+      
+      <!--Section: Products v.3-->
+      <section id="profiles">
+          <div class="row justify-content-center p-2">
+            <div class="col-md-4">
+              <div>
+                <!-- Search form -->
+                <form class="form-inline active-purple-3 active-purple-4">
+                  <i class="fa fa-search" aria-hidden="true"></i>
+                  <input class="form-control form-control-sm mdb-autocomplete ml-3 w-75" id="home_search_skill" type="text" placeholder="<?php echo $this->translate('Search for a skill', 'ppit-flow', $context->getLocale()) ?>" aria-label="">
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="row justify-content-center p-2">
+            <div class="col-md-12">
+              <div class="text-center">
+<?php foreach ($context->getConfig('matching/skills') as $entryId => $entry) : ?>
+                <input type="hidden" id="skill-<?php echo $entryId ?>" value="0" />
+                <span id="home_search-<?php echo $entryId ?>" class="chip <?php echo $entry['color'] ?> white-text home_search">
+                  <?php echo $context->localize($entry['labels']) ?>
+                  &nbsp;<a><i id="home_search_chip-<?php echo $entryId ?>" class="home_search_close home_search_close ?> fa fa-times" style="color: red"></i></a>
+                </span>
+<?php endforeach;?>
+              </div>
+            </div>
+          </div>
+      </section>
+		
+      <!--Section: Products v.3-->
+      <section>
+
+<?php $nbSlides = (int) count($viewData['accounts']) / 3 ?>
+
+<!--Carousel Wrapper-->
+<div id="multi-item-example" class="carousel slide carousel-multi-item" data-ride="carousel">
+
+    <!--Controls-->
+    <div class="controls-top">
+        <a class="btn-floating" href="#multi-item-example" data-slide="prev"><i class="fa fa-chevron-left"></i></a>
+        <a class="btn-floating" href="#multi-item-example" data-slide="next"><i class="fa fa-chevron-right"></i></a>
+    </div>
+    <!--/.Controls-->
+
+    <!--Slides-->
+    <div class="carousel-inner" role="listbox">
+
+<?php $i = 0; foreach ($viewData['accounts'] as $accountId => $account) : ?>
+
+  <?php if ($i % 3 == 0) : ?>
+       <div class="carousel-item <?php if ($i == 0) echo 'active' ?>">
+
+          <!--Grid column-->
+          <div class="col-md-4">
+  <?php else : ?>
+
+          <!--Grid column-->
+          <div class="col-md-4 clearfix d-none d-md-block">
+  <?php endif;?>
+
+<!-- Card -->
+<div class="card card-cascade narrower">
+
+  <!-- Card image -->
+  <div class="view view-cascade gradient-card-header blue">
+    <a class="link_profile" id="link_profile-<?php echo $accountId ?>">
+	  <!-- Title -->
+	  <h2 class="card-header-title mb-0">
+        <img class="" src="<?php echo $this->basePath('photos/'.(($account['photo_link_id']) ? $account['photo_link_id'] : 'no-photo.png')) ?>" width="40" height="40" alt="Sample image" />
+        <?php echo $account['n_first'] ?>
+      </h2>
+	  <!-- Subtitle -->
+	  <p class="card-header-subtitle mb-0"><?php echo $account['profile_tiny_5'] ?></p>
+    </a>
+  </div>
+
+  <!-- Card content -->
+  <div class="card-body card-body-cascade text-center">
+
+    <!-- Title -->
+    <div class="d-flex justify-content-between">
+      <div class="col-11 text-left pl-0 mb-3">
+        <?php echo $account['property_16'] ?>
+      </div>
+    </div>
+        
+    <div class="d-flex justify-content-between">
+      <div class="text-truncate text-left pl-0">
+  <?php foreach (explode(',', $account['profile_tiny_2']) as $skillId) : ?>
+    <?php if (array_key_exists($skillId, $context->getConfig('matching/skills'))) : ?>
+        <span class="chip chip-lg <?php echo $context->getConfig('matching/skills')[$skillId]['color'] ?> white-text">
+      <?php echo $context->localize($description['properties']['property_2']['modalities'][$skillId]) ?>
+        </span>
+    <?php endif;?>
+  <?php endforeach;?>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+<!-- Card -->
+         </div>
+         <!--Grid column-->
+
+  <?php if ($i % 3 == 2) : ?>
+       </div>
+  <?php endif;?>
+  
+<?php $i++; endforeach;?>
+
+<?php if ($i % 3 != 0) : ?>
+       </div>
+<?php endif;?>
+
+    </div>
+    <!--/.Slides-->
+
+</div>
+<!--/.Carousel Wrapper-->
+
+    <div id="requests"></div>
+      </div>
+    </div>
+
+      </section>
+      <!--Section: Products v.3-->
+
+    </div>
+<!-- Card --> 
+    
+  </main>
+  <!--Main layout-->
+  
+<div class="modal fade" id="modalShowProfileForm" tabindex="-1" role="dialog" aria-labelledby="modalShowProfileLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+              <div class="modal-header text-center">
+                  <h4 class="modal-title w-100 font-weight-bold"></h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body mx-3">
+                  <div id="show_profile_content"></div>
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+
+            <a class="btn btn-secondary btn-rounded"><?php echo $this->translate('Contact', 'ppit-flow', $context->getLocale()) ?></a>
+            <button type="button" class="btn btn-link" data-dismiss="modal" aria-label="Close">
+              <?php echo $this->translate('Close', 'ppit-core', $context->getLocale()) ?>
+            </button>
+              </div>
+        </div>
+    </div>
+</div>

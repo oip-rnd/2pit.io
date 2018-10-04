@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Header -->
+<?php echo $this->partial('/partials/pbc-header') ?>
+
+<main>
+    <div class="container">
+
+        <!--Section: Table-->
+        <section class="mb-5">
+
+  <!--Top Table UI-->
+  <div class="card p-2 mb-5">
+
+      <!--Grid row-->
+      <div class="row">
+
+          <!--Grid column-->
+          <div class="col-lg-4 col-md-6">
+
+		  	<div class="md-form">
+        		<i class="fa fa-search prefix grey-text mx-2"></i>
+				<input type="text" id="search-skill" placeholder="Compétences" class="mx-10 form-control mdb-autocomplete">
+			    <button class="mdb-autocomplete-clear">
+			        <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="https://www.w3.org/2000/svg">
+			            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+			            <path d="M0 0h24v24H0z" fill="none" />
+			        </svg>
+			    </button>
+			</div>
+
+          <div class="text-center">
+<?php foreach ($availableSkills as $skillId => $skill) : ?>
+				<span id="search-skill-<?php echo $skillId ?>" class="chip <?php echo $context->getConfig('pbc/skillColors')[$skillId] ?> white-text search-skill">
+					<?php echo $context->localize($context->getConfig('pbc/skills')[$skillId]) ?>
+				    &nbsp;<a href="#"><i id="<?php echo $skillId ?>" class="search-close fa fa-times" style="color: red"></i></a>
+				</span>
+<?php endforeach;?>
+		  </div>
+
+          </div>
+          <!--Grid column-->
+
+          <!--Grid column-->
+          <div class="col-lg-4 col-md-6">
+
+		  	<div class="md-form">
+        		<i class="fa fa-search prefix grey-text mx-2"></i>
+				<input type="text" id="search-location" placeholder="Localisations" class="mx-10 form-control">
+			</div>
+
+          <div class="text-center">
+<?php foreach ($availableLocations as $locationId => $location) : ?>
+				<span id="search-location-<?php echo $locationId ?>" class="chip danger-color white-text search-location">
+					<?php echo $context->localize($context->getConfig('pbc/locations')[$locationId]) ?>
+				    &nbsp;<a href="#"><i id="<?php echo $locationId ?>" class="search-close fa fa-times" style="color: black"></i></a>
+				</span>
+<?php endforeach;?>
+		  </div>
+
+          </div>
+          <!--Grid column-->
+
+          <!--Grid column-->
+          <div class="col-lg-3 col-md-5">
+
+		  	<div class="md-form">
+        		<i class="fa fa-search prefix grey-text mx-2"></i>
+				<input type="text" id="search-language" placeholder="Langues" class="mx-10 form-control">
+			</div>
+
+          <div class="text-center">
+<?php foreach ($availableLanguages as $languageId => $language) : ?>
+				<span id="search-language-<?php echo $languageId ?>" class="chip teal lighten-2 white-text search-language">
+					<?php echo $context->localize($context->getConfig('pbc/languages')[$languageId]) ?>
+				    &nbsp;<a href="#"><i id="<?php echo $languageId ?>" class="search-close fa fa-times" style="color: black"></i></a>
+				</span>
+<?php endforeach;?>
+		  </div>
+
+          </div>
+          <!--Grid column-->
+
+          <!--Grid column-->
+          <div class="col-lg-1 col-md-1">
+
+			<div class="form-inline mt-2 ml-2">
+				<button class="btn btn-sm btn-warning ml-2 px-2" id="search">
+					<i class="fa fa-search"></i>
+				</button>
+			</div>
+
+          <!--Grid column-->
+
+      </div>
+      <!--Grid row-->
+
+  </div>
+  <!--Top Table UI-->
+</section>
+
+		
+      <!--Section: Products v.3-->
+      <section class="text-center mb-4">
+
+        <!--Grid row-->
+        <div class="row wow fadeIn">
+
+<!--Card-->
+<div class="card card-cascade narrower">
+
+    <!--Card header-->
+    <div class="view py-3 gradient-card-header info-color-dark mx-4 d-flex justify-content-between align-items-center">
+
+  <div>
+  </div>
+
+  <a href="" class="white-text mx-3">Compétences disponibles</a>
+
+  <div>
+  </div>
+
+    </div>
+    <!--/Card header-->
+
+    <!--Card content-->
+    <div class="card-body">
+
+      <div class="table-responsive" id="table_list">
+      </div>
+
+    </div>
+    <!--/.Card content-->
+
+</div>
+<!--/.Card-->
+
+        </div>
+        <!--Grid row-->
+
+        </section>
+        <!--Section: Table-->
+    </div>
+
+<button type="button" class="btn btn-primary" id="subscription_button" data-toggle="modal" data-target="#subscription_modal">
+    Soumettre une demande de contribution
+</button>
+
+<div class="modal fade" id="subscription_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header text-center">
+		        <h4 class="modal-title w-100 font-weight-bold">Réservez une compétence</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body" id="subscription_form"></div>
+	            <div class="modal-footer">
+	                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+	                <button type="button" class="btn btn-primary">Soumettre</button>
+	            </div>
+			</div>
+		</div>
+	</div>
+</div>
+
+  </main>
+  <!--Main layout-->
+
+<?php echo $this->partial('/partials/pbc-footer') ?>
+
+<script>
+
+$(document).ready(function() {
+	// Initialize Material Select
+	$('.mdb-select').material_select();
+});
+
+$('#search').hide();
+
+// Skills
+
+var skills = [
+<?php $first = true; foreach ($availableSkills as $skill) : ?>
+	<?php 
+	if (!$first) echo ',';
+	$first = false;
+	?>
+	"<?php echo $skill ?>"
+<?php endforeach;?>
+];
+
+<?php foreach ($availableSkills as $skillId => $skill) : ?>
+	<?php if (in_array($skillId, $skills)) : ?>
+var <?php echo $skillId ?> = 1;
+	<?php else : ?>
+var <?php echo $skillId ?> = 0;
+	<?php endif;?>
+<?php endforeach;?>
+
+$('.search-skill').hide();
+<?php foreach ($skills as $skillId) : ?>
+$('#search-skill-<?php echo $skillId ?>').show();
+<?php endforeach;?>
+
+$('#search-skill').mdb_autocomplete({
+    data: skills
+});
+
+$('#search-skill').change(function () {
+	$('#search').show();
+});
+
+// Locations
+
+var locations = [
+<?php $first = true; foreach ($availableLocations as $location) : ?>
+	<?php 
+	if (!$first) echo ',';
+	$first = false;
+	?>
+	"<?php echo $location ?>"
+<?php endforeach;?>
+];
+
+<?php foreach ($availableLocations as $locationId => $location) : ?>
+	<?php if (in_array($locationId, $locations)) : ?>
+var <?php echo $locationId ?> = 1;
+	<?php else : ?>
+var <?php echo $locationId ?> = 0;
+	<?php endif;?>
+<?php endforeach;?>
+
+$('.search-location').hide();
+<?php foreach ($locations as $locationId) : ?>
+$('#search-location-<?php echo $locationId ?>').show();
+<?php endforeach;?>
+
+$('#search-location').mdb_autocomplete({
+ data: locations
+});
+
+$('#search-location').change(function () {
+	$('#search').show();
+});
+
+// Languages
+
+var languages = [
+<?php $first = true; foreach ($availableLanguages as $language) : ?>
+	<?php 
+	if (!$first) echo ',';
+	$first = false;
+	?>
+	"<?php echo $language ?>"
+<?php endforeach;?>
+];
+
+<?php foreach ($availableLanguages as $languageId => $language) : ?>
+	<?php if (in_array($languageId, $languages)) : ?>
+var <?php echo $languageId ?> = 1;
+	<?php else : ?>
+var <?php echo $languageId ?> = 0;
+	<?php endif;?>
+<?php endforeach;?>
+
+$('.search-language').hide();
+<?php foreach ($languages as $languageId) : ?>
+$('#search-language-<?php echo $languageId ?>').show();
+<?php endforeach;?>
+
+$('#search-language').mdb_autocomplete({
+data: languages
+});
+
+$('#search-language').change(function () {
+	$('#search').show();
+});
+
+// Search
+
+$('#search').click(function () {
+
+// Skills
+<?php foreach ($availableSkills as $skillId => $skill) : ?>
+	if ($('#search-skill').val().localeCompare('<?php echo $skill ?>') == 0) {
+		<?php echo $skillId ?> = 1;
+		$('#search-skill-<?php echo $skillId ?>').show();
+	}
+<?php endforeach;?>
+	$('#search-skill').val('');
+	$('#search').hide();
+
+// Locations
+<?php foreach ($availableLocations as $locationId => $location) : ?>
+	if ($('#search-location').val().localeCompare('<?php echo $location ?>') == 0) {
+		<?php echo $locationId ?> = 1;
+		$('#search-location-<?php echo $locationId ?>').show();
+	}
+<?php endforeach;?>
+	$('#search-location').val('');
+	$('#location').hide();
+
+// Languages
+<?php foreach ($availableLanguages as $languageId => $language) : ?>
+	if ($('#search-language').val().localeCompare('<?php echo $language ?>') == 0) {
+		<?php echo $languageId ?> = 1;
+		$('#search-language-<?php echo $languageId ?>').show();
+	}
+<?php endforeach;?>
+	$('#search-language').val('');
+	$('#language').hide();
+
+	loadTableTbody();
+});
+
+$('.search-close').click(function () {
+
+// Skills
+<?php foreach ($availableSkills as $skillId => $skill) : ?>
+	if ($(this).attr('id') == '<?php echo $skillId ?>') <?php echo $skillId ?> = 0;
+<?php endforeach;?>
+
+// Locations
+<?php foreach ($availableLocations as $locationId => $location) : ?>
+	if ($(this).attr('id') == '<?php echo $locationId ?>') <?php echo $locationId ?> = 0;
+<?php endforeach;?>
+
+// Languages
+<?php foreach ($availableLanguages as $languageId => $language) : ?>
+	if ($(this).attr('id') == '<?php echo $languageId ?>') <?php echo $languageId ?> = 0;
+<?php endforeach;?>
+
+	$(this).parent().parent().hide();
+	$('#search').show();
+});
+
+function loadTableTbody() {
+	var params = '?skills=';
+	first = true;
+	<?php foreach ($availableSkills as $skillId => $skill) : ?>
+	if (<?php echo $skillId ?> == 1) {
+		if (!first) params += ',';
+		first = false;
+		params += '<?php echo $skillId ?>';
+	}
+	<?php endforeach;?>
+
+	params += '&locations=';
+	first = true;
+	<?php foreach ($availableLocations as $locationId => $location) : ?>
+	if (<?php echo $locationId ?> == 1) {
+		if (!first) params += ',';
+		first = false;
+		params += '<?php echo $locationId ?>';
+	}
+	<?php endforeach;?>
+
+	params += '&languages=';
+	first = true;
+	<?php foreach ($availableLanguages as $languageId => $language) : ?>
+	if (<?php echo $languageId ?> == 1) {
+		if (!first) params += ',';
+		first = false;
+		params += '<?php echo $languageId ?>';
+	}
+	<?php endforeach;?>
+
+	route = '<?php echo $this->url('mockup2/v1', ['type' => $type, 'perspective' => $perspective]) ?>' + params;
+	xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4 && xhttp.status == 200) {
+			document.getElementById('table_list').innerHTML = xhttp.responseText;
+		}
+	}
+	xhttp.open("GET", route, true);
+	xhttp.setRequestHeader('content-type', 'text/html');
+	xhttp.send();
+}
+
+loadTableTbody();
+
+function loadSubscription() {
+	var params = '?contributors=', first = true;
+	$('.checkbox_contributor').each(function() {
+		if (document.getElementById($(this).attr('id')).checked) {
+			if (!first) params += ',';
+			first = false;
+			params += $(this).attr('id').split('_')[1];
+		}
+	});
+	route = '<?php echo $this->url('mockup2/subscription') ?>' + params;
+	xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4 && xhttp.status == 200) {
+			document.getElementById('subscription_form').innerHTML = xhttp.responseText;
+		}
+	}
+	xhttp.open("GET", route, true);
+	xhttp.setRequestHeader('content-type', 'text/html');
+	xhttp.send();
+}
+
+$('#subscription_button').click(function() {
+	loadSubscription();
+});
+
+$('#subscription_button').hide();
+$(document).on('change', '.checkbox', function () {
+	$('#subscription_button').show();
+});
+
+$(document).on('change', '#checkbox_contributor', function () {
+	var current = document.getElementById('checkbox_contributor').checked;
+	$('.checkbox_contributor').each(function () {
+		document.getElementById($(this).attr('id')).checked = (current) ? true : false;
+	});
+});
+
+</script>
+
+</body>
+
+</html>

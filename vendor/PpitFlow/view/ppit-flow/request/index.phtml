@@ -1,0 +1,203 @@
+<!--Main layout-->
+<main>
+  <div class="container" name="descr" id="descr">
+ <!-- Grid row -->
+<section class="my-5">
+
+  <div class="row border-0 font-weight-bold d-flex justify-content-between">
+
+<!-- Navbar -->
+      
+<ul class="nav grey lighten-4 md-pills pills-primary">
+<?php foreach ($content['index']['navbar'] as $navId => $navItem) : ?>
+
+<!-- Mode change -->
+
+  <?php if ($navItem['type'] == 'mode') : ?>
+  <li class="nav-item">
+    <a class="nav-link aMode" id="aMode<?php echo $navItem['value'] ?>"><?php echo $context->localize($navItem['labels'], $locale) ?></a>
+  </li>
+
+<!-- Search -->
+
+  <?php elseif ($navItem['type'] == 'search') : ?>
+    <?php
+    $propertyId = $navItem['property'];
+    $property = $content['detail']['properties'][$propertyId];
+    ?>
+ 
+  <li class="nav-item">
+    <div>
+      <!-- Search form -->
+      <form class="form-inline">
+        <i class="fa fa-search" aria-hidden="true"></i>
+        <input class="form-control form-control-sm mdb-autocomplete ml-3 w-75" id="homeSearch-<?php echo $navItem['property'] ?>" type="text" placeholder="<?php echo $context->localize($navItem['labels'], $locale) ?>" aria-label="">
+      </form><br>
+      
+    <?php if ($property['type'] == 'chips') : ?>
+      <?php foreach ($context->getConfig($property['repository']) as $entryId => $entry) : ?>
+
+      <input type="hidden" class="homeSearchValue" id="skill-<?php echo $entryId ?>" value="0" />
+      <span id="homeSearch-<?php echo $entryId ?>" class="chip <?php echo $entry['color'] ?> white-text homeSearch">
+        <?php echo $context->localize($entry['labels']) ?>
+        &nbsp;<a><i id="homeSearchChip-<?php echo $entryId ?>" class="homeSearchClose ?> fa fa-times" style="color: red"></i></a>
+      </span>
+
+      <?php endforeach;?>
+    <?php endif;?>
+
+    </div>
+  </li>
+
+<!-- New event -->
+
+  <?php elseif ($navItem['type'] == 'new') : ?>
+
+  <li class="nav-item">
+    <a class="nav-link" href="<?php echo $this->url('request/fill') ?>" class="text-secondary mr-3"><i class="fa fa-plus mr-1"></i><?php echo $context->localize($navItem['labels'], $locale) ?></a>
+  </li>
+
+  <?php endif;?>
+<?php endforeach;?>
+</ul>
+  </div>
+
+  <section class="section pb-5">
+    
+    <div class="row">
+
+      <!--Grid column-->
+      <div class="col-md-9">
+        <div id="requests"></div>
+      </div>
+
+      <div class="col-md-3">
+
+      </div>
+    </div>
+    <br>
+    
+    <div class="row">
+<?php foreach ($content['form']['legal'] as $paragraph) : ?>
+    <?php if (array_key_exists('a', $paragraph)) : ?>
+          <a 
+            href="<?php echo $paragraph['a']['href']?>" 
+            <?php if (array_key_exists('class', $paragraph['a'])) echo 'class="'.$paragraph['a']['class'].'"' ?>
+            <?php if (array_key_exists('id', $paragraph['a'])) echo 'id="'.$paragraph['a']['id'].'"' ?>
+          >
+    <?php elseif (array_key_exists('button', $paragraph)) : ?>
+          <button type="button" 
+            <?php if (array_key_exists('class', $paragraph['button'])) echo 'class="'.$paragraph['button']['class'].'"' ?>
+            <?php if (array_key_exists('id', $paragraph['button'])) echo 'id="'.$paragraph['button']['id'].'"' ?>
+          >
+    <?php else : ?>
+          <<?php echo $paragraph['type']?> <?php if (array_key_exists('class', $paragraph)) echo 'class="'.$paragraph['class'].'"' ?>>
+    <?php endif;?>
+    <?php if (array_key_exists('text', $paragraph)) : ?>
+      <?php echo $context->localize($paragraph['text'], $locale) ?>
+    <?php endif;?>
+    <?php if (array_key_exists('a', $paragraph)) : ?>
+          </a>
+    <?php elseif (array_key_exists('button', $paragraph)) : ?>
+          </button>
+    <?php else : ?>
+          </<?php echo $paragraph['type']?>>
+    <?php endif;?>
+<?php endforeach;?>
+    </div>
+
+  </section> 
+  <!--Section: Contact v.2-->
+
+</div>
+  
+<div class="modal fade" id="modalShowProfileForm" tabindex="-1" role="dialog" aria-labelledby="modalShowProfileLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+              <div class="modal-header text-center">
+                  <h4 class="modal-title w-100 font-weight-bold" id="modalShowProfileTitle"></h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body mx-3">
+                  <div id="modalShowProfileContent"></div>
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+
+            <button type="button" class="btn btn-link" data-dismiss="modal" aria-label="Close">
+              <?php echo $this->translate('Close', 'ppit-core', $context->getLocale()) ?>
+            </button>
+              </div>
+        </div>
+    </div>
+</div>
+
+<!-- Requests -->
+  
+<div class="modal fade" id="modalRequestActionForm" tabindex="-1" role="dialog" aria-labelledby="modalRequestActionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+              <div class="modal-header text-center">
+                  <h4 class="modal-title w-100 font-weight-bold" id="modalRequestActionTitle"></h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body mx-3">
+                  <div id="modalRequestActionContent"></div>
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+
+            <a class="btn btn-warning btn-rounded" id="buttonRequestAction"></a>
+            <button type="button" class="btn btn-link" data-dismiss="modal" aria-label="Close">
+              <?php echo $this->translate('Close', 'ppit-core', $context->getLocale()) ?>
+            </button>
+              </div>
+        </div>
+    </div>
+</div>
+ 
+<div class="modal fade" id="modalRequestDetailForm" tabindex="-1" role="dialog" aria-labelledby="modalRequestDetailLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+              <div class="modal-header text-center">
+                  <h4 class="modal-title w-100 font-weight-bold" id="modalRequestDetailTitle"></h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body mx-3">
+                  <div id="modalRequestDetailContent"></div>
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+
+            <button type="button" class="btn btn-link" data-dismiss="modal" aria-label="Close">
+              <?php echo $this->translate('Close', 'ppit-core', $context->getLocale()) ?>
+            </button>
+              </div>
+        </div>
+    </div>
+</div>
+ 
+<div class="modal fade" id="modalRequestUpdateForm" tabindex="-1" role="dialog" aria-labelledby="modalRequestUpdateLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+              <div class="modal-header text-center">
+                  <h4 class="modal-title w-100 font-weight-bold" id="modalRequestUpdateTitle"></h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body mx-3">
+                  <div id="modalRequestUpdateContent"></div>
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+
+            <button type="button" class="btn btn-link" data-dismiss="modal" aria-label="Close">
+              <?php echo $this->translate('Close', 'ppit-core', $context->getLocale()) ?>
+            </button>
+              </div>
+        </div>
+    </div>
+</div>

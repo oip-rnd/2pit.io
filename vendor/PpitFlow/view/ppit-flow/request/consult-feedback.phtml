@@ -1,0 +1,9 @@
+<div class="container">
+  <section class="section pb-5">
+    <div class="row">
+      <h5 class="grey-text font-weight-bold h5"><?php echo sprintf($this->translate('Concerning the request <em>%s</em>,', 'ppit-flow', $context->getLocale()), $request->caption) ?></h3>
+<?php foreach ($myReceivedFeedbacks as $feedback) : ?>
+      <h5 class="grey-text h5"><?php echo sprintf($this->translate('%s gave you this feedback:', 'ppit-flow', $context->getLocale()), $feedback['n_fn']) ?></h4>
+      <p class="grey-text mb-5 mx-auto w-responsive lead"><?php echo $feedback['text'] ?></p>
+<?php endforeach;?>
+    </div>
