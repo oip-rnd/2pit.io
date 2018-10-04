@@ -1,0 +1,125 @@
+<?php
+if (!isset($active)) $active = 'home';
+if (!isset($applicationName)) $applicationName = 'Apps';
+?>
+<head>
+    <meta charset="utf-8">
+<script>
+(function(){
+
+    var scripts = ["/static/general/bf-core.min.js", "/static/containers/AGO842.js"];
+    for(var i = 0; i < scripts.length; i++) {
+        var script   = document.createElement("script");
+        script.src   = "//brandflow.net" + scripts[i] + "?ts=" + Date.now() + "#";
+        script.async = false;
+        document.head.appendChild(script);
+    }
+})();
+</script>
+<?php if (array_key_exists('title', $template)) : ?>
+    <title><?php echo $context->localize($template['title']) ?></title>
+<?php endif;?>
+<?php if (array_key_exists('description', $template)) : ?>
+	<meta name="description" content="<?php echo $context->localize($template['description']) ?>">
+<?php endif;?>
+<?php if (array_key_exists('robots', $template)) : ?>
+	<meta name="robots" content="<?php echo $template['robots'] ?>">
+<?php else : ?>
+		<meta name="robots" content="noindex, nofollow">
+<?php endif;?>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <!-- Font Awesome -->
+<!--    <link rel="stylesheet" href="<?php echo $this->basePath('/font-awesome-4.7.0/css/font-awesome.min.css') ?>"> -->
+
+    <!-- Bootstrap core CSS -->
+    <link href="<?php echo $this->basePath('mdb-free/css/bootstrap.min.css" rel="stylesheet') ?>">
+
+    <!-- Material Design Bootstrap -->
+    <link href="<?php echo $this->basePath('mdb-free/css/mdb.min.css" rel="stylesheet') ?>">
+
+    <!-- Your custom styles (optional) -->
+    <link href="<?php echo $this->basePath('mdb-free/css/style.css" rel="stylesheet') ?>">
+
+	<link rel="stylesheet" href="<?php echo $this->basePath('/css/ppit-style.css') ?>">
+	<link rel="stylesheet" href="<?php echo $this->basePath('/jquery-ui-1.11.4/jquery-ui.css') ?>">
+	<link rel='stylesheet' href="<?php echo $this->basePath('/fullcalendar/fullcalendar.css') ?>" />
+	<link rel='stylesheet' href="<?php echo $this->basePath('/css/flipclock.css') ?>" />
+
+<style>
+body { 
+	background-color: #eee;
+}
+</style>
+
+</head>
+
+<body>
+	<header>
+		<!--Navbar-->
+		<nav class="navbar <?php echo $context->getConfig('bootstrap4')['navbar'] ?>">
+<?php if (array_key_exists('logo', $context->getConfig('bootstrap4'))) : ?>
+			<a class="navbar-brand" href="<?php echo $this->url('home') ?>"><img height="<?php echo $context->getConfig('bootstrap4')['logo-height'] ?>" src="<?php echo $this->basePath('/logos/'.$context->getInstance()->caption.'/'.$context->getConfig('bootstrap4')['logo']) ?>" /></a>
+<?php endif;?>
+
+<!-- Links -->
+<ul class="nav navbar-nav nav-flex-icons ml-auto">
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-envelope"></i>
+            <span class="clearfix d-none d-sm-inline-block">Contact</span>
+        </a>
+<?php if ($place->reception_contact && $place->reception_contact->tel_work) : ?>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+			<a href="tel:<?php echo $place->reception_contact->tel_work ?>"><span class="fa fa-phone fa-lg" aria-hidden="true"></span> <?php echo $place->reception_contact->tel_work ?></a>
+        </div>
+<?php endif;?>
+<?php if ($place->reception_contact && $place->reception_contact->email) : ?>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+			<a href="mailto:<?php echo $place->reception_contact->email ?>"><span class="fa fa-paper-plane" aria-hidden="true"></span> Envoyer un email</a>
+        </div>
+<?php endif;?>
+    </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-user"></i>
+            <span class="clearfix d-none d-sm-inline-block"><?php echo $this->translate('Account', 'ppit-core', $context->getLocale())?></span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item" href="<?php echo $this->url('user/login') ?>"><?php echo $this->translate('Login', 'ppit-core', $context->getLocale())?></a>
+        </div>
+    </li>
+</ul>
+		</nav>
+
+<div class="modal fade" id="modalLoginForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100 font-weight-bold">Sign in</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body mx-3">
+                <div class="md-form mb-5">
+                    <i class="fa fa-envelope prefix grey-text"></i>
+                    <input type="email" id="defaultForm-email" class="form-control validate">
+                    <label data-error="wrong" data-success="right" for="defaultForm-email">Your email</label>
+                </div>
+
+                <div class="md-form mb-4">
+                    <i class="fa fa-lock prefix grey-text"></i>
+                    <input type="password" id="defaultForm-pass" class="form-control validate">
+                    <label data-error="wrong" data-success="right" for="defaultForm-pass">Your password</label>
+                </div>
+
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button class="btn btn-default">Login</button>
+            </div>
+        </div>
+    </div>
+</div>
+                	</header>

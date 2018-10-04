@@ -1,0 +1,150 @@
+<div class="panel panel-default">
+	<div class="panel-heading" style="background:  <?php echo $context->getConfig('styleSheet')['panelHeadingBackground'] ?>; color: <?php echo $context->getConfig('styleSheet')['panelHeadingColor'] ?>">
+		<strong><?php echo $this->translate('Grouped actions', 'ppit-core', $context->getLocale()) ?></strong>
+ 		<div class="btn-group pull-right">
+			<button type="button" class="btn btn-default" title="<?php echo $this->translate('Return to list', 'ppit-core', $context->getLocale()) ?>" id="remove-anchor">
+				<span class="glyphicon glyphicon-remove"></span>
+			</button>
+ 		 </div>
+	</div>
+	<div class="panel-body">
+		<form action="" id="group-form" method="post" class="form-horizontal" enctype="multipart/form-data">
+			
+<!-- Global message -->
+<?php if ($message == 'OK') : ?>
+			<div id="message">
+					<div class="alert alert-success"><h4><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h4></div>
+			</div>
+<?php endif;?>
+
+<!-- Isolation error -->
+			<input type="hidden" id="update_time" name="update_time" value="<?php echo (isset($update_time)) ? $update_time : 0 ?>" />
+<?php if ($error == 'Isolation') : ?>
+			<div class="alert alert-danger" style="text-align: center">
+				<strong><?php echo $this->translate('The database has evolved in the meantime, please input again', 'ppit-core', $context->getLocale()) ?></strong>
+			</div>
+<?php endif;?>
+
+<!-- Consistency error -->
+			<input type="hidden" id="update_time" name="update_time" value="<?php echo (isset($update_time)) ? $update_time : 0 ?>" />
+<?php if ($error == 'Consistency') : ?>
+			<div class="alert alert-danger" style="text-align: center">
+				<strong><?php echo $this->translate('The data are not consistent', 'ppit-core', $context->getLocale()) ?></strong>
+			</div>
+<?php endif;?>
+
+<!--  CSRF -->
+<?php $element = $csrfForm->get('csrf') ?>
+		    <div class="form-group">
+				<?php echo $this->formElement($element) ?>
+<?php if ($this->formElementErrors($element)) : ?>
+				<div class="alert alert-danger" style="text-align: center">
+					<strong><?php echo $this->translate('The form has expired, please input again', 'ppit-core', $context->getLocale()) ?></strong>
+				</div>
+<?php endif;?>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-5 control-label"><?php echo $this->translate('Selected accounts', 'ppit-commitment', $context->getLocale()) ?></label>
+				<div class="col-sm-7">&nbsp;</div>
+			</div>
+
+<?php $i = 0; foreach ($content['data']['selection'] as $account_id => $account) : ?>
+		
+			<input type="hidden"  id="group-account_<?php echo $i ?>" value="<?php echo $account_id ?>" />
+
+			<div class="form-group">
+				<label class="col-sm-5 control-label">&nbsp;</label>
+				<div class="col-sm-7">
+					<input class="form-control" disabled="disabled" value="<?php echo $account['name'] ?>" />
+				</div>
+			</div>
+
+<?php $i++; endforeach;?>
+
+			<input type="hidden" id="group-nb-account" value="<?php echo count($content['data']['selection']) ?>" />
+			
+			<ul class="nav nav-tabs">
+			  <li data-toggle="tab" class="group-tab active" id="update-tab"><a><?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?></a></li>
+			  <li data-toggle="tab" class="group-tab" id="invite-to-test-tab"><a><?php echo $this->translate('Invite to a test', 'ppit-flow', $context->getLocale()) ?></a></li>
+			  <li data-toggle="tab" class="group-tab" id="add-to-group-tab"><a><?php echo $this->translate('Add to group', 'ppit-core', $context->getLocale()) ?></a></li>
+			  <li data-toggle="tab" class="group-tab" id="send-message-tab"><a><?php echo $this->translate('Send an email', 'ppit-core', $context->getLocale()) ?></a></li>
+			  <li data-toggle="tab" class="group-tab" id="password-request-tab"><a><?php echo $this->translate('New password', 'ppit-core', $context->getLocale()) ?></a></li>
+			</ul>
+
+			<div class="group-panel" id="update-panel">
+
+<?php 
+if ($message == 'OK') $isDisabled = true; else $isDisabled = false;
+?>
+
+<?php foreach ($groupUpdatePage as $propertyId => $options) : ?>
+
+	<?php if (array_key_exists('type', $options) && $options['type'] == 'separator') : ?>
+				<hr>
+				<div class="form-group">
+					<label class="col-sm-12 control-label">
+						<?php echo $context->localize($options['label']) ?>
+					</label>
+				</div>
+		
+	<?php else : ?>
+
+		<?php $property = $configProperties[$propertyId] ?>
+	
+		<div class="form-group" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_' : '').$propertyId ?>_group">
+				<label class="col-sm-5 control-label">
+			<?php if (array_key_exists('mandatory', $options) && 	$options['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels']) ?>
+				</label>
+			<div class="col-sm-1">
+					<input type="checkbox" class="form-control" id="<?php echo $propertyId ?>_check" <?php if ($isDisabled) echo 'disabled="disabled"'?> />
+			</div>
+
+			<div class="col-sm-6">
+			<?php if ($property['type'] == 'date') : ?>
+					<input type="hidden" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
+					<input class="form-control" id="input_<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php if (array_key_exists($propertyId, $content['data']['account'])) echo $context->decodeDate($content['data']['account'][$propertyId]) ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?> />
+
+			<?php elseif ($property['type'] == 'number') : ?>
+					<input type="hidden" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
+					<input class="form-control" id="input_<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php if (array_key_exists($propertyId, $content['data']['account'])) echo $context->formatFloat($content['data']['account'][$propertyId], 2) ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?> />
+
+			<?php elseif ($property['type'] == 'textarea') : ?>
+					<textarea class="form-control" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?>><?php if (array_key_exists($propertyId, $content['data']['account'])) echo $content['data']['account'][$propertyId] ?></textarea>
+
+			<?php elseif ($property['type'] == 'select') : ?>
+					<select class="form-control" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?>>
+		    			<option />
+				<?php foreach ($property['modalities'] as $key => $labels) : ?>
+		    			<option value="<?php echo $key ?>" <?php if (array_key_exists($propertyId, $content['data']['account']) && $content['data']['account'][$propertyId] == $key) echo 'selected="selected"' ?>><?php echo $context->localize($labels) ?></option>
+				<?php endforeach;?>
+					</select>
+	
+			<?php else : ?>
+					<input class="form-control" id="<?php echo $propertyId ?>" value="<?php if (array_key_exists($propertyId, $content['data']['account'])) echo $content['data']['account'][$propertyId] ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?> />
+
+			<?php endif;?>
+				</div>
+				<div class="col-sm-12"><p class="help-block" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_' : '').$propertyId ?>_error"></p></div>
+			</div>
+
+	<?php endif;?>
+<?php endforeach;?>
+<?php if (!$message) : ?>
+			    <div class="form-group">
+					<div class="col-sm-5">&nbsp;</div>
+					<div class="col-sm-7">
+						<input name="submit" type="submit" id="submit-button" class="btn btn-warning" value="<?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?>">
+					</div>
+				</div>
+<?php endif;?>
+			</div>
+		</form>
+
+		<div class="group-panel" id="add-to-group-panel"></div>
+		<div class="group-panel" id="send-message-panel"></div>
+		<div class="group-panel" id="invite-to-test-panel"></div>
+		<div class="group-panel" id="password-request-panel"></div>
+	</div>
+</div>
+	

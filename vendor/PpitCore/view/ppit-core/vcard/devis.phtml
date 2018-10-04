@@ -1,0 +1,22 @@
+<?php
+    echo $this->partial('/partials/menu');
+?>
+<?php
+$this->headTitle($title);
+?>
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+		<div class="panel panel-default">
+            <div class="panel-heading">
+				<strong><?php echo $this->translate($title);?></strong>
+            </div>
+           	<div class="panel-body">
+<h3 align="center"><?php echo $this->translate('Souscrire ou demander un devis');?></h3>
+<p align="center"><?php echo $this->translate('Ou simplement nous poser une question');?></p>
+<?php
+    echo $this->partial('/partials/generic-form', array('route' => 'vcard/devis', 'id' => $id, 'form' => $this->form, 'returnUrl' => $this->url('zfcuser/login')));
+?>
+			</div>
+		</div>
+	</div>
+</div>

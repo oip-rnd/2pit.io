@@ -1,0 +1,157 @@
+<!-- 
+/**
+ * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
+ *
+ * @link      https://github.com/p-pit/PpitCore
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
+ */
+-->
+
+<style>
+table td { 
+  font-size: 0.9rem;
+}
+</style>
+
+<div class="col-md-12">
+<table class="table table-sm table-hover">
+	<tr class="table-info">
+		<header>
+		<th>&nbsp;</th>
+		</header>
+
+<?php foreach ($description['list'] as $propertyId => $property) : ?>
+	<?php if ($property) : ?>
+		<th align="center">
+			<a type="button" class="btn btn-sm sort_anchor <?php if ($major == $propertyId) echo 'btn-secondary active '.(($major == $propertyId) ? (($dir == 'ASC') ? 'sort_anchor_up' : 'sort_anchor_down') : '') ?>" role="button" id="<?php echo $propertyId ?>-anchor">
+				<span><?php echo $context->localize($property['labels']) ?></span>
+			<?php if ($major == $propertyId) : ?>
+				<i class="fa fa-caret-<?php echo ($dir == 'ASC') ? 'up' : 'down' ?>"></i>
+			<?php endif ?>
+			</a>
+		</th>
+	<?php endif;?>
+<?php endforeach;?>
+
+		<th>&nbsp;</th>
+	</tr>
+	
+    <input type="hidden" id="caption_0" value="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale()) ?>" />
+	<tr class="event">
+		<td style="text-align: center">
+		    <div class="input-group input-group-sm">
+				<button type="button" class="btn btn-sm btn-outline-primary index-btn event-detail-anchor" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Detail', 'ppit-core', $context->getLocale())?>" id="event-detail-anchor_0">
+					<span class="fa fa-plus" id="add-glyphicon"></span>
+				</button>
+			</div>
+		</td>
+<!--		<td colspan="<?php echo count($context->getConfig('event/list'.(($type) ? '/'.$type : ''))) ?>">
+		    <div class="input-group input-group-sm">
+				<button type="button" class="btn btn-sm btn-outline-primary index-btn event-group-anchor" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Grouped actions', 'ppit-core', $context->getLocale())?>" id="event-group-anchor">
+					<span class="far fa-list-alt" id="group-glyphicon"></span>
+				</button>
+			</div>
+		</td> -->
+	</tr>
+
+<?php $i = 0; foreach ($events as $event) : ?>
+	
+	<input type="hidden" id="caption_<?php echo $event->id ?>" value="<?php echo $this->translate('Detail', 'ppit-core', $context->getLocale()) ?>" />
+	<tr class="event">
+	
+		<td style="text-align: center">
+		    <div class="input-group input-group-sm">
+				<button type="button" class="btn btn-sm btn-outline-primary index-btn event-detail-anchor" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Detail', 'ppit-core', $context->getLocale())?>" id="event-detail-anchor_<?php echo $event->id ?>">
+					<i class="fa fa-search" id="<?php echo $event->id ?>-glyphicon"></i>
+				</button>
+			</div>
+		</td>
+
+	<?php foreach ($description['list'] as $propertyId => $property) : ?>
+	
+		<?php if (array_key_exists($propertyId, $masked)) : ?>
+	
+			<?php if ($personnalize) : ?>
+			<td>&nbsp;</td>
+			<?php endif;?>
+
+		<?php else : ?>
+			<?php 
+//			$media = array_key_exists('media', $parameters) ? $parameters['media'] : null;
+			?>
+			<?php if ($property) : ?>
+		
+				<?php if ($propertyId == 'place_id') : ?>
+			<td class="<?php //echo $media ?>"><?php echo $places[$event->properties[$propertyId]]->caption ?></td>
+		
+				<?php elseif ($property['type'] == 'date') : ?>
+			<td class="<?php //echo $media ?>"><?php echo $context->decodeDate($event->properties[$propertyId]) ?></td>
+	
+				<?php elseif ($property['type'] == 'time') : ?>
+			<td class="<?php //echo $media ?>"><?php echo $event->properties[$propertyId] ?></td>
+	
+				<?php elseif ($property['type'] == 'number') : ?>
+			<td class="<?php //echo $media ?>" style="text-align: right"><?php echo $context->formatFloat($event->properties[$propertyId], 2) ?></td>
+	
+				<?php elseif ($property['type'] == 'select') : ?>
+			<td class="<?php //echo $media ?>"><?php if (array_key_exists($event->properties[$propertyId], $property['modalities'])) echo $context->localize($property['modalities'][$event->properties[$propertyId]]) ?></td>
+  
+                <?php elseif ($property['type'] == 'multiselect') : ?>
+                  <?php 
+                  $value = array();
+                  foreach (explode(',', $event->properties[$propertyId]) as $modalityId) {
+                   if (array_key_exists($modalityId, $property['modalities'])) $value[] = $context->localize($property['modalities'][$modalityId]);
+                  }
+                  $value = implode(', ', $value);
+                  ?>
+            <td><?php echo $value ?></td>
+	
+				<?php else : ?>
+			<td class="<?php //echo $media ?>"><?php echo $event->properties[$propertyId] ?></td>
+	
+				<?php endif;?>
+	
+			<?php endif;?>
+
+		<?php endif;?>
+	<?php endforeach;?>
+	</tr>
+	
+<?php endforeach; ?>
+
+	<tr class="table-info">
+		<td>&nbsp;</td>
+
+<?php foreach ($description['list'] as $propertyId => $property) : ?>
+		<td>
+          <strong>
+	<?php if ($propertyId == $major) : ?>
+			<?php echo $this->translate('Number', 'ppit-core', $context->getLocale()) ?>:&nbsp;<?php echo $count ?>
+			<?php if ($sum) echo $this->translate('Sum', 'ppit-core', $context->getLocale()).':&nbsp;'.$sum ?>
+			<?php if ($average) echo $this->translate('Average', 'ppit-core', $context->getLocale()).':&nbsp;'.$average ?>
+
+		<?php if ($distribution) : ?>
+			<select class="form-control px-0 py-0 my-0" id="select-distribution">
+			<?php foreach ($distribution as $modality => $value) : ?>
+				<?php 
+				if ($propertyId == 'place_id') if ($modality) $label = $places[$modality]->caption; else $label = '';
+				else $label = $property['modalities'][$modality][$context->getLocale()];
+				?>
+				<option value="<?php echo $modality ?>"><?php echo $label ?></option>
+			<?php endforeach;?>
+			</select>
+			<?php foreach ($distribution as $modality => $value) : ?>
+			<span class="distribution" id="distribution_<?php echo $modality ?>"><?php echo $value ?>&nbsp;/&nbsp;<?php echo $count ?>&nbsp;=&nbsp;<?php echo round($value / $count * 100, 1) ?>%</span>
+			<?php endforeach;?>
+		<?php endif;?>
+	<?php else : ?>
+			&nbsp;
+	<?php endif;?>
+          </strong>
+		</td>
+<?php endforeach;?>
+	</tr>
+
+</table>
+	</div>

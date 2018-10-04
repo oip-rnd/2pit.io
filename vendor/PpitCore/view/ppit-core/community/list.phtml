@@ -1,0 +1,85 @@
+<?php
+$spa = true;
+$anchorStyle = ($spa) ? $context->getAnchorStyle() : 'classic';
+?>
+
+				<table class="table table-striped ppit_index">
+					<tr>
+						<th>&nbsp;</th>
+						<th><strong>
+							<?php echo $this->partial('/partials/anchor-widget.phtml', array(
+									'text' => $this->translate('Name', 'ppit-core', $context->getLocale()),
+									'id' => 'name-anchor',
+									'anchorStyle' => $context->getAnchorStyle(),
+									'spa' => $spa,
+							)) ?>
+						</strong></th>
+					</tr>
+
+					<tr>
+						<td colspan="3">
+<!-- Add -->
+							<?php echo $this->partial('/partials/anchor-widget.phtml', array(
+									'glyphicon' => 'glyphicon-plus',
+									'title' => $this->translate('Add', 'ppit-core', $context->getLocale()),
+									'id' => 'add-anchor',
+									'anchorStyle' => $anchorStyle,
+									'spa' => $spa,
+									'showForm' => true,
+							)) ?>
+						</td>
+					</tr>
+
+<?php foreach ($communities as $community) : ?>
+					<tr>
+
+<!-- detail -->
+						<td>
+							<?php echo $this->partial('/partials/anchor-widget.phtml', array(
+									'glyphicon' => 'glyphicon-zoom-in',
+									'title' => $this->translate('Detail', 'ppit-core', $context->getLocale()),
+									'id' => 'detail-anchor-'.$community->id,
+									'anchorStyle' => $context->getAnchorStyle(),
+									'spa' => $spa,
+									'showForm' => true,
+							)) ?>
+						</td>
+
+						<td><?php echo $community->name ?></td>
+						
+					</tr>
+<?php endforeach; ?>
+				</table>
+		
+<script id='community_list_script'>
+
+// Sort on name
+$('#name-anchor').click(function () {
+	reload(
+		'<?php echo $this->url('community/list').'?major=name'.(($major == 'name' && $dir =='ASC') ? '&dir=DESC' : '&dir=ASC') ?>',
+		'community_list_script',
+		'community_list'
+	);
+} );
+
+// Add
+<?php echo $this->partial('/partials/show-form-script', array(
+		'id' => 'add-anchor',
+		'route' => $this->url('community/update'),
+		'script' =>'community_update_script',
+		'spa' => $spa,
+)) ?>
+
+<?php foreach ($communities as $community) : ?>
+
+// Update
+	<?php echo $this->partial('/partials/show-form-script', array(
+			'id' => 'detail-anchor-'.$community->id,
+			'route' => $this->url('community/update', array('parent_id' => 0, 'id' => $community->id)),
+			'script' =>'community_update_script',
+			'spa' => $spa,
+	)) ?>
+
+<?php endforeach;?>
+
+</script>

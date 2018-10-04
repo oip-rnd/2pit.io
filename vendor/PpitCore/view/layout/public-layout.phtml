@@ -1,0 +1,157 @@
+<?php
+	$children = $this->viewModel()->getCurrent()->getChildren();
+	$child = $children[0];
+	$description = (isset($child->description) ? $child->description : null)
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    
+    <meta charset="utf-8">
+        <?php echo $this->headTitle()->setSeparator('')->setAutoEscape(false) ?>
+
+        <?php echo $this->headMeta()
+            ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+        ?>
+<?php if ($description) : ?>
+		<meta name="description" content="<?php echo $description ?>">
+<?php endif;?>
+<?php if (isset($child->robots)) : ?>
+		<meta name="robots" content="<?php echo $child->robots ?>">
+<?php else : ?>
+		<meta name="robots" content="noindex, nofollow">
+<?php endif;?>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="<?php echo $this->basePath('/font-awesome-4.7.0/css/font-awesome.min.css') ?>">
+
+    <!-- Bootstrap core CSS -->
+    <link href="<?php echo $this->basePath('mdb-free/css/bootstrap.min.css" rel="stylesheet') ?>">
+
+    <!-- Material Design Bootstrap -->
+    <link href="<?php echo $this->basePath('mdb-free/css/mdb.min.css" rel="stylesheet') ?>">
+
+    <!-- Your custom styles (optional) -->
+    <link href="<?php echo $this->basePath('mdb-free/css/style.css" rel="stylesheet') ?>">
+
+	<link rel="stylesheet" href="<?php echo $this->basePath('/css/ppit-style.css') ?>">
+	<link rel="stylesheet" href="<?php echo $this->basePath('/jquery-ui-1.11.4/jquery-ui.css') ?>">
+	<link rel='stylesheet' href="<?php echo $this->basePath('/fullcalendar/fullcalendar.css') ?>" />
+	<link rel='stylesheet' href="<?php echo $this->basePath('/css/flipclock.css') ?>" />
+
+    <!-- SCRIPTS -->
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="<?php echo $this->basePath('mdb-free/js/jquery-2.2.3.min.js') ?>"></script>
+
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="<?php echo $this->basePath('mdb-free/js/tether.min.js') ?>"></script>
+
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="<?php echo $this->basePath('mdb-free/js/bootstrap.min.js') ?>"></script>
+
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="<?php echo $this->basePath('mdb-free/js/mdb.min.js') ?>"></script>
+
+	<script src="<?php echo $this->basePath('/js/jquery.min.js') ?>"></script>
+	<script src="<?php echo $this->basePath('/jquery-ui-1.11.4/jquery-ui.js') ?>"></script>
+	<script src="<?php echo $this->basePath("ckeditor/ckeditor.js") ?>"></script>
+	<script src="<?php echo $this->basePath('/js/moment-with-locales.min.js') ?>"></script>
+	<script src="<?php echo $this->basePath('/fullcalendar/fullcalendar.js') ?>"></script>
+	<script src="<?php echo $this->basePath('/fullcalendar/lang-all.js') ?>"></script>
+	<script src="<?php echo $this->basePath('/js/flipclock.min.js') ?>"></script>
+
+<style>
+body { 
+	background-color: #ededed;
+}
+</style>
+
+</head>
+
+<body>
+   
+	<header>
+		<!--Navbar-->
+		<nav class="navbar <?php echo $child->context->getConfig('bootstrap4')['navbar'] ?>">
+<?php if (array_key_exists('logo', $child->context->getConfig('bootstrap4'))) : ?>
+			<a class="navbar-brand" href="<?php echo $this->url('home') ?>"><img height="<?php echo $child->context->getConfig('bootstrap4')['logo-height'] ?>" src="<?php echo $this->basePath('/logos/'.$child->context->getInstance()->caption.'/'.$child->context->getConfig('bootstrap4')['logo']) ?>" alt="<?php echo $child->context->getInstance()->caption ?> logo" /></a>
+<?php endif;?>
+		    <div class="container">
+		        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNav1" aria-controls="navbarNav1" aria-expanded="false" aria-label="Toggle navigation">
+		            <span class="navbar-toggler-icon"></span>
+		        </button>
+		        <div class="collapse navbar-collapse" id="navbarNav1">
+		            <ul class="navbar-nav mr-auto">
+		                <li class="nav-item active">
+		                    <a class="nav-link" href="<?php echo $this->url('home') ?>">Home <span class="sr-only">(current)</span></a>
+		                </li>
+		            </ul>
+		        </div>
+		    </div>
+		</nav>
+	</header>
+	
+<?php echo $this->content; ?>
+	
+	<!--Footer-->
+	<footer class="page-footer <?php echo $child->context->getConfig('bootstrap4')['footer'] ?>">
+	
+	    <!--Footer Links-->
+	    <div class="container">
+	        <div class="row">
+	
+	            <!--First column-->
+	            <div class="col-md-6">
+	                <h5 class="title"><?php echo $this->translate('Contact us', 'ppit-document', $child->context->getLocale()) ?></h5>
+	                <ul>
+<?php if ($child->place->reception_contact && $child->place->reception_contact->tel_work) : ?>
+	                	<li>
+							<a href="tel:<?php echo $child->place->reception_contact->tel_work ?>"><span class="fa fa-phone fa-lg" aria-hidden="true"></span> <?php echo $child->place->reception_contact->tel_work ?></a>
+						</li>
+<?php endif;?>
+
+<?php if ($child->place->reception_contact && $child->place->reception_contact->email) : ?>
+						<li>
+							<a href="mailto:<?php echo $child->place->reception_contact->email ?>"><span class="fa fa-send" aria-hidden="true"></span> Envoyer un email</a>
+						</li>
+<?php endif;?>
+	                	<li>
+							<a href="<?php echo $this->url('instance/legalNotices') ?>" rel="follow">Mentions légales</a>
+	                	</li>
+	                </ul>
+	            </div>
+	            <!--/.First column-->
+	
+	            <!--Second column-->
+<!--	            <div class="col-md-6">
+	                <h5 class="title"><?php echo $this->translate('Resources', 'ppit-core', $child->context->getLocale()) ?></h5>
+	                <ul>
+	                    <li><a href="<?php //echo $this->url('public/displayBlog', array('directory' => 'blog', 'name' => key($child->context->getConfig('ppitDocument')['pages']['blog']))) ?>">Blog</a></li>
+	                    <li><a href="https://github.com/2pit-io/2pit.io" target='_blank'>Developer community</a></li>
+	                </ul> -->
+	            </div>
+	            <!--/.Second column-->
+	        </div>
+	    </div>
+	    <!--/.Footer Links-->
+	
+	    <!--Copyright-->
+	    <div class="footer-copyright">
+	        <div class="container-fluid">
+	            <?php echo $child->links['copyright'] ?>
+	
+	        </div>
+	    </div>
+	    <!--/.Copyright-->
+	
+	</footer>
+	<!--/.Footer-->
+
+</body>
+
+</html>

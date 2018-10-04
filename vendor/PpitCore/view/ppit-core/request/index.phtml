@@ -1,0 +1,631 @@
+<!-- 
+/**
+ * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
+ *
+ * @link      https://github.com/p-pit/PpitCore
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
+ */
+-->
+
+<!-- Load the common form javascript functions -->
+<?php echo $this->partial('/partials/common-form-js.phtml'); ?>
+
+<?php
+$title = $page['title'][$context->getLocale()];
+$this->headTitle($title);
+echo $this->partial('/partials/header');
+?>
+	<div>&nbsp;</div>
+	<div class="row" id="main_menu" >
+
+<?php foreach ($context->getConfig('menus/'.(($app) ? $app : 'p-pit-admin'))['entries'] as $entryId => $entryDef) : ?>
+	<?php if ($context->isAllowed($entryDef['route'])) : ?>
+		<?php if ($entryId == 'request') $color = 'btn-primary'; else $color = 'btn-default' ?>
+		<div class="col-md-2">
+				<button type="button" class="btn menu-btn <?php echo $color ?>" style="width:100%; text-align: left" id="<?php echo $entryId ?>-anchor">
+				<?php if (array_key_exists('glyphicon', $entryDef)) : ?>
+					<span class="glyphicon <?php echo $entryDef['glyphicon'] ?>"></span>
+				<?php endif;?>
+					<?php echo $entryDef['label'][$context->getLocale()] ?>
+				</button>
+		</div>
+	<?php endif ?>
+<?php endforeach;?>
+
+	</div>
+	<div>&nbsp;</div>
+
+	<!-- Main panel -->
+<div class="row">
+	<div class="col-md-12 ppit-panel" id="index_action"></div>
+</div
+
+<div>&nbsp;</div>
+
+<!-- MDB core JavaScript -->
+<script type="text/javascript" src="<?php echo $this->basePath('mdb-free/js/mdb.min.js') ?>"></script>
+
+<script>
+
+<?php foreach ($context->getConfig('menus/'.(($app) ? $app : 'p-pit-admin'))['entries'] as $entryId => $entryDef) : ?>
+$('#<?php echo $entryId ?>-anchor').click(function () { $(location).attr('href', '<?php echo $this->url($entryDef['route'], $entryDef['params']) ?>'); });
+<?php endforeach;?>
+
+function getParams() {
+
+	var params = '?', todo = true;
+
+<?php foreach ($searchPage['properties'] as $propertyId => $unused) : ?>
+	<?php $property = $configProperties[$propertyId] ?>
+
+	<?php if (in_array($property['type'], array('date', 'time', 'datetime', 'number'))) : ?>
+
+	if (document.getElementById('search_check_min_<?php echo $propertyId ?>').checked) {
+		var min_<?php echo $propertyId ?> = $('#search_min_<?php echo $propertyId ?>').val();
+		<?php if ($property['type'] == 'date') : ?>
+			if (min_<?php echo $propertyId ?>) min_<?php echo $propertyId ?> = encodeDate(min_<?php echo $propertyId ?>);
+		<?php endif;?>
+		params += 'min_<?php echo $propertyId ?>=' + min_<?php echo $propertyId ?> + '&'; 
+		todo = false;
+	}
+
+	if (document.getElementById('search_check_max_<?php echo $propertyId ?>').checked) {
+		var max_<?php echo $propertyId ?> = $('#search_max_<?php echo $propertyId ?>').val();
+		<?php if ($property['type'] == 'date') : ?>
+			if (max_<?php echo $propertyId ?>) max_<?php echo $propertyId ?> = encodeDate(max_<?php echo $propertyId ?>);
+		<?php endif;?>
+		params += 'max_<?php echo $propertyId ?>=' + max_<?php echo $propertyId ?> + '&'; 
+		todo = false;
+	}
+
+	<?php else : ?>
+	if (document.getElementById('search_check_<?php echo $propertyId ?>').checked) {
+		params += '<?php echo $propertyId ?>=' + $('#search_<?php echo $propertyId ?>').val() + '&'; todo = false;
+	}
+
+	<?php endif;?>
+<?php endforeach;?>
+
+	$('#mode-text').text((todo) ? '<?php echo $searchPage['todoTitle'][$context->getLocale()] ?>' : '<?php echo $searchPage['searchTitle'][$context->getLocale()] ?>');
+
+	return params;
+}
+
+// Export the list
+function exportList() {
+
+	var params = getParams();
+	document.location.href = '<?php echo $this->url('request/list', array('type' => $type)) ?>' + params;
+}
+
+function sortList(criterion) {
+
+	var dir;
+	ascCriterion = $('.glyphicon-triangle-top').first().parent().attr('id');
+	descCriterion = $('.glyphicon-triangle-bottom').first().parent().attr('id');
+	if (criterion + '-anchor' == ascCriterion) dir = 'DESC'; else dir = 'ASC';
+	getList(getParams(), criterion, dir);
+}
+
+function maskList(column) {
+
+	ascCriterion = $('.glyphicon-triangle-top').first().parent().attr('id');
+	descCriterion = $('.glyphicon-triangle-bottom').first().parent().attr('id');
+	if (ascCriterion) {
+		criterion = ascCriterion.split('-')[0];
+		dir = 'ASC';
+	}
+	else if (descCriterion) {
+		criterion = descCriterion.split('-')[0];
+		dir = 'DESC';
+	}
+	else {
+		criterion = 'update_time';
+		dir = 'DESC';
+	}
+	var params = getParams();
+	params += '&mask=' + column;
+	getList(params, criterion, dir);
+}
+
+function unmaskList(column) {
+
+	ascCriterion = $('.glyphicon-triangle-top').first().parent().attr('id');
+	descCriterion = $('.glyphicon-triangle-bottom').first().parent().attr('id');
+	if (ascCriterion) {
+		criterion = ascCriterion.split('-')[0];
+		dir = 'ASC';
+	}
+	else if (descCriterion) {
+		criterion = descCriterion.split('-')[0];
+		dir = 'DESC';
+	}
+	else {
+		criterion = 'update_time';
+		dir = 'DESC';
+	}
+	var params = getParams();
+	params += '&unmask=' + column;
+	getList(params, criterion, dir);
+}
+
+function filterList() {
+
+	ascCriterion = $('.glyphicon-triangle-top').first().parent().attr('id');
+	descCriterion = $('.glyphicon-triangle-bottom').first().parent().attr('id');
+	if (ascCriterion) {
+		criterion = ascCriterion.split('-')[0];
+		dir = 'ASC';
+	}
+	else if (descCriterion) {
+		criterion = descCriterion.split('-')[0];
+		dir = 'DESC';
+	}
+	else {
+		criterion = 'update_time';
+		dir = 'DESC';
+	}
+	getList(getParams(), criterion, dir);
+}
+
+function connectSearchInputs() {
+
+	$('#erase-button').click(function () { 
+		$('.search_input').val('');
+		$('.search_check').attr('checked', false);
+		filterList();
+	});
+
+<?php foreach ($searchPage['properties'] as $propertyId => $unused) : ?>
+	<?php $property = $configProperties[$propertyId] ?>
+
+	<?php if ($propertyId == 'type') : ?>
+		$('#search_<?php echo $propertyId ?>').change(function () { 
+			document.location.href = '<?php echo $this->url('request/index') ?>/' + $('#search_type').val(); 
+		});
+
+	<?php elseif (in_array($property['type'], array('date', 'time', 'datetime', 'number'))) : ?>
+
+	$('#search_check_min_<?php echo $propertyId ?>').change(function () {
+
+		$('#search-button').removeClass('btn-default').addClass('btn-success');
+		$('#search-button').unbind('click');
+		$('#search-button').click(function () { 
+			getList(getParams(), 'update_time', 'DESC');
+		});
+		if (!document.getElementById('search_check_min_<?php echo $propertyId ?>').checked) {
+			$('#search_min_<?php echo $propertyId ?>').val('');
+		}
+	});
+
+		<?php if ($property['type'] == 'select') : ?>
+	$('#search_min_<?php echo $propertyId ?>').keyup(function () { 
+		$('#search-button').removeClass('btn-default').addClass('btn-success');
+		$('#search-button').unbind('click');
+		$('#search-button').click(function () { 
+			getList(getParams(), 'update_time', 'DESC');
+		});
+		document.getElementById('search_check_min_<?php echo $propertyId ?>').checked = true;	
+	});
+
+	$('#search_max_<?php echo $propertyId ?>').keyup(function () { 
+		$('#search-button').removeClass('btn-default').addClass('btn-success');
+		$('#search-button').unbind('click');
+		$('#search-button').click(function () { 
+			getList(getParams(), 'update_time', 'DESC');
+		});
+		document.getElementById('search_check_max_<?php echo $propertyId ?>').checked = true;	
+	});
+
+		<?php else : ?>
+	$('#search_min_<?php echo $propertyId ?>').change(function () { 
+		$('#search-button').removeClass('btn-default').addClass('btn-success');
+		$('#search-button').unbind('click');
+		$('#search-button').click(function () { 
+			getList(getParams(), 'update_time', 'DESC');
+		});
+		document.getElementById('search_check_min_<?php echo $propertyId ?>').checked = true;	
+	});
+	$('#search_max_<?php echo $propertyId ?>').change(function () { 
+		$('#search-button').removeClass('btn-default').addClass('btn-success');
+		$('#search-button').unbind('click');
+		$('#search-button').click(function () { 
+			getList(getParams(), 'update_time', 'DESC');
+		});
+		document.getElementById('search_check_max_<?php echo $propertyId ?>').checked = true;	
+	});
+
+		<?php endif;?>
+
+		<?php if ($property['type'] == 'date') : ?>
+	$("#search_min_<?php echo $propertyId ?>").datepicker();
+	$("#search_max_<?php echo $propertyId ?>").datepicker();
+		<?php endif;?>
+	
+	<?php else : ?>
+
+	$('#search_check_<?php echo $propertyId ?>').change(function () {
+		$('#search-button').removeClass('btn-default').addClass('btn-success');
+		$('#search-button').unbind('click');
+		$('#search-button').click(function () { 
+			getList(getParams(), 'update_time', 'DESC');
+		});
+		if (!document.getElementById('search_check_<?php echo $propertyId ?>').checked) {
+			$('#search_<?php echo $propertyId ?>').val('');
+		}
+	});
+		
+		<?php if ($property['type'] == 'select') : ?>
+	$('#search_<?php echo $propertyId ?>').change(function () { 
+		$('#search-button').removeClass('btn-default').addClass('btn-success');
+		$('#search-button').unbind('click');
+		$('#search-button').click(function () { 
+			getList(getParams(), 'update_time', 'DESC');
+		});
+		document.getElementById('search_check_<?php echo $propertyId ?>').checked = true;
+	});
+	
+		<?php else : ?>
+	$('#search_<?php echo $propertyId ?>').keyup(function () {
+		$('#search-button').removeClass('btn-default').addClass('btn-success');
+		$('#search-button').unbind('click');
+		$('#search-button').click(function () { 
+			getlist(getParams(), 'update_time', 'DESC');
+		});
+		document.getElementById('search_check_<?php echo $propertyId ?>').checked = true;	
+	});
+	
+		<?php endif;?>
+
+		<?php if ($property['type'] == 'date') : ?>
+	$("#search_<?php echo $propertyId ?>").datepicker();
+		<?php endif;?>
+
+	<?php endif;?>
+<?php endforeach;?>
+}
+
+function showChart(params) {
+
+	// Execute the ajax request
+	var route = '<?php echo $this->url('request/distribute', array('type' => $type)) ?>' + params;
+	var xhttp = new XMLHttpRequest();
+	xhttp.open("GET", route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4 && xhttp.status == 200) {
+		    var option = {
+			    responsive: true,
+		    };
+		    var ctx = document.getElementById("chart").getContext('2d');
+			var data = JSON.parse(xhttp.responseText);
+			var myChart = new Chart(ctx).Doughnut(data,option);
+		}
+	}
+	xhttp.send();
+}
+
+// Load the list
+function getList(params, major, dir) {		
+
+	showChart(params);
+	
+	// Execute the ajax request
+	var route = '<?php echo $this->url('request/list', array('type' => $type)) ?>' + params + '&major=' + major + (((dir =='ASC') ? '&dir=ASC' : '&dir=DESC') <?php if ($personnalize) : ?> + '&personnalize=true' <?php endif;?>);
+	var xhttp = new XMLHttpRequest();
+	xhttp.open("GET", route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4 && xhttp.status == 200) {
+			document.getElementById('list-panel').innerHTML = xhttp.responseText;
+		
+			$('#export-button').click(function () { exportList(); });
+
+			$('.detail-row').hide();
+			$('.invisible').hide();
+			
+			$(function () {
+			    $('.tip').tooltip({
+			        content: function () {
+			            return $(this).prop('title');
+			        }
+			    });
+			});
+			
+			$('.input_cell').keyup(function () {
+				var cells = $(this).val().split('\t');
+				k = 0;
+				for (i = 0; i < 16; i++) {
+					for (j = 0; j < <?php echo count($listPage['properties']) ?>; j++) {
+						$('#input_cell_' + i + '_' + j).val(cells[k]);
+						if (k >= cells.length) break;
+						k++;
+					}
+					if (k >= cells.length) break;
+				}
+			});
+			
+			// Connect the sort anchors
+			$('.ppit-sort-anchor').each(function () {
+				$(this).click(function () {
+					sortList($(this).attr('id').split('-')[0]);
+				});
+			});
+			
+			// Connect the admin anchor
+			$('#admin-anchor').click(function () { 
+				document.location.href = '<?php echo $this->url('request/index', array('type' => $type)) ?>' <?php if (!$personnalize) : ?> + '?personnalize=true' <?php endif;?>; 
+			});
+
+			// Connect the plus (unmask) anchors
+			$('.plus-anchor').each(function () {
+				$(this).click(function () {
+					unmaskList($(this).attr('id').split('-')[0]);
+				});
+			});
+			
+			// Connect the minus (mask) anchors
+			$('.minus-anchor').each(function () {
+				$(this).click(function () {
+					maskList($(this).attr('id').split('-')[0]);
+				});
+			});
+			
+			// Connect the detail anchors
+			$('.detail-anchor').each(function () {
+				$(this).click(function () {
+					getDetail($(this).attr('id').split('_')[1]);
+				});
+			});
+			
+			// Connect the distribution anchor
+			$('.distribution').hide();
+			var distributionValue = $('#select-distribution').val();
+			$('#distribution_' + distributionValue).show();
+			$('#select-distribution').change(function () {
+				$('.distribution').hide();
+				var distributionValue = $('#select-distribution').val();
+				$('#distribution_' + distributionValue).show();
+			});
+		}
+	}
+	xhttp.send();
+	$('#search-button').removeClass('btn-success').addClass('btn-default');
+/*	$('#search-button').unbind('click');
+	$('#search-button').click(unpressSearchButton);*/
+}
+
+function connectAuditPanel()
+{
+	$('#audit-panel').hide();
+	$('#audit-label').click(function () {
+		if ($('#audit-label').text() == '<?php echo $this->translate('Show', 'ppit-core', $context->getLocale()) ?>') {
+			$('#audit-panel').show();
+			$('#audit-label').text('<?php echo $this->translate('Mask', 'ppit-core', $context->getLocale()) ?>');
+		}
+		else {
+			$('#audit-panel').hide();
+			$('#audit-label').text('<?php echo $this->translate('Show', 'ppit-core', $context->getLocale()) ?>');
+		}
+	});
+}
+
+<?php 
+$properties = array();
+foreach ($updatePage['properties'] as $propertyId => $options) {
+	if (!array_key_exists('type', $options) || $options['type'] != 'separator') {
+		$property = $configProperties[$propertyId];
+	
+		if ($property['type'] == 'number') $properties[$propertyId] = array('type' => $property['type'], 'mandatory' => $options['mandatory'], 'minValue' => $property['minValue'], 'maxValue' => $property['maxValue']);
+		else $properties[$propertyId] = array('type' => $property['type'], 'mandatory' => $options['mandatory'], 'maxSize' => ($property['type'] == 'textarea') ? 2047 : 255);
+	}
+}
+$properties['update_time'] = array('type' => 'hidden');
+
+echo $this->partial('/partials/check-update-properties', array('entity' => 'Request', 'context' => $context, 'properties' => $properties)) 
+?>
+
+function connectUpdateForm(id, action, target)
+{
+<?php foreach ($updatePage['properties'] as $propertyId => $options) : ?>
+	<?php if (!array_key_exists('type', $options) || $options['type'] != 'separator') : ?>
+		<?php $property = $configProperties[$propertyId];
+		if ($property['type'] == 'date') : ?>
+			$('#input_<?php echo $propertyId ?>').datepicker();
+		<?php endif;?>
+	<?php endif;?>
+<?php endforeach ?>
+
+	var form = document.getElementById('ppit-form');
+	form.onsubmit = function(event) {
+		event.preventDefault();
+
+		var validity;
+		var formData = new FormData();
+		if (action == 'delete') {
+			validity = true;
+			formData.append('update_time', $('#update_time').val());
+		}
+		else {
+			// Check validity
+			validity = checkRequestUpdateProperties(id);
+			if (validity) {
+				
+				// Get the properties values
+	<?php foreach ($properties as $propertyId => $property) : ?>
+	
+		<?php if ($property['type'] == 'checkbox') : ?>
+				formData.append('<?php echo $propertyId ?>', ((document.getElementById('<?php echo $propertyId ?>').checked) ? 1 : 0));
+	
+		<?php elseif ($property['type'] == 'attachment') : ?>
+				var fileSelect = document.getElementById('<?php echo $propertyId ?>');
+				if (fileSelect) {
+					var files = fileSelect.files;
+					for (var i = 0; i < files.length; i++) {
+						var file = files[i];
+						formData.append('<?php echo $propertyId ?>', file, file.name);
+					}
+				}
+	
+		<?php else : ?>
+				formData.append('<?php echo $propertyId ?>', $('#<?php echo $propertyId ?>').val());
+	
+		<?php endif ?>
+	
+	<?php endforeach ?>
+			}
+		}
+		if (validity) {
+			var xhttp = new XMLHttpRequest();
+			var route;
+			route = '<?php echo $this->url('request/update', array('type' => $type)) ?>' + '/' + id;
+			if (action) route += '?act=' + action;
+			xhttp.open('POST', route, true);
+			// Set up a handler for when the request finishes.
+			xhttp.onload = function () {
+				if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+				if (xhttp.readyState == 4 && xhttp.status == 200) {
+					document.getElementById(target).innerHTML = xhttp.responseText;
+					connectUpdateForm(id, action, target);
+					$('.action-btn').removeClass('btn-primary').addClass('btn-default');
+				}
+			};
+			xhttp.send(formData);
+		}
+		else return false;
+	}
+}
+
+function getUpdate(id, action, target) {
+
+	var xhttp = new XMLHttpRequest();
+	var route = '<?php echo $this->url('request/update', array('type' => $type)) ?>' + '/' + id;
+	if (action) route += '?act=' + action;
+
+	xhttp.open('GET', route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4 && xhttp.status == 200) {
+			document.getElementById(target).innerHTML = xhttp.responseText;
+			
+			$(function () {
+			    $('.tip').tooltip({
+			        content: function () {
+			            return $(this).prop('title');
+			        }
+			    });
+			});
+
+	<?php foreach ($updatePage['properties'] as $propertyId => $options) : ?>
+		<?php if (array_key_exists('autofocus', $options)) : ?>
+			$('#<?php echo $propertyId?>').focus();
+		<?php endif;?>
+	<?php endforeach;?>
+
+			if (id) {
+				$('#update-anchor').click(function () { getUpdate(id, 'update', target); });
+				$('#delete-anchor').click(function () { getUpdate(id, 'delete', target); });
+			}
+			else $('#add-anchor').click(function () { getUpdate(id, 'add', target); });
+			connectUpdateForm(id, action, target);
+		}
+	}
+	xhttp.send();
+
+	// Highlight the clicked button (and only it in its class)
+	$('.action-btn').removeClass("btn-primary").addClass("btn-default");
+	if (action == 'update') $('#update-anchor').removeClass("btn-default").addClass("btn-primary");
+	else if (action == 'delete') $('#delete-anchor').removeClass("btn-default").addClass("btn-primary");
+}
+
+// Load the detail panel
+function getDetail(id) {
+
+	// Ensure the target is displayed
+	$('.detail-row').hide();
+	$('#detail-row_' + id).show();
+
+	// Highlight the clicked button (and only it in its class)
+	$('.index-btn').removeClass("btn-primary").addClass("btn-default");
+	$('.index-btn').attr('disabled', 'disabled');
+	$('#detail-anchor_' + id).removeClass("btn-default").addClass("btn-primary");
+
+	var route = '<?php echo $this->url('request/detail', array('type' => $type)) ?>' + '/' + id;
+
+	// Execute the ajax request
+	xhttp = new XMLHttpRequest();
+	xhttp.open("GET", route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4 && xhttp.status == 200) {
+			document.getElementById('detail-div_' + id).innerHTML = xhttp.responseText;
+			
+			connectAuditPanel();
+
+			$('#remove-anchor').click(function () {
+
+				// Highlight the clicked button (and only it in its class)
+				$('.index-btn').removeClass("btn-primary").addClass("btn-default");
+				$('.index-btn').attr('disabled', false);
+
+				$('#detail-row_' + id).hide();
+				filterList();
+			});
+
+			getUpdate(id, '', 'update-panel');
+		}
+	}
+	xhttp.send();
+}
+
+function pressSearchButton() {
+		$('.search').show();
+//		$('#search-button').addClass('active');
+/*		$('#search-button').attr('aria-pressed', 'true');
+		$('#search-button').unbind('click');
+		$('#search-button').click(unpressSearchButton);*/
+}
+
+function unpressSearchButton() {
+		$('.search').hide();
+		$('#search-button').removeClass('active');
+		$('#search-button').attr('aria-pressed', 'false');
+		$('#search-button').unbind('click');
+		$('#search-button').click(pressSearchButton);
+}
+
+function getSearch()
+{
+	// Hide the other panels
+	$('.ppit-panel').hide();
+	$('#index_action').show();
+	// Anchor to the main panel
+	$(location).attr('hash', '#');
+	var xhttp = new XMLHttpRequest();
+	xhttp.open("GET", '<?php echo $this->url('request/search', array('type' => $type)) ?>', false);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4 && xhttp.status == 200) {
+				document.getElementById('index_action').innerHTML = xhttp.responseText;
+//				$('.search').hide();
+//				$('#search-button').click(pressSearchButton);
+				pressSearchButton();
+				<?php
+				$todoTitle = $searchPage['todoTitle'][$context->getLocale()];
+				?>
+				$('#mode-text').text('<?php echo $todoTitle ?>');
+				connectSearchInputs();
+		}
+	}
+	xhttp.send();
+}
+
+function activateRequest() {
+	getSearch();
+	getList('?', 'begin_date', 'DESC');
+}
+
+activateRequest();
+
+</script>

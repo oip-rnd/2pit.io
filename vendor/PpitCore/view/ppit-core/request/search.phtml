@@ -1,0 +1,104 @@
+<!-- 
+/**
+ * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
+ *
+ * @link      https://github.com/p-pit/PpitCore
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
+ */
+-->
+
+<div class="panel panel-default">
+	<div class="panel-heading" style="background: <?php echo $context->getConfig('styleSheet')['panelHeadingBackground'] ?>; color: <?php echo $context->getConfig('styleSheet')['panelHeadingColor'] ?>">
+		<strong>
+			<?php echo $page['title'][$context->getLocale()] ?>
+			(<span id="mode-text"></span>)
+		</strong>
+	</div>
+	<div class="panel-body">
+
+		<div class="col-md-6">
+
+<!-- Filters -->
+
+			<div class="col-sm-6">&nbsp;</div>
+		
+			<div class="col-sm-3">
+    			<button type="button" class="form-control btn btn-default btn-xs" title="<?php echo $this->translate('Search', 'ppit-core', $context->getLocale()) ?>" id="search-button">
+					<span class="glyphicon glyphicon-search"></span>
+				</button>
+			</div>
+			<div class="col-sm-3 search">
+    			<button type="button" class="form-control btn btn-default btn-xs" title="<?php echo $this->translate('Erase', 'ppit-core', $context->getLocale()) ?>" id="erase-button">
+					<span class="glyphicon glyphicon-remove"></span>
+				</button>
+			</div>
+		
+<?php foreach ($page['properties'] as $propertyId => $rendering) : ?>
+	<?php $property = $configProperties[$propertyId] ?>
+	<?php $label = $property['labels'][$context->getLocale()] ?>
+	
+	<?php if (in_array($property['type'], array('date', 'time', 'datetime', 'number'))) : ?>
+
+			<label class="col-sm-6 control-label search"><?php echo $label ?></label>
+			<div class="input-group search">
+			    <span class="input-group-addon">
+					<input type="checkbox" class="search_check" id="search_check_min_<?php echo $propertyId ?>">
+				</span>
+    			<input class="form-control search_input" type="text" id="search_min_<?php echo $propertyId ?>" class="form-control" placeholder="<?php echo $this->translate('Min', 'ppit-core', $context->getLocale()) ?>" />
+			</div>
+
+			<label class="col-sm-6 control-label search">&nbsp;</label>
+			<div class="input-group search">
+			    <span class="input-group-addon">
+					<input type="checkbox" class="search_check" id="search_check_max_<?php echo $propertyId ?>">
+				</span>
+    			<input class="form-control search_input" type="text" class="search_input" id="search_max_<?php echo $propertyId ?>" placeholder="<?php echo $this->translate('Max', 'ppit-core', $context->getLocale()) ?>" />
+			</div>
+
+	<?php else : ?>
+
+			<label class="col-sm-6 control-label search"><?php echo $label ?></label>
+			<div class="input-group search">
+			    <span class="input-group-addon">
+					<input type="checkbox" class="search_check" id="search_check_<?php echo $propertyId ?>">
+				</span>
+	
+		<?php if ($property['type'] == 'select') : ?>
+
+			<?php
+			$modalities = array();
+			if ($propertyId == 'place_id') foreach ($places as $place) $modalities[$place->id] = $place->caption;
+			else foreach ($property['modalities'] as $modalityId => $modality) $modalities[$modalityId] = $modality[$context->getLocale()];
+			?>
+				<select class="form-control search_input" id="search_<?php echo $propertyId ?>">
+					<option value=""></option>
+			<?php foreach ($modalities as $modalityId => $modality) : ?>
+		    		<option value="<?php echo $modalityId ?>" <?php if ($propertyId == 'type' && $modalityId == $type) echo 'selected="selected"' ?>><?php echo $modality ?></option>
+			<?php endforeach;?>
+					<option value="*">*</option>
+	   		 	</select>
+
+		<?php else : ?>
+				<input class="form-control search_input" type="text" id="search_<?php echo $propertyId ?>" placeholder="<?php echo $this->translate('Contains', 'ppit-core', $context->getLocale()) ?>" />
+
+		<?php endif;?>
+
+			</div>
+
+	<?php endif;?>
+<?php endforeach;?>
+		</div>
+
+		<div class="col-md-6">
+			<div class="col-md-6 col-md-offset-3"><canvas id="chart"></canvas></div>
+		</div>
+
+<!-- Add or update section -->
+		<div style="background-color: #ffffff;" class="row">
+			<div>&nbsp;</div>
+			<div id="list-panel"></div>
+		</div>
+
+	</div>
+</div>

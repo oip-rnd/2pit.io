@@ -1,0 +1,362 @@
+/**
+ * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
+ *
+ * @link      https://github.com/p-pit/PpitCore
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
+ */
+
+var criterion = 'update_time', dir = 'DESC';
+
+function eventGetParams() {
+
+	var params = '?', todo = true;
+
+<?php foreach ($content_description['search']['properties'] as $propertyId => $property) : ?>
+	<?php if (in_array($property['type'], array('date', 'time', 'datetime', 'number'))) : ?>
+	
+	var min_<?php echo $propertyId ?> = document.getElementById('search_min-<?php echo $propertyId ?>').value;
+	if (min_<?php echo $propertyId ?>) min_<?php echo $propertyId ?> = encodeDate(min_<?php echo $propertyId ?>);
+	if (min_<?php echo $propertyId ?>.length >= 2) { params += 'min_<?php echo $propertyId ?>=' + min_<?php echo $propertyId ?> + '&'; todo = false; }
+
+	var max_<?php echo $propertyId ?> = document.getElementById('search_max-<?php echo $propertyId ?>').value;
+	if (max_<?php echo $propertyId ?>) max_<?php echo $propertyId ?> = encodeDate(max_<?php echo $propertyId ?>);
+	if (max_<?php echo $propertyId ?>.length >= 2) { params += 'max_<?php echo $propertyId ?>=' + max_<?php echo $propertyId ?> + '&'; todo = false; }
+
+	<?php else : ?>
+
+		<?php if (in_array($property['type'], ['select', 'multiselect'])) : ?>
+	var <?php echo $propertyId ?> = $('#search-<?php echo $propertyId ?>').val();
+	if (<?php echo $propertyId ?>) { params += '<?php echo $propertyId ?>=' + <?php echo $propertyId ?> + '&'; todo = false; }
+
+		<?php else : ?>
+	var <?php echo $propertyId ?> = document.getElementById('search-<?php echo $propertyId ?>').value;
+	if (<?php echo $propertyId ?>.length >= 2) { params += '<?php echo $propertyId ?>=' + <?php echo $propertyId ?> + '&'; todo = false; }
+
+		<?php endif;?>	
+	<?php endif;?>
+
+<?php endforeach;?>
+
+	<?php
+	$todoTitle = $content_description['search']['todoTitle'][$context->getLocale()];
+	$searchTitle = $content_description['search']['searchTitle'][$context->getLocale()];
+	?>
+	$('#mode-text').text((todo) ? '<?php echo $todoTitle ?>' : '<?php echo $searchTitle ?>');
+
+	return params;
+}
+
+// Export the list
+function exportEventList() {
+
+	var params = eventGetParams();
+	document.location.href = '<?php echo $this->url('event/export') ?>/' +  '<?php echo $type ?>' + params;
+}
+
+// Load the list
+function getEventList(params) {
+  var route = '<?php echo $this->url('event/listAlt') ?>' + '<?php echo (($type) ? '/'.$type : '') ?>' + params + '&major=' + criterion + ((dir =='ASC') ? '&dir=ASC' : '&dir=DESC');
+  var xhttp = new XMLHttpRequest();
+  xhttp.open("GET", route, true);
+  xhttp.onreadystatechange = function() {
+    if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      $('#event-list-panel').html(xhttp.responseText);
+
+      // Connect the sort anchors
+      $('.sort_anchor').click(function () {
+        criterion = $(this).attr('id').split('-')[0];
+        ascCriterion = $('.sort_anchor_up').attr('id');
+        descCriterion = $('.sort_anchor_down').attr('id');
+        if (criterion + '-anchor' == ascCriterion) dir = 'DESC';
+        else if (criterion + '-anchor' == descCriterion) dir = 'ASC';
+        else dir = 'ASC';
+        getEventList(eventGetParams());
+      });
+
+      // Connect the detail anchors
+      $('.event-detail-anchor').each(function () {
+
+        $(this).click(function () {
+          var id = $(this).attr('id').split('_')[1];
+          $('#modalFormLabel').html($('#caption_' + id).val());
+          $('#modalForm').modal('toggle');
+          getDetail(id, '');
+          $(this).removeClass("btn-outline-primary").addClass("btn-primary");
+        });
+      });
+      
+      // Connect the distribution anchor
+      $('.distribution').hide();
+      var distributionValue = $('#select-distribution').val();
+      $('#distribution_' + distributionValue).show();
+      $('#select-distribution').change(function () {
+        $('.distribution').hide();
+        var distributionValue = $('#select-distribution').val();
+        $('#distribution_' + distributionValue).show();
+      });
+
+      $('[data-toggle="tooltip"]').tooltip()
+    }
+  }
+  xhttp.send();
+}
+
+$('#modalForm').on('hidden.bs.modal', function (e) {
+  $('.event-detail-anchor').addClass("btn-outline-primary").removeClass("btn-primary");
+})
+
+function connectAuditPanel()
+{
+	$('#audit-panel').hide();
+	$('#audit-label').click(function () {
+		if ($('#audit-label').text() == '<?php echo $this->translate('Show', 'ppit-core', $context->getLocale()) ?>') {
+			$('#audit-panel').show();
+			$('#audit-label').text('<?php echo $this->translate('Mask', 'ppit-core', $context->getLocale()) ?>');
+		}
+		else {
+			$('#audit-panel').hide();
+			$('#audit-label').text('<?php echo $this->translate('Show', 'ppit-core', $context->getLocale()) ?>');
+		}
+	});
+}
+
+<?php 
+$properties = array();
+foreach ($content_description['update'] as $propertyId => $property) {
+	if ($property['type'] != 'separator') {
+		if ($property['type'] == 'number') $properties[$propertyId] = array('type' => $property['type'], 'mandatory' => $property['mandatory'], 'minValue' => $property['minValue'], 'maxValue' => $property['maxValue']);
+		else $properties[$propertyId] = array('type' => $property['type'], 'mandatory' => $property['mandatory'], 'maxSize' => ($property['type'] == 'textarea') ? 2047 : 255);
+	}
+}
+$properties['event_update_time'] = array('type' => 'hidden');
+
+echo $this->partial('/partials/check-update-properties', array('entity' => 'Event', 'context' => $context, 'properties' => $properties)) 
+?>
+
+function postForm(id)
+{
+		// Check validity
+		var validity = checkEventUpdateProperties(id);
+		if (validity) {
+		
+			// Create a new FormData object.
+			var formData = new FormData();
+			
+			// Get the properties values
+<?php foreach ($properties as $propertyId => $property) : ?>
+
+	<?php if ($property['type'] == 'checkbox') : ?>
+			formData.append('<?php echo $propertyId ?>', ((document.getElementById('<?php echo $propertyId ?>').checked) ? 1 : 0));
+
+	<?php elseif ($property['type'] == 'attachment') : ?>
+			var fileSelect = document.getElementById('<?php echo $propertyId ?>');
+			if (fileSelect) {
+				var files = fileSelect.files;
+				for (var i = 0; i < files.length; i++) {
+					var file = files[i];
+					formData.append('<?php echo $propertyId ?>', file, file.name);
+				}
+			}
+
+	<?php else : ?>
+			formData.append('<?php echo $propertyId ?>', $('#<?php echo $propertyId ?>').val());
+
+	<?php endif ?>
+
+<?php endforeach ?>
+
+			var xhttp = new XMLHttpRequest();
+			var route;
+			route = '<?php echo $this->url('event/update') ?>' + '/' + id + '/<?php echo $type ?>';
+			xhttp.open('POST', route, true);
+			// Set up a handler for when the request finishes.
+			xhttp.onload = function () {
+				if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+				if (xhttp.readyState == 4 && xhttp.status == 200) {
+                    $('#update_panel').html(xhttp.responseText);
+                    getEventList(eventGetParams());
+			        $('#button_edit').unbind();
+			        $('#button_delete').unbind();
+			        $('#button_save_up').unbind();
+			        $('#button_save_down').unbind();
+		            $('#button_edit').hide();
+		            $('#button_delete').hide();
+		            $('#button_save_up').hide();
+		            $('#button_save_down').hide();
+		            $('.updatable-control').prop('disabled', false);
+				}
+			};
+			xhttp.send(formData);
+		}
+		else return false;
+}
+
+function getDetail(id) {
+
+	var xhttp = new XMLHttpRequest();
+	var route = '<?php echo $this->url('event/updateAlt') ?>' + '/' + id + '/<?php echo $type ?>';
+
+	xhttp.open('GET', route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4 && xhttp.status == 200) {
+          $('#update_panel').html(xhttp.responseText);
+          if (id) {
+            $('#event-update-anchor').click(function () { getDetail(id, 'update'); });
+            $('#event-delete-anchor').click(function () { getDetail(id, 'delete'); });
+          }
+          else $('#event-add-anchor').click(function () { getDetail(id, 'add'); });
+          $('.update_selectpicker').selectpicker();
+          $('.update_date').datepicker();
+
+          // Connect the buttons
+          $('#button_edit').click(function () {
+            $('#button_edit').hide();
+            $('#button_delete').hide();
+            $('#button_save_up').show();
+            $('#button_save_up').text('<?php echo $this->translate('Save changes', 'ppit-core', $context->getLocale()) ?>');
+            $('#button_save_up').removeClass('btn-danger').addClass('btn-warning');
+            $('#button_save_down').show();
+            $('#button_save_down').text('<?php echo $this->translate('Save changes', 'ppit-core', $context->getLocale()) ?>');
+            $('#button_save_down').removeClass('btn-danger').addClass('btn-warning');
+            $('.updatable-control').prop('disabled', false);
+            $('.focused-control').focus();
+          });
+          $('#button_delete').click(function () {
+            $('#button_edit').hide();
+            $('#button_delete').hide();
+            $('#button_save_up').show();
+            $('#button_save_up').text('<?php echo $this->translate('Confirm deletion', 'ppit-core', $context->getLocale()) ?>');
+            $('#button_save_up').removeClass('btn-warning').addClass('btn-danger');
+            $('#button_save_down').show();
+            $('#button_save_down').text('<?php echo $this->translate('Confirm deletion', 'ppit-core', $context->getLocale()) ?>');
+            $('#button_save_down').removeClass('btn-warning').addClass('btn-danger');
+            $('.updatable-control').prop('disabled', true);
+          });
+          $('#modalForm').on('shown.bs.modal', function () {
+            $('.focused-control').focus();
+          })
+          if (id == '0') {
+            $('#button_edit').hide();
+            $('#button_delete').hide();
+            $('#button_save_up').show();
+            $('#button_save_up').text('<?php echo $this->translate('Save changes', 'ppit-core', $context->getLocale()) ?>');
+            $('#button_save_up').removeClass('btn-danger').addClass('btn-warning');
+            $('#button_save_down').show();
+            $('#button_save_down').text('<?php echo $this->translate('Save changes', 'ppit-core', $context->getLocale()) ?>');
+            $('#button_save_up').removeClass('btn-danger').addClass('btn-warning');
+            $('.updatable-control').prop('disabled', false);
+          }
+          else {
+            $('#button_edit').show();
+            $('#button_delete').show();
+            $('#button_save_up').hide();
+            $('#button_save_down').hide();
+            $('.updatable-control').prop('disabled', true);
+          }
+          $('#button_save_up').click(function () {
+            postForm(id);
+          });
+          $('#button_save_down').click(function () {
+            postForm(id);
+          });
+		}
+	}
+	xhttp.send();
+}
+
+function getEventSearch()
+{
+  // Process request formatting the search engine
+  var xhttp = new XMLHttpRequest();
+  xhttp.open("GET", '<?php echo $this->url('event/searchAlt') ?>' + '<?php echo (($type) ? '/'.$type : '') ?>', false);
+  xhttp.onreadystatechange = function() {
+    if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+    
+      // Update the DOM with the request html content
+      $('#index_panel').html(xhttp.responseText);
+
+      // Show the list title in default (todo) mode
+      $('#mode-text').text('<?php echo $context->localize($context->getConfig('event/search'.(($type) ? '/'.$type : ''))['todoTitle']) ?>');
+
+      // Connect the export button
+      $('#export-button').click(function () { exportEventList(); });
+  
+      // Connect the erase button that reset all the search engine inputs and checks and refresh the list
+      $('#erase-button').click(function() {
+        $('.search_input').val('');
+        $('.search_selectpicker').selectpicker('deselectAll');
+        $('.search_check_value').val('0');
+        $('.search_check').removeClass('btn-secondary').addClass('btn-default').removeClass('active');
+        $('#erase-button').removeClass('btn-success').addClass('btn-default');
+        $('#erase-button').attr('disabled', 'disabled');
+        getEventList(eventGetParams());
+      });
+      
+      $('.search_selectpicker').selectpicker('deselectAll');
+   
+      // Connect the date picker on date inputs
+      $('.search_input_date').datepicker();
+   
+      // Trigger the change event on date inputs and refresh the list
+      $('.search_input_date').change(function () {
+        var propertyId = $(this).attr('id').split('-')[1];
+        $('#erase-button').removeClass('btn-default').addClass('btn-success');
+        $('#erase-button').attr('disabled', false);
+        $('#search_check-' + propertyId).removeClass('btn-default').addClass('btn-secondary').addClass('active');
+        $('#search_check_value-' + propertyId).val('1');
+        getEventList(eventGetParams());
+      }); 
+   
+      // Trigger the change event on select inputs and refresh the list
+      $('.search_input_select').change(function () {
+        var propertyId = $(this).attr('id').split('-')[1];
+        $('#erase-button').removeClass('btn-default').addClass('btn-success');
+        $('#erase-button').attr('disabled', false);
+        $('#search_check-' + propertyId).removeClass('btn-default').addClass('btn-secondary').addClass('active');
+        $('#search_check_value-' + propertyId).val('1');
+        getEventList(eventGetParams());
+      }); 
+
+      // Trigger the keyup event on text inputs and refresh the list
+      $('.search_input_text').keyup(function () {
+        var propertyId = $(this).attr('id').split('-')[1];
+        $('#erase-button').removeClass('btn-default').addClass('btn-success');
+        $('#erase-button').attr('disabled', false);
+        $('#search_check-' + propertyId).removeClass('btn-default').addClass('btn-secondary').addClass('active');
+        $('#search_check_value-' + propertyId).val('1');
+        getEventList(eventGetParams());
+      });
+
+      // Trigger the click event on per-property checks (allowing to search on empty values) and refresh the list
+      $('.search_check').click(function() {
+        $('#erase-button').removeClass('btn-default').addClass('btn-success');
+        $('#erase-button').attr('disabled', false);
+        var propertyId = $(this).attr('id').split('-')[1], check = 'search_check_value-' + propertyId;
+        if ($('#' + check).val() == '1') {
+          $(this).removeClass('btn-secondary').addClass('btn-default').removeClass('active');
+          $('#' + check).val('0');
+          $('#search-' + propertyId).val('');
+        }
+        else {
+          $(this).removeClass('btn-default').addClass('btn-secondary').addClass('active');
+          $('#' + check).val('1');
+        }
+        getEventList(eventGetParams());
+	  });
+    }
+  }
+  xhttp.send();
+}
+
+function activateEvent() {
+
+    // Connect buttons and links at the search engine
+	getEventSearch();
+  
+    // Retrieve and show the initial list
+	getEventList(eventGetParams());
+}

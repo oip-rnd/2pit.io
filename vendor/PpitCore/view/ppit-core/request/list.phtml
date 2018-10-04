@@ -1,0 +1,167 @@
+<!-- 
+/**
+ * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
+ *
+ * @link      https://github.com/p-pit/PpitCore
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
+ */
+-->
+
+<div class="col-md-12">
+
+<!-- Actions -->
+	<div>
+    	<button type="button" class="btn btn-default" title="<?php echo $this->translate('Export', 'ppit-core', $context->getLocale()) ?>" id="export-button">
+			<span class="glyphicon glyphicon-cloud-download"></span>
+			<span><?php echo $this->translate('Export', 'ppit-core', $context->getLocale())?></span>
+		</button>
+    </div>    
+	<div>&nbsp;</div>
+
+	<div style="overflow-x:auto;">
+		<table class="table table-striped ppit_index">
+			<tr>
+				<th>
+					<button type="button" class="btn btn-default btn-xs <?php if ($personnalize) echo 'active' ?>" aria-pressed="true" id="admin-anchor" title="<?php echo $this->translate('Personnalize', 'ppit-core', $context->getLocale()) ?>">
+						<span class="glyphicon glyphicon-cog ?>"></span>
+					</button>
+				</th>
+
+<?php $first = true; foreach ($page['properties'] as $propertyId => $parameters) : ?>
+	<?php $property = $configProperties[$propertyId] ?>
+
+	<?php if ($masked && array_key_exists($propertyId, $masked)) : ?>
+
+		<?php if ($personnalize) : ?>
+				<th align="center">
+					<button type="button" class="btn btn-default btn-xs plus-anchor" id="<?php echo $propertyId ?>-plus-anchor" title="<?php echo $property['labels'][$context->getLocale()] ?>">
+						<span class="glyphicon glyphicon-plus ?>"></span>
+					</button>
+					<br>
+				</th>
+		<?php endif;?>
+
+	<?php else : ?>
+		<?php 
+		$media = array_key_exists('media', $parameters) ? $parameters['media'] : null;
+		?>
+		<?php if ($property) : ?>
+				<th class="<?php echo $media ?>" align="center">
+		
+			<?php if ($personnalize) : ?>
+					<button type="button" class="btn btn-default btn-xs minus-anchor" id="<?php echo $propertyId ?>-minus-anchor">
+						<span class="glyphicon glyphicon-minus ?>"></span>
+					</button>
+					<br>
+			<?php endif ?>
+					
+					<?php $label = (array_key_exists('short', $property)) ? $property['short'][$context->getLocale()] : $property['labels'][$context->getLocale()] ?>
+			<?php if ($label) : ?>
+					<button type="button" class="btn btn-default btn-xs ppit-sort-anchor" id="<?php echo $propertyId ?>-anchor">
+						<span><?php echo $label ?></span>
+				<?php if ($major == $propertyId) : ?>
+						<span class="glyphicon glyphicon-triangle-<?php echo ($dir == 'ASC') ? 'top' : 'bottom' ?>"></span>
+				<?php endif ?>
+					</button>
+			<?php endif;?>
+				</th>
+		<?php endif;?>
+	<?php endif;?>
+<?php endforeach;?>
+
+				<th>&nbsp;</th>
+			</tr>
+	
+			<tr>
+				<td style="text-align: center">
+					<button type="button" class="btn btn-default index-btn detail-anchor" title="<?php echo $this->translate('Detail', 'ppit-core', $context->getLocale())?>" id="detail-anchor_0">
+						<span class="glyphicon glyphicon-plus" id="add-glyphicon"></span>
+					</button>
+				</td>
+				<td colspan="<?php echo count($page['properties']) ?>">
+					&nbsp;&nbsp;
+					<button type="button" class="btn btn-default index-btn group-anchor" title="<?php echo $this->translate('Grouped actions', 'ppit-core', $context->getLocale())?>" id="group-anchor">
+						<span class="glyphicon glyphicon-list-alt" id="group-glyphicon"></span>
+					</button>
+				</td>
+			</tr>
+	
+			<tr class="detail-row" id="detail-row_0" rowspan="2"><td colspan="99"><div class="col-md-6 col-md-offset-3 ppit-panel" id="detail-div_0"></div></td></tr>
+			<tr class="invisible"><td colspan="99"></td></tr>
+
+<?php $i = 0; foreach ($requests as $request) : ?>
+	
+			<tr>
+				<td style="text-align: center">
+					<button type="button" class="btn btn-default index-btn detail-anchor" title="<?php echo $this->translate('Detail', 'ppit-core', $context->getLocale())?>" id="detail-anchor_<?php echo $request->id ?>">
+						<span class="glyphicon glyphicon-zoom-in" id="<?php echo $request->id ?>-glyphicon"></span>
+					</button>
+				</td>
+		
+	<?php foreach ($page['properties'] as $propertyId => $parameters) : ?>
+		<?php $property = $configProperties[$propertyId] ?>
+
+		<?php if ($masked && array_key_exists($propertyId, $masked)) : ?>
+			
+			<?php if ($personnalize) : ?>
+					<td>&nbsp;</td>
+			<?php endif;?>
+		
+		<?php else : ?>
+			<?php $media = array_key_exists('media', $parameters) ? $parameters['media'] : null ?>
+		
+			<?php if ($propertyId == 'place_id') : ?>
+				<td class="<?php echo $media ?>"><?php if ($request->place_id) echo $places[$request->properties[$propertyId]]->caption ?></td>
+				
+			<?php elseif ($property['type'] == 'date') : ?>
+				<td class="<?php echo $media ?>"><?php echo $context->decodeDate($request->properties[$propertyId]) ?></td>
+		
+			<?php elseif ($property['type'] == 'time') : ?>
+				<td class="<?php echo $media ?>"><?php echo $request->properties[$propertyId] ?></td>
+		
+			<?php elseif ($property['type'] == 'number') : ?>
+				<td class="<?php echo $media ?>" style="text-align: right"><?php echo $context->formatFloat($request->properties[$propertyId], 2) ?></td>
+		
+			<?php elseif ($property['type'] == 'select') : ?>
+				<td class="<?php echo $media ?>"><?php if ($request->properties[$propertyId]) echo $property['modalities'][$request->properties[$propertyId]][$context->getLocale()] ?></td>
+		
+			<?php else : ?>
+				<td class="<?php echo $media ?>"><?php echo $request->properties[$propertyId] ?></td>
+		
+			<?php endif;?>
+		
+		
+		<?php endif;?>
+	<?php endforeach;?>
+			</tr>
+	
+			<tr class="detail-row" id="detail-row_<?php echo $request->id ?>" rowspan="2"><td colspan="99"><div class="col-md-6 col-md-offset-3 ppit-panel" id="detail-div_<?php echo $request->id ?>"></div></td></tr>
+			<tr class="invisible"><td colspan="99"></td></tr>
+	
+<?php endforeach; ?>
+			<tr>
+				<th colspan="<?php echo count($page['properties']) + 1 ?>" style="text-align: center">
+<?php $property = $configProperties[$major] ?>
+					<?php echo $property['labels'][$context->getLocale()] ?>&nbsp;&nbsp;&nbsp;&nbsp;
+					<?php echo $this->translate('Number', 'ppit-core', $context->getLocale()) ?>: <?php echo $count ?>&nbsp;&nbsp;&nbsp;&nbsp;
+					<?php if ($sum) echo $this->translate('Sum', 'ppit-core', $context->getLocale()).': '.$sum ?>&nbsp;&nbsp;&nbsp;&nbsp;
+					<?php if ($average) echo $this->translate('Average', 'ppit-core', $context->getLocale()).': '.$average ?>
+
+<?php if ($distribution) : ?>
+			<select id="select-distribution">
+	<?php foreach ($distribution as $modality => $value) : ?>
+				<option value="<?php echo $modality ?>"><?php echo $property['modalities'][$modality][$context->getLocale()] ?></option>
+	<?php endforeach;?>
+			</select>
+			&nbsp;&nbsp;
+	<?php foreach ($distribution as $modality => $value) : ?>
+			<span class="distribution" id="distribution_<?php echo $modality ?>"><?php echo $value ?> / <?php echo $count ?> = <?php echo round($value / $count * 100, 1) ?>%</span>
+	<?php endforeach;?>
+<?php endif;?>
+				</th>
+			</tr>
+		
+		</table>
+	</div>
+</div>

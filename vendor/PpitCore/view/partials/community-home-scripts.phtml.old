@@ -1,0 +1,101 @@
+
+function getEvents() {
+
+	// Execute the ajax request
+	route = '<?php echo $this->url('event/get').'?community_id='.$community->id ?>';
+	xhttp = new XMLHttpRequest();
+	xhttp.open("GET", route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4) {
+	<?php if (!$config['isTraceActive']) : ?>
+			if (xhttp.status == 200) {
+	<?php endif;?>
+		    $('#calendar').fullCalendar({
+		    	lang: '<?php echo substr($context->getLocale(), 0, 2) ?>',
+		        defaultView: 'agendaWeek'
+		    });
+			obj = jQuery.parseJSON(xhttp.responseText);
+
+			jQuery.each(obj, function (name, value) {
+				var color;			
+<?php foreach ($context->getConfig('event')['category'] as $categoryId => $category) : ?>
+	<?php foreach ($category['color'] as $color => $unused) : ?>
+				if (value.category == '<?php echo $categoryId ?>') color = '<?php echo $color ?>';
+	<?php endforeach;?>
+<?php endforeach;?>
+
+				var event={
+					id:value.id,
+					title: value.caption + ' (' + value.location + ')',
+					color: color,
+					start:  $.fullCalendar.moment(value.begin_date + ' ' + value.begin_time), 
+					end:  $.fullCalendar.moment(value.end_date + ' ' + value.end_time)
+				};
+				$('#calendar').fullCalendar('renderEvent', event, true);
+			});
+<?php if (!$config['isTraceActive']) : ?>
+			}
+<?php endif;?>
+		}
+	}
+	xhttp.send();
+}
+
+function connectEventTab(route) {
+
+	// Execute the ajax request
+	xhttp = new XMLHttpRequest();
+	xhttp.open("GET", route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4) {
+	<?php if (!$config['isTraceActive']) : ?>
+			if (xhttp.status == 200) {
+	<?php endif;?>
+			document.getElementById('dashboard-panel').innerHTML = xhttp.responseText;
+			getEvents();
+<?php if (!$config['isTraceActive']) : ?>
+			}
+<?php endif;?>
+		}
+	}
+	xhttp.send();
+}
+
+function connectDashboardTab(route) {
+
+	// Execute the ajax request
+	xhttp = new XMLHttpRequest();
+	xhttp.open("GET", route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4) {
+	<?php if (!$config['isTraceActive']) : ?>
+			if (xhttp.status == 200) {
+	<?php endif;?>
+			document.getElementById('dashboard-panel').innerHTML = xhttp.responseText;
+<?php if (!$config['isTraceActive']) : ?>
+			}
+<?php endif;?>
+		}
+	}
+	xhttp.send();
+}
+
+function activateCommunity() {
+			
+		connectEventTab('<?php echo $this->url('community/planning', array('community_id' => $community->id, 'type' => 'vcard')) ?>');
+		
+		$('#event-tab').click(function () {
+			$('.dashboard-tab').removeClass('active');
+			$('#event-tab').addClass('active');
+			connectEventTab('<?php echo $this->url('community/planning', array('community_id' => $community->id, 'type' => 'vcard')) ?>');
+		});
+		
+		$('#learning-tab').click(function () {
+			$('.dashboard-tab').removeClass('active');
+			$('#learning-tab').addClass('active');
+			connectDashboardTab('<?php echo $this->url('community/dashboard', array('community_id' => $community->id, 'type' => 'vcard')) ?>');
+		});
+}

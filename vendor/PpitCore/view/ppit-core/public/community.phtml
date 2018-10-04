@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Header -->
+<?php echo $this->partial('/partials/mdbootstrap-header') ?>
+
+<div class="container" id="main">
+<div>&nbsp;</div>
+<?php
+$title = $community->home_title[$context->getLocale()];
+$this->headTitle($title);
+$this->headMeta('description', $community->home_description[$context->getLocale()]);
+?>
+
+<div style="width: 100%; height: 40; background-color: <?php echo $context->getConfig('headerParams')['background-color'] ?>; border-radius: 8px; display: block">
+	<?php for ($i=0; $i < $context->getConfig('headerParams')['shift']; $i++) echo '&nbsp;' ?>
+
+<?php if ((!isset($homePage) || !$homePage) && array_key_exists('logo-href', $context->getConfig('headerParams'))) : ?>
+	<a target="_blank" href="<?php echo $context->getConfig('headerParams')['logo-href'] ?>" rel="follow">
+<?php endif;?>
+		<img height="<?php echo $logo_height ?>" src="<?php echo $this->basePath($logo) ?>" alt="<?php echo $context->getInstance()->caption ?> logo" />
+<?php if ((!isset($homePage) || !$homePage) && array_key_exists('logo-href', $context->getConfig('headerParams'))) : ?>
+	</a>
+<?php endif;?>
+<?php if ($context->getConfig('headerParams')['signature']) : ?>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<img width="<?php echo $context->getConfig('headerParams')['signature-width'] ?>" style="margin-left: auto; margin-right: auto" src="<?php echo $this->basePath('/logos/'.$context->getInstance()->caption.'/'.$context->getConfig('headerParams')['signature']) ?>" alt="<?php echo $context->getInstance()->caption ?> baseline" />
+<?php endif;?>
+</div>
+
+<!--Main layout-->
+
+<div>&nbsp;</div>
+
+<?php 
+$directory = $template['rows']['jumbotron']['directory'];
+$entry = $template['rows']['jumbotron']['entry'];
+$jumbotron = $community->getConfig($directory)[$entry]
+?>
+<?php for ($i = 0; $i < count($jumbotron['parts']); $i++) : ?>
+	<?php $documentPart = $jumbotron['parts'][$i]; ?>
+        <!--First row-->
+        <div class="row">
+	<?php $image = $documentPart['image'] ?>
+	<?php if (!$documentPart['type']) : ?>
+			<div class="col-md-7">
+			    <!--Featured image -->
+			    <div class="view overlay hm-white-light z-depth-1-half">
+			        <img
+					<?php foreach ($image as $attr => $value) : ?>
+						<?php if ($attr == 'src') : ?>
+						src="<?php echo $this->basePath('img/'.$context->getInstance()->caption.'/'.$value) ?>"
+						<?php else : ?>
+						<?php echo $attr ?>="<?php echo $value ?>"
+						<?php endif;?>
+					<?php endforeach;?>
+ 					class="img-fluid " alt=""
+ 			        />
+			        <div class="mask">
+			        </div>
+			    </div>
+			</div>
+
+            <!--Main information-->
+            <div class="col-md-5" id="document_part_panel_<?php echo $i ?>">			
+				<div class="card-block" style="background-color: #FFFFFF; color: #686868">
+					<?php echo $context->localize($documentPart['text']) ?>
+<?php if (array_key_exists('actions', $documentPart)) : ?>
+					<div class="row">
+	<?php $first=true; foreach ($documentPart['actions'] as $actionId => $action) : ?>
+					  <div class="col-md-6">
+		<?php $href = $action['href'] ?>
+			<?php if ($href['type'] == 'anchor') : ?>
+			          	<a class="btn btn-primary" href="<?php echo $href['value'] ?>" <?php if (array_key_exists('target', $action)) echo 'target="'.$action['target'].'"' ?> style="width: 100%" title="<?php echo $action['labels'][$context->getLocale()] ?>">
+			<?php else : ?>
+				<?php 
+				if ($href['type'] == 'url') $onclick = 'location_href(\''.$actionId.'\', \''.$href['value'].'\')';
+				elseif ($href['type'] == 'route') $onclick = 'showForm(\''.$actionId.'\', \''.$this->url($href['value'], $href['params'], $href['urlParams']).'\')';
+				elseif ($href['type'] == 'redirect') $onclick = 'location_href(\''.$actionId.'\', \''.$this->url($href['value'], $href['params']).$href['urlParams'].'\')';
+				?>
+			          	<a class="btn btn-primary" style="width: 100%" id="<?php echo $actionId ?>" title="<?php echo $action['labels'][$context->getLocale()] ?>" onClick="<?php echo $onclick ?>">
+			<?php endif;?>
+		<?php if (isset($action['glyphicon'])) : ?>
+								<i class="fa <?php echo $action['glyphicon'] ?>" aria-hidden="true"></i>
+		<?php endif;?>
+								<?php echo $action['labels'][$context->getLocale()] ?>
+						</a>
+					  </div>
+	<?php $first=false; endforeach ?>
+					</div>
+<?php endif;?>
+				</div>
+            </div>
+    <?php elseif ($documentPart['type'] == 'card') : ?>
+	
+	        <div class="col-md-12" id="document_part_panel_<?php echo $i ?>">			
+			
+				<div class="card">
+			
+	            <!--Card image-->
+
+	    <?php if ($documentPart['image']) : ?>
+	                <img class="card-img-top view overlay hm-white-slight"
+					<?php foreach ($image as $attr => $value) : ?>
+						<?php if ($attr == 'src') : ?>
+						src="<?php echo $this->basePath('img/'.$context->getInstance()->caption.'/'.$value) ?>"
+						<?php else : ?>
+						<?php echo $attr ?>="<?php echo $value ?>"
+						<?php endif;?>
+					<?php endforeach;?>
+					class="img-fluid" alt=""
+	                />
+	                <div class="mask"></div>
+	            <!--/.Card image-->
+		<?php endif;?>
+			
+	            <!--Card content-->
+					<div class="card-block" style="background-color: #FFFFFF; color: #686868">
+						<?php echo $context->localize($documentPart['text']) ?>
+<?php if (array_key_exists('actions', $documentPart)) : ?>
+					<div class="row">
+	<?php $first=true; foreach ($documentPart['actions'] as $actionId => $action) : ?>
+					  <div class="col-md-6">
+		<?php $href = $action['href'] ?>
+			<?php if ($href['type'] == 'anchor') : ?>
+			          	<a class="btn btn-primary" href="<?php echo $href['value'] ?>" <?php if (array_key_exists('target', $action)) echo 'target="'.$action['target'].'"' ?> style="width: 100%" title="<?php echo $action['labels'][$context->getLocale()] ?>">
+			<?php else : ?>
+				<?php 
+				if ($href['type'] == 'url') $onclick = 'location_href(\''.$actionId.'\', \''.$href['value'].'\')';
+				elseif ($href['type'] == 'route') $onclick = 'showForm(\''.$actionId.'\', \''.$this->url($href['value'], $href['params'], $href['urlParams']).'\')';
+				elseif ($href['type'] == 'redirect') $onclick = 'location_href(\''.$actionId.'\', \''.$this->url($href['value'], $href['params']).$href['urlParams'].'\')';
+				?>
+			          	<a class="btn btn-primary" style="width: 100%" id="<?php echo $actionId ?>" title="<?php echo $action['labels'][$context->getLocale()] ?>" onClick="<?php echo $onclick ?>">
+			<?php endif;?>
+		<?php if (isset($action['glyphicon'])) : ?>
+								<i class="fa <?php echo $action['glyphicon'] ?>" aria-hidden="true"></i>
+		<?php endif;?>
+								<?php echo $action['labels'][$context->getLocale()] ?>
+						</a>
+					  </div>
+	<?php $first=false; endforeach ?>
+					</div>
+<?php endif;?>
+					</div>
+	            </div>
+	        </div>
+	<?php endif;?>
+        </div>
+        <!--/.First row-->
+
+		<hr>
+<?php endfor;?>
+	
+        <!--Second row-->
+		<div class="row">
+			<div class="col-md-12 card-block ppit-panel" style="background-color: #FFFFFF" id="main-panel">
+				
+				<ul class="nav nav-tabs">
+<?php $first = true; foreach ($template['rows']['tabs']['content'] as $tabId => $tab) : ?>
+	<?php if ($tab['level'] == 'community' || $tab['level'] == 'subject' && $subject_id) : ?>
+				  <li class="nav-item" id="<?php echo $tabId ?>-tab">
+				  	<a class="nav-link <?php if ($first) echo 'active' ?>" data-toggle="tab" href="#<?php echo $tabId ?>-panel" role="tab"><?php echo $tab['label'][$context->getLocale()] ?></a>
+				  </li>
+	<?php endif; ?>
+<?php $first = false; endforeach;?>
+				</ul>
+
+				<div class="tab-content card">
+<?php $first = true; foreach ($template['rows']['tabs']['content'] as $tabId => $tab) : ?>		
+					<div class="tab-pane fade <?php if ($first) echo 'in show active' ?>" id="<?php echo $tabId ?>-panel" role="tabpanel"></div>
+<?php $first = false; endforeach;?>
+				</div>
+
+			</div>
+		</div>
+		
+	
+        <!--Third row-->
+        <div class="row">
+            <div class="col-md-12">
+            	<div>&nbsp;</div>
+				<div>
+<?php foreach ($community->external_links as $linkId => $link) : ?>
+	<?php if ($linkId == 'facebook') : ?>
+					<a href="<?php echo $link['url'] ?>" target="_blank"><img src="<?php echo $this->basePath('/img/facebook.png') ?>" width="24" alt="<?php echo 'P-Pit on Facebook' ?>" /></a>
+	<?php elseif ($linkId == 'linkedin') : ?>
+					<a href="<?php echo $link['url'] ?>" target="_blank"><img src="<?php echo $this->basePath('/img/linkedin.png') ?>" width="24" alt="<?php echo 'P-Pit on Linkedin' ?>" /></a>
+	<?php elseif ($linkId == 'twitter') : ?>
+					<a href="<?php echo $link['url'] ?>" target="_blank"><img src="<?php echo $this->basePath('/img/twitter.png') ?>" width="24" alt="<?php echo 'P-Pit on Twitter' ?>" /></a>
+	<?php elseif ($linkId == 'googleplus') : ?>
+					<a href="<?php echo $link['url'] ?>" target="_blank"><img src="<?php echo $this->basePath('/img/google.png') ?>" width="24" alt="<?php echo 'P-Pit on Google' ?>" /></a>
+	<?php elseif ($linkId == 'mailto') : ?>
+					<a href="mailto:?subject=<?php echo $title ?>&body=<?php echo $this->serverUrl(true) ?>" target="_blank"><img src="<?php echo $this->basePath('/img/email.png') ?>" width="24" alt="Share by email" /></a>
+	<?php endif;?>
+<?php endforeach;?>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<!-- Footer -->
+<?php echo $this->partial('/partials/mdbootstrap-footer') ?>
+		
+<script>
+
+function location_href(button, target) { 
+	document.location.href=target; 
+}
+
+<?php if ($fqdn == 'www.p-pit.fr') : ?>
+<!-- Google analytics -->
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-82264844-1', 'auto');
+ga('send', 'pageview');
+<?php endif;?>
+
+<?php
+echo $this->partial('/partials/home-scripts');
+?>
+
+<?php foreach ($template['rows']['tabs']['content'] as $tabId => $tab) : ?>
+	<?php if ($tab['level'] == 'community' || $tab['level'] == 'subject' && $subject_id) : ?>
+		<?php if ($tab['type'] == 'static') : ?>
+			<?php
+			$params = array('id' => $subject_id);
+			if (array_key_exists('params', $tab)) {
+				foreach ($tab['params'] as $param => $argument) $params[$param] = $argument;
+			}
+			$route = $this->url($tab['route'], $params);
+			?>
+showStatic('<?php echo $route ?>', '<?php echo $tabId ?>-panel');
+		<?php elseif ($tab['type'] == 'calendar') : ?>
+showCalendar('<?php echo $this->url($tab['route'], array('id' => $subject_id)) ?>', '<?php echo $tabId ?>-panel');
+		<?php endif;?>
+	<?php endif;?>
+<?php endforeach;?>
+
+</script>
+
+</html>

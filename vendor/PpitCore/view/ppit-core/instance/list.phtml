@@ -1,0 +1,40 @@
+<!-- 
+/**
+ * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
+ *
+ * @link      https://github.com/p-pit/PpitCore
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
+ */
+-->
+
+		<table class="table table-striped ppit_index">
+			<tr>
+				<th>&nbsp;</th>
+				<th>
+					<button type="button" class="btn btn-default btn-xs ppit-sort-anchor" id="caption-anchor">
+						<span><?php echo $this->translate('Caption', 'ppit-core', $context->getLocale()) ?></span>
+<?php if ($major == 'caption') : ?>
+						<span class="glyphicon glyphicon-triangle-<?php echo ($dir == 'ASC') ? 'top' : 'bottom' ?>"></span>
+<?php endif ?>
+					</button>
+				</th>
+			</tr>
+			<tr>
+				<td colspan="3">
+					<button type="button" class="btn btn-default index-btn instance-detail-anchor" title="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale())?>" id="instance-detail-anchor_0">
+						<span class="glyphicon glyphicon-plus" id="add-glyphicon"></span>
+					</button>
+				</td>
+			</tr>
+<?php foreach ($instances as $instance) : ?>
+			<tr<?php if (!$instance->is_active) echo ' class="inactive"'?>>
+				<td>
+					<button type="button" class="btn btn-default index-btn instance-detail-anchor" title="<?php echo $this->translate('Detail', 'ppit-core', $context->getLocale())?>" id="instance-detail-anchor_<?php echo $instance->id ?>">
+						<span class="glyphicon glyphicon-zoom-in" id="<?php echo $instance->id ?>-glyphicon"></span>
+					</button>
+				</td>
+				<td><?php echo $instance->caption ?></td>
+			</tr>
+<?php endforeach; ?>
+		</table>
