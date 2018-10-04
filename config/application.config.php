@@ -2,8 +2,11 @@
 return array(
     // This should be an array of module namespaces used in the application.
     'modules' => array(
+    	'PpitCommitment',
     	'PpitCore',
+    	'PpitFlow',
     	'PpitUser',
+    	'Pbc',
     	'Application',
     ),
 
