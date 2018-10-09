@@ -1031,7 +1031,18 @@ class UserController extends AbstractActionController
 				    		echo json_encode('Trial to register an already existing user, based on email address');
 				    		return $this->getResponse();
 				    	}
-	
+
+				    	// Check that the email address belongs to the accepted domains
+				    	if ($context->getConfig('user/acceptedRegistrationDomain')) {
+				    		$domain = explode('@', $data['email'])[1];
+				    		if (!in_array($domain, $context->getConfig('user/acceptedRegistrationDomain'))) {
+				    			$connection->rollback();
+				    			$this->getResponse()->setStatusCode('401');
+				    			echo json_encode('The email domain does not belong to accepted domains');
+				    			return $this->getResponse();
+				    		}
+				    	}
+
 				    	$user_id = $context->getSecurityAgent()->register($account->email, $account->contact_1_id, $this->request->getPost('password'));
 				    	$user = User::getTable()->transGet($user_id);
 						$token = $context->getSecurityAgent()->requestAuthenticationToken($user->username, false);

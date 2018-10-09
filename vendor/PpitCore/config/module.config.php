@@ -6006,6 +6006,8 @@ table.note-report td {
 		'fr_FR' => 'Activation de votre compte',
 	),
 
+	'user/acceptedRegistrationDomain' => null,
+	
 	'user/messages/activation/text' => array(
 		'en_US' => '
 Hello,
