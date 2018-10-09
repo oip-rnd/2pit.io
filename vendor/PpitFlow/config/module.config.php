@@ -1260,6 +1260,15 @@ table.note-report td {
 			),
 			'analytics-id' => 'UA-82264844-4',
 			'campaign' => '1er sondage',
+			'style' => array(
+				'navbar' => 'background-color: transparent;',
+				'topNavCollapse' => 'background-color: #ffffff;',
+			),
+			'navbar' => array(
+				'class' => 'navbar navbar-expand-lg fixed-top scrolling-navbar navbar-black',
+				'account' => true,
+				'collapse' => false,
+			),
 			'logo' => array(
 				'href' => 'landing/template2',
 				'params' => ['place_identifier' => 'probonocorpo'],
@@ -1279,37 +1288,20 @@ table.note-report td {
 		'intro' => array(
 			array(
 				'type' => 'h4',
+				'class' => 'd-flex justify-content-center text-responsive',
 				'text' => array(
-					'default' => '<span class="h3-responsive font-bold mb-2">LET\'S SHARE OUR SKILLS!</span>',
-					'fr_FR' => '<span class="h3-responsive font-bold mb-2">PARTAGEONS NOS COMPÉTENCES !</span>',
+					'default' => '<span class="h4-responsive font-bold mb-2">LET\'S SHARE OUR SKILLS!</span>', 
+					'fr_FR' => '<span class="h4-responsive font-bold mb-2">PARTAGEZ VOS TALENTS !</span>',
 				),
 			),
 			array(
 				'type' => 'div',
-				'button' => ['data-toggle' => 'modal', 'data-target' => '#modalLoginForm', 'class' => 'btn btn-secondary'],
+				'button' => ['id' => 'a_survey', 'href' => '#descr', 'class' => 'btn btn-outline-secondary'], 
 				'text' => array(
-					'default' => 'Sign in <i class="fa fa-sign-in-alt ml-2"></i>',
-					'fr_FR' => 'Me connecter <i class="fa fa-sign-in-alt ml-2"></i>',
+					'default' => 'Discover',
+					'fr_FR' => 'Découvrir',
 				),
 			),
-			array(
-				'type' => 'div',
-				'button' => ['data-toggle' => 'modal', 'data-target' => '#modalRegisterForm', 'class' => 'btn btn-primary'],
-				'text' => array(
-					'default' => 'Register <i class="fa fa-sign-in-alt ml-2"></i>',
-					'fr_FR' => 'M’enregistrer <i class="fa fa-user-circle ml-2"></i>',
-				),
-			),
-			array(
-				'type' => 'div',
-				'button' => ['id' => 'a_survey', 'href' => '#descr', 'class' => 'btn btn-default'],
-				'text' => array(
-					'default' => 'I am interested <i class="fa fa-hand-point-up ml-2"></i>',
-					'fr_FR' => 'Ça m\'intéresse <i class="fa fa-hand-point-up ml-2"></i>',
-				),
-			),
-			array('type' => 'br', 'class' => 'hr-light'),
-			array('type' => 'br', 'class' => 'hr-light'),
 			array('type' => 'br', 'class' => 'hr-light'),
 			array('type' => 'br', 'class' => 'hr-light'),
 			array('type' => 'br', 'class' => 'hr-light'),
@@ -1320,33 +1312,50 @@ table.note-report td {
 		'presentation' => array(
 			array(
 				'type' => 'feature-box',
+				'margin' => false,
 				'rows' => array(
 					'columns' => array(
 						array(
 							'column-class' => 'col-md-12',
-							'type' => 'h1',
-							'class' => 'font-weight-bold text-center h1 my-5',
-							'text' => array(
-								'default' => 'ProBonoCorpo : Let\'s share our skills',
-								'fr_FR' => 'ProBonoCorpo : Partageons nos compétences',
+							'paragraphs' => array(
+								array(
+									'type' => 'h2',
+									'class' => 'section-heading h2-responsive text-center text-uppercase grey-text',
+									'text' => array(
+										'default' => 'Probono corpo makes collaboration and mutual aid easier',
+										'fr_FR' => 'Probono corpo facilite la collaboration et l’entraide',
+									),
+								),
 							),
 						),
 						array(
-							'column-class' => 'col-md-12',
-							'type' => 'p',
-							'class' => 'text-center grey-text mb-5 mx-auto w-responsive lead',
-							'text' => array(
-								'default' => 'Thank you for submitting your contribution',
-								'fr_FR' => 'Merci de soumettre votre contribution',
-							),
-						),
-						array(
-							'column-class' => 'col-md-12',
-							'type' => 'p',
-							'class' => 'text-center grey-text mb-5 mx-auto w-responsive lead',
-							'text' => array(
-								'default' => 'It will help us to start and develop ProBonoCorpo, SG internal startup',
-								'fr_FR' => 'Elle va nous aider à lancer et développer ProBonoCorpo, startup interne SG',
+							'column-class' => 'col-lg-12',
+							'paragraphs' => array(
+								array(
+									'class' => 'px-3 py-3',
+									'style' => 'background-color: #98BD29',
+									'type' => 'div',
+									'text' => array(
+										'default' => '
+<!-- Category -->
+<!-- Post title -->
+<h2 class="section-heading h2-responsive my-4 text-center text-uppercase font-weight-bold" style="color: #FFF;">The challenges for the business</h2>
+<!-- Excerpt -->
+<h5 class="h5-responsive my-3"><span style="color: #007837;"><i class="fa fa-check pr-2"></i></span>Share and pass on the skills</h5>
+<h5 class="h5-responsive my-3"><span style="color: #007837;"><i class="fa fa-check pr-2"></i></span>Quickly mobilize resources that fit the need</h5>
+<h5 class="h5-responsive my-3"><span style="color: #007837;"><i class="fa fa-check pr-2"></i></span>Help engagement with an agile and innovative organization</h5>
+', 
+										'fr_FR' => '
+<!-- Category -->
+<!-- Post title -->
+<h2 class="section-heading h2-responsive my-4 text-center text-uppercase font-weight-bold" style="color: #FFF;">Les challenges pour l’entreprise</h2>
+<!-- Excerpt -->
+<h5 class="h5-responsive my-3"><span style="color: #007837;"><i class="fa fa-check pr-2"></i></span>Partager et transmettre les compétences</h5>
+<h5 class="h5-responsive my-3"><span style="color: #007837;"><i class="fa fa-check pr-2"></i></span>Mobiliser rapidement des ressources au plus près des besoins</h5>
+<h5 class="h5-responsive my-3"><span style="color: #007837;"><i class="fa fa-check pr-2"></i></span>Favoriser l’engagement par une organisation agile et innovante</h5>
+',
+									),
+								),
 							),
 						),
 					),
@@ -1359,9 +1368,6 @@ table.note-report td {
 				'property_1_contributor' => ['definition' => 'inline', 'type' => 'checkbox', 'class' => 'col-md-3', 'property_id' => 'property_1', 'value' => 'contributor', 'labels' => ['default' => 'Contributor', 'fr_FR' => 'Contributeur']],
 				'property_1_requestor' => ['definition' => 'inline', 'type' => 'checkbox', 'class' => 'col-md-3', 'property_id' => 'property_1', 'value' => 'requestor', 'labels' => ['default' => 'Requestor', 'fr_FR' => 'Demandeur']],
 				'email' => ['mandatory' => true, 'updatable' => false],
-				/*				'comment_1' => ['definition' => 'inline', 'type' => 'textarea', 'rows' => 1, 'class' => 'col-md-12', 'labels' => ['default' => 'Offered skills', 'fr_FR' => 'Compétences offertes']],
-					'comment_2' => ['definition' => 'inline', 'type' => 'textarea', 'rows' => 1, 'class' => 'col-md-12', 'labels' => ['default' => 'Requested skills', 'fr_FR' => 'Compétences demandées']],
-	'property_2_available' => ['definition' => 'inline', 'type' => 'checkbox', 'class' => 'col-md-4', 'property_id' => 'property_2', 'value' => 'available', 'default' => 'available', 'labels' => ['default' => 'Available for a phone call', 'fr_FR' => 'Disponible pour un point téléphonique']],*/
 			),
 			'submit' => array(
 				'class' => 'btn btn-light-blue btn-rounded',
@@ -1615,10 +1621,10 @@ table.note-report td {
 	
 		'index' => array(
 			'navbar' => array(
-				'publicMode' => ['type' => 'mode', 'value' => 'Public', 'labels' => ['default' => 'Current', 'fr_FR' => 'En cours']],
-				'skills' => ['type' => 'search', 'property' => 'property_2', 'labels' => ['default' => 'Keywords', 'fr_FR' => 'Mots clés']],
+				'publicMode' => ['type' => 'mode', 'value' => 'Public', 'labels' => ['default' => 'All the events', 'fr_FR' => 'Tous les événements']],
 				'ownerMode' => ['type' => 'mode', 'value' => 'Owner', 'labels' => ['default' => 'My events', 'fr_FR' => 'Mes événements']],
 				'contributorMode' => ['type' => 'mode', 'value' => 'Contributor', 'labels' => ['default' => 'My participations', 'fr_FR' => 'Mes participations']],
+				'skills' => ['type' => 'search', 'property' => 'property_2', 'labels' => ['default' => 'Keywords', 'fr_FR' => 'Mots clés']],
 				'new' => ['type' => 'new', 'labels' => ['default' => 'New event', 'fr_FR' => 'Nouvel événement']],
 			)
 		),
@@ -1650,8 +1656,8 @@ table.note-report td {
 		),
 	
 		'status' => array(
-			'new' => ['labels' => ['default' => 'Subscription in progress', 'fr_FR' => 'Inscriptions en cours'], 'value' => 25, 'color' => 'bg-danger'],
-			'connected' => ['labels' => ['default' => 'Subscription closed', 'fr_FR' => 'Inscriptions closes'], 'value'  => 50, 'color' => 'bg-info'],
+			'new' => ['labels' => ['default' => 'Registration in progress', 'fr_FR' => 'Inscriptions en cours'], 'value' => 25, 'color' => 'bg-danger'],
+			'connected' => ['labels' => ['default' => 'Registration closed', 'fr_FR' => 'Inscriptions closes'], 'value'  => 50, 'color' => 'bg-info'],
 			'realized' => ['labels' => ['default' => 'Is currently happening', 'fr_FR' => 'A lieu en ce moment'], 'value' => 75, 'color' => 'bg-warning'],
 			'completed' => ['labels' => ['default' => 'Completed', 'fr_FR' => 'Terminé'], 'value' => 100, 'color' => 'bg-success'],
 		),
@@ -1672,8 +1678,8 @@ table.note-report td {
 			'Matching' => array(
 				'contact' => ['icon' => 'handshake', 'labels' => ['default' => 'Contact', 'fr_FR' => 'Contacter']],
 				'abandon' => ['icon' => 'trash-alt', 'labels' => ['default' => 'Abandon my selection', 'fr_FR' => 'Abandonner ma sélection']],
-				'accept' => ['icon' => 'thumbs-up', 'labels' => ['default' => 'Accept the subscription', 'fr_FR' => 'Accepter son inscription']],
-				'decline' => ['icon' => 'thumbs-down', 'labels' => ['default' => 'Decline the subscription', 'fr_FR' => 'Décliner son inscription']],
+				'accept' => ['icon' => 'thumbs-up', 'labels' => ['default' => 'Accept the registration', 'fr_FR' => 'Accepter son inscription']],
+				'decline' => ['icon' => 'thumbs-down', 'labels' => ['default' => 'Decline the registration', 'fr_FR' => 'Décliner son inscription']],
 				'feedback' => ['icon' => 'comments', 'labels' => ['default' => 'Give a feedback', 'fr_FR' => 'Donner un feedback']],
 			),
 			'Public' => array(
@@ -1740,14 +1746,14 @@ table.note-report td {
 				),
 				'Contributor' => array(
 					'new' => ['default' => 'Wishing to participate to this event?', 'fr_FR' => 'Envie de participer à cet événement ?'],
-					'linked' => ['default' => 'The organizer is notified of your subscription request', 'fr_FR' => 'L’organisateur est notifié votre demande d’inscription'],
+					'linked' => ['default' => 'The organizer is notified of your registration request', 'fr_FR' => 'L’organisateur est notifié votre demande d’inscription'],
 					'contributor_feedback' => ['default' => 'This event is waiting for a feedback from your side', 'fr_FR' => 'Cet événement est en attente de feedback de votre part'],
 					'requestor_feedback' => ['default' => 'This event is waiting for a feedback from the organizer’s side', 'fr_FR' => 'Cet événement est en attente de feedback de la part de l’organisateur'],
 					'completed' => ['default' => 'This event is over. Thank you for your participation', 'fr_FR' => 'Cet événement est terminé. Merci de votre participation'],
 				),
 				'Public' => array(
 					'new' => ['default' => 'Wishing to participate to this event?', 'fr_FR' => 'Envie de participer à cet événement ?'],
-					'linked' => ['default' => 'The organizer is notified of your subscription request', 'fr_FR' => 'L’organisateur est notifié de votre demande d’inscription'],
+					'linked' => ['default' => 'The organizer is notified of your registration request', 'fr_FR' => 'L’organisateur est notifié de votre demande d’inscription'],
 					'contributor_feedback' => ['default' => 'This event is waiting for a feedback from your side', 'fr_FR' => 'Cet événement est en attente de feedback de votre part'],
 					'requestor_feedback' => ['default' => 'This event is waiting for a feedback from the organizer’s side', 'fr_FR' => 'Cet événement est en attente de feedback de la part de l’organisateur'],
 					'completed' => ['default' => 'This event is over', 'fr_FR' => 'Cet événement est terminé'],
