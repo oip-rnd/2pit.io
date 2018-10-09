@@ -1,55 +1,56 @@
-  <!--Main layout-->
-  <main>  
-    <div class="container" name="descr" id="descr">
-      <br><br><br>
+<!--Main layout-->
+<main>  
+  <div class="container" name="descr" id="descr">
+    <br><br><br>
  
- <?php foreach ($content['presentation'] as $sectionId => $section) : ?>
+<?php foreach ($content['presentation'] as $sectionId => $section) : ?>
 
-        <!-- Presentation section -->
-        <div class="presentation-section my-3">
-          <div class="portlet">
-          <div class="portlet-header">
-            <ul class="nav grey lighten-4">
-              <li class="nav-item">
-                <a class="nav-link text-secondary"><i class="fa fa-edit"></i></a>
-              </li>
-              <li>
-                <a class="nav-link text-secondary"><i class="fa fa-trash"></i></a>
-              </li>
-            </ul>
-          </div>
+    <!-- Presentation section -->
+    <div class="presentation-section my-3">
+      <div class="portlet">
+        <div class="portlet-header">
+          <ul class="nav grey lighten-4">
+            <li class="nav-item">
+              <a class="nav-link text-secondary"><i class="fa fa-edit"></i></a>
+            </li>
+            <li>
+              <a class="nav-link text-secondary"><i class="fa fa-trash"></i></a>
+            </li>
+          </ul>
+        </div>
 
-          <div class="portlet-content">
+        <div class="portlet-content">
   
   <?php if ($section['type'] == 'lightbox') : ?>
-            <!--Section: Blog v.4-->
-            <section class="section section-blog-fw mt-5 pb-3 wow fadeIn">
-              <div id="mdb-lightbox-ui"></div>
-              <div class="mdb-lightbox <?php if (array_key_exists('margin', $section) && !$section['margin']) echo 'no-margin' ?>">
-                <div class="view overlay">
+
+          <!--Section: Blog v.4-->
+          <section class="section section-blog-fw mt-5 pb-3 wow fadeIn">
+            <div id="mdb-lightbox-ui"></div>
+            <div class="mdb-lightbox <?php if (array_key_exists('margin', $section) && !$section['margin']) echo 'no-margin' ?>">
+              <div class="view overlay">
 
   <?php elseif ($section['type'] == 'feature-box') : ?>
-            <section class="section feature-box wow fadeIn" data-wow-delay="0.3s">
+          <section class="section feature-box wow fadeIn" data-wow-delay="0.3s">
 
   <?php elseif ($section['type'] == 'card-cascade') : ?>
-            <section class="section wow fadeIn" data-wow-delay="0.3s">
-              <!--Featured image-->
-              <div class="card card-cascade wider reverse">
-                <div class="view view-cascade overlay">
+          <section class="section wow fadeIn" data-wow-delay="0.3s">
+            <!--Featured image-->
+            <div class="card card-cascade wider reverse">
+              <div class="view view-cascade overlay">
   <?php endif;?>
 	
   <?php foreach ($section['rows'] as $rowId => $row) : ?>
-                  <div class="row">
+                <div class="row">
 
     <?php foreach ($row as $columnId => $column) : ?>
 
-                    <figure class="<?php echo $column['column-class']?>">
-                      <div class="resizable ui-widget-content">
-                        <span class="ui-widget-header">Drag for resizing</span>
-                      </div>
+                  <figure class="<?php echo $column['column-class']?>">
+                    <div class="resizable ui-widget-content">
+                      <span class="ui-widget-header">Drag for resizing</span>
+                    </div>
 
       <?php foreach ($column['paragraphs'] as $paragraphId => $paragraph) : ?>
-                        <<?php echo $paragraph['type']?> class="<?php if (array_key_exists('class', $paragraph)) echo $paragraph['class'] ?>" style="<?php if (array_key_exists('style', $paragraph)) echo $paragraph['style'] ?>">
+                    <<?php echo $paragraph['type']?> class="<?php if (array_key_exists('class', $paragraph)) echo $paragraph['class'] ?>" style="<?php if (array_key_exists('style', $paragraph)) echo $paragraph['style'] ?>">
                           
       <?php if (array_key_exists('a', $paragraph)) : ?>
                       <a 
@@ -75,7 +76,7 @@
       <?php endif;?>
 
       <?php if (array_key_exists('text', $paragraph)) : ?>
-                      <span class="editable" id="presentation/<?php echo $sectionId ?>/rows/<?php echo $rowId ?>/<?php echo $paragraphId ?>/text<?php if (array_key_exists('text', $paragraph)) echo '/'.$context->getLocaleFor($paragraph['text']) ?>">
+	                  <span class="editable" id="presentation/<?php echo $sectionId ?>/rows/<?php echo $rowId ?>/<?php echo $paragraphId ?>/text<?php if (array_key_exists('text', $paragraph)) echo '/'.$context->getLocaleFor($paragraph['text']) ?>">
                         <?php echo $context->localize($paragraph['text'], $locale) ?>
                       </span>
 
@@ -98,206 +99,207 @@
                       </button>
       <?php endif;?>
 
-                      </<?php echo $paragraph['type']?>>
+                    </<?php echo $paragraph['type']?>>
       <?php endforeach;?>
 
-                    </figure>
+                  </figure>
     <?php endforeach;?>
-                  </div>
+                </div>
   <?php endforeach;?>
 
   <?php if ($section['type'] == 'lightbox') : ?>
-                </div>
               </div>
-            </section>
+            </div>
+          </section>
 	
   <?php elseif ($section['type'] == 'feature-box') : ?>
-            </section>
+          </section>
 
   <?php elseif ($section['type'] == 'card-cascade') : ?>
-                </div>
               </div>
-            </section>
+            </div>
+          </section>
 
   <?php endif;?>
 
-          </div>
         </div>
-        <!--/ Presentation section -->
+      </div>
+    </div>
+    <!--/ Presentation section -->
 
 <?php endforeach;?>
 
 <?php if (array_key_exists('pricing', $content)) : ?>
 
-<hr>
+    <hr>
 
-<!-- Section: Pricing v.1 -->
-<section class="my-5">
+    <!-- Section: Pricing v.1 -->
+    <section class="my-5">
 
 <?php foreach ($content['pricing']['introduction'] as $paragraph) : ?>
   <?php if (array_key_exists('a', $paragraph)) : ?>
-          <a 
-            href="<?php echo $paragraph['a']['href']?>" 
-          	<?php if (array_key_exists('class', $paragraph['a'])) echo 'class="'.$paragraph['a']['class'].'"' ?>
-          	<?php if (array_key_exists('id', $paragraph['a'])) echo 'id="'.$paragraph['a']['id'].'"' ?>
-          >
+      <a 
+        href="<?php echo $paragraph['a']['href']?>" 
+        <?php if (array_key_exists('class', $paragraph['a'])) echo 'class="'.$paragraph['a']['class'].'"' ?>
+        <?php if (array_key_exists('id', $paragraph['a'])) echo 'id="'.$paragraph['a']['id'].'"' ?>
+      >
 
   <?php elseif (array_key_exists('button', $paragraph)) : ?>
-          <button type="button" 
-          	<?php if (array_key_exists('class', $paragraph['button'])) echo 'class="'.$paragraph['button']['class'].'"' ?>
-          	<?php if (array_key_exists('id', $paragraph['button'])) echo 'id="'.$paragraph['button']['id'].'"' ?>
-          >
+      <button type="button" 
+        <?php if (array_key_exists('class', $paragraph['button'])) echo 'class="'.$paragraph['button']['class'].'"' ?>
+        <?php if (array_key_exists('id', $paragraph['button'])) echo 'id="'.$paragraph['button']['id'].'"' ?>
+      >
 		
   <?php else : ?>
-          <<?php echo $paragraph['type']?> <?php if (array_key_exists('class', $paragraph)) echo 'class="'.$paragraph['class'].'"' ?>>
+      <<?php echo $paragraph['type']?> <?php if (array_key_exists('class', $paragraph)) echo 'class="'.$paragraph['class'].'"' ?>>
 
   <?php endif;?>
 
   <?php if (array_key_exists('text', $paragraph)) : ?>
-          <?php echo $context->localize($paragraph['text'], $locale) ?>
+      <?php echo $context->localize($paragraph['text'], $locale) ?>
   
   <?php endif;?>
 	
   <?php if (array_key_exists('a', $paragraph)) : ?>
-          </a>
+      </a>
 
   <?php elseif (array_key_exists('button', $paragraph)) : ?>
-          </button>
+      </button>
 
   <?php else : ?>
-          </<?php echo $paragraph['type']?>>
+      </<?php echo $paragraph['type']?>>
 		
   <?php endif;?>
 <?php endforeach;?>
 
-  <!-- Grid row -->
-  <div class="row">
+      <!-- Grid row -->
+      <div class="row">
 
-    <!-- Grid column -->
-    <div class="col-md-8 mb-4">
+        <!-- Grid column -->
+        <div class="col-md-8 mb-4">
 
-      <!-- Pricing card -->
-      <div class="card pricing-card justify-content-center">
+          <!-- Pricing card -->
+          <div class="card pricing-card justify-content-center">
 
-        <!-- Price -->
-        <div class="header white-text blue rounded-top">
+            <!-- Price -->
+            <div class="header white-text blue rounded-top">
 <?php foreach ($content['pricing']['card']['header'] as $paragraphId => $paragraph) : ?>
   <?php if (array_key_exists('a', $paragraph)) : ?>
-          <a 
-            href="<?php echo $paragraph['a']['href']?>" 
-            <?php if (array_key_exists('class', $paragraph['a'])) echo 'class="'.$paragraph['a']['class'].'"' ?>
-            <?php if (array_key_exists('id', $paragraph['a'])) echo 'id="'.$paragraph['a']['id'].'"' ?>
-          >
+              <a 
+                href="<?php echo $paragraph['a']['href']?>" 
+                <?php if (array_key_exists('class', $paragraph['a'])) echo 'class="'.$paragraph['a']['class'].'"' ?>
+                <?php if (array_key_exists('id', $paragraph['a'])) echo 'id="'.$paragraph['a']['id'].'"' ?>
+              >
 
   <?php elseif (array_key_exists('button', $paragraph)) : ?>
-          <button type="button" 
-            <?php if (array_key_exists('class', $paragraph['button'])) echo 'class="'.$paragraph['button']['class'].'"' ?>
-            <?php if (array_key_exists('id', $paragraph['button'])) echo 'id="'.$paragraph['button']['id'].'"' ?>
-          >
+              <button type="button" 
+                <?php if (array_key_exists('class', $paragraph['button'])) echo 'class="'.$paragraph['button']['class'].'"' ?>
+                <?php if (array_key_exists('id', $paragraph['button'])) echo 'id="'.$paragraph['button']['id'].'"' ?>
+              >
     
   <?php else : ?>
-          <<?php echo $paragraph['type']?> <?php if (array_key_exists('class', $paragraph)) echo 'class="'.$paragraph['class'].'"' ?>>
+              <<?php echo $paragraph['type']?> <?php if (array_key_exists('class', $paragraph)) echo 'class="'.$paragraph['class'].'"' ?>>
 
   <?php endif;?>
 
   <?php if (array_key_exists('text', $paragraph)) : ?>
-          <?php echo $context->localize($paragraph['text'], $locale) ?>
+                <?php echo $context->localize($paragraph['text'], $locale) ?>
   
   <?php endif;?>
   
   <?php if (array_key_exists('a', $paragraph)) : ?>
-          </a>
+              </a>
 
   <?php elseif (array_key_exists('button', $paragraph)) : ?>
-          </button>
+              </button>
 
   <?php else : ?>
-          </<?php echo $paragraph['type']?>>
+              </<?php echo $paragraph['type']?>>
     
   <?php endif;?>
 <?php endforeach;?>
-        </div>
+            </div>
 
-        <!-- Features -->
-        <div class="card-body striped mb-1">
+            <!-- Features -->
+            <div class="card-body striped mb-1">
 
-          <ul>
+              <ul>
  <?php foreach ($content['pricing']['card']['body'] as $paragraphId => $paragraph) : ?>
-            <li>
+                <li>
   <?php if (array_key_exists('a', $paragraph)) : ?>
-          <a 
-            href="<?php echo $paragraph['a']['href']?>" 
-            <?php if (array_key_exists('class', $paragraph['a'])) echo 'class="'.$paragraph['a']['class'].'"' ?>
-            <?php if (array_key_exists('id', $paragraph['a'])) echo 'id="'.$paragraph['a']['id'].'"' ?>
-          >
+                  <a 
+                    href="<?php echo $paragraph['a']['href']?>" 
+                    <?php if (array_key_exists('class', $paragraph['a'])) echo 'class="'.$paragraph['a']['class'].'"' ?>
+                    <?php if (array_key_exists('id', $paragraph['a'])) echo 'id="'.$paragraph['a']['id'].'"' ?>
+                  >
 
   <?php elseif (array_key_exists('button', $paragraph)) : ?>
-          <button type="button" 
-            <?php if (array_key_exists('class', $paragraph['button'])) echo 'class="'.$paragraph['button']['class'].'"' ?>
-            <?php if (array_key_exists('id', $paragraph['button'])) echo 'id="'.$paragraph['button']['id'].'"' ?>
-          >
+                  <button type="button" 
+                    <?php if (array_key_exists('class', $paragraph['button'])) echo 'class="'.$paragraph['button']['class'].'"' ?>
+                    <?php if (array_key_exists('id', $paragraph['button'])) echo 'id="'.$paragraph['button']['id'].'"' ?>
+                  >
     
   <?php else : ?>
-          <<?php echo $paragraph['type']?> <?php if (array_key_exists('class', $paragraph)) echo 'class="'.$paragraph['class'].'"' ?>>
+                  <<?php echo $paragraph['type']?> <?php if (array_key_exists('class', $paragraph)) echo 'class="'.$paragraph['class'].'"' ?>>
 
   <?php endif;?>
 
   <?php if (array_key_exists('text', $paragraph)) : ?>
-          <?php echo $context->localize($paragraph['text'], $locale) ?>
+                    <?php echo $context->localize($paragraph['text'], $locale) ?>
   
   <?php endif;?>
   
   <?php if (array_key_exists('a', $paragraph)) : ?>
-          </a>
+                  </a>
 
   <?php elseif (array_key_exists('button', $paragraph)) : ?>
-          </button>
+                  </button>
 
   <?php else : ?>
-          </<?php echo $paragraph['type']?>>
+                  </<?php echo $paragraph['type']?>>
     
   <?php endif;?>
 <?php endforeach;?>
-            </li>
-          </ul>
+                </li>
+              </ul>
+
+            </div>
+            <!-- Features -->
+
+          </div>
+          <!-- Pricing card -->
 
         </div>
-        <!-- Features -->
+        <!-- Grid column -->
 
       </div>
-      <!-- Pricing card -->
+      <!-- Grid row -->
 
-    </div>
-    <!-- Grid column -->
-
-  </div>
-  <!-- Grid row -->
-
-</section>
-<!-- Section: Pricing v.1 -->
+    </section>
+    <!-- Section: Pricing v.1 -->
 
 <?php endif;?>
 
-      <!-- Contact Form -->	
-      <section class="section pb-5" id="contactForm">
-        <div class="row">
+    <!-- Contact Form -->	
+    <section class="section pb-5" id="contactForm">
+      <div class="row">
 
 <?php foreach ($content['form']['introduction'] as $paragraph) : ?>
   <?php if (array_key_exists('a', $paragraph)) : ?>
-          <a 
-            href="<?php echo $paragraph['a']['href']?>" 
-          	<?php if (array_key_exists('class', $paragraph['a'])) echo 'class="'.$paragraph['a']['class'].'"' ?>
-          	<?php if (array_key_exists('id', $paragraph['a'])) echo 'id="'.$paragraph['a']['id'].'"' ?>
-          >
+        <a 
+          href="<?php echo $paragraph['a']['href']?>" 
+          <?php if (array_key_exists('class', $paragraph['a'])) echo 'class="'.$paragraph['a']['class'].'"' ?>
+          <?php if (array_key_exists('id', $paragraph['a'])) echo 'id="'.$paragraph['a']['id'].'"' ?>
+        >
 
   <?php elseif (array_key_exists('button', $paragraph)) : ?>
-          <button type="button" 
-          	<?php if (array_key_exists('class', $paragraph['button'])) echo 'class="'.$paragraph['button']['class'].'"' ?>
-          	<?php if (array_key_exists('id', $paragraph['button'])) echo 'id="'.$paragraph['button']['id'].'"' ?>
-          >
+        <button type="button" 
+           <?php if (array_key_exists('class', $paragraph['button'])) echo 'class="'.$paragraph['button']['class'].'"' ?>
+           <?php if (array_key_exists('id', $paragraph['button'])) echo 'id="'.$paragraph['button']['id'].'"' ?>
+        >
 		
   <?php else : ?>
-          <<?php echo $paragraph['type']?> <?php if (array_key_exists('class', $paragraph)) echo 'class="'.$paragraph['class'].'"' ?>>
+        <<?php echo $paragraph['type']?> <?php if (array_key_exists('class', $paragraph)) echo 'class="'.$paragraph['class'].'"' ?>>
 
   <?php endif;?>
 
@@ -307,173 +309,139 @@
   <?php endif;?>
 	
   <?php if (array_key_exists('a', $paragraph)) : ?>
-          </a>
+        </a>
 
   <?php elseif (array_key_exists('button', $paragraph)) : ?>
-          </button>
+        </button>
 
   <?php else : ?>
-          </<?php echo $paragraph['type']?>>
+        </<?php echo $paragraph['type']?>>
 		
   <?php endif;?>
 <?php endforeach;?>
 
-        </div>
-        <div class="row">
+      </div>
+      
+      <div class="row">
 
-          <!--Grid column-->
-          <div class="<?php echo (array_key_exists('column-class', $content['form'])) ? $content['form']['column-class'] : 'col-md-8 col-xl-9' ?>">
-            <form action="<?php echo $this->url('landing/template2', array('place_identifier' => $place_identifier, 'id' => $id)) ?>#survey" method="post">
-              <div class="row">
+        <!--Grid column-->
+        <div class="<?php echo (array_key_exists('column-class', $content['form'])) ? $content['form']['column-class'] : 'col-md-8 col-xl-9' ?>">
+          <form action="<?php echo $this->url('landing/template2', array('place_identifier' => $place_identifier, 'id' => $id)) ?>#survey" method="post">
+            <div class="row">
 
  <?php foreach ($content['form']['inputs'] as $inputId => $property) : ?>
-                <?php $disabled = $message || $error || $id && !$property['updatable'] ?>
-                <div class="<?php echo (array_key_exists('class',$property)) ? $property['class'] : 'col-md-6' ?>">
-                  <div class="md-form">
+              <?php $disabled = $message || $error || $id && !$property['updatable'] ?>
+              <div class="<?php echo (array_key_exists('class',$property)) ? $property['class'] : 'col-md-6' ?>">
+                <div class="md-form">
 
   <?php if ($property['type'] == 'select') : ?>
-                    <select id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="mdb-select validate" <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?>>
-                      <option value=""><?php echo $this->translate('Please choose', 'ppit-core', $context->getLocale()) ?></option>
+                  <select id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="mdb-select validate" <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?>>
+                    <option value=""><?php echo $this->translate('Please choose', 'ppit-core', $context->getLocale()) ?></option>
     <?php foreach ($property['modalities'] as $modalityId => $modality) : ?>
-                      <option value="<?php echo $modalityId ?>" <?php if ($viewData[$inputId] == $modalityId) echo 'selected="selected"' ?>><?php echo $context->localize($modality, $locale) ?></option>
+                    <option value="<?php echo $modalityId ?>" <?php if ($viewData[$inputId] == $modalityId) echo 'selected="selected"' ?>><?php echo $context->localize($modality, $locale) ?></option>
     <?php endforeach;?>
-                    </select>
-                    <label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+                  </select>
+                  <label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
 
   <?php elseif ($property['type'] == 'radio') : ?>
-                    <input type="radio" id="<?php echo $inputId ?>" name="<?php echo $property['property_id'] ?>" class="form-control validate with-gap" value="<?php echo $property['value'] ?>" <?php if ($disabled) echo 'disabled="disabled"' ?> <?php if ($viewData[$inputId]) echo 'checked="checked"' ?> />
-                    <label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+                  <input type="radio" id="<?php echo $inputId ?>" name="<?php echo $property['property_id'] ?>" class="form-control validate with-gap" value="<?php echo $property['value'] ?>" <?php if ($disabled) echo 'disabled="disabled"' ?> <?php if ($viewData[$inputId]) echo 'checked="checked"' ?> />
+                  <label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
 
   <?php elseif ($property['type'] == 'checkbox') : ?>
-                    <input type="checkbox" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-check-input validate" value="<?php echo $property['value'] ?>" <?php if ($disabled) echo 'disabled="disabled"' ?> <?php if ($viewData[$inputId]) echo 'checked="checked"' ?> />
-                    <label for="<?php echo $inputId ?>" class="form-check-label"><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+                  <input type="checkbox" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-check-input validate" value="<?php echo $property['value'] ?>" <?php if ($disabled) echo 'disabled="disabled"' ?> <?php if ($viewData[$inputId]) echo 'checked="checked"' ?> />
+                  <label for="<?php echo $inputId ?>" class="form-check-label"><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
 
   <?php elseif ($property['type'] == 'textarea') : ?>
-                    <textarea rows="<?php echo $property['rows'] ?>" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="md-textarea form-control validate" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?>><?php echo $viewData[$inputId] ?></textarea>
-                    <label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+                  <textarea rows="<?php echo $property['rows'] ?>" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="md-textarea form-control validate" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?>><?php echo $viewData[$inputId] ?></textarea>
+                  <label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
 
   <?php elseif ($property['type'] == 'file') : ?>
-                    <div class="file-field">
-                      <div class="btn btn-primary btn-sm float-left ">
-                        <span><?php if ($property['mandatory']) echo '* ' ?><?php echo $this->translate('Choose file', 'ppit-core', $context->getLocale()) ?></span>
-                        <input type="file" id="<?php $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate" <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value=" value="<?php echo $viewData[$inputId] ?>">
-                      </div>
-                      <div class="file-path-wrapper">
-                        <input class="file-path validate" type="text" placeholder="<?php echo $context->localize($property['labels'], $locale) ?>" >
-                      </div>
+                  <div class="file-field">
+                    <div class="btn btn-primary btn-sm float-left ">
+                      <span><?php if ($property['mandatory']) echo '* ' ?><?php echo $this->translate('Choose file', 'ppit-core', $context->getLocale()) ?></span>
+                      <input type="file" id="<?php $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate" <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value=" value="<?php echo $viewData[$inputId] ?>">
                     </div>
+                    <div class="file-path-wrapper">
+                      <input class="file-path validate" type="text" placeholder="<?php echo $context->localize($property['labels'], $locale) ?>" >
+                    </div>
+                  </div>
 
   <?php elseif ($property['type'] == 'email') : ?>
-                    <input type="email" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>" />
-                    <label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+                  <input type="email" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>" />
+                  <label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
 
   <?php elseif ($property['type'] == 'input') : ?>
-                    <input type="text" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>" />
-                    <label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+                  <input type="text" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>" />
+                  <label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
 
   <?php elseif ($property['type'] == 'separation') : ?>
-                    <hr>
+                  <hr>
 
   <?php else : ?>
-                    <span class="font-weight-bold"><?php echo $context->localize($property['labels'], $locale) ?></span>
+                  <span class="font-weight-bold"><?php echo $context->localize($property['labels'], $locale) ?></span>
 
   <?php endif;?>
-                  </div>
                 </div>
+              </div>
 
 <?php endforeach;?>
 
-              </div>
+            </div>
 
 <?php if ($message || $error) : ?>
-              <p class="section-description">
-                <a href="<?php echo $this->url('home') ?>" class="btn btn-light-blue btn-rounded">Accueil</a>
-              </p>
+            <p class="section-description">
+              <a href="<?php echo $this->url('home') ?>" class="btn btn-light-blue btn-rounded">Accueil</a>
+            </p>
 
 <?php else : ?>
-              <div class="center-on-small-only">
-                <button class="<?php echo $content['form']['submit']['class'] ?>" type="submit"><?php echo $context->localize($content['form']['submit']['labels'], $locale) ?></button>
-              </div>
+            <div class="center-on-small-only">
+              <button class="<?php echo $content['form']['submit']['class'] ?>" type="submit"><?php echo $context->localize($content['form']['submit']['labels'], $locale) ?></button>
+            </div>
 
 <?php endif;?>
 
-            </form>
-          </div>
-          <!--Grid column-->
+          </form>
+        </div>
+        <!--Grid column-->
 
 <?php if (array_key_exists('contact_section', $content)) : ?>
-          <!--Grid column-->
-          <div class="<?php echo (array_key_exists('column-class', $content['contact_section'])) ? $content['contact_section']['column-class'] : 'col-md-4 col-xl-3' ?>">
+
+        <!--Grid column-->
+        <div class="<?php echo (array_key_exists('column-class', $content['contact_section'])) ? $content['contact_section']['column-class'] : 'col-md-4 col-xl-3' ?>">
 
 <?php if (array_key_exists('img', $content['contact_section'])) : ?> 
-            <img class="<?php echo $content['contact_section']['img']['class'] ?>" src="<?php echo $this->basePath($content['contact_section']['img']['src']) ?>" alt="<?php echo $content['contact_section']['img']['alt'] ?>" />
+          <img class="<?php echo $content['contact_section']['img']['class'] ?>" src="<?php echo $this->basePath($content['contact_section']['img']['src']) ?>" alt="<?php echo $content['contact_section']['img']['alt'] ?>" />
 <?php endif;?> 
         
-            <ul class="contact-icons text-center list-unstyled">
+          <ul class="contact-icons text-center list-unstyled">
 
   <?php if (array_key_exists('location', $content['contact_section'])) : ?>
-              <li><i class="fa fa-map-marker fa-2x"></i>
-                <p><?php echo $context->localize($content['contact_section']['location']['label'], $locale) ?></p>
-              </li>
+            <li><i class="fa fa-map-marker fa-2x"></i>
+              <p><?php echo $context->localize($content['contact_section']['location']['label'], $locale) ?></p>
+            </li>
   <?php endif;?>
 
   <?php if (array_key_exists('phone', $content['contact_section'])) : ?>
-              <li><i class="fa fa-phone fa-2x"></i>
-                <p><?php echo $context->localize($content['contact_section']['phone']['label'], $locale) ?></p>
-              </li>
+            <li><i class="fa fa-phone fa-2x"></i>
+              <p><?php echo $context->localize($content['contact_section']['phone']['label'], $locale) ?></p>
+            </li>
   <?php endif;?>
 
   <?php if (array_key_exists('email', $content['contact_section'])) : ?>
-              <li><i class="fa fa-envelope fa-2x"></i>
-                <p><?php echo $context->localize($content['contact_section']['email']['label'], $locale) ?></p>
-              </li>
+            <li><i class="fa fa-envelope fa-2x"></i>
+              <p><?php echo $context->localize($content['contact_section']['email']['label'], $locale) ?></p>
+            </li>
   <?php endif;?>
 
-            </ul>
-          </div>
-          <!--Grid column-->
-          
-<?php elseif (array_key_exists('map-container', $content)) : ?>
-
-         <!--Grid column-->
-          <div class="col-lg-7">
-
-      <!-- Google map-->
-      <div id="map-container" class="rounded z-depth-1-half map-container" style="height: 400px">
-      </div>
-      <br>
-      <!-- Buttons-->
-      <div class="row text-center">
-        <div class="col-md-4">
-          <a class="btn-floating blue accent-1">
-            <i class="fa fa-map-marker"></i>
-          </a>
-          <p>New York, 94126</p>
-          <p class="mb-md-0">United States</p>
+          </ul>
         </div>
-        <div class="col-md-4">
-          <a class="btn-floating blue accent-1">
-            <i class="fa fa-phone"></i>
-          </a>
-          <p>+ 01 234 567 89</p>
-          <p class="mb-md-0">Mon - Fri, 8:00-22:00</p>
-        </div>
-        <div class="col-md-4">
-          <a class="btn-floating blue accent-1">
-            <i class="fa fa-envelope"></i>
-          </a>
-          <p>info@gmail.com</p>
-          <p class="mb-0">sale@gmail.com</p>
-        </div>
-      </div>
-
-          </div>
-          <!--Grid column-->
+        <!--Grid column-->
 
 <?php endif;?>
 
-        </div>
-      </section> 
-      <!--/ Contact form -->
+      </div>
+    </section> 
+    <!--/ Contact form -->
 
-    </div>
+  </div>
+</main>
