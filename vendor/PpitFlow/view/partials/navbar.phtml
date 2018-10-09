@@ -1,17 +1,27 @@
-
-        <!--Navbar-->
 <?php
 if (array_key_exists('navbar', $header)) {
-	$navbarClass = $header['navbar']['class']; 
-	$navbarAccount = $header['navbar']['account']; 
+  $navbarStyle = $header['style']['navbar']; 
+  $topNavCollapseStyle = $header['style']['topNavCollapse'];
+  $navbarClass = $header['navbar']['class']; 
+  $navbarAccount = $header['navbar']['account']; 
+  $navbarCollapse = $header['navbar']['collapse'];
 }
 else {
-	$navbarClass = 'navbar navbar-expand-lg fixed-top scrolling-navbar navbar-transparent';
-	$navbarAccount = true; 
+  $navbarStyle = 'background-color: transparent;';
+  $topNavCollapseStyle = 'background-color: #4285F4;';
+  $navbarClass = 'navbar navbar-expand-lg fixed-top scrolling-navbar';
+  $navbarAccount = false; 
+  $navbarCollapse = false;
 }
 ?>
+
+    <style>
+        .navbar { <?php echo $navbarStyle?> }
+        .top-nav-collapse { <?php echo $topNavCollapseStyle?> }
+    </style>
+        <!--Navbar-->
+
         <nav class="<?php echo $navbarClass ?>">
-            <div class="container">
 
                 <!-- Navbar brand -->
 				<a href="<?php echo $this->url($header['logo']['href'], $header['logo']['params']) ?>" class="navbar-brand">
@@ -23,43 +33,47 @@ else {
 					/>
 				</a>
 
+<?php if ($navbarCollapse) :?>
                 <!-- Collapse button -->
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav" aria-controls="basicExampleNav"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav" aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
                 </button>
-
-                <!-- Collapsible content -->
-                <div class="collapse navbar-collapse" id="basicExampleNav">
-                </div>
-                
+                  <div class="collapse navbar-collapse" id="basicExampleNav">
+<?php endif;?>
+   
 <?php if ($navbarAccount) : ?>
-                <!-- Collapsible content -->
-                    <!-- Links -->
-                    <ul class="navbar-nav mr-auto">
-                        <li class="nav-item">
-					        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-<?php if ($context->isAuthenticated()) : ?>
-                              <img src="<?php echo $this->basePath('/photos/'.$photo_link_id).'?random='.time() ?>" height="40" class="rounded-circle z-depth-0" alt="avatar image">
-<?php else : ?>
-                              <i class="fa fa-user"></i>
-                              <span class="clearfix d-none d-sm-inline-block"><?php echo $this->translate('Account', 'ppit-core', $locale)?></span>
+                  <!-- Collapsible content -->
+                  <!-- Links -->
+                  <ul class="nav navbar-nav nav-flex-icons ml-auto">
+  <?php if ($context->isAuthenticated()) : ?>
+                    <li class="nav-item">
+                      <img src="<?php echo $this->basePath('/photos/'.$photo_link_id).'?random='.time() ?>" height="40" class="rounded-circle z-depth-0" alt="avatar image">
+                    </li>
+                    <li class="nav-item active">
+                      <a class="nav-link" data-toggle="modal" data-target="#modalProfileForm"><?php echo $this->translate('My profile', 'ppit-core', $locale)?></a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" data-toggle="modal" data-target="#modalLogoutForm"><i class="fa fa-sign-out-alt ml-1"></i> <span class="clearfix d-none d-sm-inline-block"><?php echo $this->translate('Logout', 'ppit-core', $locale)?></span></a>
+                    </li>
+  <?php else : ?>
+                    <li class="nav-item">
+                      <a class="nav-link" href="#contactForm"><i class="fa fa-envelope ml-1"></i> <span class="clearfix d-none d-sm-inline-block"><?php echo $this->translate('Contact us', 'ppit-flow', $locale)?></span></a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" data-toggle="modal" id="login-anchor" data-target="#modalLoginForm"><i class="fa fa-sign-in-alt ml-1"></i> <span class="clearfix d-none d-sm-inline-block"><?php echo $this->translate('Login', 'ppit-core', $locale)?></span></a>
+                    </li>
+                    <li class="nav-item active">
+                      <a class="nav-link" data-toggle="modal" data-target="#modalRegisterForm"><i class="fa fa-user ml-1"></i> <span class="clearfix d-none d-sm-inline-block"><?php echo $this->translate('Register', 'ppit-core', $locale)?></span></a>
+                    </li>
+  <?php endif;?>
+                  </ul>
+                  <!-- Links -->
 <?php endif;?>
-					        </a>
-					        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-<?php if ($context->isAuthenticated()) : ?>
-                              <a class="dropdown-item" data-toggle="modal" data-target="#modalProfileForm"><?php echo $this->translate('My profile', 'ppit-core', $locale)?></a>
-                              <a class="dropdown-item" data-toggle="modal" data-target="#modalLogoutForm"><?php echo $this->translate('Logout', 'ppit-core', $locale)?></a>
-<?php else : ?>
-                              <a class="dropdown-item" data-toggle="modal" id="login-anchor" data-target="#modalLoginForm"><?php echo $this->translate('Login', 'ppit-core', $locale)?></a>
-                              <a class="dropdown-item" data-toggle="modal" data-target="#modalRegisterForm"><?php echo $this->translate('Register', 'ppit-core', $locale)?></a>
+
+<?php if ($navbarCollapse) :?>
+          </div>
 <?php endif;?>
-					        </div>
-                        </li>
-                    </ul>
-                    <!-- Links -->
-<?php endif;?>
-            </div>
+
         </nav>
         <!--/.Navbar-->    
 
@@ -320,7 +334,7 @@ else {
         </div>
         <div id="modalProfileInputs"></div>
         <div class="modal-footer d-flex justify-content-center">
-          <button type="submit" class="btn btn-secondary btn-rounded"><?php echo $this->translate('Update', 'ppit-core', $locale) ?></button>
+          <button type="submit" class="btn btn-secondary btn-rounded"><?php echo $this->translate('Save', 'ppit-core', $locale) ?></button>
         </div>
       </form>
     </div>

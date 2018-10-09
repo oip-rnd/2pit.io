@@ -4,6 +4,7 @@ return array(
 	'Accepted' => 'Accepté',
 	'Concerning the request <em>%s</em>,' => 'Au sujet de la demande <em>%s</em>,',
 	'Contact' => 'Contacter',
+	'Contact us' => 'Nous contacter',
 	'Current requests' => 'Demandes en cours',
 	'Events' => 'Événements',
 	'Feedback expected' => 'Feedback attendu',
