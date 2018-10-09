@@ -54,53 +54,53 @@
   <div class="row">
 
 <?php foreach ($content['form']['inputs'] as $inputId => $property) : ?>
-  <?php $disabled = true ?>
+  <?php $disabled = false ?>
     <div class="<?php echo (array_key_exists('class',$property)) ? $property['class'] : 'col-md-6' ?>">
       <div class="md-form">
 
   <?php if ($property['type'] == 'select') : ?>
-        <select id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="mdb-select validate profile_input <?php if ($viewData[$inputId]) echo 'filled' ?> <?php if ($property['focused']) echo 'profile_input_focused' ?>" <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?>>
+        <select id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="mdb-select validate profile_input <?php if ($property['focused']) echo 'profile_input_focused' ?>" <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?>>
           <option value=""><?php echo $this->translate('Please choose', 'ppit-core', $context->getLocale()) ?></option>
     <?php foreach ($property['modalities'] as $modalityId => $modality) : ?>
           <option value="<?php echo $modalityId ?>" <?php if ($viewData[$inputId] == $modalityId) echo 'selected="selected"' ?>><?php echo $context->localize($modality, $locale) ?></option>
     <?php endforeach;?>
         </select>
-        <label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+        <label for="<?php echo $inputId ?>" class="active"><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
 
   <?php elseif ($property['type'] == 'radio') : ?>
-        <input type="radio" id="<?php echo $inputId ?>" name="<?php echo $property['property_id'] ?>" class="form-control validate with-gap profile_input <?php if ($viewData[$inputId]) echo 'filled' ?> <?php if ($property['focused']) echo 'profile_input_focused' ?>" value="<?php echo $property['value'] ?>" <?php if ($disabled) echo 'disabled="disabled"' ?> <?php if ($viewData[$inputId]) echo 'checked="checked"' ?> />
-        <label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+        <input type="radio" id="<?php echo $inputId ?>" name="<?php echo $property['property_id'] ?>" class="form-control validate with-gap profile_input <?php if ($property['focused']) echo 'profile_input_focused' ?>" value="<?php echo $property['value'] ?>" <?php if ($disabled) echo 'disabled="disabled"' ?> <?php if ($viewData[$inputId]) echo 'checked="checked"' ?> />
+        <label for="<?php echo $inputId ?>" class="active"><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
 
   <?php elseif ($property['type'] == 'checkbox') : ?>
-        <input type="checkbox" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate profile_input <?php if ($viewData[$inputId]) echo 'filled' ?> <?php if ($property['focused']) echo 'profile_input_focused' ?>" value="<?php echo $property['value'] ?>" <?php if ($disabled) echo 'disabled="disabled"' ?> <?php if ($viewData[$inputId]) echo 'checked="checked"' ?> />
-        <label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+        <input type="checkbox" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate profile_input <?php if ($property['focused']) echo 'profile_input_focused' ?>" value="<?php echo $property['value'] ?>" <?php if ($disabled) echo 'disabled="disabled"' ?> <?php if ($viewData[$inputId]) echo 'checked="checked"' ?> />
+        <label for="<?php echo $inputId ?>" class="active"><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
 
   <?php elseif ($property['type'] == 'textarea') : ?>
-        <textarea rows="3" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate profile_input <?php if ($viewData[$inputId]) echo 'filled' ?> <?php if ($property['focused']) echo 'profile_input_focused' ?>" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?>><?php echo $viewData[$inputId] ?></textarea>
-        <label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+        <textarea rows="3" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate profile_input <?php if ($property['focused']) echo 'profile_input_focused' ?>" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?>><?php echo $viewData[$inputId] ?></textarea>
+        <label for="<?php echo $inputId ?>" class="active"><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
 
   <?php elseif ($property['type'] == 'file') : ?>
         <div class="file-field">
           <div class="btn btn-primary btn-sm float-left ">
             <span><?php if ($property['mandatory']) echo '* ' ?><?php echo $this->translate('Choose file', 'ppit-core', $context->getLocale()) ?></span>
-            <input type="file" id="<?php $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate profile_input <?php if ($viewData[$inputId]) echo 'filled' ?> <?php if ($property['focused']) echo 'profile_input_focused' ?>" <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value=" value="<?php echo $viewData[$inputId] ?>">
+            <input type="file" id="<?php $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate profile_input <?php if ($property['focused']) echo 'profile_input_focused' ?>" <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value=" value="<?php echo $viewData[$inputId] ?>">
           </div>
           <div class="file-path-wrapper">
-            <input class="file-path validate profile_input <?php if ($viewData[$inputId]) echo 'filled' ?> <?php if ($property['focused']) echo 'profile_input_focused' ?>" type="text" placeholder="<?php echo $context->localize($property['labels'], $locale) ?>" >
+            <input class="file-path validate profile_input <?php if ($property['focused']) echo 'profile_input_focused' ?>" type="text" placeholder="<?php echo $context->localize($property['labels'], $locale) ?>" >
           </div>
         </div>
 
   <?php elseif ($property['type'] == 'email') : ?>
-        <input type="email" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate profile_input <?php if ($viewData[$inputId]) echo 'filled' ?> <?php if ($property['focused']) echo 'profile_input_focused' ?>" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>" />
-        <label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+        <input type="email" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate profile_input <?php if ($property['focused']) echo 'profile_input_focused' ?>" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>" />
+        <label for="<?php echo $inputId ?>" class="active"><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
 
   <?php elseif ($property['type'] == 'keywords') : ?>
-        <input type="text" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control mdb-autocomplete profile_input <?php if ($viewData[$inputId]) echo 'filled' ?> <?php if ($property['focused']) echo 'profile_input_focused' ?>" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>">
-        <label for="<?php echo $inputId ?>" class="disabled"><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+        <input type="text" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control mdb-autocomplete profile_input <?php if ($property['focused']) echo 'profile_input_focused' ?>" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>">
+        <label for="<?php echo $inputId ?>" class="active"><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
 
   <?php elseif (in_array($property['type'], ['input', 'phone'])) : ?>
-        <input type="text" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate profile_input <?php if ($viewData[$inputId]) echo 'filled' ?> <?php if ($property['focused']) echo 'profile_input_focused' ?>" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>" />
-        <label for="<?php echo $inputId ?>" class="disabled"><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+        <input type="text" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate profile_input <?php if ($property['focused']) echo 'profile_input_focused' ?>" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>" />
+        <label for="<?php echo $inputId ?>" class="active"><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
 
   <?php elseif ($property['type'] == 'separation') : ?>
         <hr>
