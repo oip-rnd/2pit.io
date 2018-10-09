@@ -33,7 +33,10 @@ class ProfileController extends AbstractActionController
 			$place_identifier = $place->identifier;
 		}
 
-		if ($context->getConfig('specificationMode') == 'config') $content = $context->getConfig('profile/'.$place_identifier);
+		if ($context->getConfig('specificationMode') == 'config') {
+			$content = $context->getConfig('profile/'.$place_identifier);
+			if (!$content) $content = $context->getConfig('profile/generic');
+		}
 		else $content = Config::get($place_identifier.'_profile', 'identifier')->content;
 		$locale = $this->params()->fromQuery('locale');
 		
@@ -110,7 +113,10 @@ class ProfileController extends AbstractActionController
 		}
 		$request_id = $this->params()->fromRoute('request_id');
 		
-		if ($context->getConfig('specificationMode') == 'config') $content = $context->getConfig('profile/'.$place_identifier);
+		if ($context->getConfig('specificationMode') == 'config') {
+			$content = $context->getConfig('profile/'.$place_identifier);
+			if (!$content) $content = $context->getConfig('profile/generic');
+		}
 		else $content = Config::get($place_identifier.'_profile', 'identifier')->content;
 		$locale = $this->params()->fromQuery('locale');
 
@@ -215,7 +221,10 @@ class ProfileController extends AbstractActionController
 		if ($actionIds) $actionIds = explode(',', $actionIds);
 		else $actionIds = array();
 
-		if ($context->getConfig('specificationMode') == 'config') $content = $context->getConfig('profile/'.$place_identifier);
+		if ($context->getConfig('specificationMode') == 'config') {
+			$content = $context->getConfig('profile/'.$place_identifier);
+			if (!$content) $content = $context->getConfig('profile/generic');
+		}
 		else $content = Config::get($place_identifier.'_profile', 'identifier')->content;
 		$locale = $this->params()->fromQuery('locale');
 		if (!$locale) if ($account) $locale = $account->locale; else $locale = $context->getLocale();
@@ -279,7 +288,10 @@ class ProfileController extends AbstractActionController
 		$locale = $this->params()->fromQuery('locale');
 	
 		// Retrieve the content
-		if ($context->getConfig('specificationMode') == 'config') $content = $context->getConfig('profile/'.$place_identifier);
+		if ($context->getConfig('specificationMode') == 'config') {
+			$content = $context->getConfig('profile/'.$place_identifier);
+			if (!$content) $content = $context->getConfig('profile/generic');
+		}
 		else $content = Config::get($place_identifier.'_profile', 'identifier')->content;
 	
 		$profile = Vcard::get($context->getContactId());
@@ -376,7 +388,7 @@ class ProfileController extends AbstractActionController
 		return $view;
 	}
 	
-	public function template1Action()
+	public function template1Action() // Deprecated
 	{
 		// Retrieve the context and the parameters
 		$context = Context::getCurrent();
@@ -396,7 +408,10 @@ class ProfileController extends AbstractActionController
 		$links = $context->getConfig('public/'.$instance_caption.'/links');
 		$locale = $this->params()->fromQuery('locale');
 		
-		if ($context->getConfig('specificationMode') == 'config') $content = $context->getConfig('profile/'.$place_identifier);
+		if ($context->getConfig('specificationMode') == 'config') {
+			$content = $context->getConfig('profile/'.$place_identifier);
+			if (!$content) $content = $context->getConfig('profile/generic');
+		}
 		else $content = Config::get($place_identifier.'_profile', 'identifier')->content;
 
 		$profile = Vcard::get($context->getContactId());
@@ -545,7 +560,10 @@ class ProfileController extends AbstractActionController
 		if (in_array($account_id, $matchedAccounts)) $matched = true;
 		else $matched = false;
 
-		if ($context->getConfig('specificationMode') == 'config') $content = $context->getConfig('profile/'.$place_identifier);
+		if ($context->getConfig('specificationMode') == 'config') {
+			$content = $context->getConfig('profile/'.$place_identifier);
+			if (!$content) $content = $context->getConfig('profile/generic');
+		}
 		else $content = Config::get($place_identifier.'_profile', 'identifier')->content;
 		
 		$description = Account::getDescription('pbc');

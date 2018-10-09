@@ -424,8 +424,7 @@ class Context implements InputFilterAwareInterface
     		// Send the mail to a test mailbox if a 'mailTo' setting is set (test environment) otherwise in the given mail (production)
     		if ($settings['mailTo']) $mail->addTo($settings['mailTo'], $settings['mailTo']);
     		else {
-    			foreach (explode(',', $emails) as $email)
-    			$mail->addTo($email, explode('@', $email[0]));
+    			foreach (explode(',', $emails) as $email) $mail->addTo($email, explode('@', $email)[0]);
     		}
     		if ($cc) foreach ($cc as $ccEmail => $ccName) $mail->addCc($ccEmail, ($ccName) ? $ccName : $ccEmail);
     		if ($settings['mailProtocol'] == 'Smtp') {

@@ -6,7 +6,6 @@ return array(
     	'PpitCore',
     	'PpitFlow',
     	'PpitUser',
-    	'Pbc',
     	'Application',
     ),
 

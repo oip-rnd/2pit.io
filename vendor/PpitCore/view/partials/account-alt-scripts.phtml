@@ -232,7 +232,9 @@ echo $this->partial('/partials/check-update-properties', array('entity' => 'Acco
 function postForm(id, action)
 {
   // Check validity
-  var validity = checkAccountUpdateProperties(id);
+  var validity;
+  if (action == 'delete') validity = true;
+  else validity = checkAccountUpdateProperties(id);
   if (validity) {
 
     // Create a new FormData object.

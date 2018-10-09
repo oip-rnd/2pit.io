@@ -6,7 +6,7 @@
  <?php foreach ($content['presentation'] as $sectionId => $section) : ?>
 
         <!-- Presentation section -->
-        <div class="presentation-section my-5">
+        <div class="presentation-section my-3">
           <div class="portlet">
           <div class="portlet-header">
             <ul class="nav grey lighten-4">
@@ -42,15 +42,18 @@
                   <div class="row">
 
     <?php foreach ($row as $columnId => $column) : ?>
+
                     <figure class="<?php echo $column['column-class']?>">
                       <div class="resizable ui-widget-content">
                         <span class="ui-widget-header">Drag for resizing</span>
                       </div>
-                        <<?php echo $column['type']?> class="<?php if (array_key_exists('class', $column)) echo $column['class'] ?>" style="<?php if (array_key_exists('style', $column)) echo $column['style'] ?>">
 
-      <?php if (array_key_exists('a', $column)) : ?>
+      <?php foreach ($column['paragraphs'] as $paragraphId => $paragraph) : ?>
+                        <<?php echo $paragraph['type']?> class="<?php if (array_key_exists('class', $paragraph)) echo $paragraph['class'] ?>" style="<?php if (array_key_exists('style', $paragraph)) echo $paragraph['style'] ?>">
+                          
+      <?php if (array_key_exists('a', $paragraph)) : ?>
                       <a 
-        <?php foreach ($column['a'] as $attrId => $attr) : ?>
+        <?php foreach ($paragraph['a'] as $attrId => $attr) : ?>
           <?php if ($attrId == 'href') : ?>
             <?php if (substr($attr, 4) == 'http') : ?>
                         <?php echo $attrId ?>="<?php echo $attr ?>"
@@ -63,22 +66,22 @@
         <?php endforeach;?>
                       >
 
-      <?php elseif (array_key_exists('button', $column)) : ?>
+      <?php elseif (array_key_exists('button', $paragraph)) : ?>
                       <button type="button" 
-                        <?php if (array_key_exists('class', $column['button'])) echo 'class="'.$column['button']['class'].'"' ?>
-                        <?php if (array_key_exists('id', $column['button'])) echo 'id="'.$column['button']['id'].'"' ?>
+                        <?php if (array_key_exists('class', $paragraph['button'])) echo 'class="'.$paragraph['button']['class'].'"' ?>
+                        <?php if (array_key_exists('id', $paragraph['button'])) echo 'id="'.$paragraph['button']['id'].'"' ?>
                       >
 
       <?php endif;?>
 
-      <?php if (array_key_exists('text', $column)) : ?>
-                      <span class="editable" id="presentation/<?php echo $sectionId ?>/rows/<?php echo $rowId ?>/<?php echo $columnId ?>/text<?php if (array_key_exists('text', $column)) echo '/'.$context->getLocaleFor($column['text']) ?>">
-                        <?php echo $context->localize($column['text'], $locale) ?>
+      <?php if (array_key_exists('text', $paragraph)) : ?>
+                      <span class="editable" id="presentation/<?php echo $sectionId ?>/rows/<?php echo $rowId ?>/<?php echo $paragraphId ?>/text<?php if (array_key_exists('text', $paragraph)) echo '/'.$context->getLocaleFor($paragraph['text']) ?>">
+                        <?php echo $context->localize($paragraph['text'], $locale) ?>
                       </span>
 
-      <?php elseif (array_key_exists('img', $column)) : ?>
+      <?php elseif (array_key_exists('img', $paragraph)) : ?>
                       <img style="background-color: #FFF"
-        <?php foreach ($column['img'] as $attrId => $attr) : ?>
+        <?php foreach ($paragraph['img'] as $attrId => $attr) : ?>
           <?php if ($attrId == 'src') : ?>
                         <?php echo $attrId ?>="<?php echo $this->basePath($attr) ?>"
           <?php else : ?>
@@ -89,12 +92,15 @@
 
       <?php endif;?>
 
-      <?php if (array_key_exists('a', $column)) : ?>
+      <?php if (array_key_exists('a', $paragraph)) : ?>
                       </a>
-      <?php elseif (array_key_exists('button', $column)) : ?>
+      <?php elseif (array_key_exists('button', $paragraph)) : ?>
                       </button>
       <?php endif;?>
-                      </<?php echo $column['type']?>>
+
+                      </<?php echo $paragraph['type']?>>
+      <?php endforeach;?>
+
                     </figure>
     <?php endforeach;?>
                   </div>
@@ -116,7 +122,6 @@
   <?php endif;?>
 
           </div>
-        </div>
         </div>
         <!--/ Presentation section -->
 
@@ -274,7 +279,7 @@
 <?php endif;?>
 
       <!-- Contact Form -->	
-      <section class="section pb-5 wow fadeIn" data-wow-delay="0.3s" id="survey">
+      <section class="section pb-5" id="contactForm">
         <div class="row">
 
 <?php foreach ($content['form']['introduction'] as $paragraph) : ?>
@@ -314,7 +319,6 @@
 <?php endforeach;?>
 
         </div>
-        <hr>
         <div class="row">
 
           <!--Grid column-->
