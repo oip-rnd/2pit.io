@@ -45,6 +45,8 @@ class Event implements InputFilterAwareInterface
 			'n_first' => 			['entity' => 'core_vcard', 'column' => 'n_first'],
 			'n_last' => 			['entity' => 'core_vcard', 'column' => 'n_last'],
 			'email' => 				['entity' => 'core_vcard', 'column' => 'email'],
+			'tel_work' => 			['entity' => 'core_vcard', 'column' => 'tel_work'],
+			'tel_cell' => 			['entity' => 'core_vcard', 'column' => 'tel_cell'],
 			'category' => 			['entity' => 'core_event', 'column' => 'category'],
 			'subcategory' => 		['entity' => 'core_event', 'column' => 'subcategory'],
 			'identifier' => 		['entity' => 'core_event', 'column' => 'identifier'],
@@ -180,6 +182,8 @@ class Event implements InputFilterAwareInterface
 	public $n_first;
 	public $n_last;
 	public $email;
+	public $tel_work;
+	public $tel_cell;
 	public $photo_link_id;
 	public $locale;
 
@@ -465,6 +469,8 @@ class Event implements InputFilterAwareInterface
         $this->n_first = (isset($data['n_first'])) ? $data['n_first'] : null;
         $this->n_last = (isset($data['n_last'])) ? $data['n_last'] : null;
         $this->email = (isset($data['email'])) ? $data['email'] : null;
+        $this->tel_work = (isset($data['tel_work'])) ? $data['tel_work'] : null;
+        $this->tel_cell = (isset($data['tel_cell'])) ? $data['tel_cell'] : null;
         $this->photo_link_id = (isset($data['photo_link_id'])) ? $data['photo_link_id'] : null;
         $this->locale = (isset($data['locale'])) ? $data['locale'] : null;
         $this->account_status = (isset($data['account_status'])) ? $data['account_status'] : null;
@@ -572,6 +578,8 @@ class Event implements InputFilterAwareInterface
     	$data['n_first'] = $this->n_first;
     	$data['n_last'] = $this->n_last;
     	$data['email'] = $this->email;
+    	$data['tel_work'] = $this->tel_work;
+    	$data['tel_cell'] = $this->tel_cell;
     	$data['photo_link_id'] = $this->photo_link_id;
     	$data['locale'] = $this->locale;
     	$data['account_status'] = $this->account_status;
@@ -618,6 +626,8 @@ class Event implements InputFilterAwareInterface
     	unset($data['n_first']);
     	unset($data['n_last']);
     	unset($data['email']);
+    	unset($data['tel_work']);
+    	unset($data['tel_cell']);
     	unset($data['photo_link_id']);
     	unset($data['locale']);
     	unset($data['account_status']);
@@ -670,7 +680,7 @@ class Event implements InputFilterAwareInterface
 
     	$select = Event::getTable()->getSelect()
     		->join('core_account', 'core_event.account_id = core_account.id', array('account_status' => 'status', 'account_property_1' => 'property_1', 'account_property_2' => 'property_2', 'account_property_3' => 'property_3', 'account_property_4' => 'property_4', 'account_property_5' => 'property_5', 'account_property_6' => 'property_6', 'account_property_7' => 'property_7', 'account_property_8' => 'property_8', 'account_property_9' => 'property_9', 'account_property_10' => 'property_10', 'account_property_11' => 'property_11', 'account_property_12' => 'property_12', 'account_property_13' => 'property_13', 'account_property_14' => 'property_14', 'account_property_15' => 'property_15', 'account_property_16' => 'property_16'), 'left')
-    		->join('core_vcard', 'core_account.contact_1_id = core_vcard.id', array('n_fn', 'n_first', 'n_last', 'email', 'photo_link_id', 'locale'), 'left')
+    		->join('core_vcard', 'core_account.contact_1_id = core_vcard.id', array('n_fn', 'n_first', 'n_last', 'email', 'tel_work', 'tel_cell', 'photo_link_id', 'locale'), 'left')
     		->join('core_place', 'core_event.place_id = core_place.id', array('place_identifier' => 'identifier', 'place_caption' => 'caption'), 'left')
 			->order($order);
 
@@ -754,7 +764,7 @@ class Event implements InputFilterAwareInterface
 
 		$select = Event::getTable()->getSelect()
 			->join('core_account', 'core_event.account_id = core_account.id', array('account_status' => 'status', 'account_property_1' => 'property_1', 'account_property_2' => 'property_2', 'account_property_3' => 'property_3', 'account_property_4' => 'property_4', 'account_property_5' => 'property_5', 'account_property_6' => 'property_6', 'account_property_7' => 'property_7', 'account_property_8' => 'property_8', 'account_property_9' => 'property_9', 'account_property_10' => 'property_10', 'account_property_11' => 'property_11', 'account_property_12' => 'property_12', 'account_property_13' => 'property_13', 'account_property_14' => 'property_14', 'account_property_15' => 'property_15', 'account_property_16' => 'property_16'), 'left')
-			->join('core_vcard', 'core_account.contact_1_id = core_vcard.id', array('n_fn', 'n_first', 'n_last', 'email', 'photo_link_id', 'locale'), 'left')
+			->join('core_vcard', 'core_account.contact_1_id = core_vcard.id', array('n_fn', 'n_first', 'n_last', 'email', 'tel_work', 'tel_cell', 'photo_link_id', 'locale'), 'left')
 			->join('core_place', 'core_event.place_id = core_place.id', array('place_identifier' => 'identifier', 'place_caption' => 'caption'), 'left')
 			->order($order);
 
@@ -862,6 +872,8 @@ class Event implements InputFilterAwareInterface
 	    			$event->n_first = $vcard->n_first;
 	    			$event->n_last = $vcard->n_last;
 	    			$event->email = $vcard->email;
+	    			$event->tel_work = $vcard->tel_work;
+	    			$event->tel_cell = $vcard->tel_cell;
 	    			$event->photo_link_id = $vcard->photo_link_id;
 	    			$event->locale = $vcard->locale;
 	    		}
@@ -889,6 +901,8 @@ class Event implements InputFilterAwareInterface
 		    		$event->n_first = $vcard->n_first;
 		    		$event->n_last = $vcard->n_last;
 	    			$event->email = $vcard->email;
+	    			$event->tel_work = $vcard->tel_work;
+	    			$event->tel_cell = $vcard->tel_cell;
 	    			$event->photo_link_id = $vcard->photo_link_id;
 		    		$event->locale = $vcard->locale;
 		    	}

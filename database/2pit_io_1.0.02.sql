@@ -1,0 +1,1 @@
+ALTER TABLE `core_account` ADD `credits` FLOAT NULL DEFAULT NULL AFTER `availability_constraints`;
