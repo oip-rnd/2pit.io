@@ -1,4 +1,5 @@
 config/autoload/*local.php
 public/MDB-Pro
-public/logos/probonocorpo
-public/img/probonocorpo
+public/photos/*
+config/autoload/innocoins
+

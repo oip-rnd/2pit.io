@@ -51,7 +51,7 @@
 
 			<div class="row">
 <?php if ($content['form']['options']['examples']) : ?>
-				<div class="col-md-6">&nbsp;</div>
+				<div class="col-md-6"><a class="btn btn-secondary btn-sm aMatchingSearchAction" id="aMatchingSearchAction"><i class="fa fa-user mr-1"></i> <?php echo $this->translate('Consult profiles', 'ppit-flow', $context->getLocale()) ?></a></div>
 				<div class="col-md-6"><a class="btn btn-secondary btn-sm" id="other-example"><?php echo $this->translate('Other example', 'ppit-flow', $locale) ?></a></div>
 <?php endif;?>
 
@@ -190,3 +190,25 @@
 
 	</div>
 </form>
+  
+<div class="modal fade" id="modalShowProfileForm" tabindex="-1" role="dialog" aria-labelledby="modalShowProfileLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+              <div class="modal-header text-center">
+                  <h4 class="modal-title w-100 font-weight-bold" id="modalShowProfileTitle"></h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body mx-3">
+                  <div id="modalShowProfileContent"></div>
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+
+            <button type="button" class="btn btn-link" data-dismiss="modal" aria-label="Close">
+              <?php echo $this->translate('Close', 'ppit-core', $context->getLocale()) ?>
+            </button>
+              </div>
+        </div>
+    </div>
+</div>
