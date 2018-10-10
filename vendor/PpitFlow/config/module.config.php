@@ -516,6 +516,14 @@ return array (
 				'fr_FR' => 'Ambassadeur',
 			)
 		),
+		'contributor' => array(
+			'route' => 'place',
+			'show' => true,
+			'labels' => array(
+				'en_US' => 'Contributor',
+				'fr_FR' => 'Contributeur',
+			)
+		),
 	),
 	
 	// Account Pro bono corpo
