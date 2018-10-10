@@ -1248,7 +1248,7 @@ class EventController extends AbstractActionController
 			// Atomicity
 			$connection = Event::getTable()->getAdapter()->getDriver()->getConnection();
 			$connection->beginTransaction();
-			try {
+//			try {
 		
 				if ($mode == 'requestor') {
 
@@ -1328,11 +1328,11 @@ class EventController extends AbstractActionController
 
 				$connection->commit();
 				$message = 'OK';
-			}
+/*			}
 			catch (\Exception $e) {
 				$connection->rollback();
 				$error = 'technical';
-			}
+			}*/
 		}
 		
 		// Feed the layout
