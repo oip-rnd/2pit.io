@@ -1909,6 +1909,11 @@ return array(
  		),
 	),
 
+	// Network of 2pit instances reachable from the local instance (the default simulates a group skill marketplace)
+	'instance/network' => array(
+		'group.2pit.io' => array('caption' => ['default' => 'Group skill Marketplace', 'fr_FR' => 'Plateforme de compétences groupe']),
+	),
+	
 	'instance/charter' => array(
 		'default' => 'To be completed',
 	),

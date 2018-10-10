@@ -13,7 +13,6 @@ return array (
 			'PpitFlow\Controller\Event' => 'PpitFlow\Controller\EventController',
 			'PpitFlow\Controller\Landing' => 'PpitFlow\Controller\LandingController',
 			'PpitFlow\Controller\Profile' => 'PpitFlow\Controller\ProfileController',
-//			'PpitFlow\Controller\Request' => 'PpitFlow\Controller\RequestController',
 			'PpitFlow\Controller\Survey' => 'PpitFlow\Controller\SurveyController',
 		),
 	),
@@ -64,13 +63,6 @@ return array (
 							'defaults' => array('action' => 'update'),
 						),
 					),
-/*					'accountList' => array(
-						'type' => 'segment',
-						'options' => array(
-							'route' => '/account-list[/:id]',
-							'defaults' => array('action' => 'accountList'),
-						),
-					),*/
 					'fill' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -1404,94 +1396,16 @@ table.note-report td {
 	// Profile
 	
 	'profile/generic' => array(
-		'header' => array(
-			'title' => ['default' => 'PRO BONO corpo - My profile', 'fr_FR' => 'PRO BONO corpo - Mon profil'],
-			'description' => ['default' => 'Show yourself as you would like to be seen with Your CTO', 'fr_FR' => 'Montre-toi comme tu aimerais être vu avec My CTO'],
-			'logo' => array(
-				'href' => 'home',
-				'params' => [],
-				'src' => '/logos/probonocorpo/PBC-logo-web-fleur.png',
-				'height' => 40,
-				'alt' => 'Pro bono corpo logo',
-			),
-			'intro_height' => '65%',
-			'background_image' => array(
-				'mask' => 'rgba-stylish-light',
-				'src' => ['default' => '/img/probonocorpo/bulles.jpg'],
-				'class' => 'img-fluid',
-				'alt' => 'Mountains',
-			),
-		),
 		'intro' => array(
 		),
-		'card' => array(
-			'last_name' => ['property' => 'last_name', 'value' => ['default' => 'LAST NAME', 'fr_FR' => 'NOM']],
-			'first_name' => ['property' => 'first_name', 'value' => ['default' => 'First name', 'fr_FR' => 'Prénom']],
-			'position' => ['property' => 'position', 'value' => ['default' => 'Your current position', 'fr_FR' => 'Votre poste actuel']],
-			'location' => ['property' => 'adr_city', 'value' => ['default' => 'Your location', 'fr_FR' => 'Votre localisation']],
-			'service' => ['property' => 'org', 'value' => ['default' => 'Votre service', 'fr_FR' => 'Votre service']],
-			['type' => 'p', 'class' => 'section-description', 'text' => ['default' => 'RESG/BSC/H2R']],
-		),
-		'features' => array(
-			'hard_skill' => [
-				'type' => 'profile',
-				'category' => 'hard_skill',
-				'property' => 'description',
-				'title' => ['default' => 'Hard skills', 'fr_FR' => 'Compétences hard'],
-				'class' => 'teal-text pb-1',
-				'i_class' => 'fa fa-wrench fa-lg blue-text',
-				'value' => [
-					['type' => 'h4', 'class' => 'mb-4', 'text' => ['default' => 'Type in a title for summarizing your skills', 'fr_FR' => 'Saisissez un titre résumant vos compétences']],
-					['type' => 'p', 'text' => ['default' => 'Lorem ipsum <strong>dolor</strong> sit amet, consectetur adipisicing elit. Cras gravida orci eu lacus feugiat, nec euismod ante posuere.']],
-				],
-			],
-			'soft_skill' => [
-				'type' => 'profile',
-				'category' => 'soft_skill',
-				'property' => 'description',
-				'title' => ['default' => 'Soft skills', 'fr_FR' => 'Compétences soft'],
-				'class' => 'teal-text pb-1',
-				'i_class' => 'fa fa-users fa-lg purple-text',
-				'value' => [
-					['type' => 'h4', 'class' => 'mb-4', 'text' => ['default' => 'Sed lacinia dictum posuere']],
-					['type' => 'p', 'text' => ['default' => 'Vestibulum vel consectetur velit. Nulla tincidunt dolor eget tortor pretium, sit amet porttitor ligula bibendum.']],
-				],
-			],
-			'inclination' => [
-				'type' => 'profile',
-				'category' => 'inclination',
-				'property' => 'description',
-				'title' => ['default' => 'Inclinations', 'fr_FR' => 'Appétences'],
-				'class' => 'teal-text pb-1',
-				'i_class' => 'fa fa-heart fa-lg red-text',
-				'value' => [
-					['type' => 'h4', 'class' => 'mb-4', 'text' => ['default' => 'Fusce facilisis arcu auctor, feugiat magna euismod, consequat quam.']],
-					['type' => 'p', 'text' => ['default' => 'Etiam quis justo tincidunt nunc molestie molestie. Suspendisse venenatis ipsum sagittis risus egestas aliquam.']],
-				],
-			],
-			'quality' => [
-				'type' => 'profile',
-				'category' => 'quality',
-				'property' => 'description',
-				'title' => ['default' => 'Qualities', 'fr_FR' => 'Qualités'],
-				'class' => 'teal-text pb-1',
-				'i_class' => 'fa fa-thumbs-up fa-lg green-text',
-				'value' => [
-					['type' => 'h4', 'class' => 'mb-4', 'text' => ['default' => 'Quisque venenatis, enim quis lacinia sollicitudin']],
-					['type' => 'p', 'text' => ['default' => 'Donec suscipit risus ac orci suscipit porttitor. Aliquam porta fringilla sem vehicula fermentum. In dui velit, pellentesque vel sem eu, placerat porta nibh.']],
-				],
-			],
-		),
-		'feature-box' => array(
-		),
 		'form' => array(
-			'introduction' => array(
+			'incentive' => array(
 				array(
 					'type' => 'p',
-					'class' => 'section-description',
+					'class' => 'section-description text-warning',
 					'text' => array(
-						'default' => 'We care about confidentiality. The informations provided here will not be communicated to anyone',
-						'fr_FR' => 'Nous sommes attachés à la confidentialité. Les informations saisies sont uniquement destinées à améliorer la mise en relation. Elles ne peuvent en aucun cas être communiquées à des tiers.',
+						'default' => 'We invite you to declare at least one skill or a short personal sentence for a start. You can come back on your profile and complete after.',
+						'fr_FR' => 'Nous t’invitons à saisir au moins une compétence ou une petite phrase pour commencer. Tu pourras revenir sur ton profil pour compléter ensuite.',
 					),
 				),
 			),
@@ -1500,6 +1414,7 @@ table.note-report td {
 				'n_last' => ['class' => 'col-md-6'],
 				'email' => ['class' => 'col-md-6', 'protected' => true],
 				'tel_work' => ['class' => 'col-md-6', 'protected' => true],
+				'locale' => ['class' => 'col-md-6'],
 				'tiny_1' => ['class' => 'col-md-6', 'definition' => 'inline', 'type' => 'input', 'labels' => ['default' => 'Service', 'fr_FR' => 'Service']],
 				'tiny_4' => ['class' => 'col-md-6', 'definition' => 'inline', 'type' => 'input', 'labels' => ['default' => 'Location', 'fr_FR' => 'Localisation']],
 				'tiny_3' => ['feature' => 'skill', 'class' => 'col-md-6', 'definition' => 'inline', 'type' => 'keywords', 'labels' => ['default' => 'My skills / wishes', 'fr_FR' => 'Que souhaitez-vous partager (compétences / appétences)'], 'placeholder' => ['default' => 'Ex. finance, design thinking, video editing...', 'fr_FR' => 'Ex. finance, design thinking, montage vidéo...']],
@@ -1664,8 +1579,8 @@ table.note-report td {
 		),
 	
 		'status' => array(
-			'new' => ['labels' => ['default' => 'Registration in progress', 'fr_FR' => 'Inscriptions en cours'], 'value' => 25, 'color' => 'bg-danger'],
-			'connected' => ['labels' => ['default' => 'Registration closed', 'fr_FR' => 'Inscriptions closes'], 'value'  => 50, 'color' => 'bg-info'],
+			'new' => ['labels' => ['default' => 'Subscription in progress', 'fr_FR' => 'Inscriptions en cours'], 'value' => 25, 'color' => 'bg-danger'],
+			'connected' => ['labels' => ['default' => 'Subscription closed', 'fr_FR' => 'Inscriptions closes'], 'value'  => 50, 'color' => 'bg-info'],
 			'realized' => ['labels' => ['default' => 'Is currently happening', 'fr_FR' => 'A lieu en ce moment'], 'value' => 75, 'color' => 'bg-warning'],
 			'completed' => ['labels' => ['default' => 'Completed', 'fr_FR' => 'Terminé'], 'value' => 100, 'color' => 'bg-success'],
 		),
@@ -1686,8 +1601,8 @@ table.note-report td {
 			'Matching' => array(
 				'contact' => ['icon' => 'handshake', 'labels' => ['default' => 'Contact', 'fr_FR' => 'Contacter']],
 				'abandon' => ['icon' => 'trash-alt', 'labels' => ['default' => 'Abandon my selection', 'fr_FR' => 'Abandonner ma sélection']],
-				'accept' => ['icon' => 'thumbs-up', 'labels' => ['default' => 'Accept the registration', 'fr_FR' => 'Accepter son inscription']],
-				'decline' => ['icon' => 'thumbs-down', 'labels' => ['default' => 'Decline the registration', 'fr_FR' => 'Décliner son inscription']],
+				'accept' => ['icon' => 'thumbs-up', 'labels' => ['default' => 'Accept the subscription', 'fr_FR' => 'Accepter son inscription']],
+				'decline' => ['icon' => 'thumbs-down', 'labels' => ['default' => 'Decline the subscription', 'fr_FR' => 'Décliner son inscription']],
 				'feedback' => ['icon' => 'comments', 'labels' => ['default' => 'Give a feedback', 'fr_FR' => 'Donner un feedback']],
 			),
 			'Public' => array(
@@ -1754,14 +1669,14 @@ table.note-report td {
 				),
 				'Contributor' => array(
 					'new' => ['default' => 'Wishing to participate to this event?', 'fr_FR' => 'Envie de participer à cet événement ?'],
-					'linked' => ['default' => 'The organizer is notified of your registration request', 'fr_FR' => 'L’organisateur est notifié votre demande d’inscription'],
+					'linked' => ['default' => 'The organizer is notified of your subscription request', 'fr_FR' => 'L’organisateur est notifié votre demande d’inscription'],
 					'contributor_feedback' => ['default' => 'This event is waiting for a feedback from your side', 'fr_FR' => 'Cet événement est en attente de feedback de votre part'],
 					'requestor_feedback' => ['default' => 'This event is waiting for a feedback from the organizer’s side', 'fr_FR' => 'Cet événement est en attente de feedback de la part de l’organisateur'],
 					'completed' => ['default' => 'This event is over. Thank you for your participation', 'fr_FR' => 'Cet événement est terminé. Merci de votre participation'],
 				),
 				'Public' => array(
 					'new' => ['default' => 'Wishing to participate to this event?', 'fr_FR' => 'Envie de participer à cet événement ?'],
-					'linked' => ['default' => 'The organizer is notified of your registration request', 'fr_FR' => 'L’organisateur est notifié de votre demande d’inscription'],
+					'linked' => ['default' => 'The organizer is notified of your subscription request', 'fr_FR' => 'L’organisateur est notifié de votre demande d’inscription'],
 					'contributor_feedback' => ['default' => 'This event is waiting for a feedback from your side', 'fr_FR' => 'Cet événement est en attente de feedback de votre part'],
 					'requestor_feedback' => ['default' => 'This event is waiting for a feedback from the organizer’s side', 'fr_FR' => 'Cet événement est en attente de feedback de la part de l’organisateur'],
 					'completed' => ['default' => 'This event is over', 'fr_FR' => 'Cet événement est terminé'],
@@ -1810,7 +1725,16 @@ table.note-report td {
 				'email' => [],
 			),
 		),
-	
+
+		'rewards' => array(
+			'brand' => 'Innocoin',
+			'balance' => array(
+				'goal' => ['labels' => ['default' => 'Goal', 'fr_FR' => 'Objectif']],
+				'earned' => ['labels' => ['default' => 'Earned', 'fr_FR' => 'Gagné']],
+				'spent' => ['labels' => ['default' => 'Spent', 'fr_FR' => 'Dépensé']],
+			),
+		),
+		
 		'feedback' => array(
 			'title' => array(
 				'requestor' => array(

@@ -5,6 +5,19 @@ toastr.error('<?php echo $this->translate('Technical information: ', 'ppit-core'
 toastr.error('<?php echo $this->translate('An error has occurred, please try again later', 'ppit-core', $context->getLocale()) ?>');
 <?php endif;?>
 
+$('.aMatchingSearchAction').click(function () {
+  var xhttp = new XMLHttpRequest();
+  xhttp.open('GET', '<?php echo $this->url('profile/list') ?>', true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      $('#modalShowProfileTitle').html('<?php echo $this->translate('Profile', 'ppit-flow', $locale) ?>');
+      $('#modalShowProfileContent').html(xhttp.responseText);
+      $('#modalShowProfileForm').modal('show');
+    }
+  };
+  xhttp.send();
+});
+
 $('.datepicker').pickadate({
 	monthsFull: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
 	weekdaysShort: ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'],

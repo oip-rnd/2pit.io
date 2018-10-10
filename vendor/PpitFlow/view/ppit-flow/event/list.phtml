@@ -28,8 +28,8 @@
     <?php endif;?>
         &nbsp;&nbsp;|&nbsp;&nbsp;
         <?php echo $request['caption'] ?>&nbsp;&nbsp;
-    <?php if ($request['value']) : ?>
-        <span class="badge red"><?php echo $request['value']?> Innocoins</span>
+    <?php if (array_key_exists('rewards', $content) && $request['value']) : ?>
+        <span class="badge red"><?php echo $request['value']?> <?php echo $content['rewards']['brand'] ?>s</span>
     <?php endif;?>
         &nbsp;&nbsp;|&nbsp;&nbsp;
 
@@ -151,6 +151,9 @@
       <h6 class="mt-0 grey-text">
         <span class="font-weight-bold">
           <?php echo $account['n_fn'] ?>
+    <?php if ($account['platform']) : ?>
+          (<?php echo $context->localize($context->getConfig('instance/network')[$account['platform']]['caption']) ?>)
+    <?php endif;?>
         </span>&nbsp;&nbsp;
         <a class="text-secondary font-small aMatchingDetailAction" id="aMatchingDetailAction-<?php echo $requestId ?>-<?php echo $account_id ?>"><i class="fa fa-search mr-1"></i></a>
 
@@ -164,7 +167,7 @@
         <span class="badge badge-success"><?php echo $this->translate('Feedback received', 'ppit-flow', $context->getLocale()) ?></span>
     <?php endif;?>
 
-    <?php if (array_key_exists('action', $request['matching_log'][$account['id']]) && $request['matching_log'][$account['id']]['action'] == 'propose') : ?>
+    <?php if (array_key_exists('action', $request['matching_log'][$account_id]) && $request['matching_log'][$account_id]['action'] == 'propose') : ?>
 
     <?php 
     $datetime1 = date_create($request['matching_log'][$account['id']]['date']);
@@ -172,7 +175,7 @@
     $age = date_diff($datetime1, $datetime2)->format("%a");
     ?>
         <span class="badge <?php echo ($age > 5) ? 'badge-danger pending_contact' : 'badge-warning' ?>"><?php echo $this->translate('To be contacted', 'ppit-flow', $context->getLocale()) ?></span>
-    <?php elseif (array_key_exists('action', $request['matching_log'][$account['id']]) && $request['matching_log'][$account['id']]['action'] == 'accept') : ?>
+    <?php elseif (array_key_exists('action', $request['matching_log'][$account_id]) && $request['matching_log'][$account_id]['action'] == 'accept') : ?>
       <?php if ($request['status'] == 'realized') : ?>
         <span class="badge badge-danger"><?php echo $this->translate('Feedback expected', 'ppit-flow', $context->getLocale()) ?></span>
       <?php else : ?>
