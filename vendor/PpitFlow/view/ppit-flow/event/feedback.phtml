@@ -11,7 +11,7 @@
 	<section class="section feature-box">
       <h3 class="font-weight-bold text-center h3 my-3"><?php echo $context->localize($content['feedback']['title'], $locale) ?></h3>
 <?php if ($message || $error) : ?>
-      <a href="<?php echo $this->url('home') ?>" class=""><?php echo $this->translate('Return to list', 'ppit-core', $context->getLocale()) ?></a>
+      <a href="<?php echo $this->url('flowEvent/index', ['type' => $type]) ?>" class=""><?php echo $this->translate('Return to list', 'ppit-core', $context->getLocale()) ?></a>
 <?php endif;?>
    	</section>
 
