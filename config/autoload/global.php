@@ -12,13 +12,6 @@
  */
 
 return array(
-    'db' => array(
-        'driver'         => 'Pdo',
-        'dsn'            => 'mysql:dbname=2pit_io;host=localhost:3306',
-        'driver_options' => array(
-            PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
-        ),
-    ),
     'service_manager' => array(
         'factories' => array(
             'Zend\Db\Adapter\Adapter'
