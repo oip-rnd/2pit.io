@@ -173,7 +173,7 @@ class ProfileController extends AbstractActionController
 				$result = Account::getList('pbc', ['status' => 'active', 'profile_tiny_2' => $skill], '+name', null);
 				foreach ($result as $account_id => $account) {
 					
-					// Exclude from the potential matching list myself aand the already matched accounts
+					// Exclude from the potential matching list myself and the already matched accounts
 					if ($account_id != $myAccountId && (!$request->matched_accounts || !in_array($account_id, explode(',', $request->matched_accounts)))) {
 						$accounts[$account_id] = $account->getProperties();
 					}
@@ -184,8 +184,8 @@ class ProfileController extends AbstractActionController
 			$result = Account::getList('pbc', ['status' => 'active'], '+name', null);
 			foreach ($result as $account_id => $account) {
 				
-				// Exclude from the potential matching list myself aand the already matched accounts
-				if ($account_id != $myAccountId && (!$request->matched_accounts || !in_array($account_id, explode(',', $request->matched_accounts)))) {
+				// Exclude from the potential matching list myself
+				if ($account_id != $myAccountId) {
 					$accounts[$account_id] = $account->getProperties();
 				}
 			}

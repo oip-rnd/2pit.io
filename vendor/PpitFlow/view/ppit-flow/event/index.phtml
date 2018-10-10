@@ -90,15 +90,38 @@
         <div id="requests"></div>
       </div>
 
-<?php if ($type == 'event' && $account->credits) : ?>
+<?php if (array_key_exists('rewards', $content) && $account->credits) : ?>
       <div class="col-md-3">
-        <div class="text-center">
-          <h5 class="h5">Innocoins acquisition</h5>
-          <div class="min-chart" id="chart-sales" data-percent="<?php echo $account->credits / 50 * 100 ?>"><span class="percent"></span>
-            <div class="label orange">Registered: <strong><?php echo $context->formatFloat(50, 2) ?></strong></div>
-            <div class="label orange">Earned: <strong><?php echo $context->formatFloat($account->credits, 2) ?></strong></div>
+
+            <!--Card-->
+            <div class="card card-cascade narrower mt-5">
+
+              <!--Card image-->
+              <div class="view view-cascade gradient-card-header blue">
+                <h5 class="mb-0"><?php echo $content['rewards']['brand'] ?>s acquisition</h5>
+              </div>
+              <!--/Card image-->
+
+              <!--Card content-->
+              <div class="card-body card-body-cascade text-center">
+  <?php
+  $balance = array(); 
+  foreach (explode(',', $account->credits) as $row) {
+    $row2 = explode(':', $row);
+    $balance[$row2[0]] = $row2[1];
+  }
+  ?>
+          <div class="min-chart" id="chart-sales" data-percent="<?php echo $balance['earned'] / $balance['goal'] * 100 ?>"><span class="percent"></span>
+  <?php foreach ($balance as $key => $value) : ?>
+            <div class="label orange"><?php echo $context->localize($content['rewards']['balance'][$key]['labels']) ?>: <strong><?php echo $context->formatFloat($value, 2) ?></strong></div>
+  <?php endforeach;?>
           </div>
-        </div>
+
+              </div>
+              <!--/.Card content-->
+
+            </div>
+            <!--/.Card-->
       </div>
 <?php endif;?>
     </div>

@@ -23,7 +23,8 @@ class EventController extends AbstractActionController
 	{
 		// Retrieve the context and the parameters
 		$context = Context::getCurrent();
-		$type = $this->params()->fromRoute('type', 'request');
+		if ($context->hasRole('contributor')) $defaultType = 'request'; else $defaultType = 'event';
+		$type = $this->params()->fromRoute('type', $defaultType);
 		$description = Event::getDescription('request');
 		$instance_caption = $context->getInstance()->caption;
 		$place_identifier = $this->params()->fromRoute('place_identifier');
@@ -177,12 +178,16 @@ class EventController extends AbstractActionController
 
 				$matchedAccounts = array();
 				if ($request->matched_accounts) {
-					foreach (explode(',', $request->matched_accounts) as $matchedId) {
+					foreach (explode(',', $request->matched_accounts) as $fullMatchedId) {
+						$fullMatchedIdExpl = explode('@', $fullMatchedId); // Ids can be local or extended to other platforms
+						$matchedId = $fullMatchedIdExpl[0];
+						$platform = array_key_exists(1, $fullMatchedIdExpl) ? $fullMatchedIdExpl[1] : null;
 						$matchingActions = array();
-						$matchedAccounts[$matchedId] = Account::get($matchedId)->properties;
-
+						$matchedAccounts[$fullMatchedId] = Account::get($matchedId)->properties;
+						$matchedAccounts[$fullMatchedId]['platform'] = $platform;
+						
 						// Actions depending on the current matching status
-						$currentMatching = $request->matching_log[$matchedId];
+						$currentMatching = $request->matching_log[$fullMatchedId];
 						if (array_key_exists('action', $currentMatching) && $currentMatching['action'] == 'propose') {
 							$matchingActions['accept'] = $content['actions']['Matching']['accept'];
 							$matchingActions['decline'] = $content['actions']['Matching']['decline'];
@@ -198,7 +203,7 @@ class EventController extends AbstractActionController
 							}
 						}
 						
-						$matchedAccounts[$matchedId]['actions'] = $matchingActions;
+						$matchedAccounts[$fullMatchedId]['actions'] = $matchingActions;
 					}
 				}
 				$content['data'][$request->id]['matched_accounts'] = $matchedAccounts;
@@ -217,7 +222,6 @@ class EventController extends AbstractActionController
 				elseif ($request->status == 'realized') {
 					$requestorFeedbackGiven = true;
 					$contributorFeedbackGiven = true;
-//					if (!array_key_exists($request->account_id, $request->feedbacks)) $content['detail']['title'] = $content['detail']['title']['Owner']['requestor_feedback'];
 				}
 				elseif ($request->status == 'completed') {
 					$actions['consultFeedback'] = $content['actions']['Owner']['consultFeedback'];
