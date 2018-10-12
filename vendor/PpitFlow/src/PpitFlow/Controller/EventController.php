@@ -25,7 +25,7 @@ class EventController extends AbstractActionController
 		$context = Context::getCurrent();
 		if ($context->hasRole('contributor')) $defaultType = 'request'; else $defaultType = 'event';
 		$type = $this->params()->fromRoute('type', $defaultType);
-		$description = Event::getDescription('request');
+		$description = Event::getDescription($type);
 		$instance_caption = $context->getInstance()->caption;
 		$place_identifier = $this->params()->fromRoute('place_identifier');
 		if ($place_identifier) $place = Place::get($place_identifier, 'identifier');
@@ -55,6 +55,61 @@ class EventController extends AbstractActionController
 		}
 		else $content = Config::get($place_identifier.'_'.$type, 'identifier')->content;
 
+		// compute ranking in gaming mode
+		$myBalance = null;
+		if (array_key_exists('rewards', $content)) {
+/*
+			// Collect the participations
+			$ranking = array();
+			$cursor = Event::getListV2($description, ['status' => 'completed']);
+			foreach ($cursor as $eventId => $event) {
+				$matchedAccounts = explode(',', $event->matched_accounts);
+				foreach ($matchedAccounts as $account_id) {
+					if (!array_key_exists($account_id, $ranking)) $ranking[$account_id] = $event->value;
+					else $ranking[$account_id] += $event->value;
+				}
+			}*/
+
+			// Rank the profiles
+			$accountType = $context->getConfig('landing_account_type');
+			$ranking = array();
+			$cursor = Account::getList($accountType, ['status' => 'active']);
+			foreach ($cursor as $anyAccountId => $anyAccount) {
+				if ($anyAccount->credits) {
+					$balance = array();
+					foreach (explode(',', $anyAccount->credits) as $row) {
+						$row = explode(':', $row);
+						$balance[$row[0]] = $row[1];
+					}
+					if ($anyAccountId == $account->id) $myBalance = $balance;
+					if ($anyAccount->credits && array_key_exists('earned', $balance)) {
+						$ranking[$anyAccountId] = $balance['earned'];
+					}
+				}
+			}
+
+			if (array_key_exists($account->id, $ranking)) {
+
+				// Rank the participants and find my rank
+				arsort($ranking);
+				$ranks = array();
+				$currentRank = 0;
+				$currentWeight = 0;
+				foreach($ranking as $account_id => $weight) {
+					if ($currentWeight != $weight) {
+						$currentRank++;
+						$currentWeight = $weight;
+						$ranks[$currentWeight] = 1;
+					}
+					else $ranks[$currentWeight]++;
+					if ($ranking[$account->id] == $currentWeight) $myBalance['rank'] = $currentRank;
+				}
+				
+				// Add a sign to indicate my rank is shared with other participant
+				if ($ranks[$ranking[$account->id]] > 1) $myBalance['rank'] = '='.$myBalance['rank'];
+			}
+		}
+		
 		// Profile form
 		if ($context->getConfig('specificationMode') == 'config') {
 			$profileForm = $context->getConfig('profile/'.$place_identifier)['form'];
@@ -118,6 +173,7 @@ class EventController extends AbstractActionController
 			'place_identifier' => $place_identifier,
 			'account' => $account,
 			'content' => $content,
+			'myBalance' => $myBalance,
 		));
 		return $view;
 	}
@@ -146,7 +202,7 @@ class EventController extends AbstractActionController
 			$predicate = $this->params()->fromQuery($propertyId, null);
 			if ($predicate !== null) $filters[$propertyId] = $predicate;
 		}
-		
+
 		// Retrieve the content
 		if ($context->getConfig('specificationMode') == 'config') {
 			$content = $context->getConfig($type.'/'.$place->identifier);
