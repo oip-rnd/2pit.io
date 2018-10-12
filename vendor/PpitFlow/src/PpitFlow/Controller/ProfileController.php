@@ -64,7 +64,8 @@ class ProfileController extends AbstractActionController
 		$viewData = array();
 		$viewData['photo_link_id'] = ($account->photo_link_id) ? $account->photo_link_id : 'no-photo.png';
 		
-		$accounts = Account::getList('pbc', ['status' => 'active'], '+name', null);
+		$accountType = $context->getConfig('landing_account_type');
+		$accounts = Account::getList($accountType, ['status' => 'active'], '+name', null);
 		$viewData['accounts'] = array();
 		foreach ($accounts as $accountId => $account) $viewData['accounts'][$accountId] = $account->getProperties();
 
@@ -76,7 +77,7 @@ class ProfileController extends AbstractActionController
 			'account_id' => $account->id,
 			'panel' => $this->params()->fromQuery('panel', null),
 			'token' => $this->params()->fromQuery('hash', null),
-			'accountType' => $context->getConfig('landing_account_type'),
+			'accountType' => $accountType,
 			'header' => $content['header'],
 			'intro' => $content['intro'],
 			'footer' => $content['footer'],
