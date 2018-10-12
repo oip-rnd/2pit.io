@@ -68,6 +68,34 @@
     </div>
   </li>
 
+<!-- Date -->
+
+  <?php elseif ($navItem['type'] == 'date') : ?>
+ 
+  <li class="nav-item">
+    <div>
+      <!-- Search form -->
+      <form class="form-inline">
+        <i class="fa fa-calendar" aria-hidden="true"></i>
+        <input class="form-control form-control-sm datepicker homeSearchInput ml-3 w-75" id="homeSearch-<?php echo $navItem['property'] ?>" type="text" placeholder="<?php echo $context->localize($navItem['labels'], $locale) ?>" aria-label="">
+      </form>
+    </div>
+  </li>
+
+<!-- Search input -->
+
+  <?php elseif ($navItem['type'] == 'input') : ?>
+ 
+  <li class="nav-item">
+    <div>
+      <!-- Search form -->
+      <form class="form-inline">
+        <i class="fa fa-search" aria-hidden="true"></i>
+        <input class="form-control form-control-sm homeSearchInput ml-3 w-75" id="homeSearch-<?php echo $navItem['property'] ?>" type="text" placeholder="<?php echo $context->localize($navItem['labels'], $locale) ?>" aria-label="">
+      </form>
+    </div>
+  </li>
+
 <!-- New event -->
 
   <?php elseif ($navItem['type'] == 'new') : ?>
@@ -90,7 +118,7 @@
         <div id="requests"></div>
       </div>
 
-<?php if (array_key_exists('rewards', $content) && $account->credits) : ?>
+<?php if ($myBalance) : ?>
       <div class="col-md-3">
 
             <!--Card-->
@@ -104,18 +132,17 @@
 
               <!--Card content-->
               <div class="card-body card-body-cascade text-center">
-  <?php
-  $balance = array(); 
-  foreach (explode(',', $account->credits) as $row) {
-    $row2 = explode(':', $row);
-    $balance[$row2[0]] = $row2[1];
-  }
-  ?>
-          <div class="min-chart" id="chart-sales" data-percent="<?php echo $balance['earned'] / $balance['goal'] * 100 ?>"><span class="percent"></span>
-  <?php foreach ($balance as $key => $value) : ?>
-            <div class="label orange"><?php echo $context->localize($content['rewards']['balance'][$key]['labels']) ?>: <strong><?php echo $context->formatFloat($value, 2) ?></strong></div>
-  <?php endforeach;?>
+  <?php if (array_key_exists('goal', $myBalance)) : ?>
+          <div class="min-chart" id="chart-sales" data-percent="<?php echo $myBalance['earned'] / $myBalance['goal'] * 100 ?>"><span class="percent"></span>
+    <?php foreach ($myBalance as $key => $value) : ?>
+            <div class="label orange"><?php echo $context->localize($content['rewards']['balance'][$key]['labels']) ?>: <strong><?php echo ($content['rewards']['balance'][$key]['precision']) ? $context->formatFloat($value, $content['rewards']['balance'][$key]['precision']) : $value ?></strong></div>
+    <?php endforeach;?>
           </div>
+  <?php else : ?>
+    <?php foreach ($myBalance as $key => $value) : ?>
+            <div><?php echo $context->localize($content['rewards']['balance'][$key]['labels']) ?>: <strong><?php echo ($content['rewards']['balance'][$key]['precision']) ? $context->formatFloat($value, $content['rewards']['balance'][$key]['precision']) : $value ?></strong></div>
+    <?php endforeach;?>
+  <?php endif;?>
 
               </div>
               <!--/.Card content-->
