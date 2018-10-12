@@ -2070,62 +2070,68 @@ return array(
 
 	'menus/synapps' => array(
 		'entries' => array(
-					'suspect' => array(
-							'route' => 'account/index',
-							'params' => array('entry' => 'suspect', 'type' => 'generic', 'app' => 'synapps'),
-							'glyphicon' => 'glyphicon-user',
-							'fa' => 'far fa-address-card fa-lg',
-							'label' => array(
-									'en_US' => 'Suspects',
-									'fr_FR' => 'Suspects',
-							),
-					),
-					'contact' => array(
-							'route' => 'account/index',
-							'params' => array('entry' => 'contact', 'type' => 'generic', 'app' => 'synapps'),
-							'glyphicon' => 'glyphicon-user',
-							'fa' => 'far fa-address-card fa-lg',
-							'label' => array(
-									'en_US' => 'Contacts',
-									'fr_FR' => 'Contacts',
-							),
-					),
-					'account' => array(
-							'route' => 'account/index',
-							'params' => array('entry' => 'account', 'type' => 'generic', 'app' => 'synapps'),
-							'glyphicon' => 'glyphicon-user',
-							'label' => array(
-									'en_US' => 'Actives',
-									'fr_FR' => 'Actifs',
-							),
-					),
-					'survey' => array(
-							'route' => 'event/index',
-							'params' => array('entry' => 'event', 'type' => 'survey', 'app' => 'synapps'),
-							'glyphicon' => 'glyphicon-check',
-							'fa' => 'far fa-calendar-check fa-lg',
-							'label' => array(
-									'en_US' => 'Surveys',
-									'fr_FR' => 'Sondages',
-							),
-					),
-					'email' => array(
-							'route' => 'event/index',
-							'params' => array('entry' => 'email', 'type' => 'email', 'app' => 'synapps'),
-							'glyphicon' => 'glyphicon-send',
-							'fa' => 'far fa-paper-plane fa-lg',
-							'label' => array(
-									'en_US' => 'Emails',
-									'fr_FR' => 'Emails',
-							),
-					),
+			'suspect' => array(
+				'route' => 'account/indexAlt',
+				'params' => array('entry' => 'contact', 'type' => 'pbc', 'app' => 'synapps'),
+				'glyphicon' => 'glyphicon-user',
+				'fa' => 'far fa-address-card fa-lg',
+				'label' => array(
+					'en_US' => 'All the contacts',
+					'fr_FR' => 'Tous contacts',
+				),
+			),
+			'contact' => array(
+				'route' => 'account/indexAlt',
+				'params' => array('entry' => 'account', 'type' => 'pbc', 'app' => 'synapps'),
+				'glyphicon' => 'glyphicon-user',
+				'fa' => 'far fa-address-card fa-lg',
+				'label' => array(
+					'en_US' => 'Active',
+					'fr_FR' => 'Actifs',
+				),
+			),
+			'account' => array(
+				'route' => 'account/indexAlt',
+				'params' => array('entry' => 'group', 'type' => 'group', 'app' => 'synapps'),
+				'glyphicon' => 'glyphicon-user',
+				'label' => array(
+					'en_US' => 'Groups',
+					'fr_FR' => 'Groupes',
+				),
+			),
+			'request' => array(
+				'route' => 'event/indexAlt',
+				'params' => array('type' => 'request', 'app' => 'synapps'),
+				'label' => array(
+					'en_US' => 'Requests',
+					'fr_FR' => 'Demandes',
+				),
+			),
+			'event' => array(
+				'route' => 'event/indexAlt',
+				'params' => array('type' => 'event', 'app' => 'synapps'),
+				'label' => array(
+					'en_US' => 'Events',
+					'fr_FR' => 'Événements',
+				),
+			),
+			'email' => array(
+				'route' => 'event/index',
+				'params' => array('entry' => 'email', 'type' => 'email', 'app' => 'synapps'),
+				'glyphicon' => 'glyphicon-send',
+				'fa' => 'far fa-paper-plane fa-lg',
+				'label' => array(
+					'en_US' => 'Emails',
+					'fr_FR' => 'Emails',
+				),
+			),
 		),
 		'labels' => array(
 			'default' => 'Synapps',
 			'fr_FR' => 'Synapps',
 		),
 	),
-
+	
 	'admin/p-pit-admin' => array(
 			'place',
 	),
