@@ -1547,7 +1547,9 @@ table.note-report td {
 				'publicMode' => ['type' => 'mode', 'value' => 'Public', 'labels' => ['default' => 'All the events', 'fr_FR' => 'Tous les événements']],
 				'ownerMode' => ['type' => 'mode', 'value' => 'Owner', 'labels' => ['default' => 'My events', 'fr_FR' => 'Mes événements']],
 				'contributorMode' => ['type' => 'mode', 'value' => 'Contributor', 'labels' => ['default' => 'My participations', 'fr_FR' => 'Mes participations']],
-				'skills' => ['type' => 'search', 'property' => 'property_2', 'labels' => ['default' => 'Keywords', 'fr_FR' => 'Mots clés']],
+//				'skills' => ['type' => 'search', 'property' => 'property_2', 'labels' => ['default' => 'Keywords', 'fr_FR' => 'Mots clés']],
+				'begin_date' => ['type' => 'date', 'property' => 'begin_date', 'labels' => ['default' => 'Date', 'fr_FR' => 'Date']],
+				'location' => ['type' => 'input', 'property' => 'location', 'labels' => ['default' => 'Location', 'fr_FR' => 'Lieu']],
 				'new' => ['type' => 'new', 'labels' => ['default' => 'New event', 'fr_FR' => 'Nouvel événement']],
 			)
 		),
@@ -1729,9 +1731,10 @@ table.note-report td {
 		'rewards' => array(
 			'brand' => 'Innocoin',
 			'balance' => array(
-				'goal' => ['labels' => ['default' => 'Goal', 'fr_FR' => 'Objectif']],
-				'earned' => ['labels' => ['default' => 'Earned', 'fr_FR' => 'Gagné']],
-				'spent' => ['labels' => ['default' => 'Spent', 'fr_FR' => 'Dépensé']],
+				'goal' => ['labels' => ['default' => 'Goal', 'fr_FR' => 'Objectif'], 'precision' => 2],
+				'earned' => ['labels' => ['default' => 'My score', 'fr_FR' => 'Mon score'], 'precision' => 2],
+				'spent' => ['labels' => ['default' => 'Spent', 'fr_FR' => 'Dépensé'], 'precision' => 2],
+				'rank' => ['labels' => ['default' => 'My rank', 'fr_FR' => 'Mon rang'], 'precision' => 0]
 			),
 		),
 		

@@ -22,13 +22,13 @@ if (mode == '<?php echo $navItem['value'] ?>') $('#aMode<?php echo $navItem['val
 
 <!-- Search -->
 
-<?php elseif ($navItem['type'] == 'search') : ?>
-  <?php
-  $propertyId = $navItem['property'];
-  $property = $detail['properties'][$propertyId];
-  ?>
+  <?php elseif ($navItem['type'] == 'search') : ?>
+    <?php
+    $propertyId = $navItem['property'];
+    $property = $detail['properties'][$propertyId];
+    ?>
 
-  <?php if ($property['type'] == 'chips') : ?>
+    <?php if ($property['type'] == 'chips') : ?>
 
 // Skills search
 var homeSearch_<?php echo $propertyId ?> = {
@@ -74,11 +74,46 @@ showList();
 });
 
     <?php endif; ?>
+
+// Input filter
+
+<?php elseif (in_array($navItem['type'], ['input'])) : ?>
+    <?php
+      $propertyId = $navItem['property'];
+      $property = $detail['properties'][$propertyId];
+    ?>
+
+$('#homeSearch-<?php echo $propertyId ?>').keyup(function () {
+  var value = $('#homeSearch-<?php echo $propertyId ?>').val();
+  if (value && value.length > 2) {
+    $('.aMode').removeClass('active');
+    $('#aModePublic').addClass('active');
+    mode = 'Public';
+    showList();
+  }
+});
+
+// Date filter
+
+  <?php elseif ($navItem['type'] == 'date') : ?>
+    <?php
+      $propertyId = $navItem['property'];
+      $property = $detail['properties'][$propertyId];
+    ?>
+
+$('#homeSearch-<?php echo $propertyId ?>').change(function () {
+  $('.aMode').removeClass('active');
+  $('#aModePublic').addClass('active');
+  mode = 'Public';
+  showList();
+});
+
   <?php endif; ?>
 <?php endforeach; ?>
 
 function resetHomeSearch() {
   $('.homeSearchValue').val(0);
+  $('.homeSearchInput').val('');
   $('.homeSearch').hide();
 }
   
@@ -95,17 +130,49 @@ $('.aDetailAction').click(function () {
   xhttp.send();
 });
 
+function encodeDate(value) {
+  <?php if ($context->getLocale() == 'en_US') : ?>
+	return value.substr(6, 4) + "-" + value.substr(0, 2) + "-" + value.substr(3, 2);
+  <?php else : ?>
+    return value.substr(6, 4) + "-" + value.substr(3, 2) + "-" + value.substr(0, 2);
+  <?php endif;?>
+}
+
 function showList() {
-  var skills = '', first = true;
-  for (id in homeSearch_property_2) {
-    if ($('#skill-' + id).val() == 1) {
-      if (!first) skills += ',';
-      skills += id;
-      first = false;
-    }
-  }
+  
   var xhttp = new XMLHttpRequest();
-  var route = '<?php echo $this->url('flowEvent/list', ['type' => $type]) ?>?mode=' + mode + '&skills=' + skills;
+  var route = '<?php echo $this->url('flowEvent/list', ['type' => $type]) ?>?mode=' + mode;
+  var value;
+
+  <?php foreach ($index['navbar'] as $navId => $navItem) : ?>
+    <?php if ($navItem['type'] == 'skills') : ?>
+  
+    var skills = '', first = true;
+    for (id in homeSearch_property_2) {
+      if ($('#skill-' + id).val() == 1) {
+        if (!first) skills += ',';
+        skills += id;
+        first = false;
+      }
+    }
+
+  route += '&skills=' + skills;
+
+    <?php elseif (in_array($navItem['type'], ['input'])) : ?>
+
+  value = $('#homeSearch-<?php echo $navItem['property'] ?>').val();
+  if (value) route += '&<?php echo $navItem['property'] ?>=%' + value + '%';
+
+    <?php elseif ($navItem['type'] == 'date') : ?>
+
+    value = $('#homeSearch-<?php echo $navItem['property'] ?>').val();
+  if (value) {
+    value = encodeDate(value);
+    route += '&<?php echo $navItem['property'] ?>=' + value;
+  }
+    
+    <?php endif; ?>
+  <?php endforeach; ?>
 
 <?php foreach ($filters as $filterId => $predicate) : ?>
   route += '&' + '<?php echo $filterId ?>' + '=' + '<?php echo $predicate ?>';
@@ -380,6 +447,27 @@ function showList() {
 }
 
 showList();
+
+// Date and time picker
+
+$('.datepicker').pickadate({
+<?php if ($context->getLocale() == 'en_US') : ?>
+  monthsFull: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+  weekdaysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+  today: 'today',
+  clear: 'clear',
+  format: 'mm/dd/yyyy',
+  formatSubmit: 'yyyy-mm-dd'
+<?php else : ?>
+  monthsFull: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+  weekdaysShort: ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'],
+  today: 'aujourd\'hui',
+  clear: 'effacer',
+  format: 'dd/mm/yyyy',
+  formatSubmit: 'yyyy-mm-dd'
+<?php endif;?>
+});
+$('.timepicker').pickatime({});
 
 // Dashboard
 

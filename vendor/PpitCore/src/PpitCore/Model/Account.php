@@ -1103,7 +1103,7 @@ class Account implements InputFilterAwareInterface
     	 
     	return $data;
     }
-    
+
     public static function getList($type, $params, $order = '+name', $limit = 50, $columns = null, $pageNumber = false, $itemCountPerPage = false)
     {
     	// Retrieve the context and the account description for the given type
