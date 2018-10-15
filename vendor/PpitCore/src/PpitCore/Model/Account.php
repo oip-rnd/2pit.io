@@ -550,6 +550,11 @@ class Account implements InputFilterAwareInterface
         $this->closing_date = (isset($data['closing_date']) && $data['closing_date'] != '9999-12-31') ? $data['closing_date'] : null;
         $this->callback_date = (isset($data['callback_date']) && $data['callback_date'] != '9999-12-31') ? $data['callback_date'] : null;
         $this->first_activation_date = (isset($data['first_activation_date'])) ? $data['first_activation_date'] : null;
+        $this->date_1 = (isset($data['date_1'])) ? $data['date_1'] : null;
+        $this->date_2 = (isset($data['date_2'])) ? $data['date_2'] : null;
+        $this->date_3 = (isset($data['date_3'])) ? $data['date_3'] : null;
+        $this->date_4 = (isset($data['date_4'])) ? $data['date_4'] : null;
+        $this->date_5 = (isset($data['date_5'])) ? $data['date_5'] : null;
         $this->priority = (isset($data['priority'])) ? $data['priority'] : null;
         $this->origine = (isset($data['origine'])) ? $data['origine'] : null;
         $this->next_meeting_date = (isset($data['next_meeting_date'])) ? $data['next_meeting_date'] : null;
@@ -1397,6 +1402,7 @@ class Account implements InputFilterAwareInterface
     			'n_fn' => $context->getFormatedName(),
     	);
 		$configProperties = Account::getConfig($type);
+		
 		foreach ($data as $propertyId => $value) {
 			if (!array_key_exists($propertyId, $configProperties)) $errors[$propertyId] = "The accounts of type $type does not manage the property $propertyId";
 			else {
