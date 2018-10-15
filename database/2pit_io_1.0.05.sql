@@ -1,0 +1,1 @@
+ALTER TABLE `core_account` ADD `date_1` DATE NULL DEFAULT NULL AFTER `first_activation_date`, ADD `date_2` DATE NULL DEFAULT NULL AFTER `date_1`, ADD `date_3` DATE NULL DEFAULT NULL AFTER `date_2`, ADD `date_4` DATE NULL DEFAULT NULL AFTER `date_3`, ADD `date_5` DATE NULL DEFAULT NULL AFTER `date_4`;
