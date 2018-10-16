@@ -928,7 +928,7 @@ table.note-report td {
 		'dimensions' => array(),
 		'indicators' => array(),
 		'properties' => array(
-			'status', 'type', 'place_id', 'place_caption', 'account_id', 'n_fn', 'n_first', 'n_last', 'email', 'category', 'subcategory', 'identifier', 'caption', 'description',
+			'status', 'type', 'place_id', 'place_caption', 'account_id', 'n_fn', 'n_first', 'n_last', 'email', 'tel_work', 'tel_cell', 'category', 'subcategory', 'identifier', 'caption', 'description',
 			'begin_date', 'end_date', 'day_of_week', 'day_of_month', 'exception_1', 'exception_2', 'exception_3', 'exception_4', 'begin_time', 'end_time', 'time_zone', 'location', 'latitude', 'longitude',
 			'matched_accounts', 'matching_log', 'rewards', 'feedbacks', 'value', 'comments',
 			'property_1', 'property_2', 'property_3', 'property_20',

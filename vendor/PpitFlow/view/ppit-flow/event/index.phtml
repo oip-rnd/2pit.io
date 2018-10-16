@@ -117,9 +117,9 @@
       <div class="col-md-9">
         <div id="requests"></div>
       </div>
-
-<?php if ($myBalance) : ?>
       <div class="col-md-3">
+
+<?php if (array_key_exists('rewards', $content)) : ?>
 
             <!--Card-->
             <div class="card card-cascade narrower mt-5">
@@ -149,8 +149,15 @@
 
             </div>
             <!--/.Card-->
-      </div>
 <?php endif;?>
+
+<?php if (array_key_exists('links', $content['index'])) foreach ($content['index']['links'] as $link) : ?>
+            <div class="h6 text-center my-4">
+              <a href="<?php echo $this->url($link['route'][0], $link['route'][1]) ?>"><?php echo $context->localize($link['labels'], $locale) ?></a>
+            </div>
+<?php endforeach;?>
+
+      </div>
     </div>
     <br>
     
