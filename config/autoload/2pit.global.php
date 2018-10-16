@@ -13,7 +13,7 @@
 
 return array(
 	'defaultRoute' => 'flowEvent',
-	'mailProtocol' => 'Sendmail', // Should be 'SendMail' or 'Smtp'. No email sent if null
+	'mailProtocol' => 'Smtp', // Should be 'SendMail' or 'Smtp'. No email sent if null
 	'mailAdmin' => 'postmaster@p-pit.fr',
 	'nameAdmin' => 'P-Pit',
 	'mailTo' => null, // Overrides the real email if not NULL (for test purposes)
