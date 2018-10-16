@@ -56,7 +56,7 @@ class EventController extends AbstractActionController
 		else $content = Config::get($place_identifier.'_'.$type, 'identifier')->content;
 
 		// compute ranking in gaming mode
-		$myBalance = null;
+		$myBalance = array('earned' => 0);
 		if (array_key_exists('rewards', $content)) {
 /*
 			// Collect the participations
@@ -212,7 +212,7 @@ class EventController extends AbstractActionController
 
 		// Card
 		foreach ($content['card']['properties'] as $propertyId => $options) {
-			if (array_key_exists('definition', $options) && $options['definition'] == 'inline') $property = $options;
+			if (!array_key_exists('definition', $options) || $options['definition'] == 'inline') $property = $options;
 			else {
 				$property = $description['properties'][$propertyId];
 				if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);

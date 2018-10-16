@@ -4160,6 +4160,24 @@ table.note-report td {
 		),
 	),
 
+	'event/generic/property/tel_work' => array(
+		'definition' => 'inline',
+		'type' => 'phone',
+		'labels' => array(
+			'en_US' => 'Phone',
+			'fr_FR' => 'Téléphone',
+		),
+	),
+	
+	'event/generic/property/tel_cell' => array(
+		'definition' => 'inline',
+		'type' => 'phone',
+		'labels' => array(
+			'en_US' => 'Cellular',
+			'fr_FR' => 'Mobile',
+		),
+	),
+	
 	'event/generic/property/locale' => array(
 		'definition' => 'inline',
 		'type' => 'select',
