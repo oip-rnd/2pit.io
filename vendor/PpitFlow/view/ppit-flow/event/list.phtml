@@ -16,27 +16,22 @@
         <div class="progress-bar <?php echo $content['status'][$request['status']]['color'] ?>" role="progressbar" style="width: <?php echo $content['status'][$request['status']]['value'] ?>%; height: 15px" aria-valuenow="<?php echo $content['status'][$request['status']]['value'] ?>" aria-valuemin="0" aria-valuemax="100"><?php echo $context->localize($content['status'][$request['status']]['labels'], $locale) ?></div>
       </div>
 
-      <div class="grey-text font-weight-bold">
+      <div class="h5 grey-text font-weight-bold mb-2">
+    <?php if ($request['type'] == 'request') : ?>
         <span class="h5"><?php echo $request['n_first'] ?></span>
-    <?php if ($request['type'] == 'event') : ?>
-      <?php if ($request['email']) : ?>
-        &nbsp;&nbsp;<a class="text-secondary" href="mailto:<?php echo $request['email'] ?>?subject=probono corpo - <?php echo $request['caption'] ?>"><i class="far fa-envelope"></i></a>
-      <?php endif;?>
-      <?php if ($request['tel_work']) : ?>
-        &nbsp;&nbsp;<a class="text-secondary" href="tel:<?php echo $request['tel_work'] ?>"><i class="fa fa-mobile-alt"></i></a>
-      <?php endif;?>
-    <?php endif;?>
         &nbsp;&nbsp;|&nbsp;&nbsp;
+    <?php endif;?>
         <?php echo $request['caption'] ?>&nbsp;&nbsp;
     <?php if (array_key_exists('rewards', $content) && $request['value']) : ?>
         <span class="badge red"><?php echo $request['value']?> <?php echo $content['rewards']['brand'] ?>s</span>
     <?php endif;?>
-        &nbsp;&nbsp;|&nbsp;&nbsp;
 
 <!-- Current user connected on this event -->
     <?php if ($request['role'] == 'requestor') : ?>
+        &nbsp;&nbsp;
         <span class="badge badge-info"><?php echo $context->localize($content['card']['roles']['requestor']['labels'], $locale) ?></span>&nbsp;&nbsp;
     <?php elseif ($request['role'] == 'contributor') : ?>
+        &nbsp;&nbsp;
         <span class="badge badge-info"><?php echo $context->localize($content['card']['roles']['contributor']['labels'], $locale) ?></span>&nbsp;&nbsp;
     <?php endif;?>
 
@@ -78,40 +73,45 @@
 
     </div>
 
-      <div>&nbsp;</div>
-
-    <div class="md-3 grey-text">
+    <div class="grey-text">
 
 <?php $first = true; foreach ($content['card']['properties'] as $inputId => $property) : ?>
-  <?php if ($property['type'] != 'chips') : ?>
+  <?php if (!$first) echo '&nbsp;&nbsp;';
+  $first = false;
+  ?>
+  <?php if ($property['type'] == 'separation') : ?>
+  
+      |
+
+  <?php elseif ($property['type'] != 'chips') : ?>
 
     <?php if ($request[$inputId]) : ?>
-      <?php 
-      if (!$first) echo '&nbsp;&nbsp;|&nbsp;&nbsp;';
-      $first = false;
-      ?>
-      <strong><?php echo $context->localize($property['labels'], $locale) ?>:</strong>
 
       <?php if ($property['type'] == 'select') : ?>
+      <strong><?php echo $context->localize($property['labels'], $locale) ?>:</strong>
       <?php echo $context->localize($property['modalities'][$request[$inputId]], $locale) ?>
 
       <?php elseif ($property['type'] == 'textarea') : ?>
+      <strong><?php echo $context->localize($property['labels'], $locale) ?>:</strong>
       <?php echo $request[$inputId] ?>
 
       <?php elseif ($property['type'] == 'email') : ?>
-      <a href="mailto:<?php echo $request[$inputId] ?>"><?php echo $request[$inputId] ?></a>
+      <a class="text-secondary" href="mailto:<?php echo $request['email'] ?>?subject=probono corpo - <?php echo $request['caption'] ?>"><i class="far fa-envelope"></i></a>
+
+      <?php elseif ($property['type'] == 'phone') : ?>
+      <a class="text-secondary" href="tel:<?php echo $request['tel_work'] ?>"><i class="fa fa-mobile-alt"></i></a>
 
       <?php elseif ($property['type'] == 'date') : ?>
+      <strong><?php echo $context->localize($property['labels'], $locale) ?>:</strong>
       <?php echo $context->decodeDate($request[$inputId]) ?>
 
       <?php elseif ($property['type'] == 'time') : ?>
+      <strong><?php echo $context->localize($property['labels'], $locale) ?>:</strong>
       <?php echo $request[$inputId] ?>
 
       <?php elseif ($property['type'] == 'input') : ?>
+      <strong><?php echo $context->localize($property['labels'], $locale) ?>:</strong>
       <?php echo $request[$inputId] ?>
-  
-      <?php elseif ($property['type'] == 'separation') : ?>
-      <hr>
 
       <?php endif;?>
     <?php endif;?>
@@ -209,10 +209,10 @@
     </div>
   </div>
   <?php endforeach;?>
+  <hr>
 <?php endif;?>
     </div>
   </div>
-  <hr>
   
 <?php endforeach ?>
 
