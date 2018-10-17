@@ -945,6 +945,7 @@ class Event implements InputFilterAwareInterface
     	$event->type = $type;
     	$event->exception_dates = [];
     	$event->matching_log = [];
+    	$event->rewards = '[]';
     	$event->feedbacks = [];
     	$event->comments = [];
     	return $event;
