@@ -295,8 +295,8 @@ class Context implements InputFilterAwareInterface
     public static function sEncodeDate($date, $locale)
     {
     	if (!$date) return null;
-    	if ($locale == 'fr_FR') return substr($date, 6, 4).'-'.substr($date, 3, 2).'-'.substr($date, 0, 2);
-    	else return substr($date, 6, 4).'-'.substr($date, 0, 2).'-'.substr($date, 3, 2);
+    	/*if ($locale == 'fr_FR')*/ return substr($date, 6, 4).'-'.substr($date, 3, 2).'-'.substr($date, 0, 2);
+//    	else return substr($date, 6, 4).'-'.substr($date, 0, 2).'-'.substr($date, 3, 2);
     }
     
     /**
@@ -306,8 +306,8 @@ class Context implements InputFilterAwareInterface
      */
     public function encodeDate($date) {
     	if (!$date) return null;
-    	if ($this->getLocale() == 'fr_FR') return substr($date, 6, 4).'-'.substr($date, 3, 2).'-'.substr($date, 0, 2);
-    	else return substr($date, 6, 4).'-'.substr($date, 0, 2).'-'.substr($date, 3, 2);
+    	/*if ($this->getLocale() == 'fr_FR')*/ return substr($date, 6, 4).'-'.substr($date, 3, 2).'-'.substr($date, 0, 2);
+//    	else return substr($date, 6, 4).'-'.substr($date, 0, 2).'-'.substr($date, 3, 2);
     }
 
     /**
@@ -318,8 +318,8 @@ class Context implements InputFilterAwareInterface
      */
     public static function sDecodeDate($date, $locale) {
     	if (!$date) return null;
-    	if ($locale == 'fr_FR') return substr($date, 8, 2).'/'.substr($date, 5, 2).'/'.substr($date, 0, 4);
-    	else return substr($date, 5, 2).'/'.substr($date, 8, 2).'/'.substr($date, 0, 4);
+    	/*if ($locale == 'fr_FR')*/ return substr($date, 8, 2).'/'.substr($date, 5, 2).'/'.substr($date, 0, 4);
+//    	else return substr($date, 5, 2).'/'.substr($date, 8, 2).'/'.substr($date, 0, 4);
     }
     
     /**
@@ -329,8 +329,8 @@ class Context implements InputFilterAwareInterface
      */
     public function decodeDate($date) {
     	if (!$date) return null;
-    	if ($this->getLocale() == 'fr_FR') return substr($date, 8, 2).'/'.substr($date, 5, 2).'/'.substr($date, 0, 4);
-    	else return substr($date, 5, 2).'/'.substr($date, 8, 2).'/'.substr($date, 0, 4);
+    	/*if ($this->getLocale() == 'fr_FR')*/ return substr($date, 8, 2).'/'.substr($date, 5, 2).'/'.substr($date, 0, 4);
+//    	else return substr($date, 5, 2).'/'.substr($date, 8, 2).'/'.substr($date, 0, 4);
     }
     
     /**
@@ -340,8 +340,8 @@ class Context implements InputFilterAwareInterface
      * @return string
      */
     public function dateFormat() {
-		if ($this->getLocale() == 'en_US') return array(2, 0, 1);
-		else return array(2, 1, 0);
+/*		if ($this->getLocale() == 'en_US') return array(2, 0, 1);
+		else */return array(2, 1, 0);
     }
 
     /**

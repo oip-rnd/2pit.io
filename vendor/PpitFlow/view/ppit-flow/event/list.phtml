@@ -1,20 +1,24 @@
 <?php foreach ($content['data'] as $requestId => $request) : ?>
   
   <div class="media d-block d-md-flex my-5">
-  <?php if ($content['card']['display']['type'] == 'avatar') : ?>
+  <?php if (array_key_exists('display', $content['card'])) : ?>
+    <?php if ($content['card']['display']['type'] == 'avatar') : ?>
     <img  class="card-img-64 rounded-circle d-flex mx-auto mb-3" src="<?php echo $this->basePath('photos/'.(($request['photo_link_id']) ? $request['photo_link_id'] : 'no-photo.png')) ?>" width="40" height="40" alt="Sample image" />
-  <?php elseif ($content['card']['display']['type'] == 'image') : ?>
-    <?php if (array_key_exists($request['category'], $content['card']['display']['class'])) : ?>
+    <?php elseif ($content['card']['display']['type'] == 'image') : ?>
+      <?php if (array_key_exists($request['category'], $content['card']['display']['class'])) : ?>
     <i class="<?php echo $content['card']['display']['class'][$request['category']] ?>"></i>
-    <?php else : ?>
+      <?php else : ?>
     <i class="fa fa-hands-calendar-alt fa-3x red-text"></i>
+      <?php endif;?>
     <?php endif;?>
   <?php endif;?>
     <div class="media-body text-md-left ml-md-3">
-      
-      <div class="progress md-progress" style="height: 15px">
-        <div class="progress-bar <?php echo $content['status'][$request['status']]['color'] ?>" role="progressbar" style="width: <?php echo $content['status'][$request['status']]['value'] ?>%; height: 15px" aria-valuenow="<?php echo $content['status'][$request['status']]['value'] ?>" aria-valuemin="0" aria-valuemax="100"><?php echo $context->localize($content['status'][$request['status']]['labels'], $locale) ?></div>
+
+  <?php if (array_key_exists('status', $content)) : ?>      
+      <div class="progress md-progress" style="height: 2px" data-toggle="tooltip" title="<?php echo $context->localize($content['status'][$request['status']]['labels'], $locale) ?>">
+        <div class="progress-bar <?php echo $content['status'][$request['status']]['color'] ?>" role="progressbar" style="width: <?php echo $content['status'][$request['status']]['value'] ?>%" aria-valuenow="<?php echo $content['status'][$request['status']]['value'] ?>" aria-valuemin="0" aria-valuemax="100"></div>
       </div>
+  <?php endif;?>
 
       <div class="h5 grey-text font-weight-bold mb-2">
     <?php if ($request['type'] == 'request') : ?>
@@ -25,13 +29,12 @@
     <?php if (array_key_exists('rewards', $content) && $request['value']) : ?>
         <span class="badge red"><?php echo $request['value']?> <?php echo $content['rewards']['brand'] ?>s</span>
     <?php endif;?>
+        &nbsp;&nbsp;
 
 <!-- Current user connected on this event -->
     <?php if ($request['role'] == 'requestor') : ?>
-        &nbsp;&nbsp;
         <span class="badge badge-info"><?php echo $context->localize($content['card']['roles']['requestor']['labels'], $locale) ?></span>&nbsp;&nbsp;
     <?php elseif ($request['role'] == 'contributor') : ?>
-        &nbsp;&nbsp;
         <span class="badge badge-info"><?php echo $context->localize($content['card']['roles']['contributor']['labels'], $locale) ?></span>&nbsp;&nbsp;
     <?php endif;?>
 
@@ -75,10 +78,35 @@
 
     <div class="grey-text">
 
-<?php $first = true; foreach ($content['card']['properties'] as $inputId => $property) : ?>
-  <?php if (!$first) echo '&nbsp;&nbsp;';
-  $first = false;
-  ?>
+<?php if (array_key_exists('mask', $content['card'])) : ?>
+  <?php foreach ($content['card']['properties'] as $inputId => $property) : ?>
+      <?php 
+      if (in_array($property['type'], ['select', 'textarea'])) {
+        $arguments[] = $context->localize($property['modalities'][$request[$inputId]], $locale);
+      }
+      elseif (in_array($property['type'], ['email'])) {
+        $arguments[] = '<a class="text-secondary" href="mailto:'.$request['email'].'?subject=probono corpo - '.$request['caption'].'"><i class="far fa-envelope"></i></a>';
+      }
+      elseif (in_array($property['type'], ['phone'])) {
+        $arguments[] = '<a class="text-secondary" href="tel:'.$request['.tel_work'].'"><i class="fa fa-mobile-alt"></i></a>';
+      }
+      elseif ($property['type'] == 'date') {
+        $arguments[] = date_format(date_create_from_format('Y-m-d', $request[$inputId]), $context->localize($property['format']));
+      }
+      elseif (in_array($property['type'], ['input', 'time'])) {
+        $arguments[] = $request[$inputId];
+      }
+      ?>
+  <?php endforeach;?>
+  <?php echo vsprintf($context->localize($content['card']['mask']['format']), $arguments) ?>
+
+<?php else : ?>
+  <?php $first = true; foreach ($content['card']['properties'] as $inputId => $property) : ?>
+    <?php 
+    if (!$first) echo '&nbsp;&nbsp;';
+    $first = false;
+    $arguments = array();
+    ?>
   <?php if ($property['type'] == 'separation') : ?>
   
       |
@@ -103,7 +131,7 @@
 
       <?php elseif ($property['type'] == 'date') : ?>
       <strong><?php echo $context->localize($property['labels'], $locale) ?>:</strong>
-      <?php echo $context->decodeDate($request[$inputId]) ?>
+      <?php echo date_format(date_create_from_format('Y-m-d', $request[$inputId]), $context->localize($property['format'])) ?>
 
       <?php elseif ($property['type'] == 'time') : ?>
       <strong><?php echo $context->localize($property['labels'], $locale) ?>:</strong>
@@ -116,7 +144,8 @@
       <?php endif;?>
     <?php endif;?>
   <?php endif;?>
-<?php endforeach;?>
+  <?php endforeach;?>
+<?php endif;?>
     </div>
     
 <?php foreach ($content['card']['properties'] as $inputId => $property) : ?>

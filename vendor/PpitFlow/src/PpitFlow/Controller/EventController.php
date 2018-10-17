@@ -54,61 +54,6 @@ class EventController extends AbstractActionController
 			if (!$content) $content = $context->getConfig($type.'/generic');
 		}
 		else $content = Config::get($place_identifier.'_'.$type, 'identifier')->content;
-
-		// compute ranking in gaming mode
-		$myBalance = array('earned' => 0);
-		if (array_key_exists('rewards', $content)) {
-/*
-			// Collect the participations
-			$ranking = array();
-			$cursor = Event::getListV2($description, ['status' => 'completed']);
-			foreach ($cursor as $eventId => $event) {
-				$matchedAccounts = explode(',', $event->matched_accounts);
-				foreach ($matchedAccounts as $account_id) {
-					if (!array_key_exists($account_id, $ranking)) $ranking[$account_id] = $event->value;
-					else $ranking[$account_id] += $event->value;
-				}
-			}*/
-
-			// Rank the profiles
-			$accountType = $context->getConfig('landing_account_type');
-			$ranking = array();
-			$cursor = Account::getList($accountType, ['status' => 'active']);
-			foreach ($cursor as $anyAccountId => $anyAccount) {
-				if ($anyAccount->credits) {
-					$balance = array();
-					foreach (explode(',', $anyAccount->credits) as $row) {
-						$row = explode(':', $row);
-						$balance[$row[0]] = $row[1];
-					}
-					if ($anyAccountId == $account->id) $myBalance = $balance;
-					if ($anyAccount->credits && array_key_exists('earned', $balance)) {
-						$ranking[$anyAccountId] = $balance['earned'];
-					}
-				}
-			}
-
-			if (array_key_exists($account->id, $ranking)) {
-
-				// Rank the participants and find my rank
-				arsort($ranking);
-				$ranks = array();
-				$currentRank = 0;
-				$currentWeight = 0;
-				foreach($ranking as $account_id => $weight) {
-					if ($currentWeight != $weight) {
-						$currentRank++;
-						$currentWeight = $weight;
-						$ranks[$currentWeight] = 1;
-					}
-					else $ranks[$currentWeight]++;
-					if ($ranking[$account->id] == $currentWeight) $myBalance['rank'] = $currentRank;
-				}
-				
-				// Add a sign to indicate my rank is shared with other participant
-				if ($ranks[$ranking[$account->id]] > 1) $myBalance['rank'] = '='.$myBalance['rank'];
-			}
-		}
 		
 		// Profile form
 		if ($context->getConfig('specificationMode') == 'config') {
@@ -171,10 +116,82 @@ class EventController extends AbstractActionController
 			'type' => $type,
 			'locale' => $locale,
 			'place_identifier' => $place_identifier,
-			'account' => $account,
+			'account' => $account->properties,
 			'content' => $content,
-			'myBalance' => $myBalance,
 		));
+		return $view;
+	}
+	
+	public function dashboardAction()
+	{
+		// Retrieve the context and the parameters
+		$context = Context::getCurrent();
+		$type = $this->params()->fromRoute('type');
+		$description = Event::getDescription($type);
+		$instance_caption = $context->getInstance()->caption;
+		$place = Place::get($context->getPlaceId());
+		$place_identifier = $place->identifier;
+		$account = Account::get($context->getContactId(), 'contact_1_id');
+		$locale = $this->params()->fromQuery('locale');
+		if (!$locale) if ($account) $locale = $account->locale; else $locale = $context->getLocale();
+		
+		// Event content
+		if ($context->getConfig('specificationMode') == 'config') {
+			$content = $context->getConfig($type.'/'.$place_identifier);
+			if (!$content) $content = $context->getConfig($type.'/generic');
+		}
+		else $content = Config::get($place_identifier.'_'.$type, 'identifier')->content;
+	
+		// compute ranking in gaming mode
+		if (array_key_exists('rewards', $content)) {
+	
+			// Rank the profiles
+			$accountType = $context->getConfig('landing_account_type');
+			$ranking = array();
+			$cursor = Account::getList($account->type, ['status' => 'active']);
+			foreach ($cursor as $anyAccountId => $anyAccount) {
+				if ($anyAccount->credits) {
+					foreach ($anyAccount->credits as $rowId => $value) {
+						if ($rowId == 'earned') {
+							$ranking[$anyAccountId] = $value;
+						}
+					}
+				}
+			}
+	
+			if (array_key_exists($account->id, $ranking)) {
+	
+				// Rank the participants and find my rank
+				arsort($ranking);
+				$ranks = array();
+				$currentRank = 0;
+				$currentWeight = 0;
+				foreach($ranking as $account_id => $weight) {
+					if ($currentWeight != $weight) {
+						$currentRank++;
+						$currentWeight = $weight;
+						$ranks[$currentWeight] = 1;
+					}
+					else $ranks[$currentWeight]++;
+					if ($ranking[$account->id] == $currentWeight) $account->credits['rank'] = $currentRank;
+				}
+	
+				// Add a sign to indicate my rank is shared with other participant
+				if ($ranks[$ranking[$account->id]] > 1) $account->credits['rank'] = '='.$account->credits['rank'];
+			}
+			$account->properties['credits'] = $account->credits;
+		}
+	
+		// Return the view
+		$view = new ViewModel(array(
+			'context' => $context,
+			'type' => $type,
+			'locale' => $locale,
+			'place_identifier' => $place_identifier,
+			'account' => $account->properties,
+			'content' => $content,
+		));
+		$view->setTerminal(true);
 		return $view;
 	}
 	
@@ -217,6 +234,7 @@ class EventController extends AbstractActionController
 				$property = $description['properties'][$propertyId];
 				if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
 				if (array_key_exists('labels', $options)) $property['labels'] = $options['labels'];
+				if (array_key_exists('format', $options)) $property['format'] = $options['format'];
 			}
 			if (array_key_exists('repository', $property)) $property['repository'] = $context->getConfig($property['repository']);
 			$content['card']['properties'][$propertyId] = $property;
@@ -489,6 +507,7 @@ class EventController extends AbstractActionController
 
 			if ($id) $rc = $event->loadAndUpdate($data, $description['properties']);
 			else $rc = $event->loadAndAdd($data, $description['properties']);
+
 			if (in_array($rc[0], ['200'])) {
 				$id = $event->id;
 				$message = 'OK';
@@ -1227,7 +1246,7 @@ class EventController extends AbstractActionController
 			return $this->response;
 		}
 	}
-
+	
 	// Feedback
 	public function feedbackAction()
 	{
@@ -1469,5 +1488,61 @@ class EventController extends AbstractActionController
 		));
 		$view->setTerminal(true);
 		return $view;
+	}
+
+	public function signOutAction()
+	{
+		// Retrieve the context and parameters
+		$context = Context::getCurrent();
+		$type = $this->params()->fromRoute('type', 'event');
+		if (!$this->request->isPost()) {
+			$this->response->setStatusCode('400');
+			$this->response->setReasonPhrase('POST');
+			return $this->response;
+		}
+		$identifier = $this->request->getPost('identifier');
+		if (!$identifier) {
+			$this->response->setStatusCode('400');
+			$this->response->setReasonPhrase('POST');
+			return $this->response;
+		}
+		$event = Event::get($type, 'type', $identifier, 'identifier');
+		if (!$event) {
+			$this->response->setStatusCode('400');
+			$this->response->setReasonPhrase('Unknown');
+			return $this->response;
+		}
+		$account = Account::get($context->getContactId(), 'contact_1_id');
+		if (!in_array($account->id, explode(',', $event->matched_accounts))) {
+			$this->response->setStatusCode('401');
+			$this->response->setReasonPhrase('Unregistered');
+			echo 'My account: '.$account->id.' Event: '.$event->id.' Matched accounts: '.$event->matched_accounts;
+			return $this->response;
+		}
+		if (array_key_exists($account->id, $event->rewards)) {
+			$this->response->setStatusCode('401');
+			$this->response->setReasonPhrase('Duplicate');
+			return $this->response;
+		}
+		$credits = $account->credits;
+		$earned = array_key_exists('earned', $credits) ? $credits['earned'] : 0;
+		$earned += $event->value;
+		$credits['earned'] = $earned;
+		$account->credits = $credits;
+		$event->rewards[$account->id] = $earned;
+
+		$connection = Event::getTable()->getAdapter()->getDriver()->getConnection();
+		$connection->beginTransaction();
+		try {
+			$event->update(null);
+			$account->update(null);
+			$connection->commit();
+			$this->response->setStatusCode('200');
+			return $this->response;
+		}
+		catch (\Exception $e) {
+			$connection->rollback();
+			$this->response->setStatusCode('500');
+		}
 	}
 }
