@@ -1,0 +1,44 @@
+
+<?php if (array_key_exists('rewards', $content)) : ?>
+
+            <!--Card-->
+            <div class="card card-cascade narrower mt-5">
+
+              <!--Card image-->
+              <div class="view view-cascade gradient-card-header blue">
+                <h5 class="mb-0"><?php echo $content['rewards']['brand'] ?>s acquisition</h5>
+              </div>
+              <!--/Card image-->
+
+              <!--Card content-->
+              <div class="card-body card-body-cascade text-center">
+  
+  <?php if (array_key_exists('goal', $account['credits'])) : ?>
+          <div class="min-chart" id="chart-sales" data-percent="<?php echo $account['credits']['earned'] / $account['credits']['goal'] * 100 ?>"><span class="percent"></span>
+    <?php foreach ($account['credits'] as $key => $value) : ?>
+            <div class="label orange"><?php echo $context->localize($content['rewards']['balance'][$key]['labels']) ?>: <strong><?php echo ($content['rewards']['balance'][$key]['precision']) ? $context->formatFloat($value, $content['rewards']['balance'][$key]['precision']) : $value ?></strong></div>
+    <?php endforeach;?>
+          </div>
+  <?php else : ?>
+    <?php foreach ($account['credits'] as $key => $value) : ?>
+            <div><?php echo $context->localize($content['rewards']['balance'][$key]['labels']) ?>: <strong><?php echo ($content['rewards']['balance'][$key]['precision']) ? $context->formatFloat($value, $content['rewards']['balance'][$key]['precision']) : $value ?></strong></div>
+    <?php endforeach;?>
+  <?php endif;?>
+
+              </div>
+              <!--/.Card content-->
+
+            </div>
+            <!--/.Card-->
+<?php endif;?>
+
+<?php if (array_key_exists('links', $content['index'])) foreach ($content['index']['links'] as $link) : ?>
+            <div class="h6 text-center my-4">
+              <a class="text-secondary" href="<?php echo $this->url($link['route'][0], $link['route'][1]) ?>">
+  <?php if (array_key_exists('icon', $link)) : ?>
+                <i class="<?php echo $link['icon']['class']?>"></i>
+  <?php endif;?>
+                <?php echo $context->localize($link['labels'], $locale) ?>
+              </a>
+            </div>
+<?php endforeach;?>

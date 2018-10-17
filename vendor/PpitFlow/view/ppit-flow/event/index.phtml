@@ -6,9 +6,35 @@
 
   <div class="row border-0 font-weight-bold d-flex justify-content-between">
 
+  <?php if (array_key_exists('signOut', $content['index'])) : ?>
+
+    <div class="col-md-12">      
+      <ul class="nav grey py-1 nav-fill">
+
+    <?php foreach ($content['index']['signOut'] as $entryId => $entry) : ?>
+      <?php if ($entry['type'] == 'signOut') : ?>
+        <li class="nav-item">
+          <input class="" id="signOut-identifier" type="text" placeholder="<?php echo $context->localize($entry['labels'], $locale) ?>" aria-label="">
+          <a class="text-white ml-2" id="signOutButton"><i class="fa fa-key" aria-hidden="true"></i></a>
+        </li>
+        
+      <?php else : ?>
+        <li class="nav-item">
+           <a class="nav-link disabled text-white" href="#!"><?php echo sprintf($context->localize($entry['labels'], $locale), $account['credits'][$entry['item']]) ?></a>
+        </li>
+        
+      <?php endif;?>
+    <?php endforeach;?>
+
+      </ul>
+    </div>
+    
+  <?php endif;?>
+
 <!-- Navbar -->
       
-<ul class="nav grey lighten-4 md-pills pills-primary">
+    <div class="col-md-12">      
+<ul class="nav grey lighten-4 md-pills pills-primary nav-fill">
 
 <?php if ($context->hasRole('contributor')) : ?>  
   <li class="nav-item dropdown">
@@ -82,6 +108,25 @@
     </div>
   </li>
 
+<!-- Select -->
+
+  <?php elseif ($navItem['type'] == 'select') : ?>
+ 
+  <li class="nav-item">
+    <div>
+      <!-- Search form -->
+      <form class="form-inline">
+        <i class="<?php echo $navItem['icon']['class'] ?>" aria-hidden="true"></i>
+        <select class="form-control form-control-sm browser-default homeSearchInput ml-3 w-75" id="homeSearch-<?php echo $navItem['property'] ?>">
+          <option value=""><?php echo $context->localize($navItem['labels'], $locale) ?></option>
+      <?php foreach ($navItem['modalities'] as $modalityId => $modality) : ?>
+          <option value="<?php echo $modalityId ?>"><?php echo $context->localize($modality, $locale) ?></option>
+      <?php endforeach;?>
+        </select>
+      </form>
+    </div>
+  </li>
+
 <!-- Search input -->
 
   <?php elseif ($navItem['type'] == 'input') : ?>
@@ -107,6 +152,7 @@
   <?php endif;?>
 <?php endforeach;?>
 </ul>
+    </div>
   </div>
 
   <section class="section pb-5">
@@ -117,46 +163,8 @@
       <div class="col-md-9">
         <div id="requests"></div>
       </div>
-      <div class="col-md-3">
-
-<?php if (array_key_exists('rewards', $content)) : ?>
-
-            <!--Card-->
-            <div class="card card-cascade narrower mt-5">
-
-              <!--Card image-->
-              <div class="view view-cascade gradient-card-header blue">
-                <h5 class="mb-0"><?php echo $content['rewards']['brand'] ?>s acquisition</h5>
-              </div>
-              <!--/Card image-->
-
-              <!--Card content-->
-              <div class="card-body card-body-cascade text-center">
-  <?php if (array_key_exists('goal', $myBalance)) : ?>
-          <div class="min-chart" id="chart-sales" data-percent="<?php echo $myBalance['earned'] / $myBalance['goal'] * 100 ?>"><span class="percent"></span>
-    <?php foreach ($myBalance as $key => $value) : ?>
-            <div class="label orange"><?php echo $context->localize($content['rewards']['balance'][$key]['labels']) ?>: <strong><?php echo ($content['rewards']['balance'][$key]['precision']) ? $context->formatFloat($value, $content['rewards']['balance'][$key]['precision']) : $value ?></strong></div>
-    <?php endforeach;?>
-          </div>
-  <?php else : ?>
-    <?php foreach ($myBalance as $key => $value) : ?>
-            <div><?php echo $context->localize($content['rewards']['balance'][$key]['labels']) ?>: <strong><?php echo ($content['rewards']['balance'][$key]['precision']) ? $context->formatFloat($value, $content['rewards']['balance'][$key]['precision']) : $value ?></strong></div>
-    <?php endforeach;?>
-  <?php endif;?>
-
-              </div>
-              <!--/.Card content-->
-
-            </div>
-            <!--/.Card-->
-<?php endif;?>
-
-<?php if (array_key_exists('links', $content['index'])) foreach ($content['index']['links'] as $link) : ?>
-            <div class="h6 text-center my-4">
-              <a href="<?php echo $this->url($link['route'][0], $link['route'][1]) ?>"><?php echo $context->localize($link['labels'], $locale) ?></a>
-            </div>
-<?php endforeach;?>
-
+      <div class="col-md-3 d-none d-sm-block">
+        <div id="dashboard"></div>
       </div>
     </div>
     <br>

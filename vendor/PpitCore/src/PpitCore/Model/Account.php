@@ -568,7 +568,7 @@ class Account implements InputFilterAwareInterface
         $this->availability_end = (isset($data['availability_end']) && $data['availability_end'] != '9999-12-31') ? $data['availability_end'] : null;
         $this->availability_exceptions = (isset($data['availability_exceptions'])) ? json_decode($data['availability_exceptions'], true) : null;
         $this->availability_constraints = (isset($data['availability_constraints'])) ? json_decode($data['availability_constraints'], true) : null;
-        $this->credits = (isset($data['credits'])) ? $data['credits'] : null;
+        $this->credits = (isset($data['credits'])) ? json_decode($data['credits'], true) : null;
         $this->default_means_of_payment = (isset($data['default_means_of_payment'])) ? $data['default_means_of_payment'] : null;
         $this->transfer_order_id = (isset($data['transfer_order_id'])) ? $data['transfer_order_id'] : null;
         $this->transfer_order_date = (isset($data['transfer_order_date'])) ? $data['transfer_order_date'] : null;
@@ -1010,6 +1010,7 @@ class Account implements InputFilterAwareInterface
     	$data['availability_end'] =  ($this->availability_end) ? $this->availability_end : '9999-12-31';
     	$data['availability_exceptions'] = json_encode($this->availability_exceptions);
     	$data['availability_constraints'] = json_encode($this->availability_constraints);
+    	$data['credits'] = json_encode($this->credits, JSON_PRETTY_PRINT);
     	$data['json_property_1'] = json_encode($this->json_property_1);
     	$data['json_property_2'] = json_encode($this->json_property_2);
     	$data['json_property_3'] = json_encode($this->json_property_3);
@@ -1370,6 +1371,7 @@ class Account implements InputFilterAwareInterface
 		$account->contact_1 = Vcard::instanciate();
 		$account->availability_exceptions = array();
 		$account->availability_constraints = array();
+		$account->credits = array();
 		$account->json_property_1 = array();
 		$account->json_property_2 = array();
 		$account->json_property_3 = array();

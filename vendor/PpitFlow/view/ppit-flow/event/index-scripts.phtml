@@ -1,5 +1,65 @@
 <script>
 
+// Rewards
+
+        $('#signOut-identifier').keyup(function () {
+          if ($('#signOut-identifier').val()) {
+//            $('#signOutButton').removeAttr('disabled');
+            $('#signOutButton').show();
+          }
+          else {
+//            $('#signOutButton').attr('disabled', 'disabled');
+              $('#signOutButton').hide();
+          }
+        });
+
+        $('#signOutButton').hide();
+        $('#signOutButton').click(function () {
+          var xhttp = new XMLHttpRequest();
+          var formData = new FormData();
+          formData.append('identifier', $('#signOut-identifier').val());
+          xhttp.open('POST', '<?php echo $this->url('flowEvent/signOut', ['type' => $type]) ?>', true);
+          xhttp.onload = function () {
+            if (xhttp.readyState == 4) {
+              if (xhttp.status == 200) {
+                toastr.success('<h4 class="text-center"><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h4>');
+//                $('#signOutButton').attr('disabled', 'disabled');
+                showDashboard();
+              }
+              else technicalError();
+            }
+          };
+          xhttp.send(formData);
+          $('#signOutButton').hide();
+          $('#signOut-identifier').val('');
+        });
+
+// Dashboard
+
+function showDashboard() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.open('GET', '<?php echo $this->url('flowEvent/dashboard', ['type' => $type]) ?>', true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4) {
+      if (xhttp.status == 200) {
+
+        // Show the dashboard
+        $('#dashboard').html(xhttp.responseText);
+        $('.min-chart#chart-sales').easyPieChart({
+          barColor: "#4caf50",
+          onStep: function (from, to, percent) {
+            $(this.el).find('.percent').text(Math.round(percent));
+          }
+        });
+      }
+      else technicalError();
+    }
+  };
+  xhttp.send();
+}
+
+showDashboard();
+
 // Requests
 
 var mode = '<?php echo $mode ?>';
@@ -93,9 +153,9 @@ $('#homeSearch-<?php echo $propertyId ?>').keyup(function () {
   }
 });
 
-// Date filter
+// Select or date filter
 
-  <?php elseif ($navItem['type'] == 'date') : ?>
+  <?php elseif (in_array($navItem['type'], ['select', 'date'])) : ?>
     <?php
       $propertyId = $navItem['property'];
       $property = $detail['properties'][$propertyId];
@@ -163,9 +223,16 @@ function showList() {
   value = $('#homeSearch-<?php echo $navItem['property'] ?>').val();
   if (value) route += '&<?php echo $navItem['property'] ?>=%' + value + '%';
 
-    <?php elseif ($navItem['type'] == 'date') : ?>
+    <?php elseif (in_array($navItem['type'], ['select'])) : ?>
 
-    value = $('#homeSearch-<?php echo $navItem['property'] ?>').val();
+  value = $('#homeSearch-<?php echo $navItem['property'] ?>').val();
+  if (value) {
+    route += '&<?php echo $navItem['property'] ?>=' + value;
+  }
+
+    <?php elseif (in_array($navItem['type'], ['date'])) : ?>
+
+  value = $('#homeSearch-<?php echo $navItem['property'] ?>').val();
   if (value) {
     value = encodeDate(value);
     route += '&<?php echo $navItem['property'] ?>=' + value;
@@ -182,6 +249,10 @@ function showList() {
   xhttp.onload = function () {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
       document.getElementById('requests').innerHTML = xhttp.responseText;
+
+      $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+      })
 
       $('.aUpdateAction').click(function () {
         var request_id = $(this).attr('id').split('-')[1];
@@ -468,18 +539,7 @@ $('.datepicker').pickadate({
 <?php endif;?>
 });
 $('.timepicker').pickatime({});
-
-// Dashboard
-
-$(function () {
-    $('.min-chart#chart-sales').easyPieChart({
-        barColor: "#4caf50",
-        onStep: function (from, to, percent) {
-            $(this.el).find('.percent').text(Math.round(percent));
-        }
-    });
-});
-
+  
 // Tooltips
 
 $(function () {
