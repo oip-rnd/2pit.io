@@ -152,14 +152,14 @@ if ($account->id && $action != 'update' || $message == 'OK') $isDisabled = true;
     <?php if ($property['type'] == 'title') : ?>
 
   <hr>
-  <h5 style="text-align: center"><?php echo $property['labels'][$context->getLocale()] ?></h5>
+  <h5 style="text-align: center"><?php echo $context->localize($property['labels']) ?></h5>
   <div>&nbsp;</div>
 
 <!-- place_id -->
     <?php elseif ($propertyId == 'place_id') : ?>
 
   <div class="form-group row" id="<?php echo $propertyId ?>_group">
-    <label class="col-sm-5 col-form-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $property['labels'][$context->getLocale()] ?></label>
+    <label class="col-sm-5 col-form-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels']) ?></label>
     <div class="col-sm-7">
       <select class="form-control <?php if (!$readonly) echo 'updatable-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
         <option />
@@ -175,7 +175,7 @@ if ($account->id && $action != 'update' || $message == 'OK') $isDisabled = true;
     <?php elseif ($property['type'] == 'input') : ?>
 
   <div class="form-group row" id="<?php echo $propertyId ?>_group">
-    <label class="col-sm-5 col-form-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $property['labels'][$context->getLocale()] ?></label>
+    <label class="col-sm-5 col-form-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels']) ?></label>
     <div class="col-sm-7">
       <input class="form-control <?php if (!$readonly) echo 'updatable-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" value="<?php echo $account->properties[$propertyId] ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
       <div class="invalid-feedback" id="<?php echo $propertyId ?>_error"></div>
@@ -186,7 +186,7 @@ if ($account->id && $action != 'update' || $message == 'OK') $isDisabled = true;
     <?php elseif ($property['type'] == 'email') : ?>
 
   <div class="form-group row" id="<?php echo $propertyId ?>_group">
-    <label class="col-sm-5 col-form-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $property['labels'][$context->getLocale()] ?></label>
+    <label class="col-sm-5 col-form-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels']) ?></label>
     <div class="col-sm-7">
       <input class="form-control <?php if (!$readonly) echo 'updatable-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" value="<?php echo $account->properties[$propertyId] ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
       <div class="invalid-feedback" id="<?php echo $propertyId ?>_error"></div>
@@ -197,7 +197,7 @@ if ($account->id && $action != 'update' || $message == 'OK') $isDisabled = true;
     <?php elseif (in_array($property['type'], ['date', 'closing_date'])) : ?>
 
   <div class="form-group row" id="input_<?php echo $propertyId ?>_group">
-    <label class="col-sm-5 col-form-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $property['labels'][$context->getLocale()] ?></label>
+    <label class="col-sm-5 col-form-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels']) ?></label>
     <div class="col-sm-7">
       <input type="hidden" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
       <input class="form-control <?php if (!$readonly) echo 'updatable-control' ?>" id="input_<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php echo $context->decodeDate($account->properties[$propertyId]) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
@@ -209,7 +209,7 @@ if ($account->id && $action != 'update' || $message == 'OK') $isDisabled = true;
     <?php elseif ($property['type'] == 'time') : ?>
 
   <div class="form-group row" id="<?php echo $propertyId ?>_group">
-    <label class="col-sm-5 col-form-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $property['labels'][$context->getLocale()] ?></label>
+    <label class="col-sm-5 col-form-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels']) ?></label>
     <div class="col-sm-7">
       <input class="form-control time <?php if (!$readonly) echo 'updatable-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" value="<?php echo $account->properties[$propertyId] ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
       <div class="invalid-feedback" id="<?php echo $propertyId ?>_error"></div>
@@ -220,7 +220,7 @@ if ($account->id && $action != 'update' || $message == 'OK') $isDisabled = true;
     <?php elseif ($property['type'] == 'datetime') : ?>
 
   <div class="form-group row" id="<?php echo $propertyId ?>_group">
-    <label class="col-sm-5 col-form-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $property['labels'][$context->getLocale()] ?></label>
+    <label class="col-sm-5 col-form-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels']) ?></label>
     <div class="col-sm-4">
       <input type="hidden" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
       <input class="form-control <?php if (!$readonly) echo 'updatable-control' ?>" id="input_<?php echo $propertyId ?>" value="<?php echo $context->decodeDate(substr($account->properties[$propertyId], 0, 10)) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
@@ -234,7 +234,7 @@ if ($account->id && $action != 'update' || $message == 'OK') $isDisabled = true;
 <!-- number -->   
     <?php elseif ($property['type'] == 'number') : ?>
   <div class="form-group row" id="input_<?php echo $propertyId ?>_group">
-    <label class="col-sm-5 col-form-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $property['labels'][$context->getLocale()] ?></label>
+    <label class="col-sm-5 col-form-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels']) ?></label>
     <div class="col-sm-7">
       <input type="hidden" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
       <input class="form-control <?php if (!$readonly) echo 'updatable-control' ?>" id="input_<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php echo $context->formatFloat($account->properties[$propertyId], 2) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
@@ -246,7 +246,7 @@ if ($account->id && $action != 'update' || $message == 'OK') $isDisabled = true;
     <?php elseif ($property['type'] == 'textarea') : ?>
 
   <div class="form-group row" id="<?php echo $propertyId ?>_group">
-    <label class="col-sm-5 col-form-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $property['labels'][$context->getLocale()] ?></label>
+    <label class="col-sm-5 col-form-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels']) ?></label>
     <div class="col-sm-7">
       <textarea class="form-control <?php if (!$readonly) echo 'updatable-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>><?php echo $account->properties[$propertyId] ?></textarea>
       <div class="invalid-feedback" id="<?php echo $propertyId ?>_error"></div>
@@ -277,7 +277,7 @@ if ($account->id && $action != 'update' || $message == 'OK') $isDisabled = true;
       $values = explode(',', $account->properties[$propertyId]);
       ?>
   <div class="form-group row" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_' : '').$propertyId ?>_group">
-    <label class="col-sm-5 col-form-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $property['labels'][$context->getLocale()] ?></label>
+    <label class="col-sm-5 col-form-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels']) ?></label>
     <div class="col-sm-7">
       <select class="<?php echo ($multiple) ? 'update_selectpicker' : 'form-control' ?> <?php if (!$readonly) echo 'updatable-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if ($multiple) echo 'multiple' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
         <option />
@@ -296,7 +296,7 @@ if ($account->id && $action != 'update' || $message == 'OK') $isDisabled = true;
       $values = explode(',', $account->properties[$propertyId]);
       ?>
   <div class="form-group row" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_' : '').$propertyId ?>_group">
-    <label class="col-sm-5 col-form-label"><?php echo $property['labels'][$context->getLocale()] ?></label>
+    <label class="col-sm-5 col-form-label"><?php echo $context->localize($property['labels']) ?></label>
     <div class="col-sm-7">
       <select class="<?php echo ($multiple) ? 'update_selectpicker' : 'form-control' ?> <?php if (!$readonly) echo 'updatable-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if ($multiple) echo 'multiple' ?> disabled="disabled" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
         <option />
@@ -369,7 +369,7 @@ if ($account->id && $action != 'update' || $message == 'OK') $isDisabled = true;
       <div class="row">
         <div class="col-md-12">
           <strong><?php echo $context->decodeDate(substr($comment['time'], 0, 10)).substr($comment['time'], 10) ?>:</strong>&nbsp;
-          <?php if (array_key_exists('status', $comment)) echo $context->getconfig('core_account/'.$type.'/property/'.'statuses')[$comment['status']]['labels'][$context->getLocale()] ?>&nbsp;
+          <?php if (array_key_exists('status', $comment)) echo $context->localize($context->getconfig('core_account/'.$type.'/property/'.'statuses')[$comment['status']]['labels']) ?>&nbsp;
           (<?php echo $comment['n_fn'] ?>)
         </div>
       </div>
@@ -424,7 +424,7 @@ if ($account->id && $action != 'update' || $message == 'OK') $isDisabled = true;
       <select class="form-control <?php if (!$readonly) echo 'updatable-control' ?>" id="<?php echo $id ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
         <option />
             <?php foreach ($field['modalities'] as $key => $labels) : ?>
-        <option value="<?php echo $key ?>" <?php if ($value == $key) echo 'selected="selected"' ?>><?php echo $labels[$context->getLocale()] ?></option>
+        <option value="<?php echo $key ?>" <?php if ($value == $key) echo 'selected="selected"' ?>><?php echo $context->localize($labels) ?></option>
             <?php endforeach;?>
       </select>
 

@@ -40,6 +40,15 @@ return array (
 							),
 						),
 					),
+					'dashboard' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/dashboard[/:type]',
+							'defaults' => array(
+								'action' => 'dashboard',
+							),
+						),
+					),
 					'list' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -145,6 +154,13 @@ return array (
 						'options' => array(
 							'route' => '/cancel[/:type][/:id]',
 							'defaults' => array('action' => 'cancel'),
+						),
+					),
+					'signOut' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/sign-out[/:type]',
+							'defaults' => array('action' => 'signOut'),
 						),
 					),
 				),
@@ -374,6 +390,7 @@ return array (
 
 				array('route' => 'flowEvent', 'roles' => array('user')),
 				array('route' => 'flowEvent/index', 'roles' => array('user')),
+				array('route' => 'flowEvent/dashboard', 'roles' => array('user')),
 				array('route' => 'flowEvent/list', 'roles' => array('user')),
 				array('route' => 'flowEvent/detail', 'roles' => array('user')),
 				array('route' => 'flowEvent/update', 'roles' => array('user')),
@@ -389,6 +406,7 @@ return array (
 				array('route' => 'flowEvent/complete', 'roles' => array('user')),
 				array('route' => 'flowEvent/consultFeedback', 'roles' => array('user')),
 				array('route' => 'flowEvent/cancel', 'roles' => array('user')),
+				array('route' => 'flowEvent/signOut', 'roles' => array('user')),
 				
 				array('route' => 'profile', 'roles' => array('user')),
 				array('route' => 'profile/index', 'roles' => array('user')),
@@ -867,6 +885,19 @@ table.note-report td {
 		),
 	),
 
+	'event/event/property/location' => array(
+		'definition' => 'inline',
+		'type' => 'select',
+		'modalities' => array(
+			'london' => ['default' => 'London', 'fr_FR' => 'Londres'],
+			'paris' => ['default' => 'Paris', 'fr_FR' => 'Paris'],
+		),
+		'labels' => array(
+			'en_US' => 'Event location',
+			'fr_FR' => 'Lieu de l’évènement',
+		),
+	),
+	
 	'event/event/property/matched_accounts' => array(
 		'definition' => 'inline',
 		'type' => 'multiselect',
@@ -944,18 +975,19 @@ table.note-report td {
 		'searchTitle' => array('default' => 'search', 'fr_FR' => 'recherche'),
 		'properties' => array(
 			'status' => ['multiple' => true],
+			'identifier' => [],
 			'account_id' => [],
 			'caption' => [],
 			'category' => [],
 			'begin_date' => [],
 			'location' => [],
-			'property_2' => [],
 			'matched_accounts' => [],
 		),
 	),
 	
 	'event/list/event' => array(
 		'status' => [],
+		'identifier' => [],
 		'account_id' => [],
 		'matched_accounts' => [],
 		'update_time' => [],
@@ -968,14 +1000,15 @@ table.note-report td {
 	
 	'event/update/event' => array(
 		'status' => ['mandatory' => true],
+		'identifier' => [],
 		'account_id' => ['mandatory' => true],
-		'caption' => [],
+		'caption' => ['mandatory' => true],
 		'category' => [],
-		'begin_date' => [],
+		'begin_date' => ['mandatory' => true],
 		'end_date' => [],
-		'begin_time' => [],
+		'begin_time' => ['mandatory' => true],
 		'end_time' => [],
-		'location' => [],
+		'location' => ['mandatory' => true],
 		'description' => [],
 		'property_1' => [],
 		'property_2' => [],
@@ -986,23 +1019,24 @@ table.note-report td {
 	
 	'event/export/event' => array(
 		'status' => 'A',
-		'account_id' => 'B',
-		'matched_accounts' => 'C',
-		'caption' => 'D',
-		'category' => 'E',
-		'begin_date' => 'F',
-		'end_date' => 'G',
-		'begin_time' => 'H',
-		'end_time' => 'I',
-		'location' => 'J',
-		'description' => 'K',
-		'property_1' => 'L',
-		'property_2' => 'M',
-		'property_3' => 'N',
-		'property_20' => 'O',
-		'matching_log' => 'P',
-		'rewards' => 'Q',
-		'feedbacks' => 'R',
+		'identifier' => 'B',
+		'account_id' => 'C',
+		'matched_accounts' => 'D',
+		'caption' => 'E',
+		'category' => 'F',
+		'begin_date' => 'G',
+		'end_date' => 'H',
+		'begin_time' => 'I',
+		'end_time' => 'J',
+		'location' => 'K',
+		'description' => 'L',
+		'property_1' => 'M',
+		'property_2' => 'N',
+		'property_3' => 'O',
+		'property_20' => 'P',
+		'matching_log' => 'Q',
+		'rewards' => 'R',
+		'feedbacks' => 'S',
 	),
 
 	// Request
@@ -1283,7 +1317,7 @@ table.note-report td {
 				'class' => 'img-fluid',
 				'alt' => 'Collaboration',
 			),
-			'locales' => ['fr_FR' => 'FR', 'en_US' => 'EN'],
+			'locales' => ['fr_FR' => ['img' => 'img/flags/france.png', 'alt' => 'FR'], 'en_US' => ['img' => 'img/flags/england.png', 'alt' => 'EN']],
 		),
 		'intro' => array(
 			array(
@@ -1543,15 +1577,22 @@ table.note-report td {
 		),
 	
 		'index' => array(
+			'signOut' => array(
+				'earned' => ['type' => 'credits', 'item' => 'earned', 'labels' => ['default' => 'Earned: %s', 'fr_FR' => 'Gagné : %s']],
+				'identifier' => ['type' => 'signOut', 'labels' => ['default' => 'Enter Event code', 'fr_FR' => 'Code de l’événement']],
+			),
 			'navbar' => array(
-				'publicMode' => ['type' => 'mode', 'value' => 'Public', 'labels' => ['default' => 'All the events', 'fr_FR' => 'Tous les événements']],
+				'publicMode' => ['type' => 'mode', 'value' => 'Public', 'labels' => ['default' => 'All events', 'fr_FR' => 'Tous les événements']],
 				'ownerMode' => ['type' => 'mode', 'value' => 'Owner', 'labels' => ['default' => 'My events', 'fr_FR' => 'Mes événements']],
-				'contributorMode' => ['type' => 'mode', 'value' => 'Contributor', 'labels' => ['default' => 'My participations', 'fr_FR' => 'Mes participations']],
+				'contributorMode' => ['type' => 'mode', 'value' => 'Contributor', 'labels' => ['default' => 'My attendance', 'fr_FR' => 'Ma présence']],
 //				'skills' => ['type' => 'search', 'property' => 'property_2', 'labels' => ['default' => 'Keywords', 'fr_FR' => 'Mots clés']],
-				'begin_date' => ['type' => 'date', 'property' => 'begin_date', 'labels' => ['default' => 'Date', 'fr_FR' => 'Date']],
-				'location' => ['type' => 'input', 'property' => 'location', 'labels' => ['default' => 'Location', 'fr_FR' => 'Lieu']],
+				'begin_date' => ['type' => 'select', 'property' => 'begin_date', 'icon' => ['class' => 'fa fa-calendar'], 'modalities' => ['2018-11-05' => ['default' => '05/11/2018'], '2018-11-06' => ['default' => '06/11/2018'], '2018-11-07' => ['default' => '07/11/2018'], '2018-11-08' => ['default' => '08/11/2018'], '2018-11-09' => ['default' => '09/11/2018']], 'labels' => ['default' => 'Date', 'fr_FR' => 'Date']],
+				'location' => ['type' => 'select', 'property' => 'location', 'icon' => ['class' => 'fa fa-map-marker-alt'], 'modalities' => ['SG House - Tower Hill' => ['default' => 'SG House - Tower Hill'], 'Exchange House' => ['default' => 'Exchange House'], 'Bishops Square' => ['default' => 'Bishops Square'], 'St James’s square' => ['default' => 'St James’s square']], 'labels' => ['default' => 'Location', 'fr_FR' => 'Lieu']],
 				'new' => ['type' => 'new', 'labels' => ['default' => 'New event', 'fr_FR' => 'Nouvel événement']],
-			)
+			),
+			'links' => array(
+				'request' => ['route' => ['flowEvent/index', ['type' => 'request']], 'icon' => ['class' => 'fa fa-hands-helping mr-2'], 'labels' => ['default' => 'Cooperate in Pro bono', 'fr_FR' => 'Coopérez en Pro bono']],
+			),
 		),
 	
 		'intro' => array(
@@ -1562,29 +1603,16 @@ table.note-report td {
 				'requestor' => ['labels' => ['default' => 'I am organizer', 'fr_FR' => 'Je suis organisateur']],
 				'contributor' => ['labels' => ['default' => 'I participate', 'fr_FR' => 'Je participe']],
 			),
-			'display' => array(
-				'type' => 'image',
-				'class' => array(
-					'information' => 'fa fa-question-circle fa-2x green-text',
-					'pro_bono_day' => 'fa fa-hands-helping fa-2x blue-text',
-					'innovation' => 'fa fa-tablet-alt fa-2x orange-text',
-					'team_building' => 'fa fa-users fa-2x grey-text',
-				),
-			),
 			'properties' => array(
 				'category' => ['definition' => 'event/event/property/property_3', 'labels' => ['default' => 'Type', 'fr_FR' => 'Type']],
 				'property_2' => ['feature' => 'keyword_skill', 'class' => 'col-md-12', 'definition' => 'inline', 'type' => 'chips', 'repository' => 'matching/skills', 'trigger' => 'property_1'],
-				'begin_date' => ['definition' => 'event/event/property/begin_date'],
+				'begin_date' => ['definition' => 'event/event/property/begin_date', 'format' => ['default' => 'l dS F', 'fr_FR' => 'd/m/Y']],
 				'begin_time' => ['definition' => 'event/event/property/begin_time'],
 				'location' => ['definition' => 'event/event/property/location'],
 			),
-		),
-	
-		'status' => array(
-			'new' => ['labels' => ['default' => 'Subscription in progress', 'fr_FR' => 'Inscriptions en cours'], 'value' => 25, 'color' => 'bg-danger'],
-			'connected' => ['labels' => ['default' => 'Subscription closed', 'fr_FR' => 'Inscriptions closes'], 'value'  => 50, 'color' => 'bg-info'],
-			'realized' => ['labels' => ['default' => 'Is currently happening', 'fr_FR' => 'A lieu en ce moment'], 'value' => 75, 'color' => 'bg-warning'],
-			'completed' => ['labels' => ['default' => 'Completed', 'fr_FR' => 'Terminé'], 'value' => 100, 'color' => 'bg-success'],
+			'mask' => array(
+				'format' => ['default' => '%s&nbsp;&nbsp;%s&nbsp;&nbsp;%s&nbsp;&nbsp;%s'],
+			),
 		),
 	
 		'actions' => array(
@@ -1889,7 +1917,10 @@ table.note-report td {
 				'ownerMode' => ['type' => 'mode', 'value' => 'Owner', 'labels' => ['default' => 'My requests', 'fr_FR' => 'Mes demandes']],
 				'contributorMode' => ['type' => 'mode', 'value' => 'Contributor', 'labels' => ['default' => 'My contributions', 'fr_FR' => 'Mes contributions']],
 				'new' => ['type' => 'new', 'labels' => ['default' => 'New request', 'fr_FR' => 'Nouvelle demande']],
-			)
+			),
+			'links' => array(
+				'request' => ['route' => ['flowEvent/index', ['type' => 'event']], 'icon' => ['class' => 'fa fa-calendar-alt mr-2'], 'labels' => ['default' => 'Coming events', 'fr_FR' => 'Événements à venir']],
+			),
 		),	
 		
 		'intro' => array(

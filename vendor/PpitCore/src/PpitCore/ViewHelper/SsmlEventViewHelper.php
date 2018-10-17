@@ -35,7 +35,7 @@ class SsmlEventViewHelper
 
 		foreach($description['export'] as $propertyId => $property) {
 			$column = $property['column'];
-			$sheet->setCellValue($column.'1', $property['labels'][$context->getLocale()]);
+			$sheet->setCellValue($column.'1', $context->localize($property['labels']));
 			$sheet->getStyle($column.'1')->getFont()->getColor()->setRGB(substr($context->getConfig('styleSheet')['panelHeadingColor'], 1, 6));
 			$sheet->getStyle($column.'1')->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setRGB(substr($context->getConfig('styleSheet')['panelHeadingBackground'], 1, 6));
 			$sheet->getStyle($column.'1')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -50,12 +50,12 @@ class SsmlEventViewHelper
 				if ($property) {
 					if ($propertyId == 'matching_log') {
 						$matching_log = array();
-						foreach ($event->matching_log as $accountId => $log) $matching_log[$context->localize($description['export']['matched_accounts']['modalities'][$accountId])] = $log;
+						if ($event->matching_log) foreach ($event->matching_log as $accountId => $log) if (array_key_exists($accountId, $description['export']['matched_accounts']['modalities'])) $matching_log[$context->localize($description['export']['matched_accounts']['modalities'][$accountId])] = $log;
 						$sheet->setCellValue($column.$j, json_encode($matching_log, JSON_PRETTY_PRINT));
 					}
 					elseif ($propertyId == 'feedbacks') {
 						$feedbacks = array();
-						foreach ($event->feedbacks as $giverId => $giver) {
+						if ($event->feedbacks) foreach ($event->feedbacks as $giverId => $giver) {
 							if ($giverId == $event->account_id) $giverName = $event->n_fn;
 							else {
 								if (array_key_exists($giverId, $description['export']['matched_accounts']['modalities'])) $giverName = $context->localize($description['export']['matched_accounts']['modalities'][$giverId]);

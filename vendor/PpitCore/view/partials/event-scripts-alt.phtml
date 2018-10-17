@@ -169,7 +169,7 @@ function postForm(id)
 
 			var xhttp = new XMLHttpRequest();
 			var route;
-			route = '<?php echo $this->url('event/update') ?>' + '/' + id + '/<?php echo $type ?>';
+			route = '<?php echo $this->url('event/updateAlt') ?>' + '/' + id + '/<?php echo $type ?>';
 			xhttp.open('POST', route, true);
 			// Set up a handler for when the request finishes.
 			xhttp.onload = function () {
