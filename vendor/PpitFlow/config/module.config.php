@@ -397,7 +397,7 @@ return array (
 				array('route' => 'flowEvent/fill', 'roles' => array('user')),
 				array('route' => 'flowEvent/contact', 'roles' => array('user')),
 				array('route' => 'flowEvent/abandon', 'roles' => array('user')),
-				array('route' => 'flowEvent/propose', 'roles' => array('user')),
+				array('route' => 'flowEvent/propose', 'roles' => array('guest')),
 				array('route' => 'flowEvent/accept', 'roles' => array('user')),
 				array('route' => 'flowEvent/decline', 'roles' => array('user')),
 				array('route' => 'flowEvent/close', 'roles' => array('user')),
@@ -1603,6 +1603,15 @@ table.note-report td {
 				'requestor' => ['labels' => ['default' => 'I am organizer', 'fr_FR' => 'Je suis organisateur']],
 				'contributor' => ['labels' => ['default' => 'I participate', 'fr_FR' => 'Je participe']],
 			),
+			'display' => array(
+				'type' => 'image',
+				'class' => array(
+					'information' => 'fa fa-question-circle fa-2x green-text',
+					'pro_bono_day' => 'fa fa-hands-helping fa-2x blue-text',
+					'innovation' => 'fa fa-tablet-alt fa-2x orange-text',
+					'team_building' => 'fa fa-users fa-2x grey-text',
+				),
+			),
 			'properties' => array(
 				'category' => ['definition' => 'event/event/property/property_3', 'labels' => ['default' => 'Type', 'fr_FR' => 'Type']],
 				'property_2' => ['feature' => 'keyword_skill', 'class' => 'col-md-12', 'definition' => 'inline', 'type' => 'chips', 'repository' => 'matching/skills', 'trigger' => 'property_1'],
@@ -1613,6 +1622,13 @@ table.note-report td {
 			'mask' => array(
 				'format' => ['default' => '%s&nbsp;&nbsp;%s&nbsp;&nbsp;%s&nbsp;&nbsp;%s'],
 			),
+		),
+	
+		'status' => array(
+			'new' => ['labels' => ['default' => 'Registration in progress', 'fr_FR' => 'Inscriptions en cours'], 'value' => 25, 'color' => 'bg-danger'],
+			'connected' => ['labels' => ['default' => 'Registration closed', 'fr_FR' => 'Inscriptions closes'], 'value'  => 50, 'color' => 'bg-info'],
+			'realized' => ['labels' => ['default' => 'Is currently happening', 'fr_FR' => 'A lieu en ce moment'], 'value' => 75, 'color' => 'bg-warning'],
+			'completed' => ['labels' => ['default' => 'Completed', 'fr_FR' => 'Terminé'], 'value' => 100, 'color' => 'bg-success'],
 		),
 	
 		'actions' => array(

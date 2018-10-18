@@ -23,8 +23,7 @@ class EventController extends AbstractActionController
 	{
 		// Retrieve the context and the parameters
 		$context = Context::getCurrent();
-		if ($context->hasRole('contributor')) $defaultType = 'request'; else $defaultType = 'event';
-		$type = $this->params()->fromRoute('type', $defaultType);
+		$type = $this->params()->fromRoute('type', $context->getConfig('event_default_type'));
 		$description = Event::getDescription($type);
 		$instance_caption = $context->getInstance()->caption;
 		$place_identifier = $this->params()->fromRoute('place_identifier');
@@ -90,6 +89,8 @@ class EventController extends AbstractActionController
 			'account_id' => $account->id,
 			'mode' => $mode,
 			'panel' => $panel,
+			'redirectRoute' => $this->params()->fromQuery('route'),
+			'redirectParams' => $this->params()->fromQuery('params'),
 			'token' => $this->params()->fromQuery('hash', null),
 			'accountType' => $accountType,
 			'header' => $content['header'],
@@ -1139,11 +1140,12 @@ class EventController extends AbstractActionController
 		$type = $this->params()->fromRoute('type', 'event');
 		$place = Place::get($context->getPlaceId());
 		$id = $this->params()->fromRoute('id');
-		$account_id = $this->params()->fromQuery('account_id');
+//		$account_id = $this->params()->fromQuery('account_id');
 
 		$request = Event::get($id);
 		if (!$request) {
 			$this->response->setStatusCode('400');
+			$this->response->setReasonPhrase('Unknown');
 			return $this->response;
 		}
 
@@ -1189,6 +1191,7 @@ class EventController extends AbstractActionController
 			if ($rc != 'OK') {
 				$connection->rollback();
 				$this->response->setStatusCode('500');
+				$this->response->setReasonPhrase('event->update:'.$rc);
 				return $this->response;
 			}
 
@@ -1203,6 +1206,7 @@ class EventController extends AbstractActionController
 				if ($rc != 'OK') {
 					$connection->rollback();
 					$this->response->setStatusCode('500');
+					$this->response->setReasonPhrase('account->update:'.$rc);
 					return $this->response;
 				}
 			}
@@ -1243,6 +1247,7 @@ class EventController extends AbstractActionController
 		catch (\Exception $e) {
 			$connection->rollback();
 			$this->response->setStatusCode('500');
+			$this->response->setReasonPhrase('Exception: '.$e);
 			return $this->response;
 		}
 	}

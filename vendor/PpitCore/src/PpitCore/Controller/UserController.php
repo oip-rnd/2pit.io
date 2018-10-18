@@ -1055,9 +1055,14 @@ class UserController extends AbstractActionController
 						$email_body = sprintf($email_body, $link);
 						$email_title = $context->localize($context->getConfig('user/messages/activation/title'));
 						Context::sendMail($user->username, $email_body, $email_title, null);
-				    	
+
 						$connection->commit();
-			    		$this->getResponse()->setStatusCode('200');
+						
+						$redirectRoute = $this->params()->fromQuery('route');
+						$redirectParams = ['id' => $this->params()->fromQuery('id')];
+						if ($redirectRoute) return $this->redirect()->toRoute($redirectRoute, $redirectParams);
+						
+						$this->getResponse()->setStatusCode('200');
 			    		return $this->getResponse();
 					}
 					catch (\Exception $e) {

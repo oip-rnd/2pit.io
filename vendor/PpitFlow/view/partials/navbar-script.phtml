@@ -25,6 +25,10 @@ $('#modalRegisterForm').on('hide.bs.modal', function () {
 });
 
 function register() {
+  var route = '<?php echo $this->url('user/v1').'?type='.$accountType.'&request=register' ?>';
+<?php if ($redirectRoute) : ?>
+  route += '&route=<?php echo $redirectRoute ?>&params=<?php echo $redirectParams ?>';
+<?php endif; ?>
   var xhttp = new XMLHttpRequest(), formData = new FormData();
   formData.append('email', $('#register-email').val());
   formData.append('n_first', $('#register-n_first').val());
@@ -32,7 +36,7 @@ function register() {
   formData.append('password', $('#register-password').val());
   formData.append('origine', $('#origine').val());
   formData.append('locale', '<?php echo $locale ?>');
-  xhttp.open('POST', '<?php echo $this->url('user/v1').'?type='.$accountType.'&request=register' ?>', true);
+  xhttp.open('POST', route, true);
   xhttp.setRequestHeader("Authorization", "Basic " + btoa($('#identity').val() + ':' + $('#credential').val()));
   xhttp.onload = function () {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
