@@ -79,6 +79,7 @@
     <div class="grey-text">
 
 <?php if (array_key_exists('mask', $content['card'])) : ?>
+  <?php $arguments = array() ?>
   <?php foreach ($content['card']['properties'] as $inputId => $property) : ?>
       <?php 
       if (in_array($property['type'], ['select', 'textarea'])) {
@@ -88,7 +89,7 @@
         $arguments[] = '<a class="text-secondary" href="mailto:'.$request['email'].'?subject=probono corpo - '.$request['caption'].'"><i class="far fa-envelope"></i></a>';
       }
       elseif (in_array($property['type'], ['phone'])) {
-        $arguments[] = '<a class="text-secondary" href="tel:'.$request['.tel_work'].'"><i class="fa fa-mobile-alt"></i></a>';
+        $arguments[] = '<a class="text-secondary" href="tel:'.$request['tel_work'].'"><i class="fa fa-mobile-alt"></i></a>';
       }
       elseif ($property['type'] == 'date') {
         $arguments[] = date_format(date_create_from_format('Y-m-d', $request[$inputId]), $context->localize($property['format']));
@@ -105,7 +106,6 @@
     <?php 
     if (!$first) echo '&nbsp;&nbsp;';
     $first = false;
-    $arguments = array();
     ?>
   <?php if ($property['type'] == 'separation') : ?>
   

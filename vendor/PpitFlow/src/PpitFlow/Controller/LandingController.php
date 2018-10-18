@@ -132,6 +132,8 @@ class LandingController extends AbstractActionController
 		$this->layout()->setVariables(array(
 			'context' => $context,
 			'panel' => $this->params()->fromQuery('panel', null),
+			'redirectRoute' => $this->params()->fromQuery('route'),
+			'redirectParams' => $this->params()->fromQuery('params'),
 			'token' => $this->params()->fromQuery('hash', null),
 			'place_identifier' => $place_identifier,
 			'account_id' => $account->id,

@@ -25,7 +25,7 @@ return array(
         // provided by modules themselves. Paths may use GLOB_BRACE notation.
         'config_glob_paths' => array(
             'config/autoload/{,*.}{global,local}.php',
-//			'config/autoload/probonocorpo/{,*.}{global,local}.php',
+			'config/autoload/probonocorpo/{,*.}{global,local}.php',
 //			'config/autoload/innocoins/{,*.}{global,local}.php',
         ),
 
