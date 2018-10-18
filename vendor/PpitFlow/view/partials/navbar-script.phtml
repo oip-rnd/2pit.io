@@ -39,7 +39,7 @@ function register() {
   xhttp.open('POST', route, true);
   xhttp.setRequestHeader("Authorization", "Basic " + btoa($('#identity').val() + ':' + $('#credential').val()));
   xhttp.onload = function () {
-    if (xhttp.readyState == 4 && xhttp.status == 200) {
+    if (xhttp.readyState == 4 && (xhttp.status == 200 || xhttp.status == 302)) {
       toastr.success("<?php echo $this->translate('Your request has been registered. To finalize the registration, please check you emails with an activation link to follow.', 'ppit-core', $context->getLocale()) ?>");
       $('#modalRegisterForm').modal('hide');
     }
