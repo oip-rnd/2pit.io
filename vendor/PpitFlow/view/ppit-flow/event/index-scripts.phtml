@@ -316,10 +316,10 @@ function showList() {
               xhttp.send();  
             });
 
-    <?php if ($action_id != 'invite') : ?>
-            $('#invite-email').hide();
-    <?php endif; ?>
             $('#modalRequestActionForm').modal('show');
+  <?php if ($action_id != 'transfer') : ?>
+            $('#transfer-email').hide();
+  <?php endif; ?>
           }
         };
         xhttp.send();
@@ -412,10 +412,10 @@ function showList() {
               xhttp.send();  
             });
 
-    <?php if ($action_id != 'invite') : ?>
-            $('#invite-email').hide();
-    <?php endif; ?>
             $('#modalRequestActionForm').modal('show');
+  <?php if ($action_id != 'transfer') : ?>
+            $('#transfer-email').hide();
+  <?php endif; ?>
           }
         };
         xhttp.send();
@@ -499,6 +499,10 @@ function showList() {
               $('#buttonRequestAction').unbind();
               $('#buttonRequestAction').click(function () {
                 var xhttp = new XMLHttpRequest();
+                var formData = new FormData();
+  <?php if ($action_id == 'transfer') : ?>
+                formData.append('transfer-email', $('#transfer-email').val());
+  <?php endif; ?>
                 xhttp.open('POST', '<?php echo $this->url('flowEvent/'.$action_id, ['type' => $type]) ?>/' + request_id, true);
                 xhttp.onload = function () {
                   if (xhttp.readyState == 4) {
@@ -510,13 +514,13 @@ function showList() {
                     else technicalError();
                   }
                 };
-                xhttp.send();  
+                xhttp.send(formData);  
               });
 
-      <?php if ($action_id != 'invite') : ?>
-        $('#invite-email').hide();
-      <?php endif; ?>
               $('#modalRequestActionForm').modal('show');
+  <?php if ($action_id != 'transfer') : ?>
+              $('#transfer-email').hide();
+  <?php endif; ?>
             }
           };
           xhttp.send();
