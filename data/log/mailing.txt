@@ -1,1 +1,58 @@
 
+2018-10-18T22:40:56+02:00 INFO (6): from: P-Pit (postmaster@p-pit.fr) - to: admin@2pit.io,manh.organizer@probono.com - subject: [Pro bono corpo] - Matching on the request: Demo - My urgent request - body: 
+	<p>Hello Admin,</p>
+	<p>Manh wishes to contribute on your request: <em>Demo - My urgent request</em>.<br>
+	Would you mind contact him/her in order to confirm the matching?</p>
+	<p>Hello Manh,</p>
+	<p>Thank you for your interest on the request of Admin, your are now connected.</p>
+	<p>Have a nice day,<br>
+	The Pro bono corpo team</p>
+	 - RC:
+2018-10-18T22:58:38+02:00 INFO (6): from: P-Pit (postmaster@p-pit.fr) - to: test1810@socgen.com - subject: Activation de votre compte - body: 
+Bonjour,
+Plus qu'une étape pour pouvoir vous connecter à votre compte, en suivant ce lien : http://localhost/~bruno/2pit.io/public/user/v1/2323?account_id=27727&request=activate&hash=62cb2b562a171e49bdc6a0fc57199ddc
+A bientôt sur la plateforme !
+ - RC:
+2018-10-18T23:02:44+02:00 INFO (6): from: P-Pit (postmaster@p-pit.fr) - to: test1810@socgen.com - subject: Activation de votre compte - body: 
+Bonjour,
+Plus qu'une étape pour pouvoir vous connecter à votre compte, en suivant ce lien : http://localhost/~bruno/2pit.io/public/user/v1/2324?account_id=27727&request=activate&hash=3e7ad4ee581c6e9eddd726da35700461
+A bientôt sur la plateforme !
+ - RC:
+2018-10-18T23:05:12+02:00 INFO (6): from: P-Pit (postmaster@p-pit.fr) - to: test1810@socgen.com - subject: Activation de votre compte - body: 
+Bonjour,
+Plus qu'une étape pour pouvoir vous connecter à votre compte, en suivant ce lien : http://localhost/~bruno/2pit.io/public/user/v1/2325?account_id=27727&request=activate&hash=666627a311e110e35aa20e979b401782
+A bientôt sur la plateforme !
+ - RC:
+2018-10-18T23:07:21+02:00 INFO (6): from: P-Pit (postmaster@p-pit.fr) - to: test1810@socgen.com - subject: Activation de votre compte - body: 
+Bonjour,
+Plus qu'une étape pour pouvoir vous connecter à votre compte, en suivant ce lien : http://localhost/~bruno/2pit.io/public/user/v1/2326?account_id=27727&request=activate&hash=9f3942cff1a98a8c4adcf3b9ab2bd81f
+A bientôt sur la plateforme !
+ - RC:
+2018-10-18T23:09:37+02:00 INFO (6): from: P-Pit (postmaster@p-pit.fr) - to: test1810@socgen.com - subject: Activation de votre compte - body: 
+Bonjour,
+Plus qu'une étape pour pouvoir vous connecter à votre compte, en suivant ce lien : http://localhost/~bruno/2pit.io/public/user/v1/2327?account_id=27727&request=activate&hash=5bf040694185940b19e119097320148f
+A bientôt sur la plateforme !
+ - RC:
+2018-10-18T23:09:38+02:00 INFO (6): from: P-Pit (postmaster@p-pit.fr) - to: admin@2pit.io,test1810@socgen.com - subject: [Pro bono corpo] - Matching on the request: Demo - My urgent request - body: 
+	<p>Hello Admin,</p>
+	<p>Test wishes to contribute on your request: <em>Demo - My urgent request</em>.<br>
+	Would you mind contact him/her in order to confirm the matching?</p>
+	<p>Hello Test,</p>
+	<p>Thank you for your interest on the request of Admin, your are now connected.</p>
+	<p>Have a nice day,<br>
+	The Pro bono corpo team</p>
+	 - RC:
+2018-10-18T23:22:53+02:00 INFO (6): from: P-Pit (postmaster@p-pit.fr) - to: test1810@test.com - subject: Activation de votre compte - body: 
+Bonjour,
+Plus qu'une étape pour pouvoir vous connecter à votre compte, en suivant ce lien : http://localhost/~bruno/2pit.io/public/user/v1/2328?account_id=27723&request=activate&hash=fd7236494aa016633d3164d10c4a35d0
+A bientôt sur la plateforme !
+ - RC:
+2018-10-18T23:22:54+02:00 INFO (6): from: P-Pit (postmaster@p-pit.fr) - to: admin@2pit.io,test1810@test.com - subject: [Pro bono corpo] - Matching on the request: Demo - My urgent request - body: 
+	<p>Hello Admin,</p>
+	<p>Test wishes to contribute on your request: <em>Demo - My urgent request</em>.<br>
+	Would you mind contact him/her in order to confirm the matching?</p>
+	<p>Hello Test,</p>
+	<p>Thank you for your interest on the request of Admin, your are now connected.</p>
+	<p>Have a nice day,<br>
+	The Pro bono corpo team</p>
+	 - RC:

@@ -27,7 +27,7 @@ $('#modalRegisterForm').on('hide.bs.modal', function () {
 function register() {
   var route = '<?php echo $this->url('user/v1').'?type='.$accountType.'&request=register' ?>';
 <?php if ($redirectRoute) : ?>
-  route += '&route=<?php echo $redirectRoute ?>&params=<?php echo $redirectParams ?>';
+  route += '&route=<?php echo $redirectRoute ?><?php echo $redirectParams ?>';
 <?php endif; ?>
   var xhttp = new XMLHttpRequest(), formData = new FormData();
   formData.append('email', $('#register-email').val());
@@ -62,11 +62,15 @@ $('#modalLoginForm').on('hide.bs.modal', function () {
 });
 
 function login() {
+    var route = '<?php echo $this->url('user/v1') ?>?request=login';
+  <?php if ($redirectRoute) : ?>
+    route += '&route=<?php echo $redirectRoute ?><?php echo $redirectParams ?>';
+  <?php endif; ?>
 	var xhttp = new XMLHttpRequest();
-	xhttp.open('GET', '<?php echo $this->url('user/v1') ?>?request=login', true);
+	xhttp.open('GET', route, true);
 	xhttp.setRequestHeader("Authorization", "Basic " + btoa($('#identity').val() + ':' + $('#credential').val()));
 	xhttp.onload = function () {
-		if (xhttp.readyState == 4 && xhttp.status == 200) {
+		if (xhttp.readyState == 4 && (xhttp.status == 200 || xhttp.status == 302)) {
 			document.location.href = '<?php echo $this->url('home') ?>';
 		}
 		else if (xhttp.statusText == 'Activation') {

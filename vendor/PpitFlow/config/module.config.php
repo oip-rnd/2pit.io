@@ -93,6 +93,13 @@ return array (
 							'defaults' => array('action' => 'propose'),
 						),
 					),
+					'transfer' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/transfer[/:type][/:id]',
+							'defaults' => array('action' => 'transfer'),
+						),
+					),
 					'accept' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -398,6 +405,7 @@ return array (
 				array('route' => 'flowEvent/contact', 'roles' => array('user')),
 				array('route' => 'flowEvent/abandon', 'roles' => array('user')),
 				array('route' => 'flowEvent/propose', 'roles' => array('guest')),
+				array('route' => 'flowEvent/transfer', 'roles' => array('user')),
 				array('route' => 'flowEvent/accept', 'roles' => array('user')),
 				array('route' => 'flowEvent/decline', 'roles' => array('user')),
 				array('route' => 'flowEvent/close', 'roles' => array('user')),
@@ -1653,6 +1661,7 @@ table.note-report td {
 			),
 			'Public' => array(
 				'propose' => ['icon' => 'hand-point-up', 'labels' => ['default' => 'Propose my participation', 'fr_FR' => 'Proposer ma participation']],
+				'transfer' => ['icon' => 'hand-point-up', 'labels' => ['default' => 'Transfer to someone else', 'fr_FR' => 'Transférer à quelqu’un d’autre']],
 			),
 		),
 	
