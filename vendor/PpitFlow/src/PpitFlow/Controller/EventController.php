@@ -118,8 +118,6 @@ class EventController extends AbstractActionController
 			'locale' => $locale,
 			'place_identifier' => $place_identifier,
 			'account' => $account->properties,
-<<<<<<< HEAD
-=======
 			'content' => $content,
 		));
 		return $view;
@@ -192,89 +190,12 @@ class EventController extends AbstractActionController
 			'locale' => $locale,
 			'place_identifier' => $place_identifier,
 			'account' => $account->properties,
->>>>>>> origin/master
 			'content' => $content,
 		));
 		$view->setTerminal(true);
 		return $view;
 	}
-	
-<<<<<<< HEAD
-	public function dashboardAction()
-	{
-		// Retrieve the context and the parameters
-		$context = Context::getCurrent();
-		$type = $this->params()->fromRoute('type');
-		$description = Event::getDescription($type);
-		$instance_caption = $context->getInstance()->caption;
-		$place = Place::get($context->getPlaceId());
-		$place_identifier = $place->identifier;
-		$account = Account::get($context->getContactId(), 'contact_1_id');
-		$locale = $this->params()->fromQuery('locale');
-		if (!$locale) if ($account) $locale = $account->locale; else $locale = $context->getLocale();
-		
-		// Event content
-		if ($context->getConfig('specificationMode') == 'config') {
-			$content = $context->getConfig($type.'/'.$place_identifier);
-			if (!$content) $content = $context->getConfig($type.'/generic');
-		}
-		else $content = Config::get($place_identifier.'_'.$type, 'identifier')->content;
-	
-		// compute ranking in gaming mode
-		if (array_key_exists('rewards', $content)) {
-	
-			// Rank the profiles
-			$accountType = $context->getConfig('landing_account_type');
-			$ranking = array();
-			$cursor = Account::getList($account->type, ['status' => 'active']);
-			foreach ($cursor as $anyAccountId => $anyAccount) {
-				if ($anyAccount->credits) {
-					foreach ($anyAccount->credits as $rowId => $value) {
-						if ($rowId == 'earned') {
-							$ranking[$anyAccountId] = $value;
-						}
-					}
-				}
-			}
-	
-			if (array_key_exists($account->id, $ranking)) {
-	
-				// Rank the participants and find my rank
-				arsort($ranking);
-				$ranks = array();
-				$currentRank = 0;
-				$currentWeight = 0;
-				foreach($ranking as $account_id => $weight) {
-					if ($currentWeight != $weight) {
-						$currentRank++;
-						$currentWeight = $weight;
-						$ranks[$currentWeight] = 1;
-					}
-					else $ranks[$currentWeight]++;
-					if ($ranking[$account->id] == $currentWeight) $account->credits['rank'] = $currentRank;
-				}
-	
-				// Add a sign to indicate my rank is shared with other participant
-				if ($ranks[$ranking[$account->id]] > 1) $account->credits['rank'] = '='.$account->credits['rank'];
-			}
-			$account->properties['credits'] = $account->credits;
-		}
-	
-		// Return the view
-		$view = new ViewModel(array(
-			'context' => $context,
-			'type' => $type,
-			'locale' => $locale,
-			'place_identifier' => $place_identifier,
-			'account' => $account->properties,
-			'content' => $content,
-		));
-		$view->setTerminal(true);
-		return $view;
-	}
-	
-=======
->>>>>>> origin/master
+
 	public function compare($a, $b)
 	{
 		if ($a['rank'] == $b['rank']) {
@@ -1220,12 +1141,8 @@ class EventController extends AbstractActionController
 		$type = $this->params()->fromRoute('type', 'event');
 		$place = Place::get($context->getPlaceId());
 		$id = $this->params()->fromRoute('id');
-<<<<<<< HEAD
 		$account_id = $this->params()->fromQuery('account_id');
 		if (!$account_id) $account_id = $context->getContactId();
-=======
-//		$account_id = $this->params()->fromQuery('account_id');
->>>>>>> origin/master
 
 		$request = Event::get($id);
 		if (!$request) {
@@ -1336,7 +1253,6 @@ class EventController extends AbstractActionController
 			return $this->response;
 		}
 	}
-<<<<<<< HEAD
 
 	public function transferAction()
 	{
@@ -1405,8 +1321,6 @@ class EventController extends AbstractActionController
 			return $this->response;
 		}
 	}
-=======
->>>>>>> origin/master
 	
 	// Feedback
 	public function feedbackAction()

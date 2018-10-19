@@ -405,10 +405,7 @@ return array (
 				array('route' => 'flowEvent/contact', 'roles' => array('user')),
 				array('route' => 'flowEvent/abandon', 'roles' => array('user')),
 				array('route' => 'flowEvent/propose', 'roles' => array('guest')),
-<<<<<<< HEAD
 				array('route' => 'flowEvent/transfer', 'roles' => array('user')),
-=======
->>>>>>> origin/master
 				array('route' => 'flowEvent/accept', 'roles' => array('user')),
 				array('route' => 'flowEvent/decline', 'roles' => array('user')),
 				array('route' => 'flowEvent/close', 'roles' => array('user')),
@@ -1337,7 +1334,6 @@ table.note-report td {
 				'text' => array(
 					'default' => '<span class="h4-responsive font-bold mb-2">LET\'S SHARE OUR SKILLS!</span>', 
 					'fr_FR' => '<span class="h4-responsive font-bold mb-2">PARTAGEZ VOS TALENTS !</span>',
-<<<<<<< HEAD
 				),
 			),
 			array(
@@ -1348,20 +1344,6 @@ table.note-report td {
 					'fr_FR' => 'Découvrir',
 				),
 			),
-			array('type' => 'br', 'class' => 'hr-light'),
-			array('type' => 'br', 'class' => 'hr-light'),
-=======
-				),
-			),
-			array(
-				'type' => 'div',
-				'button' => ['id' => 'a_survey', 'href' => '#descr', 'class' => 'btn btn-outline-secondary'], 
-				'text' => array(
-					'default' => 'Discover',
-					'fr_FR' => 'Découvrir',
-				),
-			),
->>>>>>> origin/master
 			array('type' => 'br', 'class' => 'hr-light'),
 			array('type' => 'br', 'class' => 'hr-light'),
 			array('type' => 'br', 'class' => 'hr-light'),
