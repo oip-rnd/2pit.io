@@ -78,7 +78,7 @@ class EventController extends AbstractActionController
 		}
 
 		$panel = $this->params()->fromQuery('panel', null);
-		if (!$panel && (!$account->properties['completeness'] || $account->properties['completeness'] == '0_not_completed')) $panel = 'modalProfileForm';
+		if ($charter_status == 'OK' && $gtou_status == 'OK' && !$panel && (!$account->properties['completeness'] || $account->properties['completeness'] == '0_not_completed')) $panel = 'modalProfileForm';
 		
 		// Feed the layout
 		$this->layout('/layout/flow-layout');
@@ -382,6 +382,7 @@ class EventController extends AbstractActionController
 				else $content['data'][$request->id]['role'] = null;
 				if (in_array($request->status, ['new', 'connected']) && $myAccount->id != $request->account_id && !in_array($myAccount->id, explode(',', $request->matched_accounts))) {
 					$actions['propose'] = $content['actions']['Public']['propose'];
+					$actions['transfer'] = $content['actions']['Public']['transfer'];
 				}
 				$content['data'][$request->id]['PublicActions'] = $actions;
 			}
@@ -1140,7 +1141,8 @@ class EventController extends AbstractActionController
 		$type = $this->params()->fromRoute('type', 'event');
 		$place = Place::get($context->getPlaceId());
 		$id = $this->params()->fromRoute('id');
-//		$account_id = $this->params()->fromQuery('account_id');
+		$account_id = $this->params()->fromQuery('account_id');
+		if (!$account_id) $account_id = $context->getContactId();
 
 		$request = Event::get($id);
 		if (!$request) {
@@ -1162,7 +1164,7 @@ class EventController extends AbstractActionController
 		try {
 
 			// Retrieve the accounts who propose
-			$otherAccounts = [Account::get($context->getContactId(), 'contact_1_id')->id]; //explode(',', $this->params()->fromQuery('accounts'));
+			$otherAccounts = [Account::get($account_id)->id]; //explode(',', $this->params()->fromQuery('accounts'));
 
 			// Mark the other accounts as matched in the request
 			if ($request->matched_accounts) $matchedAccounts = explode(',', $request->matched_accounts);
@@ -1239,6 +1241,74 @@ class EventController extends AbstractActionController
 				}
 			}
 
+			// Commit the update
+			$connection->commit();
+			$this->response->setStatusCode('200');
+			return $this->response;
+		}
+		catch (\Exception $e) {
+			$connection->rollback();
+			$this->response->setStatusCode('500');
+			$this->response->setReasonPhrase('Exception: '.$e);
+			return $this->response;
+		}
+	}
+
+	public function transferAction()
+	{
+		$context = Context::getCurrent();
+		$type = $this->params()->fromRoute('type', 'event');
+		$place = Place::get($context->getPlaceId());
+		$id = $this->params()->fromRoute('id');
+	
+		$account = Account::get($context->getContactId(), 'contact_1_id');
+		
+		$request = Event::get($id);
+		if (!$request) {
+			$this->response->setStatusCode('400');
+			$this->response->setReasonPhrase('Unknown');
+			return $this->response;
+		}
+	
+		// Retrieve the content
+		if ($context->getConfig('specificationMode') == 'config') {
+			$content = $context->getConfig($type.'/'.$place->identifier);
+			if (!$content) $content = $context->getConfig($type.'/generic');
+		}
+		else $content = Config::get($place->identifier.'_'.$type, 'identifier')->content;
+	
+		// Atomicity
+		$connection = Event::getTable()->getAdapter()->getDriver()->getConnection();
+		$connection->beginTransaction();
+		try {
+
+			$email = $this->getRequest()->getPost('email');
+
+			// Email
+			if ($email) {
+				$url = $context->getServiceManager()->get('viewhelpermanager')->get('url');
+	
+				// Email title
+				$emailTitleFormat = $context->localize($content['emails']['transfer']['title']['format'], $request->locale);
+				$titleArguments = array();
+				foreach ($content['emails']['transfer']['title']['parameters'] as $parameter) {
+					if ($parameter == 'contributor_n_first') $titleArguments[] = $otherAccount->n_first;
+					else $titleArguments[] = $request->properties[$parameter];
+				}
+				$emailTitle = vsprintf($emailTitleFormat, $titleArguments);
+					
+				// Email body
+				$emailBodyFormat = $context->localize($content['emails']['transfer']['body']['format'], $request->locale);
+				$bodyArguments = array();
+				foreach ($content['emails']['transfer']['body']['parameters'] as $parameter) {
+					if ($parameter == 'contributor_n_first') $bodyArguments[] = $otherAccount->n_first;
+					else $bodyArguments[] = $request->properties[$parameter];
+				}
+				$emailBody = vsprintf($emailBodyFormat, $bodyArguments);
+					
+				Context::sendMail($account->email.','.$email, $emailBody, $emailTitle);
+			}
+	
 			// Commit the update
 			$connection->commit();
 			$this->response->setStatusCode('200');

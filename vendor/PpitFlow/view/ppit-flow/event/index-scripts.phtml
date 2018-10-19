@@ -316,6 +316,9 @@ function showList() {
               xhttp.send();  
             });
 
+    <?php if ($action_id != 'invite') : ?>
+            $('#invite-email').hide();
+    <?php endif; ?>
             $('#modalRequestActionForm').modal('show');
           }
         };
@@ -409,6 +412,9 @@ function showList() {
               xhttp.send();  
             });
 
+    <?php if ($action_id != 'invite') : ?>
+            $('#invite-email').hide();
+    <?php endif; ?>
             $('#modalRequestActionForm').modal('show');
           }
         };
@@ -468,6 +474,9 @@ function showList() {
                 xhttp.send();  
               });
 
+      <?php if ($action_id != 'transfer') : ?>
+        $('#transfer-email').hide();
+      <?php endif; ?>
               $('#modalRequestActionForm').modal('show');
             }
           };
@@ -504,6 +513,9 @@ function showList() {
                 xhttp.send();  
               });
 
+      <?php if ($action_id != 'invite') : ?>
+        $('#invite-email').hide();
+      <?php endif; ?>
               $('#modalRequestActionForm').modal('show');
             }
           };

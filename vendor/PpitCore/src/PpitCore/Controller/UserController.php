@@ -901,7 +901,7 @@ class UserController extends AbstractActionController
 	public function v1Action()
 	{
 		$context = Context::getCurrent();
-		$type = $this->params()->fromQuery('type');
+//		$type = $this->params()->fromQuery('type');
 		$request = $this->params()->fromQuery('request', 'logout');
 		$content = array();
 
@@ -982,12 +982,11 @@ class UserController extends AbstractActionController
 					$this->getResponse()->setReasonPhrase($rc);
 					return $this->getResponse();
 				}
+						
+				$redirectRoute = $this->params()->fromQuery('route');
+				$redirectParams = ['type' => $this->params()->fromQuery('type'), 'id' => $this->params()->fromQuery('id')];
+				if ($redirectRoute) return $this->redirect()->toRoute($redirectRoute, $redirectParams);
 			}
-/*
-			if (!$context->isAuthenticated() && !$context->wsAuthenticate($this->getEvent())) {
-				$this->getResponse()->setStatusCode('401');
-				return $this->getResponse();
-			}*/
 				
 			// Logout
 			if ($request == 'logout') {
@@ -1012,11 +1011,11 @@ class UserController extends AbstractActionController
 				$data['password'] = $this->request->getPost('password');
 				$data['locale'] = $this->request->getPost('locale');
 				$data['origine'] = $this->request->getPost('origine');
-				if ($type) {
+				if ($context->getConfig('landing_account_type')) {
 					$connection = User::getTable()->getAdapter()->getDriver()->getConnection();
 					$connection->beginTransaction();
 					try {
-						$account = Account::instanciate($type);
+						$account = Account::instanciate($context->getConfig('landing_account_type'));
 						$rc = $account->loadAndAdd($data);
 						if ($rc[0] == 206) $account = $rc[1];
 						$content['data'] = $account->getProperties();
@@ -1047,7 +1046,7 @@ class UserController extends AbstractActionController
 				    	$user_id = $context->getSecurityAgent()->register($account->email, $account->contact_1_id, $this->request->getPost('password'));
 				    	$user = User::getTable()->transGet($user_id);
 						$token = $context->getSecurityAgent()->requestAuthenticationToken($user->username, false);
-				    	
+
 						// Send the OTP by email
 						$url = $context->getServiceManager()->get('viewhelpermanager')->get('url');
 						$email_body = $context->localize($context->getConfig('user/messages/activation/text'));
@@ -1057,10 +1056,10 @@ class UserController extends AbstractActionController
 						Context::sendMail($user->username, $email_body, $email_title, null);
 
 						$connection->commit();
-						
+
 						$redirectRoute = $this->params()->fromQuery('route');
-						$redirectParams = ['id' => $this->params()->fromQuery('id')];
-						if ($redirectRoute) return $this->redirect()->toRoute($redirectRoute, $redirectParams);
+						$redirectParams = ['type' => $this->params()->fromQuery('type'), 'id' => $this->params()->fromQuery('id')];
+						if ($redirectRoute) return $this->redirect()->toRoute($redirectRoute, $redirectParams, ['query' => ['account_id' => $account->id]]);
 						
 						$this->getResponse()->setStatusCode('200');
 			    		return $this->getResponse();
