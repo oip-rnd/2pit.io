@@ -13,9 +13,9 @@
 
 return array(
 	'defaultRoute' => 'flowEvent',
-	'mailAdmin' => 'postmaster@p-pit.fr',
-	'nameAdmin' => 'P-Pit',
-	'mailTo' => null, // Overrides the real email if not NULL (for test purposes)
+	'mailAdmin' => 'no-reply@probonocorpo.com',
+	'nameAdmin' => 'Pro bono corpo',
+	'mailTo' => 'contact@probonocorpo.com', // Overrides the real email if not NULL (for test purposes)
 	'isTraceActive' => true,
 	'isDemoModeActive' => true,
 	'isDemoAccountUpdatable' => false,
@@ -32,7 +32,7 @@ return array(
 	),
 		
 	'specifications' => array(
-			'mailTo' => 'support@p-pit.fr', // Overrides the real email if not NULL (for test purposes)
+			'mailTo' => 'contact@probonocorpo.com', // Overrides the real email if not NULL (for test purposes)
 			'credit' => array(
 					'unlimitedCredits' => true,
 			),
