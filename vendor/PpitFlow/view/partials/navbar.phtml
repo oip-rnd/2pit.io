@@ -100,7 +100,7 @@ else {
 	            <div class="modal-body mx-3">
 	                <div class="md-form mb-5">
 	                    <i class="fa fa-envelope prefix grey-text"></i>
-	                    <input type="text" id="identity" class="form-control validate modal_input" required="required">
+	                    <input type="text" id="identity" class="form-control validate modal_input" required="required" value="<?php echo $identity ?>">
 	                    <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="identity"><?php echo $this->translate('Email', 'ppit-core', $locale) ?></label>
 	                </div>
 	
@@ -270,7 +270,7 @@ else {
             <form id="register-form">
 	            <div class="modal-body mx-3">
 	                <div class="md-form mb-3">
-	                    <input type="email" id="register-email" class="form-control validate modal_input" required="required">
+	                    <input type="email" id="register-email" class="form-control validate modal_input" required="required" value="<?php echo $identity ?>">
 	                    <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="register-email">* <?php echo $this->translate('Email', 'ppit-core', $locale) ?></label>
 	                </div>
 	
