@@ -691,7 +691,7 @@ class Event implements InputFilterAwareInterface
 
     	// Todo list vs search modes
     	if ($mode == 'todo') {
-	    	$where->equalTo('core_event.status', 'new');
+//	    	$where->equalTo('core_event.status', 'new');
     	}
     	else {
     		// Set the filters

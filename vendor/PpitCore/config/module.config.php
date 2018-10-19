@@ -4045,25 +4045,6 @@ table.note-report td {
 ',
 	),
 	
-	// Event
-	
-	'event/generic/property/status' => array(
-		'definition' => 'inline',
-		'type' => 'select',
-		'modalities' => array(
-				'new' => array('en_US' => 'New', 'fr_FR' => 'Nouveau'),
-				'completed' => array('en_US' => 'Completed', 'fr_FR' => 'Complété'),
-				'scheduled' => array('en_US' => 'Scheduled', 'fr_FR' => 'Planifié'),
-		),
-		'labels' => array(
-				'en_US' => 'Status',
-				'fr_FR' => 'Statut',
-		),
-		'perspectives' => array(
-			'generic' => array('', 'new', 'scheduled'),
-		),
-	),
-	
 	'event/generic/property/type' => array(
 		'definition' => 'inline',
 		'type' => 'select',
@@ -4314,7 +4295,7 @@ table.note-report td {
 		'definition' => 'inline',
 		'type' => 'time',
 		'labels' => array(
-				'en_US' => 'Time',
+				'en_US' => 'Start Time',
 				'fr_FR' => 'Heure',
 		),
 	),
@@ -4323,7 +4304,7 @@ table.note-report td {
 		'definition' => 'inline',
 		'type' => 'time',
 		'labels' => array(
-				'en_US' => 'End time',
+				'en_US' => 'End Time',
 				'fr_FR' => 'Heure de fin',
 		),
 	),

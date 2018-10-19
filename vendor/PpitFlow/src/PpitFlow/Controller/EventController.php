@@ -332,7 +332,7 @@ class EventController extends AbstractActionController
 		else {
 
 			if (!$filters) $filters = ['status' => 'new,connected,realized,completed'];
-			$filters['account_status'] = 'active';
+			if ($type == 'request') $filters['account_status'] = 'active';
 			$skills = $this->params()->fromQuery('skills');
 //			if (!$skills) {
 				$requests = Event::getListV2($description, $filters);
@@ -380,9 +380,11 @@ class EventController extends AbstractActionController
 				if ($myAccount->id == $request->account_id) $content['data'][$request->id]['role'] = 'requestor';
 				elseif (in_array($myAccount->id, explode(',', $request->matched_accounts))) $content['data'][$request->id]['role'] = 'contributor';
 				else $content['data'][$request->id]['role'] = null;
-				if (in_array($request->status, ['new', 'connected']) && $myAccount->id != $request->account_id && !in_array($myAccount->id, explode(',', $request->matched_accounts))) {
-					$actions['propose'] = $content['actions']['Public']['propose'];
-					if (array_key_exists('transfer', $actions)) $actions['transfer'] = $content['actions']['Public']['transfer'];
+				if (in_array($request->status, ['new', 'connected'])) {
+					if ($myAccount->id != $request->account_id && !in_array($myAccount->id, explode(',', $request->matched_accounts))) {
+						$actions['propose'] = $content['actions']['Public']['propose'];
+					}
+					if (array_key_exists('transfer', $content['actions']['Public'])) $actions['transfer'] = $content['actions']['Public']['transfer'];
 				}
 				$content['data'][$request->id]['PublicActions'] = $actions;
 			}
@@ -700,6 +702,7 @@ class EventController extends AbstractActionController
 		// Return the view
 		$view = new ViewModel(array(
 			'context' => $context,
+			'imagePath' => 'img/'.$place_identifier.'/event_'.$type.'/',
 			'id' => $id,
 			'status' => $request->status,
 			'mode' => $mode,
@@ -1142,7 +1145,11 @@ class EventController extends AbstractActionController
 		$place = Place::get($context->getPlaceId());
 		$id = $this->params()->fromRoute('id');
 		$account_id = $this->params()->fromQuery('account_id');
-		if (!$account_id) $account_id = $context->getContactId();
+		if ($account_id) $account = Account::get($account_id);
+		else {
+			$account = Account::get($context->getContactId(), 'contact_1_id');
+			$account_id = $account->id;
+		}
 
 		$request = Event::get($id);
 		if (!$request) {
@@ -1163,32 +1170,26 @@ class EventController extends AbstractActionController
 		$connection->beginTransaction();
 		try {
 
-			// Retrieve the accounts who propose
-			$otherAccounts = [Account::get($account_id)->id]; //explode(',', $this->params()->fromQuery('accounts'));
-
-			// Mark the other accounts as matched in the request
+			// Mark my account as matched in the request
 			if ($request->matched_accounts) $matchedAccounts = explode(',', $request->matched_accounts);
 			else $matchedAccounts = array();
-			foreach ($otherAccounts as $account_id) {
-				if (!in_array($account_id, $matchedAccounts)) $matchedAccounts[] = $account_id;
-				$request->matched_accounts = implode(',', $matchedAccounts);
-				$entry = array(
-					'user_id' => $context->getUserId(),
-					'n_fn' => $context->getFormatedName(),
-					'action' => 'request/propose',
-				);
-				if (array_key_exists($account_id, $request->matching_log)) {
-					$request->matching_log[$account_id]['log'][date('Y-m-d H:i:s')] = $entry;
-				}
-				else {
-					$request->matching_log[$account_id] = ['log' => [date('Y-m-d H:i:s') => $entry]];
-				}
-				$request->matching_log[$account_id]['action'] = 'propose';
-				$request->matching_log[$account_id]['date'] = Date('Y-m-d');
+			if (!in_array($account_id, $matchedAccounts)) $matchedAccounts[] = $account_id;
+			$request->matched_accounts = implode(',', $matchedAccounts);
+			$entry = array(
+				'user_id' => $context->getUserId(),
+				'n_fn' => $context->getFormatedName(),
+				'action' => 'request/propose',
+			);
+			if (array_key_exists($account_id, $request->matching_log)) {
+				$request->matching_log[$account_id]['log'][date('Y-m-d H:i:s')] = $entry;
 			}
+			else {
+				$request->matching_log[$account_id] = ['log' => [date('Y-m-d H:i:s') => $entry]];
+			}
+			$request->matching_log[$account_id]['action'] = 'propose';
+			$request->matching_log[$account_id]['date'] = Date('Y-m-d');
 
 			// Mark the request as connected
-//			$request->status = 'connected';
 			$rc = $request->update(null);
 			if ($rc != 'OK') {
 				$connection->rollback();
@@ -1198,47 +1199,42 @@ class EventController extends AbstractActionController
 			}
 
 			// Mark the other account as matched in the owner's account
-			$account = Account::get($request->account_id);
-			if ($account->property_2) $matchedAccounts = explode(',', $account->property_2);
+			$ownerAccount = Account::get($request->account_id);
+			if ($ownerAccount->property_2) $matchedAccounts = explode(',', $ownerAccount->property_2);
 			else $matchedAccounts = array();
-			foreach ($otherAccounts as $account_id) {
-				if (!in_array($account_id, $matchedAccounts)) $matchedAccounts[] = $account_id;
-				$account->property_2 = implode(',', $matchedAccounts);
-				$rc = $account->update(null);
-				if ($rc != 'OK') {
-					$connection->rollback();
-					$this->response->setStatusCode('500');
-					$this->response->setReasonPhrase('account->update:'.$rc);
-					return $this->response;
-				}
+			if (!in_array($account_id, $matchedAccounts)) $matchedAccounts[] = $account_id;
+			$ownerAccount->property_2 = implode(',', $matchedAccounts);
+			$rc = $ownerAccount->update(null);
+			if ($rc != 'OK') {
+				$connection->rollback();
+				$this->response->setStatusCode('500');
+				$this->response->setReasonPhrase('account->update:'.$rc);
+				return $this->response;
 			}
 
 			// Email
 			if (array_key_exists('emails', $content) && array_key_exists('matching', $content['emails'])) {
 				$url = $context->getServiceManager()->get('viewhelpermanager')->get('url');
-				foreach ($otherAccounts as $account_id) {
-					$otherAccount = Account::get($account_id);
 	
-					// Email title
-					$emailTitleFormat = $context->localize($content['emails']['matching']['title']['format'], $request->locale);
-					$titleArguments = array();
-					foreach ($content['emails']['matching']['title']['parameters'] as $parameter) {
-						if ($parameter == 'contributor_n_first') $titleArguments[] = $otherAccount->n_first;
-						else $titleArguments[] = $request->properties[$parameter];
-					}
-					$emailTitle = vsprintf($emailTitleFormat, $titleArguments);
-					
-					// Email body
-					$emailBodyFormat = $context->localize($content['emails']['matching']['body']['format'], $request->locale);
-					$bodyArguments = array();
-					foreach ($content['emails']['matching']['body']['parameters'] as $parameter) {
-						if ($parameter == 'contributor_n_first') $bodyArguments[] = $otherAccount->n_first;
-						else $bodyArguments[] = $request->properties[$parameter];
-					}
-					$emailBody = vsprintf($emailBodyFormat, $bodyArguments);
-					
-					Context::sendMail($request->email.','.$otherAccount->email, $emailBody, $emailTitle);
+				// Email title
+				$emailTitleFormat = $context->localize($content['emails']['matching']['title']['format'], $request->locale);
+				$titleArguments = array();
+				foreach ($content['emails']['matching']['title']['parameters'] as $parameter) {
+					if ($parameter == 'contributor_n_first') $titleArguments[] = $account->n_first;
+					else $titleArguments[] = $request->properties[$parameter];
 				}
+				$emailTitle = vsprintf($emailTitleFormat, $titleArguments);
+				
+				// Email body
+				$emailBodyFormat = $context->localize($content['emails']['matching']['body']['format'], $request->locale);
+				$bodyArguments = array();
+				foreach ($content['emails']['matching']['body']['parameters'] as $parameter) {
+					if ($parameter == 'contributor_n_first') $bodyArguments[] = $account->n_first;
+					else $bodyArguments[] = $request->properties[$parameter];
+				}
+				$emailBody = vsprintf($emailBodyFormat, $bodyArguments);
+				
+				Context::sendMail($request->email.','.$account->email, $emailBody, $emailTitle);
 			}
 
 			// Commit the update
@@ -1276,15 +1272,15 @@ class EventController extends AbstractActionController
 			if (!$content) $content = $context->getConfig($type.'/generic');
 		}
 		else $content = Config::get($place->identifier.'_'.$type, 'identifier')->content;
-	
+		$description = \PpitCore\Model\Event::getDescription($type);
+		
 		// Atomicity
 		$connection = Event::getTable()->getAdapter()->getDriver()->getConnection();
 		$connection->beginTransaction();
 		try {
 
-			$email = $this->getRequest()->getPost('email');
-
 			// Email
+			$email = $this->getRequest()->getPost('transfer-email');
 			if ($email) {
 				$url = $context->getServiceManager()->get('viewhelpermanager')->get('url');
 	
@@ -1292,7 +1288,8 @@ class EventController extends AbstractActionController
 				$emailTitleFormat = $context->localize($content['emails']['transfer']['title']['format'], $request->locale);
 				$titleArguments = array();
 				foreach ($content['emails']['transfer']['title']['parameters'] as $parameter) {
-					if ($parameter == 'contributor_n_first') $titleArguments[] = $otherAccount->n_first;
+					if ($parameter == 'referrer_n_first') $titleArguments[] = $referrer->n_first;
+					elseif ($parameter == 'contributor_n_first') $titleArguments[] = $account->n_first;
 					else $titleArguments[] = $request->properties[$parameter];
 				}
 				$emailTitle = vsprintf($emailTitleFormat, $titleArguments);
@@ -1301,12 +1298,16 @@ class EventController extends AbstractActionController
 				$emailBodyFormat = $context->localize($content['emails']['transfer']['body']['format'], $request->locale);
 				$bodyArguments = array();
 				foreach ($content['emails']['transfer']['body']['parameters'] as $parameter) {
-					if ($parameter == 'contributor_n_first') $bodyArguments[] = $otherAccount->n_first;
+					if ($parameter == 'referrer_n_first') $bodyArguments[] = $account->n_first;
+					elseif (substr($parameter, 0, 5) == 'label') $titleArguments[] = $context->localize($description['properties'][substr($parameter, 6)]['labels']);
+					elseif ($parameter == 'redirect_link') {
+						$titleArguments[] = $url('landing/template2', [], ['force_canonical' => true, 'query' => ['email' => $email, 'route' => 'flowEvent/propose', 'type' => $type, 'id' => $id]]);
+					}
 					else $bodyArguments[] = $request->properties[$parameter];
 				}
 				$emailBody = vsprintf($emailBodyFormat, $bodyArguments);
 					
-				Context::sendMail($account->email.','.$email, $emailBody, $emailTitle);
+				Context::sendMail($email, $emailBody, $emailTitle, [$account->email]);
 			}
 	
 			// Commit the update
