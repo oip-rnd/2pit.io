@@ -89,6 +89,7 @@ class EventController extends AbstractActionController
 			'account_id' => $account->id,
 			'mode' => $mode,
 			'panel' => $panel,
+			'identity' => null,
 			'redirectRoute' => $this->params()->fromQuery('route'),
 			'redirectParams' => $this->params()->fromQuery('params'),
 			'token' => $this->params()->fromQuery('hash', null),
@@ -1299,15 +1300,15 @@ class EventController extends AbstractActionController
 				$bodyArguments = array();
 				foreach ($content['emails']['transfer']['body']['parameters'] as $parameter) {
 					if ($parameter == 'referrer_n_first') $bodyArguments[] = $account->n_first;
-					elseif (substr($parameter, 0, 5) == 'label') $titleArguments[] = $context->localize($description['properties'][substr($parameter, 6)]['labels']);
+					elseif (substr($parameter, 0, 5) == 'label') $bodyArguments[] = $context->localize($description['properties'][substr($parameter, 6)]['labels']);
 					elseif ($parameter == 'redirect_link') {
-						$titleArguments[] = $url('landing/template2', [], ['force_canonical' => true, 'query' => ['email' => $email, 'route' => 'flowEvent/propose', 'type' => $type, 'id' => $id]]);
+						$bodyArguments[] = $url('landing/template2', [], ['force_canonical' => true, 'query' => ['email' => $email, 'route' => 'flowEvent/propose', 'type' => $type, 'id' => $id]]);
 					}
 					else $bodyArguments[] = $request->properties[$parameter];
 				}
 				$emailBody = vsprintf($emailBodyFormat, $bodyArguments);
-					
-				Context::sendMail($email, $emailBody, $emailTitle, [$account->email]);
+
+				Context::sendMail($email, $emailBody, $emailTitle, [$account->email => $account->n_first]);
 			}
 	
 			// Commit the update

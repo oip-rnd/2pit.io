@@ -54,8 +54,11 @@ class LandingController extends AbstractActionController
 		if ($email) {
 			$account = null;
 			$vcard = Vcard::get($email, 'email');
-			if ($vcard) $userContact = UserContact::get($vcard->id, 'vcard_id');
-			if ($userContact) $panel = 'modalLoginForm';
+			if ($vcard) {
+				$userContact = UserContact::get($vcard->id, 'vcard_id');
+				if ($userContact) $panel = 'modalLoginForm';
+				else $panel = 'modalRegisterForm';
+			}
 			else $panel = 'modalRegisterForm';
 		}
 
@@ -145,6 +148,7 @@ class LandingController extends AbstractActionController
 		$this->layout()->setVariables(array(
 			'context' => $context,
 			'panel' => $panel,
+			'identity' => $email,
 			'redirectRoute' => $this->params()->fromQuery('route'),
 			'redirectParams' => '&type='.$this->params()->fromQuery('type').'&id='.$this->params()->fromQuery('id'),
 			'token' => $this->params()->fromQuery('hash', null),
