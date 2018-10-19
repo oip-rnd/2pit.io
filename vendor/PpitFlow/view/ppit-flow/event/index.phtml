@@ -18,7 +18,7 @@
           <a class="text-white ml-2" id="signOutButton"><i class="fa fa-key" aria-hidden="true"></i></a>
         </li>
         
-      <?php else : ?>
+      <?php elseif (array_key_exists($entry['item'], $account['credits'])) : ?>
         <li class="nav-item">
            <a class="nav-link disabled text-white" href="#!"><?php echo sprintf($context->localize($entry['labels'], $locale), $account['credits'][$entry['item']]) ?></a>
         </li>

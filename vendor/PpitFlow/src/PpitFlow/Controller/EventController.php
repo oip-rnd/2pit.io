@@ -382,7 +382,7 @@ class EventController extends AbstractActionController
 				else $content['data'][$request->id]['role'] = null;
 				if (in_array($request->status, ['new', 'connected']) && $myAccount->id != $request->account_id && !in_array($myAccount->id, explode(',', $request->matched_accounts))) {
 					$actions['propose'] = $content['actions']['Public']['propose'];
-					$actions['transfer'] = $content['actions']['Public']['transfer'];
+					if (array_key_exists('transfer', $actions)) $actions['transfer'] = $content['actions']['Public']['transfer'];
 				}
 				$content['data'][$request->id]['PublicActions'] = $actions;
 			}
