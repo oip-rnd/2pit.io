@@ -27,7 +27,11 @@ $('#modalRegisterForm').on('hide.bs.modal', function () {
 function register() {
   var route = '<?php echo $this->url('user/v1').'?type='.$accountType.'&request=register' ?>';
 <?php if ($redirectRoute) : ?>
+<<<<<<< HEAD
   route += '&route=<?php echo $redirectRoute ?><?php echo $redirectParams ?>';
+=======
+  route += '&route=<?php echo $redirectRoute ?>&params=<?php echo $redirectParams ?>';
+>>>>>>> origin/master
 <?php endif; ?>
   var xhttp = new XMLHttpRequest(), formData = new FormData();
   formData.append('email', $('#register-email').val());

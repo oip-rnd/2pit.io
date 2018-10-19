@@ -1056,10 +1056,17 @@ class UserController extends AbstractActionController
 						Context::sendMail($user->username, $email_body, $email_title, null);
 
 						$connection->commit();
+<<<<<<< HEAD
 
 						$redirectRoute = $this->params()->fromQuery('route');
 						$redirectParams = ['type' => $this->params()->fromQuery('type'), 'id' => $this->params()->fromQuery('id')];
 						if ($redirectRoute) return $this->redirect()->toRoute($redirectRoute, $redirectParams, ['query' => ['account_id' => $account->id]]);
+=======
+						
+						$redirectRoute = $this->params()->fromQuery('route');
+						$redirectParams = ['id' => $this->params()->fromQuery('id')];
+						if ($redirectRoute) return $this->redirect()->toRoute($redirectRoute, $redirectParams);
+>>>>>>> origin/master
 						
 						$this->getResponse()->setStatusCode('200');
 			    		return $this->getResponse();
