@@ -1909,6 +1909,8 @@ return array(
  		),
 	),
 
+	'mailTo' => null, // Overrides the real email if not NULL (for test purposes)
+	
 	// Network of 2pit instances reachable from the local instance (the default simulates a group skill marketplace)
 	'instance/network' => array(
 		'group.2pit.io' => array('caption' => ['default' => 'Group skill Marketplace', 'fr_FR' => 'Plateforme de compétences groupe']),

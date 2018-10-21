@@ -1293,15 +1293,6 @@ class Event implements InputFilterAwareInterface
 			}
 		}
 
-		// Credits associated to this event
-		if (!$this->value) {
-			$categoryDefinition = $context->getConfig('event/'.$this->type.'/property/category');
-			if ($categoryDefinition && array_key_exists('values', $categoryDefinition)) {
-				$this->value = $categoryDefinition['values'][$this->category];
-			}
-			else $this->value = 1;
-		}
-
 		$this->audit[] = $auditRow;
 
     	return 'OK';
@@ -1407,11 +1398,10 @@ class Event implements InputFilterAwareInterface
     	$type = $interaction->category;
     
     	// Normalize the data
-		foreach($context->getConfig('core_account/'.$type)['properties'] as $propertyId) {
+		$properties = Event::getConfigProperties($type);
+		foreach($properties as $propertyId => $property) {
     		if (array_key_exists($propertyId, $data)) {
     			$value = $data[$propertyId];
-				$property = $context->getConfig('event/'.$type.'/property/'.$propertyId);
-				if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
     			if ($property['type'] == 'select') {
     				$valueKey = null;
     				foreach ($property['modalities'] as $modalityId => $modality) if ($context->localize($modality) == $value) $valueKey = $modalityId;
@@ -1424,7 +1414,7 @@ class Event implements InputFilterAwareInterface
     	}
     
     	$event = Event::instanciate($type);
-    	$rc = $event->loadAndAdd($data);
+    	$rc = $event->loadAndAdd($data, $properties);
     	return $rc;
     }
     
