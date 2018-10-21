@@ -1993,6 +1993,7 @@ table.note-report td {
 			),
 			'Public' => array(
 				'propose' => ['icon' => 'hand-point-up', 'labels' => ['default' => 'Propose my contribution', 'fr_FR' => 'Proposer ma contribution']],
+				'transfer' => ['icon' => 'bullhorn', 'labels' => ['default' => 'Transfer to someone else', 'fr_FR' => 'Transférer à quelqu’un d’autre']],
 			),
 		),
 
@@ -2070,6 +2071,9 @@ table.note-report td {
 					'requestor_feedback' => ['default' => 'This request is waiting for a feedback from the requestor’s side', 'fr_FR' => 'Cette demande est en attente de feedback de la part du demandeur'],
 					'completed' => ['default' => 'This request is over', 'fr_FR' => 'Cette demande est terminée'],
 				),
+			),
+			'display' => array(
+				'type' => 'avatar',
 			),
 			'introduction' => array(
 			),
