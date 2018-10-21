@@ -15,7 +15,6 @@ return array(
 	'defaultRoute' => 'flowEvent',
 	'mailAdmin' => 'no-reply@probonocorpo.com',
 	'nameAdmin' => 'Pro bono corpo',
-	'mailTo' => 'contact@probonocorpo.com', // Overrides the real email if not NULL (for test purposes)
 	'isTraceActive' => true,
 	'isDemoModeActive' => true,
 	'isDemoAccountUpdatable' => false,
