@@ -1599,11 +1599,6 @@ class Account implements InputFilterAwareInterface
 			$text .= $signature['body'][$context->getLocale()];
 			$part = new MimePart($text);
     		$part->type = "text/html";
-
-/*	    	$img = new MimePart($context->getConfig('customisation/esi/send-message/logo')['content']);
-    		$img->type = "image/gif";
-    		$img->encoding = Mime::ENCODING_BASE64;
-    		$img->disposition = Mime::DISPOSITION_INLINE;*/
     		
     		$body = new MimeMessage();
     		$body->setParts(array($part/*, $img*/));
@@ -1628,6 +1623,9 @@ class Account implements InputFilterAwareInterface
     		if ($settings['mailProtocol']) $transport->send($mail);
 
     		if ($settings['isTraceActive']) {
+    			if (!is_dir('data')) mkdir('data', 0777, true);
+    			if (!is_dir('data/log')) mkdir('data/log', 0777, true);
+    			if (!file_exists('data/log/mailing.txt')) touch('data/log/mailing.txt');
     			$writer = new Writer\Stream('data/log/mailing.txt');
     			$logger = new Logger();
     			$logger->addWriter($writer);

@@ -1,9 +1,11 @@
-config/autoload/*local.php
+config/autoload/*
+!config/autoload/*global.php
 public/data
 public/MDB-Pro
 public/photos/*
-public/img/probonocorpo
-public/logo/probonocorpo
-config/autoload/probonocorpo
-config/autoload/innocoins
+public/img/*
+!public/img/2pit_io
+!public/img/flags
+public/logo/*
+!public/logos/2pit_io
 
