@@ -8,4 +8,7 @@ public/img/*
 !public/img/flags
 public/logo/*
 !public/logos/2pit_io
-
+config/vendor/Ppit*
+!config/vendor/PpitCommitment
+!config/vendor/PpitCore
+!config/vendor/Ppituser
