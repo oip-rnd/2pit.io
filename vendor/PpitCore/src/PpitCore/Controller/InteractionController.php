@@ -206,8 +206,14 @@ class InteractionController extends AbstractActionController
 								for ($row = 2; $row <= $lastRow; $row++) {
 									$pairs = array();
 									foreach ($colNames as $label) {
-										$pairs[$keys[$label]] = $worksheet->getCell($label.$row)->getValue();
-					    				if ($label == $lastColumn) break;
+										$cell = $worksheet->getCell($label.$row);
+										$value = $cell->getValue();
+										if(\PHPExcel_Shared_Date::isDateTime($cell)) {
+											if (in_array($keys[$label], ['begin_time', 'end_time'])) $value = date('H:i:s', \PHPExcel_Shared_Date::ExcelToPHP($value));
+											else $value = date('Y-m-d', \PHPExcel_Shared_Date::ExcelToPHP($value)); 
+										}
+										$pairs[$keys[$label]] = $value;
+										if ($label == $lastColumn) break;
 					    			}
 					    			$data[] = $pairs;
 								}
