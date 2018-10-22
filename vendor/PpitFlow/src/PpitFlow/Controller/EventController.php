@@ -102,7 +102,7 @@ class EventController extends AbstractActionController
 			'footer' => $content['footer'],
 			'tooltips' => $content['tooltips'],
 			'locale' => $locale,
-			'photo_link_id' => ($account) ? $account->photo_link_id : null,
+			'photo_link_id' => ($account && $account->photo_link_id != 'no-photo.png') ? $account->photo_link_id : null,
 			'profileForm' => $profileForm,
 			'charter_status' => $charter_status,
 			'gtou_status' => $gtou_status,

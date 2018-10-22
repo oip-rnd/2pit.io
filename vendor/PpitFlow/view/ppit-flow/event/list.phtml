@@ -20,25 +20,35 @@
       </div>
   <?php endif;?>
 
-      <div class="h5 grey-text font-weight-bold mb-2">
+      <div class="grey-text font-weight-bold mb-2">
+        <span class="h5">
+
     <?php if ($request['type'] == 'request') : ?>
-        <span class="h5"><?php echo $request['n_first'] ?></span>
-        &nbsp;&nbsp;|&nbsp;&nbsp;
+          <?php echo $request['n_first'] ?>
+          &nbsp;&nbsp;|&nbsp;&nbsp;
     <?php endif;?>
-        <?php echo $request['caption'] ?>&nbsp;&nbsp;
+
+        <?php echo $request['caption'] ?>
+
     <?php if (array_key_exists('rewards', $content) && $request['value']) : ?>
-        <span class="badge red"><?php echo $request['value']?> <?php echo $content['rewards']['brand'] ?>s</span>
+          &nbsp;&nbsp;
+          <span class="badge badge-success"><?php echo $request['value']?> <?php echo $content['rewards']['brand'] ?>s</span>
     <?php endif;?>
-        &nbsp;&nbsp;
 
 <!-- Current user connected on this event -->
+    
     <?php if ($request['role'] == 'requestor') : ?>
-        <span class="badge badge-info"><?php echo $context->localize($content['card']['roles']['requestor']['labels'], $locale) ?></span>&nbsp;&nbsp;
+          &nbsp;&nbsp;
+          <span class="badge badge-info"><?php echo $context->localize($content['card']['roles']['requestor']['labels'], $locale) ?></span>
+    
     <?php elseif ($request['role'] == 'contributor') : ?>
-        <span class="badge badge-info"><?php echo $context->localize($content['card']['roles']['contributor']['labels'], $locale) ?></span>&nbsp;&nbsp;
+          &nbsp;&nbsp;
+          <span class="badge badge-info"><?php echo $context->localize($content['card']['roles']['contributor']['labels'], $locale) ?></span>
+    
     <?php endif;?>
+        </span>
 
-        <a class="text-secondary aDetailAction" id="aDetailAction-<?php echo $requestId ?>"><i class="fa fa-search mr-1"></i></a>
+        &nbsp;&nbsp;<a class="text-secondary aDetailAction" id="aDetailAction-<?php echo $requestId ?>"><i class="fa fa-search mr-1"></i><?php echo $this->translate('Details', 'ppit-core', $locale) ?></a>
 
       </div>
       
