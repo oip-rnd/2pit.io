@@ -1,0 +1,5 @@
+2018-10-22T16:00:26+02:00 INFO (6): from: Pro bono corpo (no-reply@probonocorpo.com) - to: test2210@test.com - subject: Activation de votre compte - body: 
+Bonjour,
+Plus qu'une étape pour pouvoir vous connecter à votre compte, en suivant ce lien : http://localhost/~bruno/2pit.io/public/user/v1/2334?account_id=27735&request=activate&hash=43b7a7129b639a37c2c73e85dc118792
+A bientôt sur la plateforme !
+ - RC:
