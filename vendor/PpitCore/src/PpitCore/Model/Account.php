@@ -1421,7 +1421,7 @@ class Account implements InputFilterAwareInterface
 		$configProperties = Account::getConfig($type);
 			
 		// Automatic values
-		if (!$this->date_1) {
+		if (!$this->date_1 && array_key_exists('date_1', $configProperties)) {
 			$date1Description = $configProperties['date_1'];
 			if (	$date1Description
 				&& 	array_key_exists('dependency', $date1Description)
@@ -1431,7 +1431,7 @@ class Account implements InputFilterAwareInterface
 			}
 		}
 
-		if (!$this->date_2) {
+		if (!$this->date_2 && array_key_exists('date_2', $configProperties)) {
 			$date2Description = $configProperties['date_2'];
 			if (	$date2Description
 				&& 	array_key_exists('dependency', $date2Description)
@@ -1441,7 +1441,7 @@ class Account implements InputFilterAwareInterface
 			}
 		}
 
-		if (!$this->date_3) {
+		if (!$this->date_3 && array_key_exists('date_3', $configProperties)) {
 			$date3Description = $configProperties['date_3'];
 			if (	$date3Description
 				&& 	array_key_exists('dependency', $date3Description)
@@ -1451,7 +1451,7 @@ class Account implements InputFilterAwareInterface
 			}
 		}
 
-		if (!$this->date_4) {
+		if (!$this->date_4 && array_key_exists('date_4', $configProperties)) {
 			$date4Description = $configProperties['date_4'];
 			if (	$date4Description
 				&& 	array_key_exists('dependency', $date4Description)
@@ -1461,7 +1461,7 @@ class Account implements InputFilterAwareInterface
 			}
 		}
 
-		if (!$this->date_5) {
+		if (!$this->date_5 && array_key_exists('date_5', $configProperties)) {
 			$date5Description = $configProperties['date_5'];
 			if (	$date5Description
 				&& 	array_key_exists('dependency', $date5Description)
