@@ -474,6 +474,11 @@ class UserController extends AbstractActionController
     	));
    		return $view;
     }
+
+    public function maintainSessionAction()
+    {
+    	return $this->response;
+    }
     
     public function expiredAction()
     {
@@ -901,7 +906,7 @@ class UserController extends AbstractActionController
 	public function v1Action()
 	{
 		$context = Context::getCurrent();
-//		$type = $this->params()->fromQuery('type');
+		$type = $this->params()->fromQuery('type');
 		$request = $this->params()->fromQuery('request', 'logout');
 		$content = array();
 
@@ -1011,11 +1016,11 @@ class UserController extends AbstractActionController
 				$data['password'] = $this->request->getPost('password');
 				$data['locale'] = $this->request->getPost('locale');
 				$data['origine'] = $this->request->getPost('origine');
-				if ($context->getConfig('landing_account_type')) {
+				if ($type) {
 					$connection = User::getTable()->getAdapter()->getDriver()->getConnection();
 					$connection->beginTransaction();
 					try {
-						$account = Account::instanciate($context->getConfig('landing_account_type'));
+						$account = Account::instanciate($type);
 						$rc = $account->loadAndAdd($data);
 						if ($rc[0] == 206) $account = $rc[1];
 						$content['data'] = $account->getProperties();
@@ -1037,7 +1042,6 @@ class UserController extends AbstractActionController
 				    		if (!in_array($domain, $context->getConfig('user/acceptedRegistrationDomain'))) {
 				    			$connection->rollback();
 				    			$this->getResponse()->setStatusCode('401');
-				    			$this->getResponse()->setReasonPhrase('accepted domain');
 				    			echo json_encode('The email domain does not belong to accepted domains');
 				    			return $this->getResponse();
 				    		}
@@ -1046,7 +1050,7 @@ class UserController extends AbstractActionController
 				    	$user_id = $context->getSecurityAgent()->register($account->email, $account->contact_1_id, $this->request->getPost('password'));
 				    	$user = User::getTable()->transGet($user_id);
 						$token = $context->getSecurityAgent()->requestAuthenticationToken($user->username, false);
-
+				    	
 						// Send the OTP by email
 						$url = $context->getServiceManager()->get('viewhelpermanager')->get('url');
 						$email_body = $context->localize($context->getConfig('user/messages/activation/text'));
@@ -1054,7 +1058,7 @@ class UserController extends AbstractActionController
 						$email_body = sprintf($email_body, $link);
 						$email_title = $context->localize($context->getConfig('user/messages/activation/title'));
 						Context::sendMail($user->username, $email_body, $email_title, null);
-
+				    	
 						$connection->commit();
 
 						$redirectRoute = $this->params()->fromQuery('route');

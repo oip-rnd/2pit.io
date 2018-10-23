@@ -368,6 +368,10 @@ class AccountController extends AbstractActionController
 		$configProperties = Account::getConfig($type);
 		$groupUpdatePage = Account::getConfigGroupUpdate($type, $configProperties);
 
+		// Retrieve the places
+		$places = array();
+		foreach (Place::getList(array()) as $place) $places[$place->id] = $place->caption;
+		
 		// Retrieve the selected list of accounts and provide a json-like array of the data for the view layer
 		$request = $this->getRequest();
 		if (!$request->isPost()) return $this->redirect()->toRoute('home');
@@ -414,7 +418,7 @@ class AccountController extends AbstractActionController
 				foreach ($accounts as $account) {
 		    		$account->currently_updated_by = null;
 					if ($account->loadData($type, $content['data']['account']) != 'OK') throw new \Exception('View error');
-					$account->update($request->getPost('update_time'));
+					$rc = $account->update($request->getPost('update_time'));
 				}
 			}
 			$message = 'OK';
@@ -425,6 +429,7 @@ class AccountController extends AbstractActionController
 				'groupUpdatePage' => $groupUpdatePage,
 				'type' => $type,
 				'content' => $content,
+				'places' => $places,
 				'csrfForm' => $csrfForm,
 				'message' => $message,
 				'error' => $error,
@@ -964,7 +969,7 @@ class AccountController extends AbstractActionController
 						}
 					}
 
-					if ($type) $data['credits'] = array($type => true);
+//					if ($type) $data['credits'] = array($type => true);
 
 	    			// Atomically save
 	    			$connection = Account::getTable()->getAdapter()->getDriver()->getConnection();

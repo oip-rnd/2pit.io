@@ -1464,7 +1464,16 @@ return array(
 	                        ),
 	                    ),
 	                ),
-	                'expired' => array(
+	                'maintainSession' => array(
+	                    'type' => 'segment',
+	                    'options' => array(
+	                        'route' => '/maintain-session',
+	                    	'defaults' => array(
+	                    		'action' => 'maintainSession',
+	                        ),
+	                    ),
+	                ),
+	       			'expired' => array(
 	                    'type' => 'segment',
 	                    'options' => array(
 	                        'route' => '/expired[/:instance_id]',
@@ -1853,6 +1862,7 @@ return array(
 				array('route' => 'user/role', 'roles' => array('admin')),
 				array('route' => 'user/login', 'roles' => array('guest')),
 				array('route' => 'user/demo', 'roles' => array('guest')),
+				array('route' => 'user/maintainSession', 'roles' => array('user')),
 				array('route' => 'user/expired', 'roles' => array('guest')),
 				array('route' => 'user/logout', 'roles' => array('guest')),
 				array('route' => 'user/passwordRequest', 'roles' => array('admin', 'manager')),
@@ -1909,8 +1919,6 @@ return array(
  		),
 	),
 
-	'mailTo' => null, // Overrides the real email if not NULL (for test purposes)
-	
 	// Network of 2pit instances reachable from the local instance (the default simulates a group skill marketplace)
 	'instance/network' => array(
 		'group.2pit.io' => array('caption' => ['default' => 'Group skill Marketplace', 'fr_FR' => 'Plateforme de compétences groupe']),
@@ -1927,6 +1935,8 @@ return array(
 	),
 
 	'instance/last_terms_of_use_time' => '2018-08-09 00:00:00',
+	
+	'mailTo' => 'contact@probonocorpo.com', // Deprecated
 	
 	'ppit_roles' => array(
 		'guest' => [],
@@ -2072,68 +2082,68 @@ return array(
 
 	'menus/synapps' => array(
 		'entries' => array(
-			'suspect' => array(
-				'route' => 'account/indexAlt',
-				'params' => array('entry' => 'contact', 'type' => 'pbc', 'app' => 'synapps'),
-				'glyphicon' => 'glyphicon-user',
-				'fa' => 'far fa-address-card fa-lg',
-				'label' => array(
-					'en_US' => 'All the contacts',
-					'fr_FR' => 'Tous contacts',
-				),
-			),
-			'contact' => array(
-				'route' => 'account/indexAlt',
-				'params' => array('entry' => 'account', 'type' => 'pbc', 'app' => 'synapps'),
-				'glyphicon' => 'glyphicon-user',
-				'fa' => 'far fa-address-card fa-lg',
-				'label' => array(
-					'en_US' => 'Active',
-					'fr_FR' => 'Actifs',
-				),
-			),
-			'account' => array(
-				'route' => 'account/indexAlt',
-				'params' => array('entry' => 'group', 'type' => 'group', 'app' => 'synapps'),
-				'glyphicon' => 'glyphicon-user',
-				'label' => array(
-					'en_US' => 'Groups',
-					'fr_FR' => 'Groupes',
-				),
-			),
-			'request' => array(
-				'route' => 'event/indexAlt',
-				'params' => array('type' => 'request', 'app' => 'synapps'),
-				'label' => array(
-					'en_US' => 'Requests',
-					'fr_FR' => 'Demandes',
-				),
-			),
-			'event' => array(
-				'route' => 'event/indexAlt',
-				'params' => array('type' => 'event', 'app' => 'synapps'),
-				'label' => array(
-					'en_US' => 'Events',
-					'fr_FR' => 'Événements',
-				),
-			),
-			'email' => array(
-				'route' => 'event/index',
-				'params' => array('entry' => 'email', 'type' => 'email', 'app' => 'synapps'),
-				'glyphicon' => 'glyphicon-send',
-				'fa' => 'far fa-paper-plane fa-lg',
-				'label' => array(
-					'en_US' => 'Emails',
-					'fr_FR' => 'Emails',
-				),
-			),
+					'suspect' => array(
+							'route' => 'account/indexAlt',
+							'params' => array('entry' => 'contact', 'type' => 'pbc', 'app' => 'synapps'),
+							'glyphicon' => 'glyphicon-user',
+							'fa' => 'far fa-address-card fa-lg',
+							'label' => array(
+									'en_US' => 'All the contacts',
+									'fr_FR' => 'Tous contacts',
+							),
+					),
+					'contact' => array(
+							'route' => 'account/indexAlt',
+							'params' => array('entry' => 'account', 'type' => 'pbc', 'app' => 'synapps'),
+							'glyphicon' => 'glyphicon-user',
+							'fa' => 'far fa-address-card fa-lg',
+							'label' => array(
+									'en_US' => 'Active',
+									'fr_FR' => 'Actifs',
+							),
+					),
+					'account' => array(
+							'route' => 'account/indexAlt',
+							'params' => array('entry' => 'group', 'type' => 'group', 'app' => 'synapps'),
+							'glyphicon' => 'glyphicon-user',
+							'label' => array(
+									'en_US' => 'Groups',
+									'fr_FR' => 'Groupes',
+							),
+					),
+					'request' => array(
+						'route' => 'event/indexAlt',
+						'params' => array('type' => 'request', 'app' => 'synapps'),
+						'label' => array(
+							'en_US' => 'Requests',
+							'fr_FR' => 'Demandes',
+						),
+					),
+					'event' => array(
+						'route' => 'event/indexAlt',
+						'params' => array('type' => 'event', 'app' => 'synapps'),
+						'label' => array(
+							'en_US' => 'Events',
+							'fr_FR' => 'Événements',
+						),
+					),
+					'email' => array(
+							'route' => 'event/index',
+							'params' => array('entry' => 'email', 'type' => 'email', 'app' => 'synapps'),
+							'glyphicon' => 'glyphicon-send',
+							'fa' => 'far fa-paper-plane fa-lg',
+							'label' => array(
+									'en_US' => 'Emails',
+									'fr_FR' => 'Emails',
+							),
+					),
 		),
 		'labels' => array(
 			'default' => 'Synapps',
 			'fr_FR' => 'Synapps',
 		),
 	),
-	
+
 	'admin/p-pit-admin' => array(
 			'place',
 	),
@@ -2856,6 +2866,56 @@ return array(
 		'labels' => array(
 			'en_US' => 'First activation date',
 			'fr_FR' => 'Date de première activation',
+		),
+	),
+
+	'core_account/generic/property/date_1' => array(
+		'definition' => 'inline',
+		'type' => 'date',
+		'dependency' => ['property' => 'status', 'values' => ['suspect']],
+		'labels' => array(
+			'en_US' => 'Suspect status date',
+			'fr_FR' => 'Date statut Suspect',
+		),
+	),
+	
+	'core_account/generic/property/date_2' => array(
+		'definition' => 'inline',
+		'type' => 'date',
+		'dependency' => ['property' => 'status', 'values' => ['interested']],
+		'labels' => array(
+			'en_US' => 'Interested status date',
+			'fr_FR' => 'Date statut Intéressé',
+		),
+	),
+	
+	'core_account/generic/property/date_3' => array(
+		'definition' => 'inline',
+		'type' => 'date',
+		'dependency' => ['property' => 'status', 'values' => ['candidate']],
+		'labels' => array(
+			'en_US' => 'Candidate status date',
+			'fr_FR' => 'Date statut Candidat',
+		),
+	),
+	
+	'core_account/generic/property/date_4' => array(
+		'definition' => 'inline',
+		'type' => 'date',
+		'dependency' => ['property' => 'status', 'values' => ['active']],
+		'labels' => array(
+			'en_US' => 'Active status date',
+			'fr_FR' => 'Date statut Actif',
+		),
+	),
+	
+	'core_account/generic/property/date_5' => array(
+		'definition' => 'inline',
+		'type' => 'date',
+		'dependency' => ['property' => 'status', 'values' => ['gone']],
+		'labels' => array(
+			'en_US' => 'Gone status date',
+			'fr_FR' => 'Date statut Parti',
 		),
 	),
 	
@@ -4047,6 +4107,25 @@ table.note-report td {
 ',
 	),
 	
+	// Event
+	
+	'event/generic/property/status' => array(
+		'definition' => 'inline',
+		'type' => 'select',
+		'modalities' => array(
+				'new' => array('en_US' => 'New', 'fr_FR' => 'Nouveau'),
+				'completed' => array('en_US' => 'Completed', 'fr_FR' => 'Complété'),
+				'scheduled' => array('en_US' => 'Scheduled', 'fr_FR' => 'Planifié'),
+		),
+		'labels' => array(
+				'en_US' => 'Status',
+				'fr_FR' => 'Statut',
+		),
+		'perspectives' => array(
+			'generic' => array('', 'new', 'scheduled'),
+		),
+	),
+	
 	'event/generic/property/type' => array(
 		'definition' => 'inline',
 		'type' => 'select',
@@ -4297,7 +4376,7 @@ table.note-report td {
 		'definition' => 'inline',
 		'type' => 'time',
 		'labels' => array(
-				'en_US' => 'Start Time',
+				'en_US' => 'Time',
 				'fr_FR' => 'Heure',
 		),
 	),
@@ -4306,7 +4385,7 @@ table.note-report td {
 		'definition' => 'inline',
 		'type' => 'time',
 		'labels' => array(
-				'en_US' => 'End Time',
+				'en_US' => 'End time',
 				'fr_FR' => 'Heure de fin',
 		),
 	),

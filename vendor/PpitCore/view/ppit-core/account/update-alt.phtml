@@ -200,7 +200,7 @@ if ($account->id && $action != 'update' || $message == 'OK') $isDisabled = true;
     <label class="col-sm-5 col-form-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels']) ?></label>
     <div class="col-sm-7">
       <input type="hidden" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
-      <input class="form-control <?php if (!$readonly) echo 'updatable-control' ?>" id="input_<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php echo $context->decodeDate($account->properties[$propertyId]) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+      <input class="form-control <?php if (!$readonly) echo 'updatable-control' ?> update_date" id="input_<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php echo $context->decodeDate($account->properties[$propertyId]) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
       <div class="invalid-feedback" id="input_<?php echo $propertyId ?>_error"></div>
     </div>
   </div>
@@ -211,7 +211,7 @@ if ($account->id && $action != 'update' || $message == 'OK') $isDisabled = true;
   <div class="form-group row" id="<?php echo $propertyId ?>_group">
     <label class="col-sm-5 col-form-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels']) ?></label>
     <div class="col-sm-7">
-      <input class="form-control time <?php if (!$readonly) echo 'updatable-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" value="<?php echo $account->properties[$propertyId] ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+      <input class="form-control time <?php if (!$readonly) echo 'updatable-control' ?> update_time" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" value="<?php echo $account->properties[$propertyId] ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
       <div class="invalid-feedback" id="<?php echo $propertyId ?>_error"></div>
     </div>
   </div>
@@ -361,7 +361,11 @@ if ($account->id && $action != 'update' || $message == 'OK') $isDisabled = true;
       <?php endif;?>
 
 <!-- log -->
-    <?php elseif ($property['type'] == 'log' && $account->properties[$propertyId]) : ?>
+    
+    <?php elseif ($property['type'] == 'log') : ?>
+    <textarea class="form-control" id="<?php echo $propertyId ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?>></textarea>
+    
+      <?php if ($account->properties[$propertyId]) : ?>
 
   <div id="<?php echo $propertyId ?>-history-panel" class="panel panel-default my-3">
     <div class="panel-body">
@@ -381,6 +385,8 @@ if ($account->id && $action != 'update' || $message == 'OK') $isDisabled = true;
     </div>
   </div>
 
+      <?php endif;?>
+    
 <!-- Structure -->
     <?php elseif ($property['type'] == 'structure') : ?>
 

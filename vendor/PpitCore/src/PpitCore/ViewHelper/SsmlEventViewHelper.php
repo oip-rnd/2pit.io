@@ -55,7 +55,7 @@ class SsmlEventViewHelper
 					}
 					elseif ($propertyId == 'feedbacks') {
 						$feedbacks = array();
-						if ($event->feedbacks) foreach ($event->feedbacks as $giverId => $giver) {
+						foreach ($event->feedbacks as $giverId => $giver) {
 							if ($giverId == $event->account_id) $giverName = $event->n_fn;
 							else {
 								if (array_key_exists($giverId, $description['export']['matched_accounts']['modalities'])) $giverName = $context->localize($description['export']['matched_accounts']['modalities'][$giverId]);

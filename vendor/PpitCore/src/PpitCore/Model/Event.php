@@ -1400,16 +1400,16 @@ class Event implements InputFilterAwareInterface
     	// Normalize the data
 		$properties = Event::getConfigProperties($type);
 		foreach($properties as $propertyId => $property) {
-    		if (array_key_exists($propertyId, $data)) {
+		if (array_key_exists($propertyId, $data)) {
     			$value = $data[$propertyId];
-    			if ($property['type'] == 'select') {
+				if ($property['type'] == 'select') {
     				$valueKey = null;
     				foreach ($property['modalities'] as $modalityId => $modality) if ($context->localize($modality) == $value) $valueKey = $modalityId;
     				if ($valueKey) $data[$propertyId] = $valueKey;
     			}
-/*    			elseif ($property['type'] == 'date' && $value) {
+    			elseif ($property['type'] == 'date' && $value) {
     				$data[$propertyId] = date('Y-m-d', \PHPExcel_Shared_Date::ExcelToPHP($value));
-    			}*/
+    			}
     		}
     	}
     

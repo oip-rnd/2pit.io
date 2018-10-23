@@ -439,9 +439,6 @@ class Context implements InputFilterAwareInterface
     		if ($settings['isTraceActive']) {
     
     			// Write to the log
-    			if (!is_dir('data')) mkdir('data', 0777, true);
-    			if (!is_dir('data/log')) mkdir('data/log', 0777, true);
-    			if (!file_exists('data/log/mailing.txt')) touch('data/log/mailing.txt');
     			$writer = new Writer\Stream('data/log/mailing.txt');
     			$logger = new Logger();
     			$logger->addWriter($writer);

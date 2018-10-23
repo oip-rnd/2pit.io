@@ -24,7 +24,6 @@ return array(
 	'maxUploadSize' => 2048000,
 	'compressGifPngToJpg' => false,
 	'formExpiration' => 1800, // Duration in seconds of a form validity (against CSRF)
-	'specificationMode' => 'config', // 'config' vs 'database'
 	'locales' => array(
 			'en_US' => 'en_US',
 			'fr_FR' => 'fr_FR',

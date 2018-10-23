@@ -1,14 +1,25 @@
-<div class="panel panel-default">
-	<div class="panel-heading" style="background:  <?php echo $context->getConfig('styleSheet')['panelHeadingBackground'] ?>; color: <?php echo $context->getConfig('styleSheet')['panelHeadingColor'] ?>">
-		<strong><?php echo $this->translate('Grouped actions', 'ppit-core', $context->getLocale()) ?></strong>
- 		<div class="btn-group pull-right">
-			<button type="button" class="btn btn-default" title="<?php echo $this->translate('Return to list', 'ppit-core', $context->getLocale()) ?>" id="remove-anchor">
-				<span class="glyphicon glyphicon-remove"></span>
-			</button>
- 		 </div>
-	</div>
-	<div class="panel-body">
-		<form action="" id="group-form" method="post" class="form-horizontal" enctype="multipart/form-data">
+<!-- 
+/**
+ * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
+ *
+ * @link      https://github.com/p-pit/PpitCore
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
+ */
+-->
+
+<div class="modal-dialog modal-lg" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="modalFormLabel"><?php echo $this->translate('Grouped actions', 'ppit-core', $context->getLocale()) ?></h5>
+      <div>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" title="<?php echo $this->translate('Cancel', 'ppit-core', $context->getLocale()) ?>">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <form action="" id="group-form" method="post" class="form-horizontal" enctype="multipart/form-data">
 			
 <!-- Global message -->
 <?php if ($message == 'OK') : ?>
@@ -44,7 +55,7 @@
 <?php endif;?>
 			</div>
 
-			<div class="form-group">
+			<div class="form-group row">
 				<label class="col-sm-5 control-label"><?php echo $this->translate('Selected accounts', 'ppit-commitment', $context->getLocale()) ?></label>
 				<div class="col-sm-7">&nbsp;</div>
 			</div>
@@ -53,23 +64,23 @@
 		
 			<input type="hidden"  id="group-account_<?php echo $i ?>" value="<?php echo $account_id ?>" />
 
-			<div class="form-group">
+			<div class="form-group row">
 				<label class="col-sm-5 control-label">&nbsp;</label>
 				<div class="col-sm-7">
 					<input class="form-control" disabled="disabled" value="<?php echo $account['name'] ?>" />
 				</div>
 			</div>
-
+      
 <?php $i++; endforeach;?>
 
 			<input type="hidden" id="group-nb-account" value="<?php echo count($content['data']['selection']) ?>" />
 			
 			<ul class="nav nav-tabs">
-			  <li data-toggle="tab" class="group-tab active" id="update-tab"><a><?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?></a></li>
-			  <li data-toggle="tab" class="group-tab" id="invite-to-test-tab"><a><?php echo $this->translate('Invite to a test', 'ppit-flow', $context->getLocale()) ?></a></li>
-			  <li data-toggle="tab" class="group-tab" id="add-to-group-tab"><a><?php echo $this->translate('Add to group', 'ppit-core', $context->getLocale()) ?></a></li>
-			  <li data-toggle="tab" class="group-tab" id="send-message-tab"><a><?php echo $this->translate('Send an email', 'ppit-core', $context->getLocale()) ?></a></li>
-			  <li data-toggle="tab" class="group-tab" id="password-request-tab"><a><?php echo $this->translate('New password', 'ppit-core', $context->getLocale()) ?></a></li>
+			  <li data-toggle="tab" class="nav-item" id="update-tab"><a class="nav-link active"><?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?></a></li>
+			  <li data-toggle="tab" class="nav-item" id="invite-to-test-tab"><a class="nav-link"><?php echo $this->translate('Invite to a test', 'ppit-flow', $context->getLocale()) ?></a></li>
+			  <li data-toggle="tab" class="nav-item" id="add-to-group-tab"><a class="nav-link"><?php echo $this->translate('Add to group', 'ppit-core', $context->getLocale()) ?></a></li>
+			  <li data-toggle="tab" class="nav-item" id="send-message-tab"><a class="nav-link"><?php echo $this->translate('Send an email', 'ppit-core', $context->getLocale()) ?></a></li>
+			  <li data-toggle="tab" class="nav-item" id="password-request-tab"><a class="nav-link"><?php echo $this->translate('New password', 'ppit-core', $context->getLocale()) ?></a></li>
 			</ul>
 
 			<div class="group-panel" id="update-panel">
@@ -82,7 +93,7 @@ if ($message == 'OK') $isDisabled = true; else $isDisabled = false;
 
 	<?php if (array_key_exists('type', $options) && $options['type'] == 'separator') : ?>
 				<hr>
-				<div class="form-group">
+				<div class="form-group row">
 					<label class="col-sm-12 control-label">
 						<?php echo $context->localize($options['label']) ?>
 					</label>
@@ -92,7 +103,7 @@ if ($message == 'OK') $isDisabled = true; else $isDisabled = false;
 
 		<?php $property = $configProperties[$propertyId] ?>
 	
-		<div class="form-group" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_' : '').$propertyId ?>_group">
+		<div class="form-group row" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_' : '').$propertyId ?>_group">
 				<label class="col-sm-5 control-label">
 			<?php if (array_key_exists('mandatory', $options) && $options['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels']) ?>
 				</label>
@@ -140,7 +151,7 @@ if ($message == 'OK') $isDisabled = true; else $isDisabled = false;
 	<?php endif;?>
 <?php endforeach;?>
 <?php if (!$message) : ?>
-			    <div class="form-group">
+			    <div class="form-group row">
 					<div class="col-sm-5">&nbsp;</div>
 					<div class="col-sm-7">
 						<input name="submit" type="submit" id="submit-button" class="btn btn-warning" value="<?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?>">
@@ -148,12 +159,12 @@ if ($message == 'OK') $isDisabled = true; else $isDisabled = false;
 				</div>
 <?php endif;?>
 			</div>
-		</form>
+      </form>
 
-		<div class="group-panel" id="add-to-group-panel"></div>
-		<div class="group-panel" id="send-message-panel"></div>
-		<div class="group-panel" id="invite-to-test-panel"></div>
-		<div class="group-panel" id="password-request-panel"></div>
+      <div class="group-panel" id="add-to-group-panel"></div>
+      <div class="group-panel" id="send-message-panel"></div>
+      <div class="group-panel" id="invite-to-test-panel"></div>
+      <div class="group-panel" id="password-request-panel"></div>
 	</div>
+  </div>
 </div>
-	

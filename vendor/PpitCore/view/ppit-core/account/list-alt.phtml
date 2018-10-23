@@ -37,18 +37,18 @@ table td {
   <input type="hidden" id="caption_0" value="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale()) ?>" />
   <tr>
     <td>
-      <input type="checkbox" class="account-checkbox" id="account-checkbox" title="<?php echo $this->translate('Check all', 'ppit-core', $context->getLocale()) ?>"></input>
+      <input type="checkbox" class="accountCheckAll" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Check all', 'ppit-core', $context->getLocale()) ?>"></input>
     </td>
     <td style="text-align: center">
         <div class="input-group input-group-sm">
-        <button type="button" class="btn btn-sm btn-outline-primary index-btn account-group-anchor" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Detail', 'ppit-core', $context->getLocale())?>" id="account-group-anchor_0">
+        <button type="button" class="btn btn-sm btn-outline-primary index-btn account-group-anchor" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Grouped actions', 'ppit-core', $context->getLocale())?>" id="account-group-anchor_0">
           <span class="fas fa-list" id="group-glyphicon"></span>
         </button>
       </div>
     </td>
     <td style="text-align: center">
         <div class="input-group input-group-sm">
-        <button type="button" class="btn btn-sm btn-outline-primary index-btn account-detail-anchor" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Detail', 'ppit-core', $context->getLocale())?>" id="account-detail-anchor_0">
+        <button type="button" class="btn btn-sm btn-outline-primary index-btn account-detail-anchor" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale())?>" id="account-detail-anchor_0">
           <span class="fas fa-plus" id="add-glyphicon"></span>
         </button>
       </div>
@@ -64,7 +64,7 @@ table td {
 		
   <tr>
     <td>
-      <input type="checkbox" class="account-checkbox" id="account-checkbox_<?php echo $i ?>"></input>
+      <input type="checkbox" class="accountCheckbox" id="accountCheckbox_<?php echo $i ?>"></input>
     </td>
   
     <td style="text-align: center">
@@ -174,16 +174,16 @@ table td {
   <?php endforeach;?>
   </tr>
 	
-<?php endforeach; ?>
+<?php $i++; endforeach; ?>
 
   <tr>
     <td>
-      <input type="checkbox" class="account-checkbox" id="down-account-checkbox"></input>
+      <input type="checkbox" class="accountCheckAll" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Check all', 'ppit-core', $context->getLocale()) ?>"></input>
     </td>
 
     <td style="text-align: center">
       <div class="input-group input-group-sm">
-        <button type="button" class="btn btn-sm btn-outline-primary index-btn account-group-anchor" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Detail', 'ppit-core', $context->getLocale())?>" id="account-down-group-anchor_0">
+        <button type="button" class="btn btn-sm btn-outline-primary index-btn account-group-anchor" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Grouped actions', 'ppit-core', $context->getLocale())?>" id="account-group-anchor_0" id="account-down-group-anchor_0">
           <i class="fas fa-list" id="group-glyphicon"></i>
         </button>
       </div>
@@ -192,7 +192,7 @@ table td {
 <?php if (count($accounts) == '50') : ?>
     <td style="text-align: center">
       <div class="input-group input-group-sm">
-        <button type="button" class="btn btn-sm btn-outline-primary index-btn account-group-anchor" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Display the entire list', 'ppit-core', $context->getLocale())?>" id="account-more-anchor">
+        <button type="button" class="btn btn-sm btn-outline-primary index-btn" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Display the entire list', 'ppit-core', $context->getLocale())?>" id="account-more-anchor">
           <i class="fas fa-ellipsis-h" id="more-glyphicon"></i>
         </button>
       </div>

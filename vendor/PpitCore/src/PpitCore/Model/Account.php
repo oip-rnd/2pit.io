@@ -146,6 +146,11 @@ class Account implements InputFilterAwareInterface
 			'closing_date' => 				['entity' => 'core_account', 'column' => 'closing_date'],
 			'callback_date' => 				['entity' => 'core_account', 'column' => 'callback_date'],
 			'first_activation_date' => 		['entity' => 'core_account', 'column' => 'first_activation_date'],
+			'date_1' => 					['entity' => 'core_account', 'column' => 'date_1'],
+			'date_2' => 					['entity' => 'core_account', 'column' => 'date_2'],
+			'date_3' => 					['entity' => 'core_account', 'column' => 'date_3'],
+			'date_4' => 					['entity' => 'core_account', 'column' => 'date_4'],
+			'date_5' => 					['entity' => 'core_account', 'column' => 'date_5'],
 			'priority' => 					['entity' => 'core_account', 'column' => 'priority'],
 			'origine' => 					['entity' => 'core_account', 'column' => 'origine'],
 			'next_meeting_date' => 			['entity' => 'core_account', 'column' => 'next_meeting_date'],
@@ -339,6 +344,11 @@ class Account implements InputFilterAwareInterface
     public $closing_date;
     public $callback_date;
     public $first_activation_date;
+    public $date_1;
+    public $date_2;
+    public $date_3;
+    public $date_4;
+    public $date_5;
     public $priority;
     public $origine;
     public $next_meeting_date;
@@ -717,6 +727,11 @@ class Account implements InputFilterAwareInterface
     	$data['closing_date'] =  ($this->closing_date) ? $this->closing_date : null;
     	$data['callback_date'] =  ($this->callback_date) ? $this->callback_date : null;
     	$data['first_activation_date'] =  ($this->first_activation_date) ? $this->first_activation_date : null;
+    	$data['date_1'] =  ($this->date_1) ? $this->date_1 : null;
+    	$data['date_2'] =  ($this->date_2) ? $this->date_2 : null;
+    	$data['date_3'] =  ($this->date_3) ? $this->date_3 : null;
+    	$data['date_4'] =  ($this->date_4) ? $this->date_4 : null;
+    	$data['date_5'] =  ($this->date_5) ? $this->date_5 : null;
     	$data['priority'] =  ($this->priority) ? $this->priority : null;
     	$data['origine'] =  ($this->origine) ? $this->origine : null;
     	$data['next_meeting_date'] =  ($this->next_meeting_date) ? $this->next_meeting_date : null;
@@ -1109,7 +1124,7 @@ class Account implements InputFilterAwareInterface
     	 
     	return $data;
     }
-
+    
     public static function getList($type, $params, $order = '+name', $limit = 50, $columns = null, $pageNumber = false, $itemCountPerPage = false)
     {
     	// Retrieve the context and the account description for the given type
@@ -1142,10 +1157,10 @@ class Account implements InputFilterAwareInterface
 			$entity = Account::$model['properties'][$propertyKey]['entity'];
 			$column = Account::$model['properties'][$propertyKey]['column'];
 				
-			if ($propertyId == 'status') $where->in('core_account.status', explode(',', $value));
+/*			if ($propertyId == 'status') $where->in('core_account.status', explode(',', $value));
 			elseif ($propertyId == 'n_fn') $where->like('core_vcard.n_fn', '%'.$value.'%');
-			elseif ($propertyId == 'email') $where->like('core_vcard.email', '%'.$value.'%');
-			elseif ($propertyId == 'gender') $where->equalTo('core_vcard.gender', $value);
+			elseif ($propertyId == 'email') $where->like('core_vcard.email', '%'.$value.'%');*/
+			if ($propertyId == 'gender') $where->equalTo('core_vcard.gender', $value);
 			elseif ($propertyId == 'adr_zip') $where->like('core_vcard.adr_zip', '%'.$value.'%');
 			elseif ($propertyId == 'locale') $where->like('core_vcard.locale', '%'.$value.'%');
 			elseif ($propertyId == 'min_availability') $where->greaterThanOrEqualTo('availability_end', $value);
@@ -1404,6 +1419,57 @@ class Account implements InputFilterAwareInterface
     			'n_fn' => $context->getFormatedName(),
     	);
 		$configProperties = Account::getConfig($type);
+			
+		// Automatic values
+		if (!$this->date_1) {
+			$date1Description = $configProperties['date_1'];
+			if (	$date1Description
+				&& 	array_key_exists('dependency', $date1Description)
+				&& 	array_key_exists($date1Description['dependency']['property'], $data)
+				&&	in_array($data[$date1Description['dependency']['property']], $date1Description['dependency']['values'])) {
+					$data['date_1'] = date('Y-m-d');
+			}
+		}
+
+		if (!$this->date_2) {
+			$date2Description = $configProperties['date_2'];
+			if (	$date2Description
+				&& 	array_key_exists('dependency', $date2Description)
+				&& 	array_key_exists($date2Description['dependency']['property'], $data)
+				&&	in_array($data[$date2Description['dependency']['property']], $date2Description['dependency']['values'])) {
+					$data['date_2'] = date('Y-m-d');
+			}
+		}
+
+		if (!$this->date_3) {
+			$date3Description = $configProperties['date_3'];
+			if (	$date3Description
+				&& 	array_key_exists('dependency', $date3Description)
+				&& 	array_key_exists($date3Description['dependency']['property'], $data)
+				&&	in_array($data[$date3Description['dependency']['property']], $date3Description['dependency']['values'])) {
+					$data['date_3'] = date('Y-m-d');
+			}
+		}
+
+		if (!$this->date_4) {
+			$date4Description = $configProperties['date_4'];
+			if (	$date4Description
+				&& 	array_key_exists('dependency', $date4Description)
+				&& 	array_key_exists($date4Description['dependency']['property'], $data)
+				&&	in_array($data[$date4Description['dependency']['property']], $date4Description['dependency']['values'])) {
+					$data['date_4'] = date('Y-m-d');
+			}
+		}
+
+		if (!$this->date_5) {
+			$date5Description = $configProperties['date_5'];
+			if (	$date5Description
+				&& 	array_key_exists('dependency', $date5Description)
+				&& 	array_key_exists($date5Description['dependency']['property'], $data)
+				&&	in_array($data[$date5Description['dependency']['property']], $date5Description['dependency']['values'])) {
+					$data['date_5'] = date('Y-m-d');
+			}
+		}
 		
 		foreach ($data as $propertyId => $value) {
 			if (!array_key_exists($propertyId, $configProperties)) $errors[$propertyId] = "The accounts of type $type does not manage the property $propertyId";
@@ -1460,6 +1526,11 @@ class Account implements InputFilterAwareInterface
 				elseif ($propertyId == 'closing_date') $this->closing_date = $value;
 	    		elseif ($propertyId == 'callback_date') $this->callback_date = $value;
 	    		elseif ($propertyId == 'first_activation_date') $this->first_activation_date = $value;
+	    		elseif ($propertyId == 'date_1') $this->date_1 = $value;
+	    		elseif ($propertyId == 'date_2') $this->date_2 = $value;
+	    		elseif ($propertyId == 'date_3') $this->date_3 = $value;
+	    		elseif ($propertyId == 'date_4') $this->date_4 = $value;
+	    		elseif ($propertyId == 'date_5') $this->date_5 = $value;
 	    		elseif ($propertyId == 'priority') $this->priority = $value;
 				elseif ($propertyId == 'origine') $this->origine = $value;
 	    		elseif ($propertyId == 'next_meeting_date') $this->next_meeting_date = $value;
@@ -1599,6 +1670,11 @@ class Account implements InputFilterAwareInterface
 			$text .= $signature['body'][$context->getLocale()];
 			$part = new MimePart($text);
     		$part->type = "text/html";
+
+/*	    	$img = new MimePart($context->getConfig('customisation/esi/send-message/logo')['content']);
+    		$img->type = "image/gif";
+    		$img->encoding = Mime::ENCODING_BASE64;
+    		$img->disposition = Mime::DISPOSITION_INLINE;*/
     		
     		$body = new MimeMessage();
     		$body->setParts(array($part/*, $img*/));
@@ -1623,9 +1699,6 @@ class Account implements InputFilterAwareInterface
     		if ($settings['mailProtocol']) $transport->send($mail);
 
     		if ($settings['isTraceActive']) {
-    			if (!is_dir('data')) mkdir('data', 0777, true);
-    			if (!is_dir('data/log')) mkdir('data/log', 0777, true);
-    			if (!file_exists('data/log/mailing.txt')) touch('data/log/mailing.txt');
     			$writer = new Writer\Stream('data/log/mailing.txt');
     			$logger = new Logger();
     			$logger->addWriter($writer);
