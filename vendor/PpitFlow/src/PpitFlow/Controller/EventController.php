@@ -19,6 +19,20 @@ use Zend\View\Model\ViewModel;
 
 class EventController extends AbstractActionController
 {
+	public static function displayRank ($rank, $hasEquals) {
+		if ($rank < 1) {
+			throw new Exception("Value must be 1 or above");
+		}
+		$equalSign = ($hasEquals === True) ? "=" : "";
+		switch ($rank % 10) {
+			case 1: $ending = ($rank / 10) % 10 === 1 ?  "th" : "st"; break;
+			case 2: $ending = ($rank / 10) % 10 === 1 ?  "th" : "nd"; break;
+			case 3: $ending = ($rank / 10) % 10 === 1 ?  "th" : "rd"; break;
+			default: $ending = "th";
+		}
+		return "Ranked " . $equalSign . " " . (string)$rank . $ending;
+	}
+	
 	public function indexAction()
 	{
 		// Retrieve the context and the parameters
@@ -608,11 +622,13 @@ class EventController extends AbstractActionController
 				if (array_key_exists('rows', $options)) $property['rows'] = $options['rows'];
 				if (array_key_exists('class', $options)) $property['class'] = $options['class'];
 				if (array_key_exists('labels', $options)) $property['labels'] = $options['labels'];
+				if (array_key_exists('format', $options)) $property['format'] = $options['format'];
 			}
 			if (array_key_exists('repository', $property)) $property['repository'] = $context->getConfig($property['repository']);
 			if (!array_key_exists('mandatory', $property)) $property['mandatory'] = false;
 			if (!array_key_exists('updatable', $property)) $property['updatable'] = true;
 			if (!array_key_exists('placeholder', $property)) $property['placeholder'] = null;
+			if (!array_key_exists('format', $property)) $property['format'] = null;
 			$content['detail']['properties'][$inputId] = $property;
 			if (array_key_exists('property_id', $property)) $propertyId = $property['property_id'];
 			else $propertyId = $inputId;

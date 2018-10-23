@@ -9,18 +9,18 @@
   <?php if (array_key_exists('signOut', $content['index'])) : ?>
 
     <div class="col-md-12">      
-      <ul class="nav grey py-1 nav-fill">
+      <ul class="nav grey lighten-4 py-1 nav-fill">
 
     <?php foreach ($content['index']['signOut'] as $entryId => $entry) : ?>
       <?php if ($entry['type'] == 'signOut') : ?>
         <li class="nav-item">
           <input class="" id="signOut-identifier" type="text" placeholder="<?php echo $context->localize($entry['labels'], $locale) ?>" aria-label="">
-          <a class="text-white ml-2" id="signOutButton"><i class="fa fa-key" aria-hidden="true"></i></a>
+          <a class="grey-text ml-2" id="signOutButton"><i class="fa fa-key" aria-hidden="true"></i></a>
         </li>
         
       <?php elseif (array_key_exists($entry['item'], $account['credits'])) : ?>
         <li class="nav-item">
-           <a class="nav-link disabled text-white" href="#!"><?php echo sprintf($context->localize($entry['labels'], $locale), $account['credits'][$entry['item']]) ?></a>
+           <span class="grey-text"><?php echo sprintf($context->localize($entry['labels'], $locale), $account['credits'][$entry['item']]) ?></span>
         </li>
         
       <?php endif;?>

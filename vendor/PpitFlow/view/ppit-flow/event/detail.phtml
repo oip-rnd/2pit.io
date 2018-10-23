@@ -28,7 +28,7 @@
   <div class="card-body card-body-cascade text-center">
 
  <?php foreach ($content['detail']['properties'] as $propertyId => $property) : ?>
-  <?php if ($propertyId != 'caption' && $viewData[$propertyId]) : ?>
+  <?php if (/*$propertyId != 'caption' &&*/ $viewData[$propertyId]) : ?>
 
   <div>
  
@@ -53,7 +53,12 @@
 
     <?php elseif ($property['type'] == 'date') : ?>
       <div class="text-left mb-3 grey-text">
-        <span class="font-weight-bold"><?php echo $context->localize($property['labels'], $locale) ?></span>: <?php echo $context->decodeDate($viewData[$propertyId]) ?>
+        <span class="font-weight-bold"><?php echo $context->localize($property['labels'], $locale) ?></span>: <?php echo date_format(date_create_from_format('Y-m-d', $viewData[$propertyId]), $context->localize($property['format'])) ?>
+      </div>
+
+    <?php elseif ($property['type'] == 'time') : ?>
+      <div class="text-left mb-3 grey-text">
+        <span class="font-weight-bold"><?php echo $context->localize($property['labels'], $locale) ?></span>: <?php echo date_format(date_create_from_format('H:i:s', $viewData[$propertyId]), $context->localize($property['format'])) ?>
       </div>
 
     <?php elseif ($property['type'] == 'textarea') : ?>
