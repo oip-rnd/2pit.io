@@ -51,8 +51,10 @@ class EventController extends AbstractActionController
 		$locale = $this->params()->fromQuery('locale');
 		if (!$locale) if ($account) $locale = $account->locale; else $locale = $context->getLocale();
 
-		$charter_status = $account->getCharterStatus();
-		$gtou_status = $account->getGtouStatus();
+		$charter_status = null;
+		if ($type == 'request') $charter_status = $account->getCharterStatus();
+		$gtou_status = null;
+		if ($type == 'request') $gtou_status = $account->getGtouStatus();
 		
 		$mode = $this->params()->fromQuery('mode', 'Public');
 		$filters = array();
@@ -92,7 +94,7 @@ class EventController extends AbstractActionController
 		}
 
 		$panel = $this->params()->fromQuery('panel', null);
-		if ($charter_status == 'OK' && $gtou_status == 'OK' && !$panel && (!$account->properties['completeness'] || $account->properties['completeness'] == '0_not_completed')) $panel = 'modalProfileForm';
+		if ('type' == 'request' && $charter_status == 'OK' && $gtou_status == 'OK' && !$panel && (!$account->properties['completeness'] || $account->properties['completeness'] == '0_not_completed')) $panel = 'modalProfileForm';
 		
 		// Feed the layout
 		$this->layout('/layout/flow-layout');
@@ -1217,16 +1219,18 @@ class EventController extends AbstractActionController
 
 			// Mark the other account as matched in the owner's account
 			$ownerAccount = Account::get($request->account_id);
-			if ($ownerAccount->property_2) $matchedAccounts = explode(',', $ownerAccount->property_2);
-			else $matchedAccounts = array();
-			if (!in_array($account_id, $matchedAccounts)) $matchedAccounts[] = $account_id;
-			$ownerAccount->property_2 = implode(',', $matchedAccounts);
-			$rc = $ownerAccount->update(null);
-			if ($rc != 'OK') {
-				$connection->rollback();
-				$this->response->setStatusCode('500');
-				$this->response->setReasonPhrase('account->update:'.$rc);
-				return $this->response;
+			if ($ownerAccount) {
+				if ($ownerAccount->property_2) $matchedAccounts = explode(',', $ownerAccount->property_2);
+				else $matchedAccounts = array();
+				if (!in_array($account_id, $matchedAccounts)) $matchedAccounts[] = $account_id;
+				$ownerAccount->property_2 = implode(',', $matchedAccounts);
+				$rc = $ownerAccount->update(null);
+				if ($rc != 'OK') {
+					$connection->rollback();
+					$this->response->setStatusCode('500');
+					$this->response->setReasonPhrase('account->update:'.$rc);
+					return $this->response;
+				}
 			}
 
 			// Email

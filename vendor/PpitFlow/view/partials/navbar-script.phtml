@@ -44,7 +44,8 @@ function register() {
       $('#modalRegisterForm').modal('hide');
     }
     else if (xhttp.statusText == 'accepted domain') toastr.error("<?php echo $this->translate('Sorry, this application is only accessible to a private network', 'ppit-core', $context->getLocale()) ?>");
-    else toastr.error("<?php echo $this->translate('An account already exists for this email address', 'ppit-core', $context->getLocale()) ?>");
+    elseif (xhttp.status == 206) toastr.error("<?php echo $this->translate('An account already exists for this email address', 'ppit-core', $context->getLocale()) ?>");
+    else toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
   };
   xhttp.send(formData);
 }

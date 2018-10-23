@@ -1042,6 +1042,7 @@ class UserController extends AbstractActionController
 				    		if (!in_array($domain, $context->getConfig('user/acceptedRegistrationDomain'))) {
 				    			$connection->rollback();
 				    			$this->getResponse()->setStatusCode('401');
+				    			$this->getResponse()->setReasonPhrase('accepted domain');
 				    			echo json_encode('The email domain does not belong to accepted domains');
 				    			return $this->getResponse();
 				    		}

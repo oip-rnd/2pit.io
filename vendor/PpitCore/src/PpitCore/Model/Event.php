@@ -1407,15 +1407,15 @@ class Event implements InputFilterAwareInterface
     				foreach ($property['modalities'] as $modalityId => $modality) if ($context->localize($modality) == $value) $valueKey = $modalityId;
     				if ($valueKey) $data[$propertyId] = $valueKey;
     			}
-    			elseif ($property['type'] == 'date' && $value) {
+/*    			elseif ($property['type'] == 'date' && $value) {
     				$data[$propertyId] = date('Y-m-d', \PHPExcel_Shared_Date::ExcelToPHP($value));
-    			}
+    			}*/
     		}
     	}
     
     	$event = Event::instanciate($type);
     	$rc = $event->loadAndAdd($data, $properties);
-    	return $rc;
+    	return ['200', $rc];
     }
     
     /**
