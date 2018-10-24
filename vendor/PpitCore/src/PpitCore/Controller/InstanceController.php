@@ -542,7 +542,7 @@ class InstanceController extends AbstractActionController
     {
     	$context = Context::getCurrent();
     	$instance_caption = $context->getInstance()->caption;
-    	echo shell_exec('cd public/img/'.$instance_caption.'/ && ./pull.sh && echo Done');
+    	echo shell_exec('cd public/img/'.$instance_caption.'/ && /usr/bin/git pull origin master && echo Done');
     	$this->getResponse()->setStatusCode('200');
     	return $this->response;
     }
