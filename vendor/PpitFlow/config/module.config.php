@@ -1593,7 +1593,7 @@ table.note-report td {
 				'contributorMode' => ['type' => 'mode', 'value' => 'Contributor', 'labels' => ['default' => 'My attendance', 'fr_FR' => 'Ma présence']],
 //				'skills' => ['type' => 'search', 'property' => 'property_2', 'labels' => ['default' => 'Keywords', 'fr_FR' => 'Mots clés']],
 				'begin_date' => ['type' => 'select', 'property' => 'begin_date', 'icon' => ['class' => 'fa fa-calendar'], 'modalities' => ['2018-11-05' => ['default' => '05/11/2018'], '2018-11-06' => ['default' => '06/11/2018'], '2018-11-07' => ['default' => '07/11/2018'], '2018-11-08' => ['default' => '08/11/2018'], '2018-11-09' => ['default' => '09/11/2018']], 'labels' => ['default' => 'Date', 'fr_FR' => 'Date']],
-				'location' => ['type' => 'select', 'property' => 'location', 'icon' => ['class' => 'fa fa-map-marker-alt'], 'modalities' => ['Tower Hill' => ['default' => 'Tower Hill'], 'Exchange House' => ['default' => 'Exchange House'], 'Bishops Square' => ['default' => 'Bishops Square'], 'St James square' => ['default' => 'St James’s square']], 'labels' => ['default' => 'Location', 'fr_FR' => 'Lieu']],
+				'location' => ['type' => 'select', 'property' => 'location', 'icon' => ['class' => 'fa fa-map-marker-alt'], 'modalities' => ['Tower Hill' => ['default' => 'Tower Hill'], 'Exchange House' => ['default' => 'Exchange House'], 'Bishops Square' => ['default' => 'Bishops Square'], 'St James Square' => ['default' => 'St James’s Square']], 'labels' => ['default' => 'Location', 'fr_FR' => 'Lieu']],
 				'new' => ['type' => 'new', 'labels' => ['default' => 'New event', 'fr_FR' => 'Nouvel événement']],
 			),
 			'links' => array(
