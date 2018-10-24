@@ -77,7 +77,7 @@
     ?>
         <a class="text-secondary font-weight-bold a<?php echo $mode ?>Action a<?php echo $mode ?>Action-<?php echo $actionId ?>" id="a<?php echo $mode ?>Action-<?php echo $actionId ?>-<?php echo $requestId ?>">
     <?php if (array_key_exists('icon', $action)) : ?>
-          <i class="fas fa-<?php echo $action['icon'] ?> mr-1"></i>
+          <i class="far fa-<?php echo $action['icon'] ?> mr-1"></i>
     <?php endif;?>
           <?php echo $context->localize($action['labels'], $locale) ?>
         </a>

@@ -537,7 +537,16 @@ class InstanceController extends AbstractActionController
     	$view->setTerminal(true);
     	return $view;
     }
-
+    
+    public function pullImgAction()
+    {
+    	$context = Context::getCurrent();
+    	$instance_caption = $context->getInstance()->caption;
+    	echo shell_exec('cd public/img/'.$instance_caption.'/ && ./pull.sh && echo Done');
+    	$this->getResponse()->setStatusCode('200');
+    	return $this->response;
+    }
+    
     public function adminAction()
     {
     	$context = Context::getCurrent();
