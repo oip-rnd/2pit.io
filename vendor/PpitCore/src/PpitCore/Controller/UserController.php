@@ -991,6 +991,9 @@ class UserController extends AbstractActionController
 				$redirectRoute = $this->params()->fromQuery('route');
 				$redirectParams = ['type' => $this->params()->fromQuery('type'), 'id' => $this->params()->fromQuery('id')];
 				if ($redirectRoute) return $this->redirect()->toRoute($redirectRoute, $redirectParams);
+
+				$this->getResponse()->setStatusCode('200');
+				return $this->getResponse();
 			}
 				
 			// Logout
