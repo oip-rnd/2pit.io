@@ -3,12 +3,10 @@
 // Rewards
 
         $('#signOut-identifier').keyup(function () {
-          if ($('#signOut-identifier').val()) {
-//            $('#signOutButton').removeAttr('disabled');
+          if ($('#signOut-identifier').val()) {//            $('#signOutButton').removeAttr('disabled');
             $('#signOutButton').show();
           }
           else {
-//            $('#signOutButton').attr('disabled', 'disabled');
               $('#signOutButton').hide();
           }
         });
@@ -22,8 +20,18 @@
           xhttp.onload = function () {
             if (xhttp.readyState == 4) {
               if (xhttp.status == 200) {
-                toastr.success('<h4 class="text-center"><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h4>');
-//                $('#signOutButton').attr('disabled', 'disabled');
+                var format = '<?php echo $context->localize($index['signOut']['identifier']['message']['ok'], $locale) ?>';
+                var pos = format.search('%s');
+                var message = format.substr(0, pos) + xhttp.responseText + format.substr(pos + 2);
+                toastr.success('<h4 class="text-center">' + message + '</h4>');
+                showDashboard();
+              }
+              else if (xhttp.status == 400 && xhttp.statusText == 'Unknown') {
+                toastr.error('<h4 class="text-center"><?php echo $context->localize($index['signOut']['identifier']['message']['unknown'], $locale) ?></h4>');
+                showDashboard();
+              }
+              else if (xhttp.status == 401 && xhttp.statusText == 'Duplicate') {
+                toastr.error('<h4 class="text-center"><?php echo $context->localize($index['signOut']['identifier']['message']['duplicate'], $locale) ?></h4>');
                 showDashboard();
               }
               else technicalError();

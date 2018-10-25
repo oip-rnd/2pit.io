@@ -1585,7 +1585,7 @@ class EventController extends AbstractActionController
 			$this->response->setReasonPhrase('POST');
 			return $this->response;
 		}
-		$identifier = $this->request->getPost('identifier');
+		$identifier = trim($this->request->getPost('identifier'));
 		if (!$identifier) {
 			$this->response->setStatusCode('400');
 			$this->response->setReasonPhrase('POST');
@@ -1598,12 +1598,12 @@ class EventController extends AbstractActionController
 			return $this->response;
 		}
 		$account = Account::get($context->getContactId(), 'contact_1_id');
-		if (!in_array($account->id, explode(',', $event->matched_accounts))) {
+/*		if (!in_array($account->id, explode(',', $event->matched_accounts))) {
 			$this->response->setStatusCode('401');
 			$this->response->setReasonPhrase('Unregistered');
 			echo 'My account: '.$account->id.' Event: '.$event->id.' Matched accounts: '.$event->matched_accounts;
 			return $this->response;
-		}
+		}*/
 		if (array_key_exists($account->id, $event->rewards)) {
 			$this->response->setStatusCode('401');
 			$this->response->setReasonPhrase('Duplicate');
@@ -1622,6 +1622,7 @@ class EventController extends AbstractActionController
 			$event->update(null);
 			$account->update(null);
 			$connection->commit();
+			echo (int)$event->value;
 			$this->response->setStatusCode('200');
 			return $this->response;
 		}

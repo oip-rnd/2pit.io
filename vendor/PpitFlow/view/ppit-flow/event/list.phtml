@@ -32,7 +32,7 @@
 
     <?php if (array_key_exists('rewards', $content) && $request['value']) : ?>
           &nbsp;&nbsp;
-          <span class="badge badge-success"><?php echo $request['value']?> <?php echo $content['rewards']['brand'] ?>s</span>
+          <span class="badge badge-success"><?php echo $content['rewards']['brand'] ?>: <?php echo $request['value']?></span>
     <?php endif;?>
 
 <!-- Current user connected on this event -->
