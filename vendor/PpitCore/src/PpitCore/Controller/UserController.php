@@ -1022,7 +1022,7 @@ class UserController extends AbstractActionController
 				if ($type) {
 					$connection = User::getTable()->getAdapter()->getDriver()->getConnection();
 					$connection->beginTransaction();
-					try {
+//					try {
 						$account = Account::instanciate($type);
 						$rc = $account->loadAndAdd($data);
 						if ($rc[0] == 206) $account = $rc[1];
@@ -1071,12 +1071,12 @@ class UserController extends AbstractActionController
 						
 						$this->getResponse()->setStatusCode('200');
 			    		return $this->getResponse();
-					}
+/*					}
 					catch (\Exception $e) {
 						$connection->rollback();
 			    		$this->getResponse()->setStatusCode('500');
 			    		return $this->getResponse();
-					}
+					}*/
 				}
 			}
 
