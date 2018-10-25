@@ -351,19 +351,7 @@ class EventController extends AbstractActionController
 			if (!$filters) $filters = ['status' => 'new,connected,realized,completed'];
 			if ($type == 'request') $filters['account_status'] = 'active';
 			$skills = $this->params()->fromQuery('skills');
-//			if (!$skills) {
-				$requests = Event::getListV2($description, $filters);
-/*			}
-			else {
-				$requests = array();
-				foreach (explode(',', $skills) as $skill) {
-					$filters['property_2'] = '%'.$skill.'%';
-					$result = Event::getListV2($description, $filters);
-					foreach ($result as $request_id => $request) {
-						$requests[$request_id] = $request;
-					}
-				}
-			}*/
+			$requests = Event::getListV2($description, $filters, '+begin_date,+begin_time');
 			$ranking = array(
 				'event:status' => [['=', 'new', [], 9000], ['=', 'connected', [], 8000], ['=', 'realized', [], 7000], ['=', 'completed', [], 6000]],
 				'query:skills' => [['matches', '%s', ['property_2'], 900], ['matches', '%s', ['property_1'], 800], ['matches', '%s', ['caption'], 700], ['matches', '%s', ['property_3'], 600], ['matches', '%s', ['property_7'], 500]],
@@ -406,7 +394,7 @@ class EventController extends AbstractActionController
 				$content['data'][$request->id]['PublicActions'] = $actions;
 			}
 			
-			uasort($content['data'], array($this, 'compare'));
+			if ($type == 'request') uasort($content['data'], array($this, 'compare'));
 		}
 
 		// Return the view

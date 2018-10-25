@@ -280,6 +280,8 @@
 
 <?php endif;?>
 
+<?php if (array_key_exists('form', $content)) : ?>
+
     <!-- Contact Form -->	
     <section class="section pb-5" id="contactForm">
       <div class="row">
@@ -403,6 +405,7 @@
           </form>
         </div>
         <!--Grid column-->
+<?php endif;?>
 
 <?php if (array_key_exists('contact_section', $content)) : ?>
 

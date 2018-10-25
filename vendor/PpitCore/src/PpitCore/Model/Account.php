@@ -1387,6 +1387,9 @@ class Account implements InputFilterAwareInterface
 		$account->availability_exceptions = array();
 		$account->availability_constraints = array();
 		$account->credits = array();
+		$creditDescription = $context->getConfig('core_account/'.$type.'/property/credits');
+		if (!$creditDescription) $creditDescription = $context->getConfig('core_account/generic/property/credits');
+		if (array_key_exists('default', $creditDescription)) $account->credits = $creditDescription['default'];
 		$account->json_property_1 = array();
 		$account->json_property_2 = array();
 		$account->json_property_3 = array();

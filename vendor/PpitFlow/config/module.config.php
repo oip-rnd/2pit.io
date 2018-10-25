@@ -584,6 +584,16 @@ return array (
 			'fr_FR' => 'Origine',
 		),
 	),
+
+	'core_account/pbc/property/credits' => array(
+		'definition' => 'inline',
+		'type' => 'textarea',
+		'labels' => array(
+			'en_US' => 'Credits',
+			'fr_FR' => 'Crédits',
+		),
+		'default' => ['earned' => 1],
+	),
 	
 	'core_account/pbc/property/property_1' => array(
 		'definition' => 'inline',

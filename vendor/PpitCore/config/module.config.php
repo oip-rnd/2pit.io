@@ -3131,6 +3131,15 @@ return array(
 				'fr_FR' => 'Jours de disponibilité',
 		),
 	),
+
+	'core_account/generic/property/credits' => array(
+		'definition' => 'inline',
+		'type' => 'textarea',
+		'labels' => array(
+			'en_US' => 'Credits',
+			'fr_FR' => 'Crédits',
+		),
+	),
 	
 	'core_account/generic/property/default_means_of_payment' => array(
 		'definition' => 'inline',
