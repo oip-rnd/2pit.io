@@ -75,30 +75,32 @@ class LandingController extends AbstractActionController
 
 		$viewData = array();
 //		$viewData['photo_link_id'] = ($account->photo_link_id) ? $account->photo_link_id : 'no-photo.png';
-		foreach ($content['form']['inputs'] as $inputId => $options) {
-			if (array_key_exists('definition', $options) && $options['definition'] == 'inline') $property = $options;
-			else {
-				$property = $context->getConfig('core_account/'.$account_type.'/property/'.$inputId);
-				if (!$property) $property = $context->getConfig('core_account/generic/property/'.$inputId);
-				if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
-				if (array_key_exists('class', $options)) $property['class'] = $options['class'];
-				if (array_key_exists('mandatory', $options)) $property['mandatory'] = $options['mandatory'];
-				if (array_key_exists('updatable', $options)) $property['updatable'] = $options['updatable'];
+		if (array_key_exists('form', $content)) {
+			foreach ($content['form']['inputs'] as $inputId => $options) {
+				if (array_key_exists('definition', $options) && $options['definition'] == 'inline') $property = $options;
+				else {
+					$property = $context->getConfig('core_account/'.$account_type.'/property/'.$inputId);
+					if (!$property) $property = $context->getConfig('core_account/generic/property/'.$inputId);
+					if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
+					if (array_key_exists('class', $options)) $property['class'] = $options['class'];
+					if (array_key_exists('mandatory', $options)) $property['mandatory'] = $options['mandatory'];
+					if (array_key_exists('updatable', $options)) $property['updatable'] = $options['updatable'];
+				}
+				if (!array_key_exists('class', $property)) $property['class'] = 'col-md-6';
+				if (!array_key_exists('mandatory', $property)) $property['mandatory'] = false;
+				if (!array_key_exists('updatable', $property)) $property['updatable'] = true;
+				if (!array_key_exists('placeholder', $property)) $property['placeholder'] = null;
+				$content['form']['inputs'][$inputId] = $property;
+				if (array_key_exists('property_id', $property)) $propertyId = $property['property_id'];
+				else $propertyId = $inputId;
+	/*			if ($id) {
+					if ($inputId != $propertyId) $viewData[$inputId] = (in_array($property['value'], explode(',', $account->properties[$propertyId])) ? $property['value'] : null);
+					else $viewData[$inputId] = $account->properties[$propertyId];
+					$queryValue = $this->params()->fromQuery($inputId);
+					if ($queryValue !== null) $viewData[$inputId] = $queryValue;
+				}
+				else*/ $viewData[$inputId] = (array_key_exists('default', $property)) ? $property['default'] : null;
 			}
-			if (!array_key_exists('class', $property)) $property['class'] = 'col-md-6';
-			if (!array_key_exists('mandatory', $property)) $property['mandatory'] = false;
-			if (!array_key_exists('updatable', $property)) $property['updatable'] = true;
-			if (!array_key_exists('placeholder', $property)) $property['placeholder'] = null;
-			$content['form']['inputs'][$inputId] = $property;
-			if (array_key_exists('property_id', $property)) $propertyId = $property['property_id'];
-			else $propertyId = $inputId;
-/*			if ($id) {
-				if ($inputId != $propertyId) $viewData[$inputId] = (in_array($property['value'], explode(',', $account->properties[$propertyId])) ? $property['value'] : null);
-				else $viewData[$inputId] = $account->properties[$propertyId];
-				$queryValue = $this->params()->fromQuery($inputId);
-				if ($queryValue !== null) $viewData[$inputId] = $queryValue;
-			}
-			else*/ $viewData[$inputId] = (array_key_exists('default', $property)) ? $property['default'] : null;
 		}
 		
 		// Process the post data after input
