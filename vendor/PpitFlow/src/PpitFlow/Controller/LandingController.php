@@ -49,7 +49,7 @@ class LandingController extends AbstractActionController
 		if(!$account) $account = Account::instanciate($account_type);*/
 
 		// If an email is given as a parameter: Show the Login or Sign Up form depending of the account existing or not
-		$panel = null;
+		$panel = $this->params()->fromQuery('panel');
 		$email = $this->params()->fromQuery('email');
 		if ($email) {
 			$account = null;
