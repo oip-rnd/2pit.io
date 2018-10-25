@@ -10,7 +10,7 @@
 return array(
 
 	'controllers' => array(
-        'invokables' => array(
+		'invokables' => array(
             'PpitCore\Controller\Account' => 'PpitCore\Controller\AccountController',
         	'PpitCore\Controller\Community' => 'PpitCore\Controller\CommunityController',
         	'PpitCore\Controller\Config' => 'PpitCore\Controller\ConfigController',
