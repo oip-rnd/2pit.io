@@ -57,8 +57,8 @@ function eventGetParams() {
 <?php endforeach;?>
 
 	<?php
-	$todoTitle = $content_description['search']['todoTitle'][$context->getLocale()];
-	$searchTitle = $content_description['search']['searchTitle'][$context->getLocale()];
+	$todoTitle = $context->localize($content_description['search']['todoTitle']);
+	$searchTitle = $context->localize($content_description['search']['searchTitle']);
 	?>
 	$('#mode-text').text((todo) ? '<?php echo $todoTitle ?>' : '<?php echo $searchTitle ?>');
 
@@ -816,7 +816,7 @@ function getEventSearch()
 //				$('.search').hide();
 //				$('#search-button').click(pressSearchButton);
 				pressSearchButton();
-				<?php $todoTitle = $content_description['search']['todoTitle'][$context->getLocale()] ?>
+				<?php $todoTitle = $context->localize($content_description['search']['todoTitle']) ?>
 				$('#mode-text').text('<?php echo $todoTitle ?>');
 				connectEventSearchInputs();
 <?php if (array_key_exists('calendar', $content_description['options']) && $content_description['options']['calendar']) : ?>

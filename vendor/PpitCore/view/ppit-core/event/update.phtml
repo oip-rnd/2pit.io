@@ -8,7 +8,7 @@
  */
 -->
 <?php if ($event->id && $context->isDemoModeActive()) : ?>
-		<a class="tip" href="#" title="<?php echo $context->getConfig('demo')['event/update'][$context->getLocale()] ?>">
+		<a class="tip" href="#" title="<?php echo $context->localize($context->getConfig('demo')['event/update']) ?>">
 		    <img src="<?php echo $this->basePath('img/tip.png') ?>" width="20" />
 		</a>
 <?php endif;?>
@@ -70,7 +70,7 @@ if ($event->id && $action != 'update' || $message == 'OK') $isDisabled = true; e
 		<hr>
 		<div class="form-group">
 			<label class="col-sm-12 control-label">
-				<?php echo $options['label'][$context->getLocale()] ?>
+				<?php echo $context->localize($options['label']) ?>
 			</label>
 		</div>
 		
@@ -80,7 +80,7 @@ if ($event->id && $action != 'update' || $message == 'OK') $isDisabled = true; e
 	
 		<div class="form-group" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_' : '').$propertyId ?>_group">
 			<label class="col-sm-5 control-label">
-				<?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo '* ' ?><?php echo $property['labels'][$context->getLocale()] ?>
+				<?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels']) ?>
 			</label>
 			<div class="col-sm-7">
 

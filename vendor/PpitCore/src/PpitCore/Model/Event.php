@@ -687,6 +687,7 @@ class Event implements InputFilterAwareInterface
 		if ($columns) $select->columns($columns);
     		
     	$where = new Where;
+	    $where->notEqualTo('core_event.status', 'deleted');
     	if ($type) $where->equalTo('core_event.type', $type);
 
     	// Todo list vs search modes
@@ -695,7 +696,6 @@ class Event implements InputFilterAwareInterface
     	}
     	else {
     		// Set the filters
-	    	$where->notEqualTo('core_event.status', 'deleted');
     		foreach ($params as $propertyId => $value) {
     			if (in_array(substr($propertyId, 0, 4), array('min_', 'max_'))) $propertyKey = substr($propertyId, 4);
     			else $propertyKey = $propertyId;
