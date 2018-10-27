@@ -1,5 +1,7 @@
 <script>
 
+<?php if (array_key_exists('signOut', $index)) : ?>
+
 // Rewards
 
         $('#signOut-identifier').keyup(function () {
@@ -42,6 +44,8 @@
           $('#signOut-identifier').val('');
         });
 
+<?php endif;?>
+        
 // Dashboard
 
 function showDashboard() {

@@ -58,6 +58,9 @@ body.modal-open {
                           <?php if (array_key_exists('width', $header['logo2'])) echo 'width="'.$header['logo2']['width'].'"' ?>
                           alt="<?php echo $header['logo2']['alt'] ?>"
                         />
+  <?php if (array_key_exists('labels', $header['logo2'])) : ?>
+                        <span class="clearfix d-none d-sm-inline-block"><?php echo $context->localize($header['logo2']['labels'], $locale)?></span>
+  <?php endif;?>
                       </a>
                     </li>
 <?php endif;?>
