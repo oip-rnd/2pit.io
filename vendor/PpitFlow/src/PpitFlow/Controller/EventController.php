@@ -19,18 +19,50 @@ use Zend\View\Model\ViewModel;
 
 class EventController extends AbstractActionController
 {
-	public static function displayRank ($rank, $hasEquals) {
-		if ($rank < 1) {
-			throw new Exception("Value must be 1 or above");
+	public function displayRank($account) 
+	{
+		$context = Context::getCurrent();
+		
+		// Rank the profiles
+		$accountType = $context->getConfig('landing_account_type');
+		$ranking = array();
+		$cursor = Account::getList($account->type, [/*'status' => 'active'*/]);
+		foreach ($cursor as $anyAccountId => $anyAccount) {
+			if ($anyAccount->credits) {
+				foreach ($anyAccount->credits as $rowId => $value) {
+					if ($rowId == 'earned') {
+						$ranking[$anyAccountId] = $value;
+					}
+				}
+			}
 		}
-		$equalSign = ($hasEquals === True) ? "=" : "";
+
+		// Rank the participants and find my rank
+		arsort($ranking);
+		$ranks = array();
+		$currentRank = 0;
+		$currentWeight = 0;
+		$i = 0;
+		foreach($ranking as $account_id => $weight) {
+			$i++;
+			if ($currentWeight != $weight) {
+				$currentRank = $i;
+				$currentWeight = $weight;
+				$ranks[$currentWeight] = 1;
+			}
+			else $ranks[$currentWeight]++;
+			if ($ranking[$account->id] == $currentWeight) $rank = $currentRank;
+		}
+
+		// Add a sign to indicate my rank is shared with other participant
+		if ($ranks[$ranking[$account->id]] > 1) $equalSign = '='; else $equalSign = '';
 		switch ($rank % 10) {
 			case 1: $ending = ($rank / 10) % 10 === 1 ?  "th" : "st"; break;
 			case 2: $ending = ($rank / 10) % 10 === 1 ?  "th" : "nd"; break;
 			case 3: $ending = ($rank / 10) % 10 === 1 ?  "th" : "rd"; break;
 			default: $ending = "th";
 		}
-		return "Ranked " . $equalSign . " " . (string)$rank . $ending;
+		return $equalSign . " " . (string)$rank . $ending;
 	}
 	
 	public function indexAction()
@@ -54,7 +86,7 @@ class EventController extends AbstractActionController
 		$charter_status = null;
 		if ($type == 'request') $charter_status = $account->getCharterStatus();
 		$gtou_status = null;
-		if ($type == 'request') $gtou_status = $account->getGtouStatus();
+//		if ($type == 'request') $gtou_status = $account->getGtouStatus();
 		
 		$mode = $this->params()->fromQuery('mode', 'Public');
 		$filters = array();
@@ -69,6 +101,12 @@ class EventController extends AbstractActionController
 			if (!$content) $content = $context->getConfig($type.'/generic');
 		}
 		else $content = Config::get($place_identifier.'_'.$type, 'identifier')->content;
+
+		// compute ranking in gaming mode
+		if (array_key_exists('rewards', $content)) {
+			$account->credits['rank'] = $this->displayRank($account);
+			$account->properties['credits'] = $account->credits;
+		}
 		
 		// Profile form
 		if ($context->getConfig('specificationMode') == 'config') {
@@ -94,8 +132,8 @@ class EventController extends AbstractActionController
 		}
 
 		$panel = $this->params()->fromQuery('panel', null);
-		if ('type' == 'request' && $charter_status == 'OK' && $gtou_status == 'OK' && !$panel && (!$account->properties['completeness'] || $account->properties['completeness'] == '0_not_completed')) $panel = 'modalProfileForm';
-		
+		if ($type == 'request' && $charter_status == 'OK' /*&& $gtou_status == 'OK'*/ && !$panel && (!$account->properties['completeness'] || $account->properties['completeness'] == '0_not_completed')) $panel = 'modalProfileForm';
+
 		// Feed the layout
 		$this->layout('/layout/flow-layout');
 		$this->layout()->setVariables(array(
@@ -162,41 +200,7 @@ class EventController extends AbstractActionController
 	
 		// compute ranking in gaming mode
 		if (array_key_exists('rewards', $content)) {
-	
-			// Rank the profiles
-			$accountType = $context->getConfig('landing_account_type');
-			$ranking = array();
-			$cursor = Account::getList($account->type, ['status' => 'active']);
-			foreach ($cursor as $anyAccountId => $anyAccount) {
-				if ($anyAccount->credits) {
-					foreach ($anyAccount->credits as $rowId => $value) {
-						if ($rowId == 'earned') {
-							$ranking[$anyAccountId] = $value;
-						}
-					}
-				}
-			}
-	
-			if (array_key_exists($account->id, $ranking)) {
-	
-				// Rank the participants and find my rank
-				arsort($ranking);
-				$ranks = array();
-				$currentRank = 0;
-				$currentWeight = 0;
-				foreach($ranking as $account_id => $weight) {
-					if ($currentWeight != $weight) {
-						$currentRank++;
-						$currentWeight = $weight;
-						$ranks[$currentWeight] = 1;
-					}
-					else $ranks[$currentWeight]++;
-					if ($ranking[$account->id] == $currentWeight) $account->credits['rank'] = $currentRank;
-				}
-	
-				// Add a sign to indicate my rank is shared with other participant
-				if ($ranks[$ranking[$account->id]] > 1) $account->credits['rank'] = '='.$account->credits['rank'];
-			}
+			$account->credits['rank'] = $this->displayRank($account);
 			$account->properties['credits'] = $account->credits;
 		}
 	
