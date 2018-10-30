@@ -352,7 +352,9 @@ class EventController extends AbstractActionController
 		// Retrieve the request according to the given search criteria or the current requests in no search criterion is given
 		else {
 
-			if (!$filters) $filters = ['status' => 'new,connected,realized,completed'];
+//			if (!$filters) $filters = ['status' => 'new,connected,realized,completed'];
+			if ($type == 'event') $filters['status'] = 'new,connected';
+			else $filters['status'] = 'new,connected,realized,completed';
 			if ($type == 'request') $filters['account_status'] = 'active';
 			$skills = $this->params()->fromQuery('skills');
 			$requests = Event::getListV2($description, $filters, '+begin_date,+begin_time');

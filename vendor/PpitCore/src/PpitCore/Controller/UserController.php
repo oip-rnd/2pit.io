@@ -957,14 +957,21 @@ class UserController extends AbstractActionController
 
 			if ($request == 'lost-password') {
 				$identity = $this->params()->fromQuery('identity');
-				$vcard = Vcard::get($identity, 'email');
+/*				$vcard = Vcard::get($identity, 'email');
 				if (!$vcard) {
 					$this->getResponse()->setStatusCode('400');
 					return $this->getResponse();
 				}
 				$userContact = UserContact::get($vcard->id, 'vcard_id');
-				$user = User::getTable()->transGet($userContact->user_id);
+				$user = User::getTable()->transGet($userContact->user_id);*/
+				$user = User::getTable()->transGet($identity, 'username');
+				if (!$user) {
+					$this->getResponse()->setStatusCode('400');
+					return $this->getResponse();
+				}
 				$token = $context->getSecurityAgent()->requestPasswordInit($user, false);
+				$userContact = UserContact::get($user->user_id, 'user_id');
+				$vcard = Vcard::get($userContact->vcard_id);
 
 				// Send the OTP by email
 				$url = $context->getServiceManager()->get('viewhelpermanager')->get('url');
