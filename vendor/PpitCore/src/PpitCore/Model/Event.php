@@ -1095,7 +1095,7 @@ class Event implements InputFilterAwareInterface
 		}
 		if (array_key_exists('matched_accounts', $data)) {
 	    	$matched_accounts = trim(strip_tags($data['matched_accounts']));
-			if (strlen($matched_accounts) > 255) return 'Integrity';
+			if (strlen($matched_accounts) > 65535) return 'Integrity';
 			if ($this->matched_accounts != $matched_accounts) $auditRow['matched_accounts'] = $this->matched_accounts = $matched_accounts;
 		}
 		if (array_key_exists('matching_log', $data)) {
