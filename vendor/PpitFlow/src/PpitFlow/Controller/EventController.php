@@ -1640,7 +1640,7 @@ class EventController extends AbstractActionController
 	{
 		foreach (Event::getList('event', []) as $eventId => $event) {
 			foreach ($event->matching_log as $accountId => $log) {
-				if (!array_key_exists($accountId, explode(',', $event->matched_accounts))) {
+				if (!in_array($accountId, explode(',', $event->matched_accounts))) {
 					echo $accountId.' '.$event->matched_accounts."\n";
 				}
 			}
