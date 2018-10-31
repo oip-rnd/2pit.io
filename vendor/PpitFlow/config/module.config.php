@@ -170,6 +170,13 @@ return array (
 							'defaults' => array('action' => 'signOut'),
 						),
 					),
+					'repair' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/repair',
+							'defaults' => array('action' => 'repair'),
+						),
+					),
 				),
 			),
 			'landing' => array(
@@ -415,6 +422,7 @@ return array (
 				array('route' => 'flowEvent/consultFeedback', 'roles' => array('user')),
 				array('route' => 'flowEvent/cancel', 'roles' => array('user')),
 				array('route' => 'flowEvent/signOut', 'roles' => array('user')),
+				array('route' => 'flowEvent/repair', 'roles' => array('admin')),
 				
 				array('route' => 'profile', 'roles' => array('user')),
 				array('route' => 'profile/index', 'roles' => array('user')),

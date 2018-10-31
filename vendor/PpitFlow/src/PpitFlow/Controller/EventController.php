@@ -1635,4 +1635,17 @@ class EventController extends AbstractActionController
 			$this->response->setStatusCode('500');
 		}
 	}
+	
+	public function repairAction()
+	{
+		foreach (Event::getList('event', []) as $eventId => $event) {
+			foreach ($event->matching_log as $accountId => $log) {
+				if (!array_key_exists($accountId, explode(',', $event->matched_accounts))) {
+					echo $accountId.' '.$event->matched_accounts."\n";
+				}
+			}
+		}
+		echo "Done\n";
+		return $this->response;
+	}
 }
