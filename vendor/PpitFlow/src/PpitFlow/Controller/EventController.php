@@ -1642,7 +1642,7 @@ class EventController extends AbstractActionController
 			if (in_array($event->id, [4088, 4126, 4090, 4110, 4073, 4100])) {
 				$matched_accounts = explode(',', $event->matched_accounts);
 				foreach ($event->matching_log as $accountId => $log) {
-					if (!in_array($accountId, $matched_accounts)) $matched_account[] = $accountId;
+					if (!in_array($accountId, $matched_accounts)) $matched_accounts[] = $accountId;
 				}
 				$event->matched_accounts = implode(',', $matched_accounts);
 				echo 'event: '.$eventId.', account: '.$accountId.' '.$event->matched_accounts."\n";
