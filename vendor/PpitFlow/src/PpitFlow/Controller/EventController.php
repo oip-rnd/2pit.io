@@ -1646,6 +1646,7 @@ class EventController extends AbstractActionController
 				}
 				$event->matched_accounts = implode(',', $matched_accounts);
 				echo 'event: '.$eventId.', account: '.$accountId.' '.$event->matched_accounts."\n";
+				$event->update(null);
 			}
 		}
 		echo "Done\n";
