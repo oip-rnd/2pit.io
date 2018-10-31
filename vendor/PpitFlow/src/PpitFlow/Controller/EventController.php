@@ -1639,11 +1639,12 @@ class EventController extends AbstractActionController
 	public function repairAction()
 	{
 		foreach (Event::getList('event', []) as $eventId => $event) {
-			foreach ($event->matching_log as $accountId => $log) {
-				if (!in_array($accountId, explode(',', $event->matched_accounts))) {
-					echo 'event: '.$eventId.', account: '.$accountId.' '.$event->matched_accounts."\n";
-					break;
+			if (in_array($event->id, [4088, 4126, 4090, 4110, 4073, 4100])) {
+				$matched_accounts = explode(',', $event->matched_accounts);
+				foreach ($event->matching_log as $accountId => $log) {
+					if (!in_array($accountId, $matched_accounts)) $matched_account[] = $accountId;
 				}
+				echo 'event: '.$eventId.', account: '.$accountId.' '.$matched_accounts."\n";
 			}
 		}
 		echo "Done\n";
