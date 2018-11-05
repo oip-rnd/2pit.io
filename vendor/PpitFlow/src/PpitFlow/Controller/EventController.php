@@ -1600,7 +1600,7 @@ class EventController extends AbstractActionController
 		$events = Event::getList($type, ['identifier' => $identifier]);
 		$event = null;
 		foreach ($events as $row) {
-			if (in_array($account->id, explode(',', $event->matched_accounts))) {
+			if (in_array($account->id, explode(',', $row->matched_accounts))) {
 				$event = $row;
 				break;
 			}

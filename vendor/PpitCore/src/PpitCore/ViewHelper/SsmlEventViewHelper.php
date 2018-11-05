@@ -83,8 +83,7 @@ class SsmlEventViewHelper
 						foreach (explode(',', $event->properties[$propertyId]) as $modalityId) {
 							if (array_key_exists($modalityId, $property['modalities'])) $value[] = $context->localize($property['modalities'][$modalityId]);
 						}
-	    				$value = implode(",\n", $value);
-	    				$value.= "\n";
+	    				$value = implode(', ', $value);
 						$sheet->setCellValue($column.$j, $value);
 					}
 					else $sheet->setCellValue($column.$j, $event->properties[$propertyId]);
