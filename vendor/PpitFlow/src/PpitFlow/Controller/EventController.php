@@ -1595,13 +1595,21 @@ class EventController extends AbstractActionController
 			$this->response->setReasonPhrase('POST');
 			return $this->response;
 		}
-		$event = Event::get($type, 'type', $identifier, 'identifier');
+		$account = Account::get($context->getContactId(), 'contact_1_id');
+//		$event = Event::get($type, 'type', $identifier, 'identifier');
+		$events = Event::getList($type, ['identifier' => $identifier]);
+		$event = null;
+		foreach ($events as $row) {
+			if (in_array($account->id, explode(',', $event->matched_accounts))) {
+				$event = $row;
+				break;
+			}
+		}
 		if (!$event) {
 			$this->response->setStatusCode('400');
 			$this->response->setReasonPhrase('Unknown');
 			return $this->response;
 		}
-		$account = Account::get($context->getContactId(), 'contact_1_id');
 /*		if (!in_array($account->id, explode(',', $event->matched_accounts))) {
 			$this->response->setStatusCode('401');
 			$this->response->setReasonPhrase('Unregistered');

@@ -1275,6 +1275,9 @@ class Event implements InputFilterAwareInterface
 			if (strlen($property_30) > 32767) return 'Integrity';
 			if ($this->property_30 != $property_30) $auditRow['property_30'] = $this->property_30 = $property_30;
 		}
+
+		// Set end date = begin date if end date is not specified
+		if (!$this->end_date) $this->end_date = $this->begin_date;
 		
 		// Set the value property to the total number of scheduled hours for a planning event
 		$config = $context->getConfig('event/'.$this->type);

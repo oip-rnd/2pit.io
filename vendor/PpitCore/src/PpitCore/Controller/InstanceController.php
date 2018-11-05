@@ -567,7 +567,6 @@ class InstanceController extends AbstractActionController
     			$instance = $context->getInstance();
 				foreach ($context->getConfig('admin/'.$app) as $propertyId) {
 					$id = str_replace('/', '_', $propertyId);
-var_dump($id, $request->getPost($id.'_updated')); return $this->response;
 					if ($request->getPost($id.'_updated')) {
 		    			$property = $context->getConfig($propertyId);
 		    			foreach ($property['modalities'] as $modalityId => &$modality) {

@@ -1209,7 +1209,7 @@ return array(
                 ),
             	'may_terminate' => true,
             		'child_routes' => array(
-            				'displayBlog' => array(
+/*            				'displayBlog' => array(
 	        						'type' => 'segment',
 	        						'options' => array(
 	        								'route' => '/blog[/:directory][/:name]',
@@ -1221,7 +1221,7 @@ return array(
 	        										'action' => 'displayBlog',
 	        								),
 	        						),
-	        				),
+	        				),*/
             				'displayPage' => array(
 	        						'type' => 'segment',
 	        						'options' => array(
@@ -1842,7 +1842,7 @@ return array(
 				
 				array('route' => 'public/displayContent', 'roles' => array('guest')),
 				array('route' => 'public/displayPage', 'roles' => array('guest')),
-				array('route' => 'public/displayBlog', 'roles' => array('guest')),
+//				array('route' => 'public/displayBlog', 'roles' => array('guest')),
 				array('route' => 'public/home', 'roles' => array('guest')),
 				array('route' => 'public/community', 'roles' => array('guest')),
 				array('route' => 'public/communityPrint', 'roles' => array('guest')),
@@ -4127,6 +4127,19 @@ table.note-report td {
 	),
 	
 	// Event
+
+	'event/type' => array(
+		'type' => 'select',
+		'modalities' => array(
+			'test_note' => array('en_US' => 'Global result', 'fr_FR' => 'Résultat global'),
+			'test_detail' => array('en_US' => 'Detailed results', 'fr_FR' => 'Résultats détaillés'),
+		),
+		'default' => 'test_note',
+		'labels' => array(
+			'en_US' => 'Type',
+			'fr_FR' => 'Type',
+		),
+	),
 	
 	'event/generic/property/status' => array(
 		'definition' => 'inline',

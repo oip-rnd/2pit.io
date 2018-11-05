@@ -94,7 +94,7 @@ return array(
         				'index' => array(
         						'type' => 'segment',
         						'options' => array(
-        								'route' => '/index[/:type]',
+        								'route' => '/index[/:type][/:app]',
         								'defaults' => array(
         										'action' => 'index',
         								),
@@ -705,7 +705,7 @@ return array(
         						'index' => array(
         								'type' => 'segment',
         								'options' => array(
-        										'route' => '/index[/:type]',
+        										'route' => '/index[/:app]',
         										'defaults' => array(
         												'action' => 'index',
         										),

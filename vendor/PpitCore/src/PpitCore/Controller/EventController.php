@@ -269,6 +269,7 @@ class EventController extends AbstractActionController
 
 		header('Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 		header('Content-Disposition:inline;filename=P-Pit_Events.xlsx ');
+		ob_end_clean();
 		$writer->save('php://output');
     	return $this->response;
     }

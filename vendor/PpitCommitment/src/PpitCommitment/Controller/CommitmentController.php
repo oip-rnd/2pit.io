@@ -68,7 +68,8 @@ class CommitmentController extends AbstractActionController
     	$place = Place::get($context->getPlaceId());
 
     	$type = $this->params()->fromRoute('type', null);
-		$applicationId = 'p-pit-engagements';
+		$app = $this->params()->fromRoute('app');
+    	$applicationId = 'p-pit-engagements';
 		$applicationName = 'P-PIT Engagements';
 		$instance = Instance::get($context->getInstanceId());
 		$configProperties = $this->getConfigProperties($type);
@@ -83,6 +84,7 @@ class CommitmentController extends AbstractActionController
 				'termProperties' => $termProperties,
 	    		'config' => $context->getConfig(),
     			'place' => $place,
+    			'app' => $app,
     			'active' => 'application',
     			'applicationId' => $applicationId,
     			'applicationName' => $applicationName,

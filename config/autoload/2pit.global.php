@@ -34,7 +34,7 @@ return array(
 			'credit' => array(
 					'unlimitedCredits' => true,
 			),
-			'ppitDocument' => array(
+/*			'ppitDocument' => array(
 					'dropbox' => array(
 							'credential' => '9CRvqMLXD40AAAAAAAAAw01AjFizF3WrpmnYhseJ8RXng1QXiokyfjKqLczV5aQ6',
 							'clientIdentifier' => 'P-PIT',
@@ -89,6 +89,6 @@ return array(
 									'name' => 'legal-notices',
 							),
 					),
-			),
+			),*/
 	),
 );

@@ -304,6 +304,7 @@ class AccountController extends AbstractActionController
 		
 		header('Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 		header('Content-Disposition:inline;filename=P-Pit_Comptes.xlsx ');
+		ob_end_clean();
 		$writer->save('php://output');
 
 		$view = new ViewModel(array());

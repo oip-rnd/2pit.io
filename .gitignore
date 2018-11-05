@@ -11,8 +11,10 @@ public/img/*
 !public/img/flags
 public/logos/*
 !public/logos/2pit_io
+vendor/dropbox
 vendor/Ppit*
 !vendor/PpitCommitment
 !vendor/PpitCore
+!vendor/PpitFlow
 !vendor/Ppituser
 
