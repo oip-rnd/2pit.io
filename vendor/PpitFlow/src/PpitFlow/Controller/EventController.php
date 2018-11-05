@@ -1626,8 +1626,9 @@ class EventController extends AbstractActionController
 		$earned += $event->value;
 		$credits['earned'] = $earned;
 		$account->credits = $credits;
-		$event->rewards[$account->id] = $earned;
-
+//		$event->rewards[$account->id] = $earned;
+		$event->rewards[$account->id] = date('Y-m-d H:i:s');
+		
 		$connection = Event::getTable()->getAdapter()->getDriver()->getConnection();
 		$connection->beginTransaction();
 		try {
