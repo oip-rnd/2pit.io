@@ -53,6 +53,11 @@ class SsmlEventViewHelper
 						if ($event->matching_log) foreach ($event->matching_log as $accountId => $log) if (array_key_exists($accountId, $description['export']['matched_accounts']['modalities'])) $matching_log[$context->localize($description['export']['matched_accounts']['modalities'][$accountId])] = $log;
 						$sheet->setCellValue($column.$j, json_encode($matching_log, JSON_PRETTY_PRINT));
 					}
+					elseif ($propertyId == 'rewards') {
+						$rewards = array();
+						if ($event->rewards) foreach ($event->rewards as $accountId => $time) if (array_key_exists($accountId, $description['export']['rewards']['modalities'])) $rewards[$context->localize($description['export']['rewards']['modalities'][$accountId])] = $time;
+						$sheet->setCellValue($column.$j, json_encode($rewards, JSON_PRETTY_PRINT));
+					}
 					elseif ($propertyId == 'feedbacks') {
 						$feedbacks = array();
 						foreach ($event->feedbacks as $giverId => $giver) {

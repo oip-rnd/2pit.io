@@ -272,6 +272,12 @@ class Event implements InputFilterAwareInterface
 		$properties = array();
 		$description = $context->getConfig('event/'.$type);
 		if (!$description) $description = $context->getConfig('event/generic');
+		
+		// Cache the account list for matched_accounts and rewards property
+		if (in_array('matched_accounts', $description['properties']) || in_array('rewards', $description['properties'])) {
+			$accounts = Account::getList($context->getConfig('landing_account_type'), [], '+name', null);
+		}
+		
 		foreach($description['properties'] as $propertyId) {
 			$property = $context->getConfig('event/'.$type.'/property/'.$propertyId);
 			if (!$property) $property = $context->getConfig('event/generic/property/'.$propertyId);
@@ -286,7 +292,11 @@ class Event implements InputFilterAwareInterface
 			}
 			elseif ($propertyId == 'matched_accounts') {
 				$property['modalities'] = array();
-				foreach (Account::getList($property['account_type'], [], '+name', null) as $account) $property['modalities'][$account->id] = ['default' => $account->n_fn.' - '.$account->email];
+				foreach ($accounts as $account) $property['modalities'][$account->id] = ['default' => $account->n_fn.' - '.$account->email];
+			}
+			elseif ($propertyId == 'rewards') {
+				$property['modalities'] = array();
+				foreach ($accounts as $account) $property['modalities'][$account->id] = ['default' => $account->n_fn.' - '.$account->email];
 			}
 			elseif (in_array($property['type'], ['select', 'multiselect']) && array_key_exists('definition', $property['modalities']) && $property['modalities']['definition'] != 'inline') {
 				$definition = $context->getConfig($property['modalities']['definition']);
