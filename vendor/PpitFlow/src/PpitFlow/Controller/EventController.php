@@ -1650,10 +1650,10 @@ class EventController extends AbstractActionController
 		$accounts = Account::getList('pbc', []);
 		foreach ($accounts as $account) $account->properties['computed'] = 0;
 		foreach (Event::getList('event', []) as $eventId => $event) {
-			foreach ($event->rewards as $accountId => $unused) $accounts[$account_id]->properties['computed'] += $event->value;
+			foreach ($event->rewards as $accountId => $unused) $accounts[$accountId]->properties['computed'] += $event->value;
 		}
 		foreach ($accounts as $account) {
-			if ($account->properties['computed'] != $account->credits['earned']) echo $account_id.': earned: '.$account->credits['earned'].', computed: '.$account->properties['computed']."\n";
+			if ($account->properties['computed'] != $account->credits['earned']) echo $accountId.': earned: '.$account->credits['earned'].', computed: '.$account->properties['computed']."\n";
 		}
 		echo "Done\n";
 		return $this->response;
