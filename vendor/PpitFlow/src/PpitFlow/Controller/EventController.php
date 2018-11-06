@@ -1647,17 +1647,15 @@ class EventController extends AbstractActionController
 	
 	public function repairAction()
 	{
+		$accounts = Account::getList('pbc', []);
+		foreach ($accounts as $account) $account['computed'] = 0;
 		foreach (Event::getList('event', []) as $eventId => $event) {
-			if (in_array($event->id, [4088, 4126, 4090, 4110, 4073, 4100])) {
-				$matched_accounts = explode(',', $event->matched_accounts);
-				foreach ($event->matching_log as $accountId => $log) {
-					if (!in_array($accountId, $matched_accounts)) $matched_accounts[] = $accountId;
-				}
-				$event->matched_accounts = implode(',', $matched_accounts);
-				echo 'event: '.$eventId.', account: '.$accountId.' '.$event->matched_accounts."\n";
-				$event->update(null);
-			}
+			foreach ($event->rewards as $accountId => $unused) $accounts[$account_id]['computed'] += $event->value;
 		}
+		foreach ($accounts as $account) {
+			if ($account['computed'] != $account->credits['earned']) echo $account_id.': earned: '.$account->credits['earned'].', computed: '.$account['computed']."\n";
+		}
+		
 		echo "Done\n";
 		return $this->response;
 	}
