@@ -26,7 +26,7 @@ class EventController extends AbstractActionController
 		// Rank the profiles
 		$accountType = $context->getConfig('landing_account_type');
 		$ranking = array();
-		$cursor = Account::getList($account->type, [/*'status' => 'active'*/]);
+		$cursor = Account::getList($account->type, [/*'status' => 'active'*/], '+name', null);
 		foreach ($cursor as $anyAccountId => $anyAccount) {
 			if ($anyAccount->credits) {
 				foreach ($anyAccount->credits as $rowId => $value) {
@@ -1647,7 +1647,7 @@ class EventController extends AbstractActionController
 	
 	public function repairAction()
 	{
-		$accounts = Account::getList('pbc', []);
+		$accounts = Account::getList('pbc', [], '+name', null);
 		foreach ($accounts as $account) $account->properties['computed'] = 0;
 		foreach (Event::getList('event', []) as $eventId => $event) {
 			foreach ($event->rewards as $accountId => $unused) $accounts[$accountId]->properties['computed'] += $event->value;
