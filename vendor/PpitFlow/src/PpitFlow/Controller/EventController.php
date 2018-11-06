@@ -1651,7 +1651,7 @@ class EventController extends AbstractActionController
 	{
 		$context = Context::getCurrent();
 		$account = Account::get($context->getContactId(), 'contact_1_id');
-		
+
 		// Rank the profiles
 		$accountType = $context->getConfig('landing_account_type');
 		$ranking = array();
@@ -1665,7 +1665,7 @@ class EventController extends AbstractActionController
 				}
 			}
 		}
-
+		
 		// Rank the participants and find my rank
 		arsort($ranking);
 		$ranks = array();
@@ -1682,8 +1682,16 @@ class EventController extends AbstractActionController
 			else $ranks[$currentWeight]++;
 			if ($ranking[$account->id] == $currentWeight) {
 				$rank = $currentRank;
-				break;
 			}
+		}
+		
+		// Add a sign to indicate my rank is shared with other participant
+		if ($ranks[$ranking[$account->id]] > 1) $equalSign = '='; else $equalSign = '';
+		switch ($rank % 10) {
+			case 1: $ending = ($rank / 10) % 10 === 1 ?  "th" : "st"; break;
+			case 2: $ending = ($rank / 10) % 10 === 1 ?  "th" : "nd"; break;
+			case 3: $ending = ($rank / 10) % 10 === 1 ?  "th" : "rd"; break;
+			default: $ending = "th";
 		}
 var_dump($rank);
 		// Add a sign to indicate my rank is shared with other participant
