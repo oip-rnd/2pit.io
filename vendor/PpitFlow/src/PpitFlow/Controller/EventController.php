@@ -1650,13 +1650,13 @@ class EventController extends AbstractActionController
 	
 	public function repairAction()
 	{
-		$context = Context::getCurrent();
+/*		$context = Context::getCurrent();
 		$account = Account::get($context->getContactId(), 'contact_1_id');
 
 		// Rank the profiles
 		$accountType = $context->getConfig('landing_account_type');
 		$ranking = array();
-		$cursor = Account::getList($account->type, [/*'status' => 'active'*/], '+name', null);
+		$cursor = Account::getList($account->type, [], '+name', null);
 		foreach ($cursor as $anyAccountId => $anyAccount) {
 			if ($anyAccount->credits) {
 				foreach ($anyAccount->credits as $rowId => $value) {
@@ -1703,9 +1703,9 @@ var_dump($rank);
 			case 3: $ending = ($rank / 10) % 10 === 1 ?  "th" : "rd"; break;
 			default: $ending = "th";
 		}
-		echo $equalSign . " " . (string)$rank . $ending;
+		echo $equalSign . " " . (string)$rank . $ending;*/
 
-/*		$accounts = Account::getList('pbc', [], '+name', null);
+		$accounts = Account::getList('pbc', [], '+name', null);
 		$computed = array();
 		foreach ($accounts as $account) $computed[$account->id] = 1;
 		foreach (Event::getList('event', [], '-update_time', null) as $eventId => $event) {
@@ -1715,9 +1715,9 @@ var_dump($rank);
 			if ($computed[$account->id] != $account->credits['earned']) {
 				echo $account->id.': earned: '.$account->credits['earned'].', computed: '.$computed[$account->id]."\n";
 				$account->credits['earned'] = $computed[$account->id];
-				$account->update(null);
+//				$account->update(null);
 			}
-		}*/
+		}
 		echo "Done\n";
 		return $this->response;
 	}
