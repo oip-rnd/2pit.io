@@ -51,9 +51,10 @@ class EventController extends AbstractActionController
 				$ranks[$currentWeight] = $i;
 			}
 			else $ranks[$currentWeight]++;
-			if ($ranking[$account->id] == $currentWeight) $rank = $currentRank;
+//			if ($ranking[$account->id] == $currentWeight) $rank = $currentRank;
 		}
-
+		$rank = $ranks[$ranking[$account->id]];
+		
 		// Add a sign to indicate my rank is shared with other participant
 		if ($ranks[$ranking[$account->id]] > 1) $equalSign = '='; else $equalSign = '';
 		switch ($rank % 10) {
@@ -1678,9 +1679,9 @@ class EventController extends AbstractActionController
 				$ranks[$currentWeight] = $i;
 			}
 			else $ranks[$currentWeight]++;
-			if ($ranking[$account->id] == $currentWeight) $rank = $currentRank;
+//			if ($ranking[$account->id] == $currentWeight) $rank = $currentRank;
 		}
-var_dump($ranks);
+		$rank = $ranks[$ranking[$account->id]];
 /*		$accounts = Account::getList('pbc', [], '+name', null);
 		$computed = array();
 		foreach ($accounts as $account) $computed[$account->id] = 1;
