@@ -1677,7 +1677,7 @@ class EventController extends AbstractActionController
 			if ($currentWeight != $weight) {
 				$currentRank = $i;
 				$currentWeight = $weight;
-				$ranks[$currentWeight] = $i;
+				$ranks[$currentWeight] = 1;
 			}
 			else $ranks[$currentWeight]++;
 			if ($ranking[$account->id] == $currentWeight) {
