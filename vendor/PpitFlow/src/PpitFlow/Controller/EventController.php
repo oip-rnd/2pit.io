@@ -51,10 +51,12 @@ class EventController extends AbstractActionController
 				$ranks[$currentWeight] = $i;
 			}
 			else $ranks[$currentWeight]++;
-//			if ($ranking[$account->id] == $currentWeight) $rank = $currentRank;
+			if ($ranking[$account->id] == $currentWeight) {
+				$rank = $currentRank;
+				break;
+			}
 		}
-		$rank = $ranks[$ranking[$account->id]];
-		
+
 		// Add a sign to indicate my rank is shared with other participant
 		if ($ranks[$ranking[$account->id]] > 1) $equalSign = '='; else $equalSign = '';
 		switch ($rank % 10) {
