@@ -1681,11 +1681,12 @@ class EventController extends AbstractActionController
 				$ranks[$currentWeight] = $i;
 			}
 			else $ranks[$currentWeight]++;
-var_dump($account->id.' => '.$ranking[$account->id].', currentWeight: '.$currentWeight.', currentRank: '.$currentRank);
 			if ($ranking[$account->id] == $currentWeight) {
 				$rank = $currentRank;
+				break;
 			}
 		}
+var_dump($rank);
 /*		$accounts = Account::getList('pbc', [], '+name', null);
 		$computed = array();
 		foreach ($accounts as $account) $computed[$account->id] = 1;
