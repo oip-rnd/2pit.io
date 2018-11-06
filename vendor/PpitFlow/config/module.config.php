@@ -204,6 +204,13 @@ return array (
 							'defaults' => array('action' => 'template2'),
 						),
 					),
+					'checkout' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/checkout[/:place_identifier][/:id]',
+							'defaults' => array('action' => 'checkout'),
+						),
+					),
 					'test' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -400,6 +407,7 @@ return array (
 			'BjyAuthorize\Guard\Route' => array(				
 				array('route' => 'landing/template1', 'roles' => array('guest')),
 				array('route' => 'landing/template2', 'roles' => array('guest')),
+				array('route' => 'landing/checkout', 'roles' => array('guest')),
 				array('route' => 'landing/test', 'roles' => array('guest')),
 
 				array('route' => 'flowEvent', 'roles' => array('user')),

@@ -706,7 +706,8 @@ class EventController extends AbstractActionController
 		$matchedAccounts = array();
 		if ($request->matched_accounts) {
 			foreach (explode(',', $request->matched_accounts) as $matchedId) {
-				$matchedAccounts[$matchedId] = Account::get($matchedId)->properties;
+				$account = Account::get($matchedId);
+				if ($account) $matchedAccounts[$matchedId] = $account->properties;
 			}
 		}
 		$viewData['matched_accounts'] = $matchedAccounts;

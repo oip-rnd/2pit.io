@@ -185,6 +185,11 @@ class LandingController extends AbstractActionController
 	{
 		return $this->template1Action();
 	}
+
+	public function checkoutAction()
+	{
+		return $this->template1Action();
+	}
 	
 	public function testAction()
 	{
