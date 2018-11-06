@@ -1648,7 +1648,7 @@ class EventController extends AbstractActionController
 	public function repairAction()
 	{
 		$accounts = Account::getList('pbc', [], '+name', null);
-		foreach ($accounts as $account) $account->properties['computed'] = 0;
+		foreach ($accounts as $account) $account->properties['computed'] = 1;
 		foreach (Event::getList('event', [], '-update_time', null) as $eventId => $event) {
 			foreach ($event->rewards as $accountId => $unused) $accounts[$accountId]->properties['computed'] += $event->value;
 		}
