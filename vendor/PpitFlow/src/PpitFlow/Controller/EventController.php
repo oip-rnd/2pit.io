@@ -1654,7 +1654,11 @@ class EventController extends AbstractActionController
 			foreach ($event->rewards as $accountId => $unused) $computed[$accountId] += $event->value;
 		}
 		foreach ($accounts as $account) {
-			if ($computed[$account->id] != $account->credits['earned']) echo $account->id.': earned: '.$account->credits['earned'].', computed: '.$computed[$account->id]."\n";
+			if ($computed[$account->id] != $account->credits['earned']) {
+				echo $account->id.': earned: '.$account->credits['earned'].', computed: '.$computed[$account->id]."\n";
+				$account->credits['earned'] = $computed[$account->id];
+				$account->update(null);
+			}
 		}
 		echo "Done\n";
 		return $this->response;
