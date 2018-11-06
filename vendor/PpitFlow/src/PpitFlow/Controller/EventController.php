@@ -1685,7 +1685,7 @@ class EventController extends AbstractActionController
 				break;
 			}
 		}
-var_dump($ranking);
+print_r($rank);
 /*		$accounts = Account::getList('pbc', [], '+name', null);
 		$computed = array();
 		foreach ($accounts as $account) $computed[$account->id] = 1;
