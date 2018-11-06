@@ -1647,7 +1647,41 @@ class EventController extends AbstractActionController
 	
 	public function repairAction()
 	{
-		$accounts = Account::getList('pbc', [], '+name', null);
+		$context = Context::getCurrent();
+		$account = Account::get($context->getContactId(), 'contact_1_id');
+		
+		// Rank the profiles
+		$accountType = $context->getConfig('landing_account_type');
+		$ranking = array();
+		$cursor = Account::getList($account->type, [/*'status' => 'active'*/], '+name', null);
+		foreach ($cursor as $anyAccountId => $anyAccount) {
+			if ($anyAccount->credits) {
+				foreach ($anyAccount->credits as $rowId => $value) {
+					if ($rowId == 'earned') {
+						$ranking[$anyAccountId] = $value;
+					}
+				}
+			}
+		}
+
+		// Rank the participants and find my rank
+		arsort($ranking);
+		$ranks = array();
+		$currentRank = 0;
+		$currentWeight = 0;
+		$i = 0;
+		foreach($ranking as $account_id => $weight) {
+			$i++;
+			if ($currentWeight != $weight) {
+				$currentRank = $i;
+				$currentWeight = $weight;
+				$ranks[$currentWeight] = $i;
+			}
+			else $ranks[$currentWeight]++;
+			if ($ranking[$account->id] == $currentWeight) $rank = $currentRank;
+		}
+var_dump($ranking);
+/*		$accounts = Account::getList('pbc', [], '+name', null);
 		$computed = array();
 		foreach ($accounts as $account) $computed[$account->id] = 1;
 		foreach (Event::getList('event', [], '-update_time', null) as $eventId => $event) {
@@ -1659,7 +1693,7 @@ class EventController extends AbstractActionController
 				$account->credits['earned'] = $computed[$account->id];
 				$account->update(null);
 			}
-		}
+		}*/
 		echo "Done\n";
 		return $this->response;
 	}
