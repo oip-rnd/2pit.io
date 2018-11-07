@@ -1715,7 +1715,7 @@ var_dump($rank);
 			if ($computed[$account->id] != $account->credits['earned']) {
 				echo $account->id.': earned: '.$account->credits['earned'].', computed: '.$computed[$account->id]."\n";
 				$account->credits['earned'] = $computed[$account->id];
-//				$account->update(null);
+				$account->update(null);
 			}
 		}
 		echo "Done\n";
