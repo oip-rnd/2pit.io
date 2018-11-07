@@ -86,7 +86,7 @@ class EventController extends AbstractActionController
 		if (!$locale) if ($account) $locale = $account->locale; else $locale = $context->getLocale();
 
 		$charter_status = null;
-		if ($type == 'request') $charter_status = $account->getCharterStatus();
+//		if ($type == 'request') $charter_status = $account->getCharterStatus();
 		$gtou_status = null;
 //		if ($type == 'request') $gtou_status = $account->getGtouStatus();
 		
