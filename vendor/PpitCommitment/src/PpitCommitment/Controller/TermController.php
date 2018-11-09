@@ -35,7 +35,7 @@ class TermController extends AbstractActionController
 	public function indexAction()
     {
     	$context = Context::getCurrent();
-		if (!$context->isAuthenticated()) $this->redirect()->toRoute('home');
+    	$type = $this->params()->fromRoute('type');
     	$place = Place::get($context->getPlaceId());
 
 		$app = $this->params()->fromRoute('app');
@@ -47,6 +47,7 @@ class TermController extends AbstractActionController
 
     	return new ViewModel(array(
     			'context' => $context,
+    			'type' => $type,
 				'termProperties' => $configProperties,
     			'config' => $context->getConfig(),
     			'place' => $place,
@@ -106,7 +107,8 @@ class TermController extends AbstractActionController
     {
     	// Retrieve the context
     	$context = Context::getCurrent();
-    	 
+    	$type = $this->params()->fromRoute('type');
+
     	$params = $this->getFilters($this->params());
     	$major = ($this->params()->fromQuery('major', 'due_date'));
     	$dir = ($this->params()->fromQuery('dir', 'ASC'));
@@ -120,6 +122,7 @@ class TermController extends AbstractActionController
     	// Return the link list
     	$view = new ViewModel(array(
     			'context' => $context,
+    			'type' => $type,
 				'termProperties' => $configProperties,
     			'config' => $context->getconfig(),
     			'places' => Place::getList(array()),

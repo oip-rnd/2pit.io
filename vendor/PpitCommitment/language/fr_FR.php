@@ -59,6 +59,7 @@
 			'First term date' => 'Date de première échéance',
 			'Generate invoice' => 'Générer la facture',
 			'Generate schedule' => 'Générer l\'échéancier',
+			'Generate subrogation' => 'Générer la subrogation',
 			'Generating an accounting invoice is irreversible. Please confirm.' => 'La génération d\'une facture comptable est irréversible. Veuillez confirmer.',
 			'Hours' => 'Heures',
 			'I accept the terms and conditions' => 'J\'accepte les conditions générales de vente',

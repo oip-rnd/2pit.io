@@ -170,7 +170,7 @@ if ($account->id && $action != 'update' || $message == 'OK') $isDisabled = true;
 				</select>
 			</div>
 
-			<?php elseif ($property['type'] == 'input') : ?>
+			<?php elseif (in_array($property['type'], ['input', 'email'])) : ?>
 			<div class="col-sm-7">
 				<input class="form-control" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" value="<?php echo $account->properties[$propertyId] ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
 			</div>

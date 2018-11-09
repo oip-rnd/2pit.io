@@ -1587,6 +1587,7 @@ class Account implements InputFilterAwareInterface
 			}
 		}
     	$this->audit[] = $auditRow;
+var_dump($this->contact_5); throw new \Exception('');
     	return 'OK';
     }
 
@@ -2031,7 +2032,7 @@ class Account implements InputFilterAwareInterface
 				if ($rc != 'OK') return ['500', 'contact_5->update: '.$rc];
 			}
 			else {
-				$rc = $this->contact5->add();
+				$rc = $this->contact_5->add();
 				if ($rc != 'OK') return ['500', 'contact_5->add: '.$rc];
 				$this->contact_5_id = $this->contact_5->id;
 			}

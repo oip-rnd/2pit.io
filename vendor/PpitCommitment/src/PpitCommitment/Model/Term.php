@@ -80,6 +80,11 @@ class Term implements InputFilterAwareInterface
     public $commitment_property_30;
     
     public $account_status;
+    public $account_date_1;
+    public $account_date_2;
+    public $account_date_3;
+    public $account_date_4;
+    public $account_date_5;
     public $account_property_1;
     public $account_property_2;
     public $account_property_3;
@@ -176,6 +181,11 @@ class Term implements InputFilterAwareInterface
         $this->commitment_property_30 = (isset($data['commitment_property_30'])) ? $data['commitment_property_30'] : null;
         
         $this->account_status = (isset($data['account_status'])) ? $data['account_status'] : null;
+        $this->account_date_1 = (isset($data['account_date_1'])) ? $data['account_date_1'] : null;
+        $this->account_date_2 = (isset($data['account_date_2'])) ? $data['account_date_2'] : null;
+        $this->account_date_3 = (isset($data['account_date_3'])) ? $data['account_date_3'] : null;
+        $this->account_date_4 = (isset($data['account_date_4'])) ? $data['account_date_4'] : null;
+        $this->account_date_5 = (isset($data['account_date_5'])) ? $data['account_date_5'] : null;
         $this->account_property_1 = (isset($data['account_property_1'])) ? $data['account_property_1'] : null;
         $this->account_property_2 = (isset($data['account_property_2'])) ? $data['account_property_2'] : null;
         $this->account_property_3 = (isset($data['account_property_3'])) ? $data['account_property_3'] : null;
@@ -264,6 +274,11 @@ class Term implements InputFilterAwareInterface
     	$data['commitment_property_30'] = $this->commitment_property_30;
     	 
     	$data['account_status'] = $this->account_status;
+    	$data['account_date_1'] = $this->account_date_1;
+    	$data['account_date_2'] = $this->account_date_2;
+    	$data['account_date_3'] = $this->account_date_3;
+    	$data['account_date_4'] = $this->account_date_4;
+    	$data['account_date_5'] = $this->account_date_5;
     	$data['account_property_1'] = $this->account_property_1;
     	$data['account_property_2'] = $this->account_property_2;
     	$data['account_property_3'] = $this->account_property_3;
@@ -333,6 +348,11 @@ class Term implements InputFilterAwareInterface
     	unset($data['commitment_property_30']);
     	 
     	unset($data['account_status']);
+    	unset($data['account_date_1']);
+    	unset($data['account_date_2']);
+    	unset($data['account_date_3']);
+    	unset($data['account_date_4']);
+    	unset($data['account_date_5']);
     	unset($data['account_property_1']);
     	unset($data['account_property_2']);
     	unset($data['account_property_3']);
@@ -358,7 +378,7 @@ class Term implements InputFilterAwareInterface
 
     	$select = Term::getTable()->getSelect()
     		->join('commitment', 'commitment.id = commitment_term.commitment_id', array('commitment_caption' => 'caption', 'commitment_property_1' => 'property_1', 'commitment_property_2' => 'property_2', 'commitment_property_3' => 'property_3', 'commitment_property_4' => 'property_4', 'commitment_property_5' => 'property_5', 'commitment_property_6' => 'property_6', 'commitment_property_7' => 'property_7', 'commitment_property_8' => 'property_8', 'commitment_property_9' => 'property_9', 'commitment_property_10' => 'property_10', 'commitment_property_11' => 'property_11', 'commitment_property_12' => 'property_12', 'commitment_property_13' => 'property_13', 'commitment_property_14' => 'property_14', 'commitment_property_15' => 'property_15', 'commitment_property_16' => 'property_16', 'commitment_property_17' => 'property_17', 'commitment_property_18' => 'property_18', 'commitment_property_19' => 'property_19', 'commitment_property_20' => 'property_20', 'commitment_property_21' => 'property_21', 'commitment_property_22' => 'property_22', 'commitment_property_23' => 'property_23', 'commitment_property_24' => 'property_24', 'commitment_property_25' => 'property_25', 'commitment_property_26' => 'property_26', 'commitment_property_27' => 'property_27', 'commitment_property_28' => 'property_28', 'commitment_property_29' => 'property_29', 'commitment_property_30' => 'property_30'), 'left')
-    		->join('core_account', 'core_account.id = commitment.account_id', array('account_status' => 'status', 'place_id', 'name', 'default_means_of_payment', 'transfer_order_id', 'transfer_order_date', 'bank_identifier', 'account_property_1' => 'property_1', 'account_property_2' => 'property_2', 'account_property_3' => 'property_3', 'account_property_4' => 'property_4', 'account_property_5' => 'property_5', 'account_property_6' => 'property_6', 'account_property_7' => 'property_7', 'account_property_8' => 'property_8', 'account_property_9' => 'property_9', 'account_property_10' => 'property_10', 'account_property_11' => 'property_11', 'account_property_12' => 'property_12', 'account_property_13' => 'property_13', 'account_property_14' => 'property_14', 'account_property_15' => 'property_15', 'account_property_16' => 'property_16'), 'left')
+    		->join('core_account', 'core_account.id = commitment.account_id', array('account_status' => 'status', 'place_id', 'name', 'default_means_of_payment', 'transfer_order_id', 'transfer_order_date', 'bank_identifier', 'account_date_1' => 'date_1', 'account_date_2' => 'date_2', 'account_date_3' => 'date_3', 'account_date_4' => 'date_4', 'account_date_5' => 'date_5', 'account_property_1' => 'property_1', 'account_property_2' => 'property_2', 'account_property_3' => 'property_3', 'account_property_4' => 'property_4', 'account_property_5' => 'property_5', 'account_property_6' => 'property_6', 'account_property_7' => 'property_7', 'account_property_8' => 'property_8', 'account_property_9' => 'property_9', 'account_property_10' => 'property_10', 'account_property_11' => 'property_11', 'account_property_12' => 'property_12', 'account_property_13' => 'property_13', 'account_property_14' => 'property_14', 'account_property_15' => 'property_15', 'account_property_16' => 'property_16'), 'left')
 			->join('core_place', 'core_account.place_id = core_place.id', array('place_caption' => 'caption', 'place_identifier' => 'identifier'), 'left')
     		->order(array($major.' '.$dir, 'due_date', 'amount DESC'));
 		$where = new Where;
@@ -384,6 +404,16 @@ class Term implements InputFilterAwareInterface
     			}
 				elseif ($propertyId == 'name') $where->like('core_account.name', '%'.$params[$propertyId].'%');
 				elseif ($propertyId == 'account_property_15') $where->equalTo('core_account.property_15', $params[$propertyId]);
+				elseif ($propertyId == 'min_account_date_1') $where->greaterThanOrEqualTo('core_account.date_1', $params[$propertyId]);
+				elseif ($propertyId == 'min_account_date_2') $where->greaterThanOrEqualTo('core_account.date_2', $params[$propertyId]);
+				elseif ($propertyId == 'min_account_date_3') $where->greaterThanOrEqualTo('core_account.date_3', $params[$propertyId]);
+				elseif ($propertyId == 'min_account_date_4') $where->greaterThanOrEqualTo('core_account.date_4', $params[$propertyId]);
+				elseif ($propertyId == 'min_account_date_5') $where->greaterThanOrEqualTo('core_account.date_5', $params[$propertyId]);
+				elseif ($propertyId == 'max_account_date_1') $where->lessThanOrEqualTo('core_account.date_1', $params[$propertyId]);
+				elseif ($propertyId == 'max_account_date_2') $where->lessThanOrEqualTo('core_account.date_2', $params[$propertyId]);
+				elseif ($propertyId == 'max_account_date_3') $where->lessThanOrEqualTo('core_account.date_3', $params[$propertyId]);
+				elseif ($propertyId == 'max_account_date_4') $where->lessThanOrEqualTo('core_account.date_4', $params[$propertyId]);
+				elseif ($propertyId == 'max_account_date_5') $where->lessThanOrEqualTo('core_account.date_5', $params[$propertyId]);
 				elseif (substr($propertyId, 0, 4) == 'min_') $where->greaterThanOrEqualTo('commitment_term.'.substr($propertyId, 4), $params[$propertyId]);
     			elseif (substr($propertyId, 0, 4) == 'max_') $where->lessThanOrEqualTo('commitment_term.'.substr($propertyId, 4), $params[$propertyId]);
 				elseif (substr($propertyId, 0, 8) == 'account_') {
@@ -460,6 +490,11 @@ class Term implements InputFilterAwareInterface
 				$term->transfer_order_date = $account->transfer_order_date;
 				$term->bank_identifier = $account->bank_identifier;
 
+				$term->account_date_1 = $account->date_1;
+				$term->account_date_2 = $account->date_2;
+				$term->account_date_3 = $account->date_3;
+				$term->account_date_4 = $account->date_4;
+				$term->account_date_5 = $account->date_5;
 				$term->account_property_1 = $account->property_1;
 		    	$term->account_property_2 = $account->property_2;
 		    	$term->account_property_3 = $account->property_3;

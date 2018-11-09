@@ -1270,6 +1270,133 @@ class CommitmentController extends AbstractActionController
     	return $this->response;
     }
 
+    public function subrogateAction()
+    {
+    	// Retrieve the context
+    	$context = Context::getCurrent();
+    	
+    	// Retrieve the parameters
+    	$type = $this->params()->fromRoute('type');
+    	$description = $this->getConfigProperties($type);
+    	$id = (int) $this->params()->fromRoute('id', 0);
+    	$commitment = Commitment::get($id);
+    	$accounts = Account::getList('business', [], '+name', null);
+    	 
+    	$subData = array();
+    	$subData['status'] = 'new';
+    	$subData['property_10'] = $commitment->identifier;
+    	$subData['property_11'] = $commitment->account_name;
+    	$subData['property_12'] = null;
+    	$subData['property_13'] = null;
+    	$subData['description'] = $commitment->description;
+    	$subData['product_caption'] = $commitment->product_caption;
+    	$subData['quantity'] = 1;
+    	$subData['default_means_of_payment'] = $commitment->default_means_of_payment;
+    	$termData = array();
+    	 
+    	// Instanciate the csrf form
+    	$csrfForm = new CsrfForm();
+    	$csrfForm->addCsrfElement('csrf');
+    	$error = null;
+    	$message = null;
+    	$request = $this->getRequest();
+    	if ($request->isPost()) {
+    		$csrfForm->setInputFilter((new Csrf('csrf'))->getInputFilter());
+    		$csrfForm->setData($request->getPost());
+    		if ($csrfForm->isValid()) { // CSRF check
+
+    			$subCommitment = Commitment::instanciate($type);
+    			 
+    			// Load the input data
+    			$subData['account_id'] = $request->getPost('account_id');
+    			$subData['property_10'] = $request->getPost('property_10');
+    			$subData['property_11'] = $request->getPost('property_11');
+    			$subData['property_12'] = $request->getPost('property_12');
+    			$subData['property_13'] = $request->getPost('property_13');
+    			$subData['property_14'] = $commitment->id; // Store the id of the original commitment
+    			$numberOfTerms = $request->getPost('number_of_terms');
+    			$termDate = $request->getPost('first_term_date');
+    			$year = substr($termDate, 0, 4);
+    			$month = substr($termDate, 5, 2);
+    			$day = substr($termDate, 8, 2);
+    			$periodicity = $request->getPost('periodicity');
+    			$sameDayOfMonth = $request->getPost('same_day_of_month');
+    			$amountToDivide = $request->getPost('amount_to_divide');
+    			$paymentMean = $request->getPost('means_of_payment');
+    			$termAmount = round($amountToDivide / $numberOfTerms, 2);
+    			$cumulativeAmount = 0;
+
+    			// Atomically save
+    			$connection = Commitment::getTable()->getAdapter()->getDriver()->getConnection();
+    			$connection->beginTransaction();
+    			try {
+    				for ($i = 0; $i < $numberOfTerms; $i++) {
+    					$subData['caption'] = 'Echéance '.($i + 1);
+    					$month++;
+    					if ($month == 13) { $month = 1; $year++; }
+    					if ($month == 2 && $day > 28) $forcedDay = 28;
+    					else $forcedDay = $day;
+    					if ($sameDayOfMonth) $termDate = $year.'-'.sprintf('%02d', $month).'-'.$forcedDay;
+    					else $termDate = date('Y-m-d', strtotime($termDate.' + '.$periodicity.' days'));
+    					if ($i == $numberOfTerms - 1) $amount = $amountToDivide - $cumulativeAmount;
+    					else $amount = $termAmount;
+
+    					$subData['tax_inclusive'] = $termAmount;
+    					$subData['unit_price'] = $subData['amount'] = $subData['taxable_1_amount'] = $subData['including_options_amount'] = $subData['taxable_1_total'] = $subData['excluding_tax'] = round($amount / 1.2, 2);
+    					$subData['tax_1_amount'] = $subData['tax_amount'] = $subData['tax_inclusive'] - $subData['excluding_tax'];
+    					$cumulativeAmount += $amount;
+
+    					if ($subCommitment->loadData($subData) != 'OK') throw new \Exception('View error');
+    					$subCommitment->id = null;
+    					$rc = $subCommitment->add();
+    					if ($rc != 'OK') {
+    						$error = $rc;
+    						break;
+    					}
+
+				    	$term = Term::instanciate($subCommitment->id);
+				    	$termData['commitment_caption'] = $subCommitment->caption;
+				    	$termData['means_of_payment'] = $paymentMean;
+    					$termData['due_date'] = $termDate;
+    					$termData['settlement_date'] = $termDate;
+    					$termData['collection_date'] = $termDate;
+    					$termData['amount'] = $termAmount;
+    					if ($term->loadData($termData, $request->getFiles()->toArray()) != 'OK') throw new \Exception('View error');
+    					$term->id = null;
+    					$rc = $term->add();
+    					if ($rc != 'OK') {
+    						$error = $rc;
+    						break;
+    					}
+    				}
+    				if ($error) $connection->rollback();
+    				else {
+    					$connection->commit();
+    					$message = 'OK';
+    				}
+    			}
+    			catch (\Exception $e) {
+    				$connection->rollback();
+    				throw $e;
+    			}
+    		}
+    	}
+
+    	$view = new ViewModel(array(
+    		'context' => $context,
+    		'description' => $description,
+    		'accounts' => $accounts,
+    		'subData' => $subData,
+    		'update_time' => $commitment->update_time,
+    		'amountToDivide' => $commitment->tax_inclusive,
+    		'csrfForm' => $csrfForm,
+    		'error' => $error,
+    		'message' => $message,
+    	));
+    	$view->setTerminal(true);
+    	return $view;
+    }
+    
     public function suspendAction()
     {
     	// Retrieve the context

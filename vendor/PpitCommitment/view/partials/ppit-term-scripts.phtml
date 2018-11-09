@@ -52,7 +52,7 @@ function termGetParams() {
 function exportTermList() {
 
 	var params = termGetParams();
-	document.location.href = '<?php echo $this->url('commitmentTerm/export') ?>' + params;
+	document.location.href = '<?php echo $this->url('commitmentTerm/export', ['type' => $type]) ?>' + params;
 }
 
 function sortTermList(criterion) {

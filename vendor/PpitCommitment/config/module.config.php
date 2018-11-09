@@ -261,6 +261,18 @@ return array(
         								),
         						),
         				),
+        				'subrogate' => array(
+        						'type' => 'segment',
+        						'options' => array(
+        								'route' => '/subrogate[/:type][/:id]',
+        								'constraints' => array(
+        										'id'     => '[0-9]*',
+        								),
+        								'defaults' => array(
+        										'action' => 'subrogate',
+        								),
+        						),
+        				),
         				'suspend' => array(
         						'type' => 'segment',
         						'options' => array(
@@ -705,7 +717,7 @@ return array(
         						'index' => array(
         								'type' => 'segment',
         								'options' => array(
-        										'route' => '/index[/:app]',
+        										'route' => '/index[/:type][/:app]',
         										'defaults' => array(
         												'action' => 'index',
         										),
@@ -732,7 +744,7 @@ return array(
         						'export' => array(
         								'type' => 'segment',
         								'options' => array(
-        										'route' => '/export',
+        										'route' => '/export[/:type]',
         										'defaults' => array(
         												'action' => 'export',
         										),
@@ -899,6 +911,7 @@ return array(
             	array('route' => 'commitment/updateProduct', 'roles' => array('sales_manager')),
             	array('route' => 'commitment/updateOption', 'roles' => array('sales_manager')),
             	array('route' => 'commitment/updateTerm', 'roles' => array('sales_manager')),
+            	array('route' => 'commitment/subrogate', 'roles' => array('sales_manager')),
             	array('route' => 'commitment/suspend', 'roles' => array('admin')),
             	array('route' => 'commitment/serviceAdd', 'roles' => array('guest')),
 //            	array('route' => 'commitment/workflow', 'roles' => array('sales_manager')),
@@ -2328,6 +2341,7 @@ table.note-report td {
 									'commissioned' => array('en_US' => 'Commissioned', 'fr_FR' => 'Mis en service'),
 									'settled' => array('en_US' => 'Settled', 'fr_FR' => 'Réglé'),
 									'invoiced' => array('en_US' => 'Invoiced', 'fr_FR' => 'Facturé'),
+									'registered' => array('en_US' => 'Registered', 'fr_FR' => 'Comptabilisé'),
 							),
 							'labels' => array(
 									'en_US' => 'Status',
@@ -2628,6 +2642,7 @@ table.note-report td {
 									'confirmed' => array('en_US' => 'Confirmed', 'fr_FR' => 'Confirmé'),
 									'settled' => array('en_US' => 'Settled', 'fr_FR' => 'Réglé'),
 									'invoiced' => array('en_US' => 'Invoiced', 'fr_FR' => 'Facturé'),
+									'registered' => array('en_US' => 'Registered', 'fr_FR' => 'Comptabilisé'),
 							),
 							'labels' => array(
 									'en_US' => 'Status',
@@ -2735,6 +2750,7 @@ table.note-report td {
 									'confirmed' => array('en_US' => 'Confirmed', 'fr_FR' => 'Confirmé'),
 									'settled' => array('en_US' => 'Settled', 'fr_FR' => 'Réglé'),
 									'invoiced' => array('en_US' => 'Invoiced', 'fr_FR' => 'Facturé'),
+									'registered' => array('en_US' => 'Registered', 'fr_FR' => 'Comptabilisé'),
 							),
 							'labels' => array(
 									'en_US' => 'Status',
@@ -2856,6 +2872,7 @@ table.note-report td {
 									'confirmed' => array('en_US' => 'Confirmed', 'fr_FR' => 'Confirmé'),
 									'settled' => array('en_US' => 'Settled', 'fr_FR' => 'Réglé'),
 									'invoiced' => array('en_US' => 'Invoiced', 'fr_FR' => 'Facturé'),
+									'registered' => array('en_US' => 'Registered', 'fr_FR' => 'Comptabilisé'),
 							),
 							'labels' => array(
 									'en_US' => 'Status',
@@ -3029,29 +3046,28 @@ table.note-report td {
 	// Learning
 
 	'commitment/property_10/learning' => array(
-			'type' => 'select',
-			'modalities' => array(),
-			'labels' => array('en_US' => 'Generic 1', 'fr_FR' => 'Générique 1'),
+			'type' => 'input',
+			'labels' => array('en_US' => 'File reference', 'fr_FR' => 'Référence du dossier'),
 	),
 
 	'commitment/property_11/learning' => array(
 			'type' => 'input',
-			'labels' => array('en_US' => 'Generic 2', 'fr_FR' => 'Générique 2'),
+			'labels' => array('en_US' => 'Student name', 'fr_FR' => 'Nom de l’étudiant'),
 	),
 
 	'commitment/property_12/learning' => array(
 			'type' => 'input',
-			'labels' => array('en_US' => 'Generic 3', 'fr_FR' => 'Générique 3'),
+			'labels' => array('en_US' => 'Training', 'fr_FR' => 'Formation'),
 	),
 
 	'commitment/property_13/learning' => array(
 			'type' => 'input',
-			'labels' => array('en_US' => 'Generic 4', 'fr_FR' => 'Générique 4'),
+			'labels' => array('en_US' => 'Training start date', 'fr_FR' => 'Date début de formation'),
 	),
 
 	'commitment/property_14/learning' => array(
 			'type' => 'input',
-			'labels' => array('en_US' => 'Generic 5', 'fr_FR' => 'Générique 5'),
+			'labels' => array('en_US' => 'Original commitment', 'fr_FR' => 'Engagement d’origine'),
 	),
 		
 	'commitment/learning' => array(
@@ -3070,6 +3086,7 @@ table.note-report td {
 									'confirmed' => array('en_US' => 'Confirmed', 'fr_FR' => 'Confirmé'),
 									'settled' => array('en_US' => 'Settled', 'fr_FR' => 'Réglé'),
 									'invoiced' => array('en_US' => 'Invoiced', 'fr_FR' => 'Facturé'),
+									'registered' => array('en_US' => 'Registered', 'fr_FR' => 'Comptabilisé'),
 							),
 							'labels' => array(
 									'en_US' => 'Status',
@@ -3227,11 +3244,10 @@ table.note-report td {
 			'todoTitle' => array('en_US' => 'active', 'fr_FR' => 'actifs'),
 			'main' => array(
 					'status' => 'select',
-					'property_10' => 'select',
 					'year' => 'contains',
-					'including_options_amount' => 'range',
-					'name' => 'contains',
 					'account_name' => 'contains',
+					'property_11' => 'contains',
+					'property_12' => 'contains',
 					'property_1' => 'select',
 					'property_2' => 'select',
 					'property_3' => 'select',
@@ -3242,10 +3258,11 @@ table.note-report td {
 	
 	'commitment/list/learning' => array(
 			'place_id' => 'select',
-			'property_10' => 'select',
 			'year' => 'text',
 			'status' => 'select',
 			'account_name' => 'text',
+			'property_11' => 'text',
+			'property_12' => 'text',
 			'caption' => 'text',
 			'quantity' => 'number',
 			'unit_price' => 'number',
@@ -3256,8 +3273,11 @@ table.note-report td {
 	'commitment/update/learning' => array(
 			'year' => array('mandatory' => true),
 			'invoice_date' => array('mandatory' => true),
-			'property_10' => array('mandatory' => false),
 			'account_id' => array('mandatory' => true),
+			'property_10' => array('mandatory' => false),
+			'property_11' => array('mandatory' => false),
+			'property_12' => array('mandatory' => false),
+			'property_13' => array('mandatory' => false),
 			'caption' => array('mandatory' => true),
 			'description' => array('mandatory' => false),
 			'property_1' => array('mandatory' => false),
@@ -3274,17 +3294,59 @@ table.note-report td {
 		'invoice_date' => 'C',
 		'account_name' => 'D',
 		'invoice_n_fn' => 'E',
-		'caption' => 'F',
-		'description' => 'G',
-		'product_caption' => 'H',
-		'unit_price' => 'I',
-		'quantity' => 'J',
-		'amount' => 'K',
-		'including_options_amount' => 'L',
-		'tax_amount' => 'M',
-		'tax_inclusive' => 'N',
-		'default_means_of_payment' => 'O',
+		'property_10' => 'F',
+		'property_11' => 'G',
+		'property_12' => 'H',
+		'property_13' => 'I',
+		'caption' => 'J',
+		'description' => 'K',
+		'product_caption' => 'L',
+		'unit_price' => 'M',
+		'quantity' => 'N',
+		'amount' => 'O',
+		'including_options_amount' => 'P',
+		'tax_amount' => 'Q',
+		'tax_inclusive' => 'R',
+		'default_means_of_payment' => 'S',
+		'property_1' => 'T',
+		'property_2' => 'U',
+		'property_3' => 'V',
+		'property_4' => 'W',
+		'property_5' => 'X',
 	),
+
+	'commitment/invoice/learning' => array(
+		'header' => array(
+			array(
+				'format' => array('en_US' => '%s', 'fr_FR' => '%s'),
+				'params' => array('account_name'),
+			),
+		),
+		'description' => array(
+			array(
+				'left' => array('en_US' => 'Reference', 'fr_FR' => 'Référence'),
+				'right' => array('en_US' => '%s', 'fr_FR' => '%s'),
+				'params' => array('property_10'),
+			),
+			array(
+				'left' => array('en_US' => 'Student name', 'fr_FR' => 'Nom de l’étudiant'),
+				'right' => array('en_US' => '%s', 'fr_FR' => '%s'),
+				'params' => array('property_11'),
+			),
+			array(
+				'left' => array('en_US' => 'Training', 'fr_FR' => 'Formation'),
+				'right' => array('en_US' => '%s', 'fr_FR' => '%s'),
+				'params' => array('property_12'),
+			),
+			array(
+				'left' => array('en_US' => 'Training start', 'fr_FR' => 'Début de formation'),
+				'right' => array('en_US' => '%s', 'fr_FR' => '%s'),
+				'params' => array('property_13'),
+			),
+		),
+	),
+	
+	// Term
 	
 	'commitmentTerm' => array(
 			'statuses' => array(),
@@ -3422,16 +3484,21 @@ table.note-report td {
 					),
 					'commitment_caption' => array('definition' => 'commitment/property/caption'),
 					'account_status' => array('definition' => 'commitment/property/account_status'),
+					'account_date_1' => array('definition' => 'core_account/generic/property/date_1'),
+					'account_date_2' => array('definition' => 'core_account/generic/property/date_2'),
+					'account_date_3' => array('definition' => 'core_account/generic/property/date_3'),
+					'account_date_4' => array('definition' => 'core_account/generic/property/date_4'),
+					'account_date_5' => array('definition' => 'core_account/generic/property/date_5'),
 					'account_property_1' => array('definition' => 'core_account/generic/property/property_1'),
 					'account_property_2' => array('definition' => 'core_account/generic/property/property_2'),
 					'account_property_3' => array('definition' => 'core_account/generic/property/property_3'),
-					'account_property_4' => array('definition' => 'core_account/generic/property/property_4'),
+					'account_property_4' => array('definition' => 'core_account/p-pit-studies/property/property_4'),
 					'account_property_5' => array('definition' => 'core_account/generic/property/property_5'),
-					'account_property_6' => array('definition' => 'core_account/generic/property/property_6'),
+					'account_property_6' => array('definition' => 'core_account/p-pit-studies/property/property_6'),
 					'account_property_7' => array('definition' => 'core_account/generic/property/property_7'),
 					'account_property_8' => array('definition' => 'core_account/generic/property/property_8'),
 					'account_property_9' => array('definition' => 'core_account/generic/property/property_9'),
-					'account_property_10' => array('definition' => 'core_account/generic/property/property_10'),
+					'account_property_10' => array('definition' => 'student/property/level'),
 					'account_property_11' => array('definition' => 'core_account/generic/property/property_11'),
 					'account_property_12' => array('definition' => 'core_account/generic/property/property_12'),
 					'account_property_13' => array('definition' => 'core_account/generic/property/property_13'),
@@ -3472,6 +3539,7 @@ table.note-report td {
 			'title' => array('en_US' => 'Term detail', 'fr_FR' => 'Détail de l\'échéance'),
 			'displayAudit' => true,
 	),
+	
 	'commitmentTerm/update' => array(
 			'status' => ['mandatory' => true],
 			'caption' => ['mandatory' => true],
@@ -3486,6 +3554,24 @@ table.note-report td {
 			'comment' => ['mandatory' => false],
 			'document' => ['mandatory' => false],
 	),
+
+	'commitmentTerm/export' => array(
+		'name' => 'A',
+		'commitment_caption' => 'B',
+		'status' => 'C',
+		'caption' => 'D',
+		'due_date' => 'E',
+		'settlement_date' => 'F',
+		'collection_date' => 'G',
+		'amount' => 'H',
+		'means_of_payment' => 'I',
+		'bank_name' => 'J',
+		'invoice_n_last' => 'K',
+		'reference' => 'L',
+		'comment' => 'M',
+		'document' => 'N',
+	),
+	
 	'commitmentTerm/group' => array(
 		'status' => [],
 		'caption' => [],
