@@ -30,5 +30,7 @@ return array(
 		),
 	),
 	'specificationMode' => 'config', // 'config' vs 'database'
-	'mailProtocol' => 'Sendmail', // Should be 'SendMail' or 'Smtp'. No email sent if null
+	'mailProtocol' => 'Smtp', // Should be 'SendMail' or 'Smtp'. No email sent if null
+	'mailAdmin' => 'no-reply@2pit.io',
+	'nameAdmin' => 'Pro bono corpo',
 );

@@ -13,8 +13,6 @@
 
 return array(
 	'defaultRoute' => 'flowEvent',
-	'mailAdmin' => 'no-reply@probonocorpo.com',
-	'nameAdmin' => 'Pro bono corpo',
 	'isTraceActive' => true,
 	'isDemoModeActive' => true,
 	'isDemoAccountUpdatable' => false,
@@ -30,7 +28,6 @@ return array(
 	),
 		
 	'specifications' => array(
-			'mailTo' => 'contact@probonocorpo.com', // Overrides the real email if not NULL (for test purposes)
 			'credit' => array(
 					'unlimitedCredits' => true,
 			),
