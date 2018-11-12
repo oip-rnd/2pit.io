@@ -96,11 +96,12 @@ body {
 				          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true" rel="nofollow"><img height="17" src="<?php echo $this->basePath('img/carre80.png') ?>" />&nbsp;&nbsp;<?php echo $applicationName ?>&nbsp;<span class="caret"></span></a>
 				          <ul class="dropdown-menu">
 <?php foreach ($child->context->getApplications() as $applicationId => $application) : ?>
-	<?php
-	$entry = $child->context->getConfig('menus/'.$applicationId)['entries'][$application['default']];
-	$url = (array_key_exists('url', $application) ? $application['url'] : $this->url($entry['route'], $entry['params']));
-	?>
-				          	<li class="dropdown-item <?php if ($applicationName == $application['labels'][$child->context->getLocale()]) echo 'active' ?>"><a href="<?php echo $url ?>" rel="nofollow"><?php echo $application['labels'][$child->context->getLocale()]?></a></li>
+  <?php if (array_key_exists('url', $application)) : ?>
+				          	<li class="dropdown-item <?php if ($applicationName == $application['labels'][$child->context->getLocale()]) echo 'active' ?>"><a href="<?php echo $application['url'] ?>" rel="nofollow"><?php echo $application['labels'][$child->context->getLocale()]?></a></li>
+  <?php else : ?>
+    <?php $entry = $child->context->getConfig('menus/'.$applicationId)['entries'][$application['default']]; ?>
+                            <li class="dropdown-item <?php if ($applicationName == $application['labels'][$child->context->getLocale()]) echo 'active' ?>"><a href="<?php echo $this->url($entry['route'], $entry['params']) ?>" rel="nofollow"><?php echo $application['labels'][$child->context->getLocale()]?></a></li>
+  <?php endif;?>
 <?php endforeach;?>
 				          </ul>
 		        		</li>

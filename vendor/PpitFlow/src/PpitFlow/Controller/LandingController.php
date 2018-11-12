@@ -126,24 +126,11 @@ class LandingController extends AbstractActionController
 			$data['contact_history'] = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2).', from '.$_SERVER['HTTP_REFERER'].', with '.$_SERVER['HTTP_USER_AGENT'].' filled landing page\'s form';
 
 			$account = Account::instanciate($account_type);
-/*			if ($id) {
-				$data['origine'] = 'e_mailing';
-				$rc = $account->loadAndUpdate($data);
-			}
-			else {*/
-				$data['origine'] = 'subscription';
-				$rc = $account->loadAndAdd($data);
-//			}
-			if (in_array($rc[0], ['200'])) $message = 'OK';
+			$data['origine'] = 'subscription';
+			$rc = $account->loadAndAdd($data);
+			if (in_array($rc[0], ['200', '206'])) $message = 'OK';
 			else $error = $rc;
 		}
-/*		else {
-			if ($id && $account->status == 'new') {
-				$data['status'] = 'suspect';
-				$data['callback_date'] = date('Y-m-d');
-				$rc = $account->loadAndUpdate($data);
-			}
-		}*/
 
 		// Feed the layout
 		$this->layout('/layout/flow-layout');
@@ -163,8 +150,10 @@ class LandingController extends AbstractActionController
 			'locale' => $locale,
 			'photo_link_id' => null,
 			'pageScripts' => 'ppit-flow/landing/scripts',
-			'message' => $this->params()->fromQuery('message'),
-			'error' => $this->params()->fromQuery('error'),
+//			'message' => $this->params()->fromQuery('message'),
+//			'error' => $this->params()->fromQuery('error'),
+			'message' => $message,
+			'error' => $error,
 		));
 		
 		// Feed and return the view

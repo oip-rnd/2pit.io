@@ -47,17 +47,11 @@
 	header,
 
 	#intro {
+      background: url("<?php echo $this->basePath($context->localize($header['background_image']['src'], $locale)) ?>") no-repeat center center;
       height: <?php echo $header['intro_height'] ?>;
-      background-size: cover;
+      background-size: <?php echo array_key_exists('background-size', $header) ? $header['background-size'] : 'contain' ?>;
+      background-color: <?php echo array_key_exists('background-color', $header) ? $header['background-color'] : '' ?>;
       max-width: 100%;
-	}
-	
-	#intro {
-	  background: url("<?php echo $this->basePath($context->localize($header['background_image']['src'], $locale)) ?>") no-repeat center center;
-	  -webkit-background-size: contain;
-	  -moz-background-size: contain;
-	  -o-background-size: contain;
-	  background-size: contain;
 	}
 	
 	@include media-breakpoint-up(sm) {
@@ -137,7 +131,7 @@
             >
 
   <?php else : ?>
-            <<?php echo $paragraph['type']?> class="editable <?php if (array_key_exists('class', $paragraph)) echo $paragraph['class'] ?>" id="intro/<?php echo $paragraphId ?>/text<?php if (array_key_exists('text', $paragraph)) echo '/'.$context->getLocaleFor($paragraph['text']) ?>">
+            <<?php echo $paragraph['type']?> class="editable <?php if (array_key_exists('class', $paragraph)) echo $paragraph['class'] ?>" <?php if (array_key_exists('style', $paragraph)) echo 'style="'.$paragraph['style'].'"' ?> id="intro/<?php echo $paragraphId ?>/text<?php if (array_key_exists('text', $paragraph)) echo '/'.$context->getLocaleFor($paragraph['text']) ?>">
   <?php endif;?>
   
   <?php if (array_key_exists('text', $paragraph)) : ?>

@@ -13,7 +13,7 @@ function eventGetParams() {
   var params = '?', todo = true;
 
 <?php foreach ($content_description['search']['properties'] as $propertyId => $property) : ?>
-  <?php if (in_array($property['type'], array('date', 'time', 'datetime', 'number'))) : ?>
+  <?php if (in_array($property['type'], array('date', 'time', 'datetime'))) : ?>
 
   var min_<?php echo $propertyId ?> = $('#search_min-<?php echo $propertyId ?>').val();
   if (min_<?php echo $propertyId ?>) min_<?php echo $propertyId ?> = encodeDate(min_<?php echo $propertyId ?>);

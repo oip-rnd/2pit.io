@@ -392,7 +392,7 @@
 
 <?php if ($message || $error) : ?>
             <p class="section-description">
-              <a href="<?php echo $this->url('home') ?>" class="btn btn-light-blue btn-rounded">Accueil</a>
+              <a href="<?php echo $this->url('home') ?>" class="<?php echo $content['form']['submit']['class'] ?>"><?php echo $this->translate('Home', 'ppit-core', $locale) ?></a>
             </p>
 
 <?php else : ?>
