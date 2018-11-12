@@ -7,49 +7,105 @@
  * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
  */
 -->
-			
+      
 <!-- Global message -->
 <?php if ($message == 'OK') : ?>
-	<div id="message">
-			<div class="alert alert-success"><h4><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h4></div>
-	</div>
+  <div id="message">
+    <div class="alert alert-success my-3"><h4><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h4></div>
+  </div>
 <?php endif;?>
 
 <!-- Duplicate error -->
 <?php if ($error == 'Duplicate') : ?>
-	<div class="alert alert-danger" style="text-align: center">
-		<strong><?php echo $this->translate('This record already exist', 'ppit-core', $context->getLocale()) ?></strong>
-	</div>
+  <div class="alert alert-danger my-3" style="text-align: center">
+    <strong><?php echo $this->translate('This record already exist', 'ppit-core', $context->getLocale()) ?></strong>
+  </div>
 <?php endif;?>
 
 <!-- Isolation error -->
 <?php if ($error == 'Isolation') : ?>
-	<div class="alert alert-danger" style="text-align: center">
-		<strong><?php echo $this->translate('The database has evolved in the meantime, please input again', 'ppit-core', $context->getLocale()) ?></strong>
-	</div>
+  <div class="alert alert-danger my-3" style="text-align: center">
+    <strong><?php echo $this->translate('The database has evolved in the meantime, please input again', 'ppit-core', $context->getLocale()) ?></strong>
+  </div>
 <?php endif;?>
 
 <!-- Consistency error -->
 <?php if ($error == 'Consistency') : ?>
-	<div class="alert alert-danger" style="text-align: center">
-		<strong><?php echo $this->translate('The data are not consistent', 'ppit-core', $context->getLocale()) ?></strong>
-	</div>
+  <div class="alert alert-danger my-3" style="text-align: center">
+    <strong><?php echo $this->translate('The data are not consistent', 'ppit-core', $context->getLocale()) ?></strong>
+  </div>
 <?php endif;?>
 
-<!--  CSRF -->
+<!-- CSRF -->
 <?php $element = $csrfForm->get('csrf') ?>
-    <div class="form-group">
-		<?php echo $this->formElement($element) ?>
+  <div class="form-group">
+    <?php echo $this->formElement($element) ?>
 <?php if ($this->formElementErrors($element)) : ?>
-		<div class="alert alert-danger" style="text-align: center">
-			<strong><?php echo $this->translate('The form has expired, please input again', 'ppit-core', $context->getLocale()) ?></strong>
-		</div>
+    <div class="alert alert-danger my-3" style="text-align: center">
+      <strong><?php echo $this->translate('The form has expired, please input again', 'ppit-core', $context->getLocale()) ?></strong>
+    </div>
 <?php endif;?>
-	</div>
+  </div>
 
-	<input type="hidden" id="event_update_time" value="<?php echo $event->update_time ?>" />
+  <input type="hidden" id="event_update_time" value="<?php echo $event->update_time ?>" />
+
+  <?php if ($event->id && !in_array($action, ['add', 'delete'])) : ?>
+  <div class="my-3">
+    <button type="button" class="btn btn-outline-primary" id="event-update-anchor" data-toggle="tooltip" title="<?php echo $this->translate('Modifier', 'ppit-core', $context->getLocale()) ?>"><i class="fa fa-edit"></i></button>
+    <button type="button" class="btn btn-outline-primary" id="event-delete-anchor" data-toggle="tooltip" title="<?php echo $this->translate('Supprimer', 'ppit-core', $context->getLocale()) ?>"><i class="fa fa-trash-alt"></i></button>
+  </div>
+  <?php endif;?>
+
+  <!-- Currently updated by anyone else -->
+  <?php if (false) : //($event->currently_updated_by && $event->currently_updated_by != $context->getFormatedName()) : ?>
+    <div class="alert alert-danger update-alert my-3" style="text-align: center">
+      <strong><?php echo sprintf($this->translate('This event is currently updated by %s. Please check with him/her before submitting.', 'ppit-core', $context->getLocale()), $account->currently_updated_by) ?></strong>
+    </div>
+  <?php endif;?>
+
+  <?php if (!$event->id) : ?>
+    <div class="form-group row">
+      <div class="col-sm-5">&nbsp;</div>
+      <div class="col-sm-7">
+        <input name="submit" type="submit" id="up-submit-button" class="btn btn-warning" value="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale()) ?>">
+      </div>
+    </div>
+
+  <?php elseif ($action == 'update') : ?>
+    <div class="form-group row">
+      <div class="col-sm-5">&nbsp;</div>
+      <div class="col-sm-7">
+        <input name="submit" type="submit" id="up-submit-button" class="btn btn-warning" value="<?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?>">
+        <button type="button" class="btn btn-link" id="up-cancel-button">
+          <?php echo $this->translate('Cancel', 'ppit-core', $context->getLocale()) ?>
+        </button>
+      </div>
+    </div>
+
+  <?php elseif ($action == 'delete') : ?>
+    <div class="form-group row">
+      <div class="col-sm-5">&nbsp;</div>
+      <div class="col-sm-7">
+        <input name="submit" type="submit" id="up-submit-button" class="btn btn-danger" value="<?php echo $this->translate('Delete', 'ppit-core', $context->getLocale()) ?>">
+        <button type="button" class="btn btn-link" id="up-cancel-button">
+          <?php echo $this->translate('Cancel', 'ppit-core', $context->getLocale()) ?>
+        </button>
+      </div>
+    </div>
+  <?php endif;?>
+
+<?php 
+if ($event->id && $action != 'update' || $message == 'OK') $isDisabled = true; else $isDisabled = false;
+?>
 
 <?php $first = true; foreach ($description['update'] as $propertyId => $property) : ?>
+  <?php 
+  if (array_key_exists('options', $property) && array_key_exists('readonly', $property['options']) && $property['options']['readonly']) $readonly = true;
+  elseif ($propertyId == 'identifier' && $internalIdentifier) $readonly = true;
+  else $readonly = false;
+  ?>
+
+  <?php if (!$readonly || $event->properties[$propertyId]) : ?>
 
 	<?php if ($property['type'] == 'separator') : ?>
 	<hr>
@@ -70,7 +126,7 @@
 		<div class="col-sm-7">
 
 			<?php if ($propertyId == 'place_id') : ?>
-			<select class="form-control updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?>>
+			<select class="form-control updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
     			<option />
 				<?php foreach ($places as $place) : ?>
     			<option value="<?php echo $place->id ?>" <?php if ($event->place_id == $place->id) echo 'selected="selected"' ?>><?php echo $place->caption ?></option>
@@ -79,17 +135,17 @@
 
 			<?php elseif ($property['type'] == 'date') : ?>
 			<input type="hidden" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
-			<input class="form-control update_date updatable-control <?php if ($first) echo 'focused-control' ?>" id="input_<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php echo $context->decodeDate($event->properties[$propertyId]) ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> />
+			<input class="form-control update_date updatable-control <?php if ($first) echo 'focused-control' ?>" id="input_<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php echo $context->decodeDate($event->properties[$propertyId]) ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
 
 			<?php elseif ($property['type'] == 'number') : ?>
 			<input type="hidden" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
-			<input class="form-control updatable-control <?php if ($first) echo 'focused-control' ?>" id="input_<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php echo $context->formatFloat($event->properties[$propertyId], 2) ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> />
+			<input class="form-control updatable-control <?php if ($first) echo 'focused-control' ?>" id="input_<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php echo $context->formatFloat($event->properties[$propertyId], 2) ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
 
 			<?php elseif ($property['type'] == 'textarea') : ?>
-			<textarea class="form-control updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?>><?php echo $event->properties[$propertyId] ?></textarea>
+			<textarea class="form-control updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>><?php echo $event->properties[$propertyId] ?></textarea>
 
 			<?php elseif ($property['type'] == 'select') : ?>
-			<select class="form-control updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?>>
+			<select class="form-control updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
     			<option />
 				<?php foreach ($property['modalities'] as $key => $labels) : ?>
     			<option value="<?php echo $key ?>" <?php if ($event->properties[$propertyId] == $key) echo 'selected="selected"' ?>><?php echo $context->localize($labels) ?></option>
@@ -98,7 +154,7 @@
 
             <?php elseif ($property['type'] == 'multiselect') : ?>
 	         <?php $values = explode(',', $event->properties[$propertyId]) ?>
-	        <select class="form-control update_selectpicker updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" multiple <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?>>
+	        <select class="form-control update_selectpicker updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" multiple <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
 	           <option />
 	           <?php foreach ($property['modalities'] as $key => $labels) : ?>
 	           <option value="<?php echo $key ?>" <?php if (in_array($key, $values)) echo 'selected="selected"' ?>><?php echo $context->localize($labels) ?></option>
@@ -106,7 +162,7 @@
 	        </select>
 
 			<?php else : ?>
-			<input class="form-control updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" value="<?php echo $event->properties[$propertyId] ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> />
+			<input class="form-control updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" value="<?php echo $event->properties[$propertyId] ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
 
 			<?php endif;?>
 		</div>
@@ -116,4 +172,36 @@
 
 		<?php $first = false; endif;?>
 	<?php endif;?>
+  <?php endif;?>
 <?php endforeach;?>
+
+<?php if (!$event->id) : ?>
+  <div class="form-group row">
+    <div class="col-sm-5">&nbsp;</div>
+    <div class="col-sm-7">
+      <input name="submit" type="submit" id="submit-button" class="btn btn-warning" value="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale()) ?>">
+    </div>
+  </div>
+
+<?php elseif ($action == 'update') : ?>
+  <div class="form-group row">
+    <div class="col-sm-5">&nbsp;</div>
+    <div class="col-sm-7">
+      <input name="submit" type="submit" id="submit-button" class="btn btn-warning" value="<?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?>">
+      <button type="button" class="btn btn-link" id="cancel-button">
+       <?php echo $this->translate('Cancel', 'ppit-core', $context->getLocale()) ?>
+      </button>
+    </div>
+  </div>
+
+<?php elseif ($action == 'delete') : ?>
+  <div class="form-group row">
+    <div class="col-sm-5">&nbsp;</div>
+    <div class="col-sm-7">
+      <input name="submit" type="submit" id="submit-button" class="btn btn-danger" value="<?php echo $this->translate('Delete', 'ppit-core', $context->getLocale()) ?>">
+      <button type="button" class="btn btn-link" id="cancel-button">
+        <?php echo $this->translate('Cancel', 'ppit-core', $context->getLocale()) ?>
+      </button>
+    </div>
+  </div>
+<?php endif;?>

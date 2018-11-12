@@ -158,23 +158,12 @@ $this->headTitle($title);
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-          <h5 class="modal-title" id="modalFormLabel"></h5>
-          <button type="button" class="btn btn-warning" id="button_edit"><i class="fa fa-edit"></i></button>
-          <button type="button" class="btn btn-danger" id="button_delete"><i class="fa fa-trash-alt"></i></button>
-      <div>
+        <h5 class="modal-title" id="modalFormLabel"><?php echo (false) ? $event->caption : $this->translate('Add', 'ppit-core', $context->getLocale()) ?></h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" title="<?php echo $this->translate('Cancel', 'ppit-core', $context->getLocale()) ?>">
           <span aria-hidden="true">&times;</span>
         </button>
-        <button type="button" class="btn btn-warning" id="button_save_up"></button>
-        </div>
       </div>
-      <div class="modal-body" id="update_panel">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-warning" id="button_save_down"></button>
-        <button type="button" class="btn btn-link" data-dismiss="modal" aria-label="Close">
-          <?php echo $this->translate('Cancel', 'ppit-core', $context->getLocale()) ?>
-        </button>
+      <div class="modal-body" id="modalFormBody">
       </div>
     </div>
   </div>
@@ -191,18 +180,15 @@ $.widget.bridge('uitooltip', $.ui.tooltip);
 <script src="<?php echo $this->basePath('/MDB-Pro/js/popper.min.js') ?>"></script>
 <script src="<?php echo $this->basePath('/bootstrap-4-2/js/bootstrap.min.js') ?>"></script>
 <script src="<?php echo $this->basePath('/bootstrap-select-1.13.1/dist/js/bootstrap-select.min.js') ?>"></script>
+<script src="<?php echo $this->basePath('/jquery.timepicker/jquery.timepicker.min.js') ?>"></script>
 
 <!-- Load the common form javascript functions -->
 <?php echo $this->partial('/partials/common-form-js.phtml'); ?>
 
 <script>
-$('.selectpicker').selectpicker({
-    noneSelectedText: null,
-});
 
 <?php
 echo $this->partial('/partials/event-scripts-alt');
-echo $this->partial('/partials/ppit-controller') 
 ?>
 
 <?php foreach ($context->getConfig('menus/'.(($app) ? $app : 'synapps'))['entries'] as $entryId => $entryDef) : ?>

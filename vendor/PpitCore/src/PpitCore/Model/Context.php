@@ -99,7 +99,7 @@ class Context implements InputFilterAwareInterface
 	 * The getInstance() method returns the current instance (\PpitCore\Model\Instance).
 	 * @return \PpitCore\Model\instance|NULL
 	 */
-    public function getInstance() { return Instance::get(Context::$exemplary->getInstanceId()); }
+    public function getInstance() { return Context::$instance; }
     
 	/**
 	 * Returns the route of the home page for the current instance. It defaults to 'index'.

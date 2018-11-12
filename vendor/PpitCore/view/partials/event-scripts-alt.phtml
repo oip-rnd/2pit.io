@@ -10,48 +10,48 @@ var criterion = 'update_time', dir = 'DESC';
 
 function eventGetParams() {
 
-	var params = '?', todo = true;
+  var params = '?', todo = true;
 
 <?php foreach ($content_description['search']['properties'] as $propertyId => $property) : ?>
-	<?php if (in_array($property['type'], array('date', 'time', 'datetime', 'number'))) : ?>
-	
-	var min_<?php echo $propertyId ?> = document.getElementById('search_min-<?php echo $propertyId ?>').value;
-	if (min_<?php echo $propertyId ?>) min_<?php echo $propertyId ?> = encodeDate(min_<?php echo $propertyId ?>);
-	if (min_<?php echo $propertyId ?>.length >= 2) { params += 'min_<?php echo $propertyId ?>=' + min_<?php echo $propertyId ?> + '&'; todo = false; }
+  <?php if (in_array($property['type'], array('date', 'time', 'datetime', 'number'))) : ?>
 
-	var max_<?php echo $propertyId ?> = document.getElementById('search_max-<?php echo $propertyId ?>').value;
-	if (max_<?php echo $propertyId ?>) max_<?php echo $propertyId ?> = encodeDate(max_<?php echo $propertyId ?>);
-	if (max_<?php echo $propertyId ?>.length >= 2) { params += 'max_<?php echo $propertyId ?>=' + max_<?php echo $propertyId ?> + '&'; todo = false; }
+  var min_<?php echo $propertyId ?> = $('#search_min-<?php echo $propertyId ?>').val();
+  if (min_<?php echo $propertyId ?>) min_<?php echo $propertyId ?> = encodeDate(min_<?php echo $propertyId ?>);
+  if (min_<?php echo $propertyId ?>.length >= 2) { params += 'min_<?php echo $propertyId ?>=' + min_<?php echo $propertyId ?> + '&'; todo = false; }
 
-	<?php else : ?>
+  var max_<?php echo $propertyId ?> = $('#search_max-<?php echo $propertyId ?>').val();
+  if (max_<?php echo $propertyId ?>) max_<?php echo $propertyId ?> = encodeDate(max_<?php echo $propertyId ?>);
+  if (max_<?php echo $propertyId ?>.length >= 2) { params += 'max_<?php echo $propertyId ?>=' + max_<?php echo $propertyId ?> + '&'; todo = false; }
 
-		<?php if (in_array($property['type'], ['select', 'multiselect'])) : ?>
-	var <?php echo $propertyId ?> = $('#search-<?php echo $propertyId ?>').val();
-	if (<?php echo $propertyId ?>) { params += '<?php echo $propertyId ?>=' + <?php echo $propertyId ?> + '&'; todo = false; }
+  <?php else : ?>
 
-		<?php else : ?>
-	var <?php echo $propertyId ?> = document.getElementById('search-<?php echo $propertyId ?>').value;
-	if (<?php echo $propertyId ?>.length >= 2) { params += '<?php echo $propertyId ?>=' + <?php echo $propertyId ?> + '&'; todo = false; }
+    <?php if (in_array($property['type'], ['select', 'multiselect'])) : ?>
+  var <?php echo $propertyId ?> = $('#search-<?php echo $propertyId ?>').val();
+  if (<?php echo $propertyId ?>) { params += '<?php echo $propertyId ?>=' + <?php echo $propertyId ?> + '&'; todo = false; }
 
-		<?php endif;?>	
-	<?php endif;?>
+    <?php else : ?>
+  var <?php echo $propertyId ?> = $('#search-<?php echo $propertyId ?>').val();
+  if (<?php echo $propertyId ?>.length >= 2) { params += '<?php echo $propertyId ?>=' + <?php echo $propertyId ?> + '&'; todo = false; }
+
+    <?php endif;?>	
+  <?php endif;?>
 
 <?php endforeach;?>
 
-	<?php
-	$todoTitle = $context->localize($content_description['search']['todoTitle']);
-	$searchTitle = $context->localize($content_description['search']['searchTitle']);
-	?>
-	$('#mode-text').text((todo) ? '<?php echo $todoTitle ?>' : '<?php echo $searchTitle ?>');
+  <?php
+  $todoTitle = $context->localize($content_description['search']['todoTitle']);
+  $searchTitle = $context->localize($content_description['search']['searchTitle']);
+  ?>
+  $('#mode-text').text((todo) ? '<?php echo $todoTitle ?>' : '<?php echo $searchTitle ?>');
 
-	return params;
+  return params;
 }
 
 // Export the list
 function exportEventList() {
 
-	var params = eventGetParams();
-	document.location.href = '<?php echo $this->url('event/export') ?>/' +  '<?php echo $type ?>' + params;
+  var params = eventGetParams();
+  document.location.href = '<?php echo $this->url('event/export') ?>/' +  '<?php echo $type ?>' + params;
 }
 
 // Load the list
@@ -80,9 +80,7 @@ function getEventList(params) {
 
         $(this).click(function () {
           var id = $(this).attr('id').split('_')[1];
-          $('#modalFormLabel').html($('#caption_' + id).val());
-          $('#modalForm').modal('toggle');
-          getDetail(id, '');
+          getDetail(id);
           $(this).removeClass("btn-outline-primary").addClass("btn-primary");
         });
       });
@@ -109,169 +107,180 @@ $('#modalForm').on('hidden.bs.modal', function (e) {
 
 function connectAuditPanel()
 {
-	$('#audit-panel').hide();
-	$('#audit-label').click(function () {
-		if ($('#audit-label').text() == '<?php echo $this->translate('Show', 'ppit-core', $context->getLocale()) ?>') {
-			$('#audit-panel').show();
-			$('#audit-label').text('<?php echo $this->translate('Mask', 'ppit-core', $context->getLocale()) ?>');
-		}
-		else {
-			$('#audit-panel').hide();
-			$('#audit-label').text('<?php echo $this->translate('Show', 'ppit-core', $context->getLocale()) ?>');
-		}
-	});
+  $('#audit-panel').hide();
+  $('#audit-label').click(function () {
+    if ($('#audit-label').text() == '<?php echo $this->translate('Show', 'ppit-core', $context->getLocale()) ?>') {
+      $('#audit-panel').show();
+      $('#audit-label').text('<?php echo $this->translate('Mask', 'ppit-core', $context->getLocale()) ?>');
+    }
+    else {
+      $('#audit-panel').hide();
+      $('#audit-label').text('<?php echo $this->translate('Show', 'ppit-core', $context->getLocale()) ?>');
+    }
+  });
 }
 
 <?php 
 $properties = array();
 foreach ($content_description['update'] as $propertyId => $property) {
-	if ($property['type'] != 'separator') {
-		if ($property['type'] == 'number') $properties[$propertyId] = array('type' => $property['type'], 'mandatory' => $property['mandatory'], 'minValue' => $property['minValue'], 'maxValue' => $property['maxValue']);
-		else $properties[$propertyId] = array('type' => $property['type'], 'mandatory' => $property['mandatory'], 'maxSize' => ($property['type'] == 'textarea') ? 2047 : 255);
-	}
+  if ($property['type'] != 'separator') {
+    if ($property['type'] == 'number') $properties[$propertyId] = array('type' => $property['type'], 'mandatory' => $property['mandatory'], 'minValue' => $property['minValue'], 'maxValue' => $property['maxValue']);
+    else $properties[$propertyId] = array('type' => $property['type'], 'mandatory' => $property['mandatory'], 'maxSize' => ($property['type'] == 'textarea') ? 2047 : 255);
+  }
 }
 $properties['event_update_time'] = array('type' => 'hidden');
 
 echo $this->partial('/partials/check-update-properties', array('entity' => 'Event', 'context' => $context, 'properties' => $properties)) 
 ?>
 
-function postForm(id)
+function connectDetail(id, action) {
+        if (id) {
+          $('#event-update-anchor').click(function () { 
+            $('[data-toggle="tooltip"]').tooltip('hide');
+            getUpdate(id, 'update'); 
+          });
+          $('#event-delete-anchor').click(function () { 
+            $('[data-toggle="tooltip"]').tooltip('hide');
+            getUpdate(id, 'delete'); 
+          });
+          $('#up-cancel-button').click(function () { getUpdate(id, ''); });
+          $('#cancel-button').click(function () { getUpdate(id, ''); });
+        }
+        else $('#event-add-anchor').click(function () { 
+          $('[data-toggle="tooltip"]').tooltip('hide');
+          getUpdate(id, 'add'); 
+        });
+
+        $('#up-submit-button').click(function () { 
+          postForm(id, action); 
+        });
+        $('#submit-button').click(function () {
+          postForm(id, action);
+        });
+
+        $('[data-toggle="tooltip"]').tooltip();
+}
+
+function postForm(id, action)
 {
-		// Check validity
-		var validity = checkEventUpdateProperties(id);
-		if (validity) {
+  // Check validity
+  var validity = checkEventUpdateProperties(id);
+  if (validity) {
 		
-			// Create a new FormData object.
-			var formData = new FormData();
+    // Create a new FormData object.
+    var formData = new FormData();
 			
-			// Get the properties values
+    // Get the properties values
 <?php foreach ($properties as $propertyId => $property) : ?>
 
-	<?php if ($property['type'] == 'checkbox') : ?>
-			formData.append('<?php echo $propertyId ?>', ((document.getElementById('<?php echo $propertyId ?>').checked) ? 1 : 0));
+  <?php if ($property['type'] == 'checkbox') : ?>
+    formData.append('<?php echo $propertyId ?>', ((document.getElementById('<?php echo $propertyId ?>').checked) ? 1 : 0));
 
-	<?php elseif ($property['type'] == 'attachment') : ?>
-			var fileSelect = document.getElementById('<?php echo $propertyId ?>');
-			if (fileSelect) {
-				var files = fileSelect.files;
-				for (var i = 0; i < files.length; i++) {
-					var file = files[i];
-					formData.append('<?php echo $propertyId ?>', file, file.name);
-				}
-			}
+  <?php elseif ($property['type'] == 'attachment') : ?>
+    var fileSelect = document.getElementById('<?php echo $propertyId ?>');
+    if (fileSelect) {
+      var files = fileSelect.files;
+      for (var i = 0; i < files.length; i++) {
+        var file = files[i];
+        formData.append('<?php echo $propertyId ?>', file, file.name);
+      }
+    }
 
-	<?php else : ?>
-			formData.append('<?php echo $propertyId ?>', $('#<?php echo $propertyId ?>').val());
+  <?php else : ?>
+    formData.append('<?php echo $propertyId ?>', $('#<?php echo $propertyId ?>').val());
 
-	<?php endif ?>
+  <?php endif ?>
 
 <?php endforeach ?>
 
-			var xhttp = new XMLHttpRequest();
-			var route;
-			route = '<?php echo $this->url('event/updateAlt') ?>' + '/' + id + '/<?php echo $type ?>';
-			xhttp.open('POST', route, true);
-			// Set up a handler for when the request finishes.
-			xhttp.onload = function () {
-				if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
-				if (xhttp.readyState == 4 && xhttp.status == 200) {
-                    $('#update_panel').html(xhttp.responseText);
-                    getEventList(eventGetParams());
-			        $('#button_edit').unbind();
-			        $('#button_delete').unbind();
-			        $('#button_save_up').unbind();
-			        $('#button_save_down').unbind();
-		            $('#button_edit').hide();
-		            $('#button_delete').hide();
-		            $('#button_save_up').hide();
-		            $('#button_save_down').hide();
-		            $('.updatable-control').prop('disabled', false);
-				}
-			};
-			xhttp.send(formData);
-		}
-		else return false;
+    var xhttp = new XMLHttpRequest();
+    var route;
+    route = '<?php echo $this->url('event/updateAlt') ?>/' + id + '/<?php echo $type ?>' + '?act=' + action;
+    xhttp.open('POST', route, true);
+    // Set up a handler for when the request finishes.
+    xhttp.onload = function () {
+      if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+      if (xhttp.readyState == 4) { 
+        if (xhttp.status == 200) {
+          $('#event-update-panel').html(xhttp.responseText);
+          getEventList(eventGetParams());
+      
+          $('.update_date').datepicker();
+          $('.update_time').timepicker({ 'timeFormat':'H:i:s', 'step': 15, 'scrollDefault': 'now' });
+          $('.update_selectpicker').selectpicker();
+
+          if (action == 'update') connectDetail(id, '');
+        }
+        else {
+          console.log(xhttp.status + ' ' + xhttp.statusText);
+          toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+        }
+      }
+    };
+    xhttp.send(formData);
+  }
+  else return false;
+}
+
+function getUpdate(id, action) {
+
+  var xhttp = new XMLHttpRequest();
+  var route = '<?php echo $this->url('event/updateAlt') ?>/' + id + '/<?php echo $type ?>';
+  if (action) route += '?act=' + action;
+
+  xhttp.open('GET', route, true);
+  xhttp.onreadystatechange = function() {
+    if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+    if (xhttp.readyState == 4) {
+      if (xhttp.status == 200) {
+        $('#event-update-panel').html(xhttp.responseText);
+
+        $('.update_date').datepicker();
+        $('.update_time').timepicker({ 'timeFormat':'H:i:s', 'step': 15, 'scrollDefault': 'now' });
+        $('.update_selectpicker').selectpicker();
+
+        connectDetail(id, action);
+      }
+      else {
+        console.log(xhttp.status + ' ' + xhttp.statusText);
+        toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+      }
+    }
+  }
+  xhttp.send();
 }
 
 function getDetail(id) {
 
-	var xhttp = new XMLHttpRequest();
-	var route = '<?php echo $this->url('event/updateAlt') ?>' + '/' + id + '/<?php echo $type ?>';
+  var xhttp = new XMLHttpRequest();
+  var route = '<?php echo $this->url('event/detailAlt', ['type' => $type]) ?>/' + id;
 
-	xhttp.open('GET', route, true);
-	xhttp.onreadystatechange = function() {
-		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
-		if (xhttp.readyState == 4 && xhttp.status == 200) {
-          $('#update_panel').html(xhttp.responseText);
-          if (id) {
-            $('#event-update-anchor').click(function () { getDetail(id, 'update'); });
-            $('#event-delete-anchor').click(function () { getDetail(id, 'delete'); });
-          }
-          else $('#event-add-anchor').click(function () { getDetail(id, 'add'); });
-          $('.update_selectpicker').selectpicker();
-          $('.update_date').datepicker();
+  xhttp.open('GET', route, true);
+  xhttp.onreadystatechange = function() {
+    if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+    if (xhttp.readyState == 4) {
+      if (xhttp.status == 200) {
+        $('#modalFormBody').html(xhttp.responseText);
+        $('#modalFormLabel').html($('#caption_' + id).val());
+        connectAuditPanel();
+        getUpdate(id, '');
 
-          // Connect the buttons
-          $('#button_edit').click(function () {
-            $('#button_edit').hide();
-            $('#button_delete').hide();
-            $('#button_save_up').show();
-            $('#button_save_up').text('<?php echo $this->translate('Save changes', 'ppit-core', $context->getLocale()) ?>');
-            $('#button_save_up').removeClass('btn-danger').addClass('btn-warning');
-            $('#button_save_down').show();
-            $('#button_save_down').text('<?php echo $this->translate('Save changes', 'ppit-core', $context->getLocale()) ?>');
-            $('#button_save_down').removeClass('btn-danger').addClass('btn-warning');
-            $('.updatable-control').prop('disabled', false);
-            $('.focused-control').focus();
-          });
-          $('#button_delete').click(function () {
-            $('#button_edit').hide();
-            $('#button_delete').hide();
-            $('#button_save_up').show();
-            $('#button_save_up').text('<?php echo $this->translate('Confirm deletion', 'ppit-core', $context->getLocale()) ?>');
-            $('#button_save_up').removeClass('btn-warning').addClass('btn-danger');
-            $('#button_save_down').show();
-            $('#button_save_down').text('<?php echo $this->translate('Confirm deletion', 'ppit-core', $context->getLocale()) ?>');
-            $('#button_save_down').removeClass('btn-warning').addClass('btn-danger');
-            $('.updatable-control').prop('disabled', true);
-          });
-          $('#modalForm').on('shown.bs.modal', function () {
-            $('.focused-control').focus();
-          })
-          if (id == '0') {
-            $('#button_edit').hide();
-            $('#button_delete').hide();
-            $('#button_save_up').show();
-            $('#button_save_up').text('<?php echo $this->translate('Save changes', 'ppit-core', $context->getLocale()) ?>');
-            $('#button_save_up').removeClass('btn-danger').addClass('btn-warning');
-            $('#button_save_down').show();
-            $('#button_save_down').text('<?php echo $this->translate('Save changes', 'ppit-core', $context->getLocale()) ?>');
-            $('#button_save_up').removeClass('btn-danger').addClass('btn-warning');
-            $('.updatable-control').prop('disabled', false);
-          }
-          else {
-            $('#button_edit').show();
-            $('#button_delete').show();
-            $('#button_save_up').hide();
-            $('#button_save_down').hide();
-            $('.updatable-control').prop('disabled', true);
-          }
-          $('#button_save_up').click(function () {
-            postForm(id);
-          });
-          $('#button_save_down').click(function () {
-            postForm(id);
-          });
-		}
-	}
-	xhttp.send();
+        $('#modalForm').modal('toggle');
+      }
+      else {
+        console.log(xhttp.status + ' ' + xhttp.statusText);
+        toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+      }
+    }
+  }
+  xhttp.send();
 }
 
 function getEventSearch()
 {
   // Process request formatting the search engine
   var xhttp = new XMLHttpRequest();
-  xhttp.open("GET", '<?php echo $this->url('event/searchAlt') ?>' + '<?php echo (($type) ? '/'.$type : '') ?>', false);
+  xhttp.open("GET", '<?php echo $this->url('event/searchAlt') ?>' + '<?php echo (($type) ? '/'.$type : '') ?>', true);
   xhttp.onreadystatechange = function() {
     if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
     if (xhttp.readyState == 4 && xhttp.status == 200) {
@@ -347,6 +356,8 @@ function getEventSearch()
         }
         getEventList(eventGetParams());
 	  });
+      
+      getEventList(eventGetParams());
     }
   }
   xhttp.send();
@@ -356,7 +367,4 @@ function activateEvent() {
 
     // Connect buttons and links at the search engine
 	getEventSearch();
-  
-    // Retrieve and show the initial list
-	getEventList(eventGetParams());
 }

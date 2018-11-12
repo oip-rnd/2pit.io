@@ -94,8 +94,8 @@ function csvAccountList() {
 function getAccountList(params) {		
 
   // Execute the ajax request
-  route = '<?php echo $this->url('account/listAlt', array('entry' => $entry, 'type' => $type)) ?>' + params + '&major=' + criterion + ((dir =='ASC') ? '&dir=ASC' : '&dir=DESC') + '&limit=' + $('#limit').val();
-  xhttp = new XMLHttpRequest();
+  var route = '<?php echo $this->url('account/listAlt', array('entry' => $entry, 'type' => $type)) ?>' + params + '&major=' + criterion + ((dir =='ASC') ? '&dir=ASC' : '&dir=DESC') + '&limit=' + $('#limit').val();
+  var xhttp = new XMLHttpRequest();
   xhttp.open("GET", route, true);
   xhttp.onreadystatechange = function() {
     if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
@@ -259,6 +259,9 @@ function postForm(id, action)
         if (xhttp.status == 200) {
           getAccountList(accountGetParams());
           $('#account-update-panel').html(xhttp.responseText);
+          $('.update_date').datepicker();
+          $('.update_time').timepicker({ 'timeFormat':'H:i:s', 'step': 15, 'scrollDefault': 'now' });
+          $('.update_selectpicker').selectpicker();
           $('[data-toggle="tooltip"]').tooltip();
         }
         else {
@@ -829,9 +832,11 @@ function postGroup()
 			route = '<?php echo $this->url('account/groupAlt', array('type' => $type)) ?>';
 			xhttp.open('POST', route, true);
 			xhttp.onload = function () {
-				if (xhttp.readyState == 4 <?php if (!$context->getConfig()['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
-                  getAccountList(accountGetParams());
-		          $('#modalForm').html(xhttp.responseText);
+				if (xhttp.readyState == 4) {
+                  if (xhttp.status == 200) {
+	                getAccountList(accountGetParams());
+			        $('#modalForm').html(xhttp.responseText);
+                  }
 				}
 			};
 			xhttp.send(formData);
@@ -924,7 +929,7 @@ function getAccountSearch()
 {
   // Process request formatting the search engine
   var xhttp = new XMLHttpRequest();
-  xhttp.open("GET", '<?php echo $this->url('account/searchAlt', array('entry' => $entry, 'type' => $type)) ?>?');
+  xhttp.open("GET", '<?php echo $this->url('account/searchAlt', array('entry' => $entry, 'type' => $type)) ?>?', true);
   xhttp.onreadystatechange = function() {
     if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
     if (xhttp.readyState == 4) {

@@ -1587,7 +1587,6 @@ class Account implements InputFilterAwareInterface
 			}
 		}
     	$this->audit[] = $auditRow;
-var_dump($this->contact_5); throw new \Exception('');
     	return 'OK';
     }
 

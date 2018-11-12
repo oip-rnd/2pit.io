@@ -37,6 +37,8 @@ class EventController extends AbstractActionController
 		$category = $this->params()->fromRoute('category', 'generic');
     	$app = $this->params()->fromRoute('app');
     	$description = Event::getDescription($type);
+    	if (array_key_exists('options', $description) && array_key_exists('internal_identifier', $description['options'])) $internalIdentifier = $description['options']['internal_identifier'];
+    	else $internalIdentifier = false;
     	$params = $this->getFilters($this->params(), $description);
 
     	$personnalize = ($this->params()->fromQuery('personnalize'));
@@ -49,7 +51,8 @@ class EventController extends AbstractActionController
 
 		return new ViewModel(array(
     			'context' => $context,
-    			'type' => $type,
+    			'internalIdentifier' => $internalIdentifier,
+				'type' => $type,
     			'params' => $params,
 				'config' => $context->getConfig(),
     			'place' => $place,
@@ -349,12 +352,19 @@ class EventController extends AbstractActionController
     	return $view;
     }
 
+    public function detailAltAction()
+    {
+    	return $this->detailAction();
+    }
+    
     public function updateAction()
     {
     	$context = Context::getCurrent();
 
     	$type = $this->params()->fromRoute('type', null);
     	$description = Event::getDescription($type);
+    	if (array_key_exists('options', $description) && array_key_exists('internal_identifier', $description['options'])) $internalIdentifier = $description['options']['internal_identifier'];
+    	else $internalIdentifier = false;
     	$action = $this->params()->fromQuery('act', null);
     	$id = (int) $this->params()->fromRoute('id', 0);
     	if ($id) {
@@ -433,6 +443,7 @@ class EventController extends AbstractActionController
     			'context' => $context,
     			'type' => $type,
     			'config' => $context->getconfig(),
+    			'internalIdentifier' => $internalIdentifier,
     			'id' => $id,
     			'action' => $action,
     			'event' => $event,

@@ -605,6 +605,18 @@ return array(
             								),
             						),
             				),
+            				'detailAlt' => array(
+            						'type' => 'segment',
+            						'options' => array(
+            								'route' => '/detail-alt[/:type][/:id]',
+            								'constraints' => array(
+            										'id'     => '[0-9]*',
+            								),
+            								'defaults' => array(
+            										'action' => 'detailAlt',
+            								),
+            						),
+            				),
             				'update' => array(
             						'type' => 'segment',
             						'options' => array(
@@ -1775,6 +1787,7 @@ return array(
 				array('route' => 'event/export', 'roles' => array('user')),
 				array('route' => 'event/synchronize', 'roles' => array('user')),
 				array('route' => 'event/detail', 'roles' => array('user')),
+				array('route' => 'event/detailAlt', 'roles' => array('user')),
 				array('route' => 'event/update', 'roles' => array('user')),
 				array('route' => 'event/updateAlt', 'roles' => array('user')),
 				

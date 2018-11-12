@@ -21,6 +21,7 @@
     <div class="modal-body">
 
 <?php if ($context->hasRole('admin') && $account->id) : ?>
+
 <!-- Display the audit -->
     <?php echo $this->translate('History', 'ppit-core', $context->getLocale()) ?> (<a id="audit-label"><?php echo $this->translate('Show', 'ppit-core', $context->getLocale()) ?></a>)
     <div id="audit-panel" class="panel panel-default">
@@ -44,7 +45,6 @@
       </div>
     </div>
     <div>&nbsp;</div>
-    <div>
 <?php endif;?>
         
 <?php if ($account->id) : ?>
