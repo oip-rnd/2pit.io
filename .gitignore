@@ -1,5 +1,6 @@
 config/autoload/*
 !config/autoload/*global.php
+!config/autoload/*template.php
 config/application.config.php
 data
 module/*
