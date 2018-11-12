@@ -16,7 +16,7 @@
         <li class="nav-item">
           <div class="form-group">
             <label for="signOut-identifier"><?php echo $context->localize($entry['labels'], $locale) ?></label>
-            <input class="" id="signOut-identifier" type="text" placeholder="<?php echo $context->localize($entry['placeholder'], $locale) ?>" aria-label="">
+            <input class="" id="signOut-identifier" type="text" placeholder="<?php if (array_key_exists('placeholder', $entry)) echo $context->localize($entry['placeholder'], $locale) ?>" aria-label="">
             <a class="grey-text ml-2" id="signOutButton"><i class="fa fa-key" aria-hidden="true"></i></a>
           </div>
         </li>

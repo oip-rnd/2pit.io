@@ -499,6 +499,7 @@ return array (
 	),
 	
 	'landing_account_type' => 'generic',
+	'event_default_type' => 'event',
 	
 	'matching/skills' => array(
 		'blockchain' => ['labels' => ['default' => 'Blockchain'], 'color' => 'aqua-gradient'],
