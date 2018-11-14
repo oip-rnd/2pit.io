@@ -1412,7 +1412,7 @@ class Account implements InputFilterAwareInterface
     	return true;
     }
 
-	public function loadData($type, $data, $passphrase = null)
+	public function loadData($type, $data)
 	{
 		$context = Context::getCurrent();
 		$errors = array();
@@ -1473,7 +1473,7 @@ class Account implements InputFilterAwareInterface
 					$data['date_5'] = date('Y-m-d');
 			}
 		}
-		
+
 		foreach ($data as $propertyId => $value) {
 			if (!array_key_exists($propertyId, $configProperties)) $errors[$propertyId] = "The accounts of type $type does not manage the property $propertyId";
 			else {
@@ -1502,13 +1502,12 @@ class Account implements InputFilterAwareInterface
 					if (array_key_exists('precision', $property) && $property['precision'] > 0) $value = (float) $value;
 					else $value = (int) $value;
 				}
-				if ($errors) return $errors;
 
 				// Private data protection
 				if ($property['private'] && $value) {
 					$value = $context->getSecurityAgent()->protectPrivateData($value);
 				}
-				
+
 				if ($propertyId == 'status') $this->status = $value;
 	    		elseif ($propertyId == 'type') $this->type = $value;
 	    		elseif ($propertyId == 'place_id') $this->place_id = $value;
@@ -1553,6 +1552,7 @@ class Account implements InputFilterAwareInterface
 				elseif ($propertyId == 'availability_end') $this->availability_end = $value;
 				elseif ($propertyId == 'availability_exceptions') $this->availability_exceptions = $value;
 				elseif ($propertyId == 'availability_constraints') $this->availability_constraints = $value;
+				elseif ($propertyId == 'credits') $this->credits = $value;
 				elseif ($propertyId == 'default_means_of_payment') $this->default_means_of_payment = $value;
 				elseif ($propertyId == 'transfer_order_id') $this->transfer_order_id = $value;
 				elseif ($propertyId == 'transfer_order_date') $this->transfer_order_date = $value;
@@ -1582,11 +1582,12 @@ class Account implements InputFilterAwareInterface
 	        	elseif ($propertyId == 'comment_2') $this->comment_2 = $value;
 	        	elseif ($propertyId == 'comment_3') $this->comment_3 = $value;
 	        	elseif ($propertyId == 'comment_4') $this->comment_4 = $value;
-	        	
+
 				if ($propertyId && $propertyId != 'contact_history' && $this->properties[$propertyId] != $value) $auditRow[$propertyId] = $value;
 			}
 		}
-    	$this->audit[] = $auditRow;
+		if ($errors) return 'Integrity';
+		$this->audit[] = $auditRow;
     	return 'OK';
     }
 
@@ -1654,7 +1655,7 @@ class Account implements InputFilterAwareInterface
 		}
 
 		$account = Account::instanciate($type);
-		$rc = $account->loadAndAdd($data);
+		$rc = $account->loadAndAdd($data, Account::getConfig($type));
 		return $rc;
     }
 
@@ -1762,11 +1763,10 @@ class Account implements InputFilterAwareInterface
 	/**
 	* Restfull implementation
 	*/
-    public function loadAndAdd($data, $passphrase = null)
+    public function loadAndAdd($data, $config)
     {
     	$context = Context::getCurrent();
     	$type = $this->type;
-    	$config = Account::getConfig($type);
     	$description = $context->getConfig('core_account/'.$type);
     	
     	if (!array_key_exists('status', $data)) $data['status'] = 'new';
@@ -1922,11 +1922,10 @@ class Account implements InputFilterAwareInterface
 		return ['200', $account->identifier];
     }
 
-    public function loadAndUpdate($data, $passphrase = null, $update_time = null)
+    public function loadAndUpdate($data, $config, $update_time = null)
     {
 		$context = Context::getCurrent();
 		$type = $this->type;
-		$config = Account::getConfig($type);
 
     	$accountData = array();
     	$vcardData = array();
@@ -1953,7 +1952,7 @@ class Account implements InputFilterAwareInterface
 		$rc = $this->contact_1->loadData($vcardData);
 		if ($rc != 'OK') return ['500', $rc];
 
-    	$rc = $this->loadData($this->type, $accountData, $passphrase);
+    	$rc = $this->loadData($this->type, $accountData);
     	if ($rc != 'OK') return ['500', $rc];
     	if (!$this->name) $this->name = $this->contact_1->n_fn;
 

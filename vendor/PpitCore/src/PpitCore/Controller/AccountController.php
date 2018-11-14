@@ -915,7 +915,6 @@ class AccountController extends AbstractActionController
     		$message = null;
     		$csrfForm->setInputFilter((new Csrf('csrf'))->getInputFilter());
     		$csrfForm->setData($request->getPost());
-    		 
     		if ($csrfForm->isValid()) { // CSRF check
 
     			// Load the input data
@@ -977,7 +976,7 @@ class AccountController extends AbstractActionController
 	    			$connection->beginTransaction();
 	    			try {
 	    				if (!$account->id) {
-	    					$rc = $account->loadAndAdd($data);
+	    					$rc = $account->loadAndAdd($data, $configProperties);
 	    					if ($rc[0] == '206') $account = $rc[1]; // Partially accepted on an already existing account which is returned as rc[1]
 	    					elseif ($rc[0] != '200') $error = $rc;
 	    				}
@@ -988,7 +987,7 @@ class AccountController extends AbstractActionController
 								$account->contact_1->savePhoto($photo);
 								$account->contact_1->photo_link_id = null;
 							}
-	    					$rc = $account->loadAndUpdate($data, $passphrase, $account->contact_1->update_time);
+	    					$rc = $account->loadAndUpdate($data, $configProperties, $account->contact_1->update_time);
 	    					if ($rc[0] != '200') $error = $rc;
 	    				}
 	    				if ($error) $connection->rollback();
@@ -1444,7 +1443,7 @@ class AccountController extends AbstractActionController
 	    	$connection = Account::getTable()->getAdapter()->getDriver()->getConnection();
 	    	$connection->beginTransaction();
 	    	try {
-				$rc = $account->loadAndAdd($data, $passphrase);
+				$rc = $account->loadAndAdd($data, $content['description']['properties']);
 	    		if ($rc[0] == '206') { // Partially accepted on an already existing account which is returned as rc[1]
 					$this->getResponse()->setStatusCode($rc[0]);
 					echo $rc[1]->id;
@@ -1476,7 +1475,7 @@ class AccountController extends AbstractActionController
 			$connection = Account::getTable()->getAdapter()->getDriver()->getConnection();
 			$connection->beginTransaction();
 			try {
-				$rc = $account->loadAndUpdate($data, $passphrase);
+				$rc = $account->loadAndUpdate($data, $content['description']['properties']);
 				if ($rc[0] != '200') {
 					$connection->rollback();
 					$this->getResponse()->setStatusCode($rc[0]);

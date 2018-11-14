@@ -127,7 +127,7 @@ class LandingController extends AbstractActionController
 
 			$account = Account::instanciate($account_type);
 			$data['origine'] = 'subscription';
-			$rc = $account->loadAndAdd($data);
+			$rc = $account->loadAndAdd($data, Account::getConfig($account_type));
 			if (in_array($rc[0], ['200', '206'])) $message = 'OK';
 			else $error = $rc;
 		}
@@ -150,10 +150,8 @@ class LandingController extends AbstractActionController
 			'locale' => $locale,
 			'photo_link_id' => null,
 			'pageScripts' => 'ppit-flow/landing/scripts',
-//			'message' => $this->params()->fromQuery('message'),
-//			'error' => $this->params()->fromQuery('error'),
-			'message' => $message,
-			'error' => $error,
+			'message' => ($message) ? $message : $this->params()->fromQuery('message'),
+			'error' => ($error) ? $error : $this->params()->fromQuery('error'),
 		));
 		
 		// Feed and return the view

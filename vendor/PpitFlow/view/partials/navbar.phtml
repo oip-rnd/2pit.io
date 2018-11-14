@@ -66,9 +66,9 @@ body.modal-open {
 <?php endif;?>
                   
 <?php if (array_key_exists('locales', $header)) : ?>
-  <?php foreach ($header['locales'] as $locale => $localeSpecification) : ?>
+  <?php foreach ($header['locales'] as $language => $localeSpecification) : ?>
                     <li class="nav-item">
-                      <a class="nav-link" href="<?php echo $this->url('landing/template2').'?locale='.$locale ?>"><img src="<?php echo $this->basePath($localeSpecification['img']) ?>" width="20" alt="<?php echo $this->basePath($localeSpecification['alt']) ?>" /></a>
+                      <a class="nav-link" href="<?php echo $this->url('landing/template2').'?locale='.$language ?>"><img src="<?php echo $this->basePath($localeSpecification['img']) ?>" width="20" alt="<?php echo $this->basePath($localeSpecification['alt']) ?>" /></a>
                     </li>
   <?php endforeach;?>
 <?php endif;?>

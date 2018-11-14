@@ -475,6 +475,13 @@ class UserController extends AbstractActionController
    		return $view;
     }
 
+    public function googleLoginAction()
+    {
+    	$view = new ViewModel(array());
+    	$view->setTerminal(true);
+    	return $view;
+    }
+    
     public function maintainSessionAction()
     {
     	return $this->response;
@@ -1031,7 +1038,7 @@ class UserController extends AbstractActionController
 					$connection->beginTransaction();
 //					try {
 						$account = Account::instanciate($type);
-						$rc = $account->loadAndAdd($data);
+						$rc = $account->loadAndAdd($data, Account::getConfig($type));
 						if ($rc[0] == 206) $account = $rc[1];
 						$content['data'] = $account->getProperties();
 						$account->status = 'registered';

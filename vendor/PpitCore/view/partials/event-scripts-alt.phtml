@@ -190,8 +190,9 @@ function postForm(id, action)
     formData.append('<?php echo $propertyId ?>', $('#<?php echo $propertyId ?>').val());
 
   <?php endif ?>
-
 <?php endforeach ?>
+
+    formData.append('csrf', $('#csrf').val());
 
     var xhttp = new XMLHttpRequest();
     var route;

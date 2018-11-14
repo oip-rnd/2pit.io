@@ -46,12 +46,18 @@
 	body,
 	header,
 
+    #intro {
+      height: <?php echo $header['intro_height'] ?>;
+      max-width: 100%;
+    }
+  
 	#intro {
       background: url("<?php echo $this->basePath($context->localize($header['background_image']['src'], $locale)) ?>") no-repeat center center;
-      height: <?php echo $header['intro_height'] ?>;
+      -webkit-background-size: contain;
+      -moz-background-size: contain;
+      -o-background-size: contain;
       background-size: <?php echo array_key_exists('background-size', $header) ? $header['background-size'] : 'contain' ?>;
       background-color: <?php echo array_key_exists('background-color', $header) ? $header['background-color'] : '' ?>;
-      max-width: 100%;
 	}
 	
 	@include media-breakpoint-up(sm) {

@@ -23,7 +23,7 @@
         
       <?php elseif (array_key_exists($entry['item'], $account['credits'])) : ?>
         <li class="nav-item">
-           <span class="grey-text"><?php echo sprintf($context->localize($entry['labels'], $locale), $account['credits'][$entry['item']], $account['credits']['rank']) ?></span>
+           <span class="grey-text"><?php echo sprintf($context->localize($entry['labels'], $locale), $account['credits'][$entry['item']], (array_key_exists('rank', $account['credits'])) ? $account['credits']['rank'] : '') ?></span>
         </li>
         
       <?php endif;?>
@@ -39,7 +39,6 @@
     <div class="col-md-12">      
 <ul class="nav grey lighten-4 md-pills pills-primary nav-fill">
 
-<?php if ($context->hasRole('contributor')) : ?>  
   <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       <?php if ($type == 'event') echo $this->translate('Events', 'ppit-flow', $locale); else echo $this->translate('Requests', 'ppit-flow', $locale); ?>
@@ -53,7 +52,6 @@
 <?php endif;?>
     </div>
   </li>
-<?php endif;?>
 
 <?php foreach ($content['index']['navbar'] as $navId => $navItem) : ?>
 

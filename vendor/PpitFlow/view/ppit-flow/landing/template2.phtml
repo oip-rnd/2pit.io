@@ -372,9 +372,16 @@
                   <input type="email" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>" />
                   <label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
 
+  <?php elseif ($property['type'] == 'phone') : ?>
+                  <input type="tel" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>" />
+                  <label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+
   <?php elseif ($property['type'] == 'input') : ?>
                   <input type="text" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>" />
                   <label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
+
+  <?php elseif ($property['type'] == 'PayPal') : ?>
+                  <div class="text-center" id="paypal-button-container"></div>
 
   <?php elseif ($property['type'] == 'separation') : ?>
                   <hr>
@@ -396,7 +403,7 @@
             </p>
 
 <?php else : ?>
-            <div class="center-on-small-only">
+            <div class="text-center">
               <button class="<?php echo $content['form']['submit']['class'] ?>" type="submit"><?php echo $context->localize($content['form']['submit']['labels'], $locale) ?></button>
             </div>
 

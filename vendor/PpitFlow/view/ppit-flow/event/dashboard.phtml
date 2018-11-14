@@ -6,7 +6,7 @@
 
               <!--Card image-->
               <div class="view view-cascade gradient-card-header blue">
-                <h5 class="mb-0"><?php echo $content['rewards']['brand'] ?> acquisition</h5>
+                <h5 class="mb-0"><?php echo $context->localize($content['rewards']['title'], $locale) ?></h5>
               </div>
               <!--/Card image-->
 
@@ -19,10 +19,19 @@
             <div class="label orange"><?php echo $context->localize($content['rewards']['balance'][$key]['labels']) ?>: <strong><?php echo ($content['rewards']['balance'][$key]['precision']) ? $context->formatFloat($value, $content['rewards']['balance'][$key]['precision']) : $value ?></strong></div>
     <?php endforeach;?>
           </div>
-  <?php else : ?>
+  <?php else : $balance = 0; ?>
     <?php foreach ($account['credits'] as $key => $value) : ?>
+      <?php if (array_key_exists($key, $content['rewards']['balance'])) : ?>
+        <?php 
+        $direction = (array_key_exists('direction', $content['rewards']['balance'][$key])) ? $content['rewards']['balance'][$key]['direction'] : 1;
+        $balance += $direction * $value;
+        ?>
             <div><?php echo $context->localize($content['rewards']['balance'][$key]['labels']) ?>: <strong><?php echo ($content['rewards']['balance'][$key]['precision']) ? $context->formatFloat($value, $content['rewards']['balance'][$key]['precision']) : $value ?></strong></div>
+      <?php endif;?>
     <?php endforeach;?>
+    <?php if (array_key_exists('balance', $content['rewards']['balance'])) : ?>
+            <div <?php if ($balance < 0) echo 'class="red-text"' ?>><?php echo $context->localize($content['rewards']['balance']['balance']['labels']) ?>: <strong><?php echo ($content['rewards']['balance']['balance']['precision']) ? $context->formatFloat($balance, $content['rewards']['balance']['balance']['precision']) : $balance ?></strong></div>
+    <?php endif;?>    
   <?php endif;?>
 
               </div>

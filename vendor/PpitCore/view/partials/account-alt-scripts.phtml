@@ -250,6 +250,8 @@ function postForm(id, action)
   <?php endif ?>
 <?php endforeach ?>
 
+    formData.append('csrf', $('#csrf').val());
+
     var xhttp = new XMLHttpRequest();
     var route, target;
     route = '<?php echo $this->url('account/updateAlt') ?>/' + id + '<?php echo (($type) ? '/'.$type : '') ?>' + '?act=' + action;

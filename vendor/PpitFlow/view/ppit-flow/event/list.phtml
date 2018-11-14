@@ -15,8 +15,8 @@
     <div class="media-body text-md-left ml-md-3">
 
   <?php if (array_key_exists('status', $content)) : ?>      
-      <div class="progress md-progress" style="height: 2px" data-toggle="tooltip" title="<?php echo $context->localize($content['status'][$request['status']]['labels'], $locale) ?>">
-        <div class="progress-bar <?php echo $content['status'][$request['status']]['color'] ?>" role="progressbar" style="width: <?php echo $content['status'][$request['status']]['value'] ?>%" aria-valuenow="<?php echo $content['status'][$request['status']]['value'] ?>" aria-valuemin="0" aria-valuemax="100"></div>
+      <div class="progress md-progress" style="height: 15px">
+        <div class="progress-bar <?php echo $content['status'][$request['status']]['color'] ?>" role="progressbar" style="width: <?php echo $content['status'][$request['status']]['value'] ?>%; height: 15px" aria-valuenow="<?php echo $content['status'][$request['status']]['value'] ?>" aria-valuemin="0" aria-valuemax="100"><?php echo $context->localize($content['status'][$request['status']]['labels'], $locale) ?></div>
       </div>
   <?php endif;?>
 

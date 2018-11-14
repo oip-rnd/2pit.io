@@ -106,7 +106,7 @@ class EventController extends AbstractActionController
 
 		// compute ranking in gaming mode
 		if (array_key_exists('rewards', $content)) {
-			$account->credits['rank'] = $this->displayRank($account);
+			if (array_key_exists('earned', $account->credits)) $account->credits['rank'] = $this->displayRank($account);
 			$account->properties['credits'] = $account->credits;
 		}
 		
@@ -201,8 +201,8 @@ class EventController extends AbstractActionController
 		else $content = Config::get($place_identifier.'_'.$type, 'identifier')->content;
 	
 		// compute ranking in gaming mode
-		if (array_key_exists('rewards', $content)) {
-			$account->credits['rank'] = $this->displayRank($account);
+		if (array_key_exists('rewards', $content) && array_key_exists('goal', $account->credits)) {
+			if (array_key_exists('earned', $account->credits)) $account->credits['rank'] = $this->displayRank($account);
 			$account->properties['credits'] = $account->credits;
 		}
 	
@@ -1083,17 +1083,21 @@ class EventController extends AbstractActionController
 	
 	public function completeAction()
 	{
+		// Retrieve the context and the parameters
 		$context = Context::getCurrent();
 		$type = $this->params()->fromRoute('type', 'event');
+		$accountType = $context->getConfig('landing_account_type');
+		$description = Event::getConfigProperties($type);
+		$accountConfigProperties = Account::getConfig($accountType);
 		$place = Place::get($context->getPlaceId());
 		$id = $this->params()->fromRoute('id');
-		$request = Event::get($id);
-		if (!$request) {
+
+		// Retrieve the event to complete
+		$event = Event::get($id);
+		if (!$event) {
 			$this->response->setStatusCode('400');
 			return $this->response;
 		}
-		$request->status = 'realized';
-		$request->update(null);
 
 		// Retrieve the content
 		if ($context->getConfig('specificationMode') == 'config') {
@@ -1102,50 +1106,110 @@ class EventController extends AbstractActionController
 		}
 		else $content = Config::get($place->identifier.'_'.$type, 'identifier')->content;
 
-		// Email for feedback
-		if ($request->matched_accounts && array_key_exists('emails', $content) && array_key_exists('feedback', $content['emails'])) {
-			$url = $context->getServiceManager()->get('viewhelpermanager')->get('url');
-
-			// Requestor
-			$account = Account::get($request->account_id);
-			$emailTitleFormat = $context->localize($content['emails']['feedback']['title']['format'], $request->locale);
-			$titleArguments = array();
-			foreach ($content['emails']['feedback']['title']['parameters'] as $parameter) {
-				$titleArguments[] = $request->properties[$parameter];
+		// Atomicity
+		$connection = Event::getTable()->getAdapter()->getDriver()->getConnection();
+		$connection->beginTransaction();
+		try {
+			
+			// Update the event status
+			$data = array();
+			$data['status'] = 'realized';
+			$rc = $event->loadAndUpdate($data, $description);
+			if ($rc[0] != '200') {
+				$connection->rollback();
+				$this->response->setStatusCode('500');
+				$this->response->setReasonPhrase($rc[1]);
+				return $this->response;
 			}
-			$emailTitle = vsprintf($emailTitleFormat, $titleArguments);
-			$emailBodyFormat = $context->localize($content['emails']['feedback']['body']['format'], $request->locale);
-			$bodyArguments = array();
-			foreach ($content['emails']['feedback']['body']['parameters'] as $parameter) {
-				$bodyArguments[] = $request->properties[$parameter];
-			}
-			$emailBody = vsprintf($emailBodyFormat, $bodyArguments);
-			Context::sendMail($request->email, $emailBody, $emailTitle);
 
-			// Contributors
-			foreach (explode(',', $request->matched_accounts) as $account_id) {
-				$otherAccount = Account::get($account_id);
-		
-				// Email title
-				$emailTitleFormat = $context->localize($content['emails']['feedback']['title']['format'], $request->locale);
+			// Rewarding and email for feedback
+			if ($event->matched_accounts && array_key_exists('emails', $content) && array_key_exists('feedback', $content['emails'])) {
+				$url = $context->getServiceManager()->get('viewhelpermanager')->get('url');
+	
+				// Retrieve the requestor
+				$account = Account::get($event->account_id);
+				$accountToUpdate = false;
+				$accountCredits = $account->credits;
+				
+				// Email
+				$emailTitleFormat = $context->localize($content['emails']['feedback']['title']['format'], $event->locale);
 				$titleArguments = array();
 				foreach ($content['emails']['feedback']['title']['parameters'] as $parameter) {
-					if ($parameter == 'n_first') $titleArguments[] = $otherAccount->n_first;
-					else $titleArguments[] = $request->properties[$parameter];
+					$titleArguments[] = $event->properties[$parameter];
 				}
 				$emailTitle = vsprintf($emailTitleFormat, $titleArguments);
-					
-				// Email body
-				$emailBodyFormat = $context->localize($content['emails']['feedback']['body']['format'], $request->locale);
+				$emailBodyFormat = $context->localize($content['emails']['feedback']['body']['format'], $event->locale);
 				$bodyArguments = array();
 				foreach ($content['emails']['feedback']['body']['parameters'] as $parameter) {
-					if ($parameter == 'n_first') $bodyArguments[] = $otherAccount->n_first;
-					else $bodyArguments[] = $request->properties[$parameter];
+					$bodyArguments[] = $event->properties[$parameter];
 				}
 				$emailBody = vsprintf($emailBodyFormat, $bodyArguments);
+				Context::sendMail($event->email, $emailBody, $emailTitle);
+	
+				// Reward and email each contributor
+				foreach (explode(',', $event->matched_accounts) as $account_id) {
+					$otherAccount = Account::get($account_id);
 					
-				Context::sendMail($otherAccount->email, $emailBody, $emailTitle);
+					// Rewarding
+					if ($event->value) {
+						$accountToUpdate = true;
+						$accountCredits['spent'] += $event->value;
+						
+						$data = array();
+						$data['credits'] = $otherAccount->credits;
+						$data['credits']['earned'] += $event->value;
+						$rc = $otherAccount->loadAndUpdate($data, $accountConfigProperties);
+
+						if ($rc[0] != '200') {
+							$connection->rollback();
+							$this->response->setStatusCode('500');
+							$this->response->setReasonPhrase($rc[1]);
+							return $this->response;
+						}
+					}
+			
+					// Email title
+					$emailTitleFormat = $context->localize($content['emails']['feedback']['title']['format'], $event->locale);
+					$titleArguments = array();
+					foreach ($content['emails']['feedback']['title']['parameters'] as $parameter) {
+						if ($parameter == 'n_first') $titleArguments[] = $otherAccount->n_first;
+						else $titleArguments[] = $event->properties[$parameter];
+					}
+					$emailTitle = vsprintf($emailTitleFormat, $titleArguments);
+						
+					// Email body
+					$emailBodyFormat = $context->localize($content['emails']['feedback']['body']['format'], $event->locale);
+					$bodyArguments = array();
+					foreach ($content['emails']['feedback']['body']['parameters'] as $parameter) {
+						if ($parameter == 'n_first') $bodyArguments[] = $otherAccount->n_first;
+						else $bodyArguments[] = $event->properties[$parameter];
+					}
+					$emailBody = vsprintf($emailBodyFormat, $bodyArguments);
+						
+					Context::sendMail($otherAccount->email, $emailBody, $emailTitle);
+				}
+				
+				if ($accountToUpdate) {
+					
+					// Reward the requestor
+					$data = array();
+					$data['credits'] = $accountCredits;
+					$rc = $account->loadAndUpdate($data, $accountConfigProperties);
+					if ($rc[0] != '200') {
+						$connection->rollback();
+						$this->response->setStatusCode('500');
+						$this->response->setReasonPhrase($rc[1]);
+						return $this->response;
+					}
+				}
+				$connection->commit();
 			}
+		}
+		catch (\Exception $e) {
+			$connection->rollback();
+			$this->response->setStatusCode('500');
+			$this->response->setReasonPhrase('Exception: '.$e);
+			return $this->response;
 		}
 		
 		$this->response->setStatusCode('200');

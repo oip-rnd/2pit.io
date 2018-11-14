@@ -1476,7 +1476,16 @@ return array(
 	                        ),
 	                    ),
 	                ),
-	                'demo' => array(
+	                'googleLogin' => array(
+	                    'type' => 'segment',
+	                    'options' => array(
+	                        'route' => '/google-login',
+	                    	'defaults' => array(
+	                    		'action' => 'googleLogin',
+	                        ),
+	                    ),
+	                ),
+	       			'demo' => array(
 	                    'type' => 'segment',
 	                    'options' => array(
 	                        'route' => '/demo[/:username]',
@@ -1884,6 +1893,7 @@ return array(
 				array('route' => 'user/update', 'roles' => array('admin', 'manager')),
 				array('route' => 'user/role', 'roles' => array('admin')),
 				array('route' => 'user/login', 'roles' => array('guest')),
+				array('route' => 'user/googleLogin', 'roles' => array('guest')),
 				array('route' => 'user/demo', 'roles' => array('guest')),
 				array('route' => 'user/maintainSession', 'roles' => array('user')),
 				array('route' => 'user/expired', 'roles' => array('guest')),
@@ -3147,7 +3157,7 @@ return array(
 
 	'core_account/generic/property/credits' => array(
 		'definition' => 'inline',
-		'type' => 'textarea',
+		'type' => 'key_value',
 		'labels' => array(
 			'en_US' => 'Credits',
 			'fr_FR' => 'Crédits',

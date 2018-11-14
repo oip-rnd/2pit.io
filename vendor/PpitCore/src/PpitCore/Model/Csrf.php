@@ -58,7 +58,7 @@ class Csrf implements InputFilterAwareInterface
 
             $inputFilter->add($factory->createInput(array(
             		'name'     => $this->csrfName,
-            		'required' => false,
+            		'required' => true,
             )));
                         
             $this->inputFilter = $inputFilter;

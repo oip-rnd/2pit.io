@@ -321,6 +321,7 @@ function showList() {
                     toastr.success('<h4 class="text-center"><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h4>');
                     $('#modalRequestActionForm').modal('hide');
                     showList();
+                    showDashboard();
                   }
                   else technicalError();
                 }

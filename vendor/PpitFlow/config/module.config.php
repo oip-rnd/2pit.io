@@ -604,7 +604,7 @@ return array (
 
 	'core_account/pbc/property/credits' => array(
 		'definition' => 'inline',
-		'type' => 'textarea',
+		'type' => 'key_value',
 		'labels' => array(
 			'en_US' => 'Credits',
 			'fr_FR' => 'Crédits',
@@ -680,7 +680,7 @@ return array (
 	
 	'core_account/pbc' => array(
 		'properties' => array(
-			'status', 'place_id', 'contact_1_id', 'n_first', 'n_last', 'n_fn', 'email', 'tel_work', 'next_meeting_date', 'origine', 'contact_history', 'locale',
+			'status', 'place_id', 'contact_1_id', 'n_first', 'n_last', 'n_fn', 'email', 'tel_work', 'next_meeting_date', 'origine', 'contact_history', 'locale', 'credits',
 			'property_1', 'property_2',
 			'profile_tiny_1', 'profile_tiny_2', 'profile_tiny_3', 'profile_tiny_4', 'profile_tiny_5',
 			'json_property_1', 'json_property_2', 'json_property_3', 'json_property_4', 'json_property_5',
@@ -1229,6 +1229,23 @@ table.note-report td {
 		'labels' => array(
 			'default' => 'Other logistic constraints',
 			'fr_FR' => 'Autres contraintes logistiques',
+		),
+	),
+
+	'event/request/property/value' => array(
+		'definition' => 'inline',
+		'type' => 'select',
+		'modalities' => array(
+			'1' => ['default' => '1 unit', 'fr_FR' => '1 unité'],
+			'2' => ['default' => '2 units', 'fr_FR' => '2 unités'],
+			'3' => ['default' => '3 units', 'fr_FR' => '3 unités'],
+			'5' => ['default' => '5 units', 'fr_FR' => '5 unités'],
+			'10' => ['default' => '10 units', 'fr_FR' => '10 unités'],
+			'20' => ['default' => '20 units', 'fr_FR' => '20 unités'],
+		),
+		'labels' => array(
+			'en_US' => 'Valuation',
+			'fr_FR' => 'Valorisation',
 		),
 	),
 	
