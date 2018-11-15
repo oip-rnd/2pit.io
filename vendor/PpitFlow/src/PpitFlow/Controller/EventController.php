@@ -72,6 +72,9 @@ class EventController extends AbstractActionController
 		// Retrieve the context and the parameters
 		$context = Context::getCurrent();
 		$type = $this->params()->fromRoute('type', $context->getConfig('event_default_type'));
+		$mode = $this->params()->fromQuery('mode', 'Public');
+		$action = $this->params()->fromQuery('action'); // For detail mode
+		$id = $this->params()->fromQuery('id'); // For detail mode
 		$description = Event::getDescription($type);
 		$instance_caption = $context->getInstance()->caption;
 		$place_identifier = $this->params()->fromRoute('place_identifier');
@@ -90,7 +93,6 @@ class EventController extends AbstractActionController
 		$gtou_status = null;
 //		if ($type == 'request') $gtou_status = $account->getGtouStatus();
 		
-		$mode = $this->params()->fromQuery('mode', 'Public');
 		$filters = array();
 		foreach ($description['search']['properties'] as $propertyId => $unused) {
 			$predicate = $this->params()->fromQuery($propertyId, null);
@@ -144,6 +146,8 @@ class EventController extends AbstractActionController
 			'place_identifier' => $place_identifier,
 			'account_id' => $account->id,
 			'mode' => $mode,
+			'queryAction' => $action,
+			'queryId' => $id,
 			'panel' => $panel,
 			'identity' => null,
 			'redirectRoute' => $this->params()->fromQuery('route'),
@@ -1132,6 +1136,7 @@ class EventController extends AbstractActionController
 				$accountCredits = $account->credits;
 				
 				// Email
+				$emailCc = [$context->getConfig('mailAdmin') => $context->getConfig('nameAdmin')];
 				$emailTitleFormat = $context->localize($content['emails']['feedback']['title']['format'], $event->locale);
 				$titleArguments = array();
 				foreach ($content['emails']['feedback']['title']['parameters'] as $parameter) {
@@ -1144,7 +1149,7 @@ class EventController extends AbstractActionController
 					$bodyArguments[] = $event->properties[$parameter];
 				}
 				$emailBody = vsprintf($emailBodyFormat, $bodyArguments);
-				Context::sendMail($event->email, $emailBody, $emailTitle);
+				Context::sendMail($event->email, $emailBody, $emailTitle, $emailCc);
 	
 				// Reward and email each contributor
 				foreach (explode(',', $event->matched_accounts) as $account_id) {
@@ -1186,7 +1191,7 @@ class EventController extends AbstractActionController
 					}
 					$emailBody = vsprintf($emailBodyFormat, $bodyArguments);
 						
-					Context::sendMail($otherAccount->email, $emailBody, $emailTitle);
+					Context::sendMail($otherAccount->email, $emailBody, $emailTitle, $emailCc);
 				}
 				
 				if ($accountToUpdate) {
@@ -1314,7 +1319,7 @@ class EventController extends AbstractActionController
 				}
 				$emailBody = vsprintf($emailBodyFormat, $bodyArguments);
 				
-				Context::sendMail($request->email.','.$account->email, $emailBody, $emailTitle);
+				Context::sendMail($request->email.','.$account->email, $emailBody, $emailTitle, $emailCc);
 			}
 
 			// Commit the update
@@ -1379,15 +1384,15 @@ class EventController extends AbstractActionController
 				$bodyArguments = array();
 				foreach ($content['emails']['transfer']['body']['parameters'] as $parameter) {
 					if ($parameter == 'referrer_n_first') $bodyArguments[] = $account->n_first;
-					elseif (substr($parameter, 0, 5) == 'label') $bodyArguments[] = $context->localize($description['properties'][substr($parameter, 6)]['labels']);
+					elseif (substr($parameter, 0, 5) == 'label') $bodyArguments[] = $context->localize($description['properties'][substr($parameter, 6)]['labels'], $request->locale);
 					elseif ($parameter == 'redirect_link') {
-						$bodyArguments[] = $url('landing/template2', [], ['force_canonical' => true, 'query' => ['email' => $email, 'route' => 'flowEvent/propose', 'type' => $type, 'id' => $id]]);
+						$bodyArguments[] = $url('landing/template2', [], ['force_canonical' => true, 'query' => ['email' => $email, 'route' => 'flowEvent/index', 'type' => $type, 'mode' => 'detail', 'action' => 'propose', 'id' => $id]]);
 					}
 					else $bodyArguments[] = $request->properties[$parameter];
 				}
 				$emailBody = vsprintf($emailBodyFormat, $bodyArguments);
 
-				Context::sendMail($email, $emailBody, $emailTitle, [$account->email => $account->n_first]);
+				Context::sendMail($email, $emailBody, $emailTitle, [$account->email => $account->n_first], $emailCc);
 			}
 	
 			// Commit the update

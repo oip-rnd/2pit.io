@@ -325,7 +325,7 @@ body.modal-open {
                       <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="register-password2">* <?php echo $this->translate('Confirm the password', 'ppit-core', $locale) ?></label>
                   </div>
 
-                    <?php $origin = $context->getConfig('core_account/'.$accountType.'/property/origine') ?>  
+<?php $origin = $context->getConfig('core_account/'.$accountType.'/property/origine') ?>  
                     <div class="md-form mb-3">
                       <select id="origine" class="mdb-select validate modal_input" required="required">
                         <option></option>

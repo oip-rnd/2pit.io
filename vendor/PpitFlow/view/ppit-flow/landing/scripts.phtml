@@ -10,7 +10,7 @@ $('.portlet-header').hide();
 $('.resizable').hide();
 </script>
 
-<?php if (array_key_exists($context->getInstance()->caption, $context->getConfig()['ppitUserSettings']['safe']) && array_key_exists('PayPalEnv', $context->getConfig()['ppitUserSettings']['safe'][$context->getInstance()->caption])) : ?>
+<?php if ($form && array_key_exists('paypal', $form)) : ?>
 
 <!-- PayPal -->
 
@@ -71,6 +71,13 @@ onAuthorize: function (data, actions) {
     });
 }
 }, '#paypal-button-container');
+
+$('#paypalDiv').hide();
+$('#submitButton').click(function () {
+  $('#paypalDiv').show(); 
+  $('#submitButton').hide(); 
+});
+
 </script>
 
 <?php endif;?>

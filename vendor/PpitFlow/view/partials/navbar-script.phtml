@@ -65,14 +65,16 @@ $('#modalLoginForm').on('hide.bs.modal', function () {
 function login() {
     var route = '<?php echo $this->url('user/v1') ?>?request=login';
   <?php if ($redirectRoute) : ?>
-    route += '&route=<?php echo $redirectRoute ?><?php echo $redirectParams ?>';
+    var redirectRoute = '<?php echo $this->url($redirectRoute)?>?<?php echo $redirectParams ?>';
+  <?php else : ?>
+    var redirectRoute = '<?php echo $this->url('home') ?>';
   <?php endif; ?>
 	var xhttp = new XMLHttpRequest();
 	xhttp.open('GET', route, true);
 	xhttp.setRequestHeader("Authorization", "Basic " + btoa($('#identity').val() + ':' + $('#credential').val()));
 	xhttp.onload = function () {
 		if (xhttp.readyState == 4 && (xhttp.status == 200 || xhttp.status == 302)) {
-			document.location.href = '<?php echo $this->url('home') ?>';
+			document.location.href = redirectRoute;
 		}
 		else if (xhttp.statusText == 'Activation') {
           toastr.error("<?php echo $this->translate('This account is not activated. You can ask for a new email activation link.', 'ppit-core', $context->getLocale()) ?>");

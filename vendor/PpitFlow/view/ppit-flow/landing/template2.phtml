@@ -380,9 +380,6 @@
                   <input type="text" id="<?php echo $inputId ?>" name="<?php echo $inputId ?>" class="form-control validate" <?php if ($property['placeholder']) echo 'placeholder="'.$context->localize($property['placeholder'], $locale).'"' ?> <?php if ($property['mandatory']) echo 'required="required"' ?> <?php if ($disabled) echo 'disabled="disabled"' ?> value="<?php echo $viewData[$inputId] ?>" />
                   <label for="<?php echo $inputId ?>" class=""><?php if ($property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels'], $locale) ?></label>
 
-  <?php elseif ($property['type'] == 'PayPal') : ?>
-                  <div class="text-center" id="paypal-button-container"></div>
-
   <?php elseif ($property['type'] == 'separation') : ?>
                   <hr>
 
@@ -404,9 +401,17 @@
 
 <?php else : ?>
             <div class="text-center">
-              <button class="<?php echo $content['form']['submit']['class'] ?>" type="submit"><?php echo $context->localize($content['form']['submit']['labels'], $locale) ?></button>
+              <button class="<?php echo $content['form']['submit']['class'] ?>" <?php if (!array_key_exists('paypal', $content['form'])) echo 'type="submit"'?> id="submitButton"><?php echo $context->localize($content['form']['submit']['labels'], $locale) ?></button>
             </div>
 
+<?php endif;?>
+
+<?php if (array_key_exists('paypal', $content['form'])) : ?>
+            <div class="col-md-12" id="paypalDiv">
+              <div class="md-form">
+                <div class="text-center" id="paypal-button-container"></div>
+              </div>
+            </div>
 <?php endif;?>
 
           </form>

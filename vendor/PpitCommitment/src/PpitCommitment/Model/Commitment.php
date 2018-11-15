@@ -842,6 +842,9 @@ class Commitment implements InputFilterAwareInterface
 				elseif ($propertyId == 'max_account_date_3') $where->lessThanOrEqualTo('core_account.date_3', $params[$propertyId]);
 				elseif ($propertyId == 'max_account_date_4') $where->lessThanOrEqualTo('core_account.date_4', $params[$propertyId]);
 				elseif ($propertyId == 'max_account_date_5') $where->lessThanOrEqualTo('core_account.date_5', $params[$propertyId]);
+				elseif ($propertyId == 'account_property_4') $where->equalTo('core_account.property_4', $params[$propertyId]);
+				elseif ($propertyId == 'account_property_6') $where->equalTo('core_account.property_6', $params[$propertyId]);
+				elseif ($propertyId == 'account_property_10') $where->equalTo('core_account.property_10', $params[$propertyId]);
 				elseif ($propertyId == 'account_property_15') $where->equalTo('core_account.property_15', $params[$propertyId]);
 				elseif (substr($propertyId, 0, 4) == 'min_') $where->greaterThanOrEqualTo('commitment.'.substr($propertyId, 4), $params[$propertyId]);
 				elseif (substr($propertyId, 0, 4) == 'max_') $where->lessThanOrEqualTo('commitment.'.substr($propertyId, 4), $params[$propertyId]);

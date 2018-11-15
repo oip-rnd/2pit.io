@@ -12,6 +12,7 @@ $('.aMatchingSearchAction').click(function () {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
       $('#modalShowProfileTitle').html('<?php echo $this->translate('Profile', 'ppit-flow', $locale) ?>');
       $('#modalShowProfileContent').html(xhttp.responseText);
+      $('.dataProtected').hide();
       $('#modalShowProfileForm').modal('show');
     }
   };

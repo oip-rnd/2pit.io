@@ -1001,11 +1001,6 @@ class UserController extends AbstractActionController
 					$this->getResponse()->setReasonPhrase($rc);
 					return $this->getResponse();
 				}
-						
-				$redirectRoute = $this->params()->fromQuery('route');
-				$redirectParams = ['type' => $this->params()->fromQuery('type'), 'id' => $this->params()->fromQuery('id')];
-				if ($redirectRoute) return $this->redirect()->toRoute($redirectRoute, $redirectParams);
-
 				$this->getResponse()->setStatusCode('200');
 				return $this->getResponse();
 			}
@@ -1036,7 +1031,7 @@ class UserController extends AbstractActionController
 				if ($type) {
 					$connection = User::getTable()->getAdapter()->getDriver()->getConnection();
 					$connection->beginTransaction();
-//					try {
+					try {
 						$account = Account::instanciate($type);
 						$rc = $account->loadAndAdd($data, Account::getConfig($type));
 						if ($rc[0] == 206) $account = $rc[1];
@@ -1078,19 +1073,15 @@ class UserController extends AbstractActionController
 						Context::sendMail($user->username, $email_body, $email_title, null);
 				    	
 						$connection->commit();
-
-						$redirectRoute = $this->params()->fromQuery('route');
-						$redirectParams = ['type' => $this->params()->fromQuery('type'), 'id' => $this->params()->fromQuery('id')];
-						if ($redirectRoute) return $this->redirect()->toRoute($redirectRoute, $redirectParams, ['query' => ['account_id' => $account->id]]);
 						
 						$this->getResponse()->setStatusCode('200');
 			    		return $this->getResponse();
-/*					}
+					}
 					catch (\Exception $e) {
 						$connection->rollback();
 			    		$this->getResponse()->setStatusCode('500');
 			    		return $this->getResponse();
-					}*/
+					}
 				}
 			}
 

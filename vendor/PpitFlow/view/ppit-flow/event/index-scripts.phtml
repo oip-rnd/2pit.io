@@ -74,7 +74,7 @@ showDashboard();
 
 // Requests
 
-var mode = '<?php echo $mode ?>';
+var mode = '<?php echo ($mode == 'detail') ? 'Contributor' : $mode ?>';
 
 <?php foreach ($index['navbar'] as $navId => $navItem) : ?>
 
@@ -209,6 +209,51 @@ function encodeDate(value) {
     return value.substr(6, 4) + "-" + value.substr(3, 2) + "-" + value.substr(0, 2);
   <?php endif;?>
 }
+
+// Public actions
+
+<?php foreach ($actions['Public'] as $action_id => $action) : ?>
+
+function public<?php echo $action_id ?>Action(request_id) {
+    var xhttp = new XMLHttpRequest();
+
+    $('#modalRequestActionTitle').html('<?php echo $context->localize($action['labels'], $locale) ?>');
+    xhttp.open('GET', '<?php echo $this->url('flowEvent/detail', ['type' => $type]) ?>/' + request_id, true);
+    xhttp.onload = function () {
+      if (xhttp.readyState == 4 && xhttp.status == 200) {
+        $('#modalRequestActionContent').html(xhttp.responseText);
+        $('#buttonRequestAction').html('<?php echo $context->localize($action['labels'], $locale) ?>');
+        $('#buttonRequestAction').unbind();
+        $('#buttonRequestAction').click(function () {
+          var xhttp = new XMLHttpRequest();
+          var formData = new FormData();
+<?php if ($action_id == 'transfer') : ?>
+          formData.append('transfer-email', $('#transfer-email').val());
+<?php endif; ?>
+          xhttp.open('POST', '<?php echo $this->url('flowEvent/'.$action_id, ['type' => $type]) ?>/' + request_id, true);
+          xhttp.onload = function () {
+            if (xhttp.readyState == 4) {
+              if (xhttp.status == 200) {
+                toastr.success('<h4 class="text-center"><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h4>');
+                $('#modalRequestActionForm').modal('hide');
+                showList();
+              }
+              else technicalError();
+            }
+          };
+          xhttp.send(formData);  
+        });
+
+        $('#modalRequestActionForm').modal('show');
+<?php if ($action_id != 'transfer') : ?>
+        $('#transfer-email').hide();
+<?php endif; ?>
+      }
+    };
+    xhttp.send();
+}
+
+<?php endforeach;?>
 
 function showList() {
   
@@ -498,45 +543,14 @@ function showList() {
     <?php endif;?>
 <?php endforeach;?>
 
+// Public actions
+
 <?php foreach ($actions['Public'] as $action_id => $action) : ?>
 
       $('.aPublicAction-<?php echo $action_id ?>').click(function () {
-          var action = $(this).attr('id').split('-')[1];
           var request_id = $(this).attr('id').split('-')[2];
-          $('#modalRequestActionTitle').html('<?php echo $context->localize($action['labels'], $locale) ?>');
-          xhttp.open('GET', '<?php echo $this->url('flowEvent/detail', ['type' => $type]) ?>/' + request_id, true);
-          xhttp.onload = function () {
-            if (xhttp.readyState == 4 && xhttp.status == 200) {
-              $('#modalRequestActionContent').html(xhttp.responseText);
-              $('#buttonRequestAction').html('<?php echo $context->localize($action['labels'], $locale) ?>');
-              $('#buttonRequestAction').unbind();
-              $('#buttonRequestAction').click(function () {
-                var xhttp = new XMLHttpRequest();
-                var formData = new FormData();
-  <?php if ($action_id == 'transfer') : ?>
-                formData.append('transfer-email', $('#transfer-email').val());
-  <?php endif; ?>
-                xhttp.open('POST', '<?php echo $this->url('flowEvent/'.$action_id, ['type' => $type]) ?>/' + request_id, true);
-                xhttp.onload = function () {
-                  if (xhttp.readyState == 4) {
-                    if (xhttp.status == 200) {
-                      toastr.success('<h4 class="text-center"><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h4>');
-                      $('#modalRequestActionForm').modal('hide');
-                      showList();
-                    }
-                    else technicalError();
-                  }
-                };
-                xhttp.send(formData);  
-              });
 
-              $('#modalRequestActionForm').modal('show');
-  <?php if ($action_id != 'transfer') : ?>
-              $('#transfer-email').hide();
-  <?php endif; ?>
-            }
-          };
-          xhttp.send();
+          public<?php echo $action_id ?>Action(request_id);
       });
 
 <?php endforeach;?>
@@ -547,6 +561,10 @@ function showList() {
 }
 
 showList();
+
+<?php if ($mode == 'detail' && $queryAction && $queryId) : ?>
+  public<?php echo $queryAction ?>Action(<?php echo $queryId ?>);
+<?php endif; ?>
 
 // Date and time picker
 

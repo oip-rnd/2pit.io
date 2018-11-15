@@ -16,6 +16,7 @@ Pull the repository:
     cd /path/to/2pit.io/
 	git init    
     git remote add origin git://github.com/2pit-io/2pit.io
+    git pull origin master
     create a database on Mysql (let's say 2pit_io)
 
 Load in mysql the full and all the incremental sql file in database/
