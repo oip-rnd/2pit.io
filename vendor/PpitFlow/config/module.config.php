@@ -921,16 +921,40 @@ table.note-report td {
 		),
 	),
 
+	'event/event/property/identifier' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'default' => 'Event Code',
+			'fr_FR' => 'Code de l’évènement',
+		),
+	),
+	
+	'event/event/property/description' => array(
+		'definition' => 'inline',
+		'type' => 'textarea',
+		'labels' => array(
+			'default' => 'Description',
+		),
+	),
+	
 	'event/event/property/location' => array(
 		'definition' => 'inline',
-		'type' => 'select',
-		'modalities' => array(
-			'london' => ['default' => 'London', 'fr_FR' => 'Londres'],
-			'paris' => ['default' => 'Paris', 'fr_FR' => 'Paris'],
-		),
+		'type' => 'input',
 		'labels' => array(
 			'en_US' => 'Event location',
 			'fr_FR' => 'Lieu de l’évènement',
+		),
+	),
+
+	'event/event/property/value' => array(
+		'definition' => 'inline',
+		'type' => 'number',
+		'minValue' => 0,
+		'maxValue' => 1000000000,
+		'labels' => array(
+			'default' => 'Amount of credits offered',
+			'fr_FR' => 'Montant de crédits offerts',
 		),
 	),
 	
@@ -943,23 +967,22 @@ table.note-report td {
 			'fr_FR' => 'Comptes connectés',
 		),
 	),
-	
+
 	'event/event/property/property_1' => array(
 		'definition' => 'inline',
 		'type' => 'input',
 		'labels' => array(
-			'en_US' => 'Skills',
-			'fr_FR' => 'Compétences',
+			'default' => 'Room',
+			'default' => 'Salle',
 		),
 	),
 	
 	'event/event/property/property_2' => array(
 		'definition' => 'inline',
-		'type' => 'multiselect',
-		'modalities' => ['definition' => 'matching/skills'],
+		'type' => 'input',
 		'labels' => array(
-			'en_US' => 'Keyword skills',
-			'fr_FR' => 'Compétences mot-clés',
+			'default' => 'Number of places',
+			'default' => 'Nombre de places',
 		),
 	),
 	
@@ -967,17 +990,26 @@ table.note-report td {
 		'definition' => 'inline',
 		'type' => 'input',
 		'labels' => array(
-			'default' => 'Targeted participants',
-			'fr_FR' => 'Participants ciblés',
+			'default' => 'Event full',
+			'default' => 'Evénement complet',
 		),
 	),
-
-	'event/event/property/property_20' => array(
+	
+	'event/event/property/property_4' => array(
 		'definition' => 'inline',
 		'type' => 'input',
 		'labels' => array(
-			'default' => 'Logistic constraints',
-			'fr_FR' => 'Contraintes logistiques',
+			'default' => 'Code expired',
+			'default' => 'Code expiré',
+		),
+	),
+	
+	'event/event/property/property_5' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'default' => 'Image name',
+			'default' => 'Nom de l’image',
 		),
 	),
 	
@@ -995,10 +1027,12 @@ table.note-report td {
 		'dimensions' => array(),
 		'indicators' => array(),
 		'properties' => array(
-			'status', 'type', 'place_id', 'place_caption', 'account_id', 'n_fn', 'n_first', 'n_last', 'email', 'tel_work', 'tel_cell', 'category', 'subcategory', 'identifier', 'caption', 'description',
+			'status', 'type', 'place_id', 'place_caption', 'account_id', 'n_fn', 'n_first', 'n_last', 'email', 'category', 'subcategory', 'identifier', 'caption', 'description',
 			'begin_date', 'end_date', 'day_of_week', 'day_of_month', 'exception_1', 'exception_2', 'exception_3', 'exception_4', 'begin_time', 'end_time', 'time_zone', 'location', 'latitude', 'longitude',
 			'matched_accounts', 'matching_log', 'rewards', 'feedbacks', 'value', 'comments',
-			'property_1', 'property_2', 'property_3', 'property_20',
+			'property_1', 'property_2', 'property_3', 'property_4', 'property_5', 'property_6', 'property_7', 'property_8', 'property_9', 'property_10',
+			'property_11', 'property_12', 'property_13', 'property_14', 'property_15', 'property_16', 'property_17', 'property_18', 'property_19', 'property_20',
+			'property_21', 'property_22', 'property_23', 'property_24', 'property_25', 'property_26', 'property_27', 'property_28', 'property_29', 'property_30',
 			'account_status', 'account_property_1', 'account_property_2', 'account_property_3', 'account_property_4', 'account_property_5', 'account_property_6', 'account_property_7', 'account_property_8', 'account_property_9', 'account_property_10', 'account_property_11', 'account_property_12', 'account_property_13', 'account_property_14', 'account_property_15', 'account_property_16',
 			'update_time'
 		),
@@ -1025,13 +1059,22 @@ table.note-report td {
 		'status' => [],
 		'identifier' => [],
 		'account_id' => [],
-		'matched_accounts' => [],
-		'update_time' => [],
 		'caption' => [],
 		'category' => [],
 		'begin_date' => [],
 		'end_date' => [],
+		'begin_time' => [],
+		'end_time' => [],
 		'location' => [],
+		'property_1' => [],
+		'property_2' => [],
+		'value' => [],
+		'identifier' => [],
+		'matched_accounts' => [],
+		'property_3' => [],
+		'property_4' => [],
+		'property_5' => [],
+		'update_time' => [],
 	),
 	
 	'event/update/event' => array(
@@ -1043,36 +1086,40 @@ table.note-report td {
 		'begin_date' => ['mandatory' => true],
 		'end_date' => [],
 		'begin_time' => ['mandatory' => true],
-		'end_time' => [],
+		'end_time' => ['mandatory' => true],
 		'location' => ['mandatory' => true],
-		'description' => [],
-		'property_1' => [],
+		'property_1' => ['mandatory' => true],
 		'property_2' => [],
+		'value' => [],
+		'description' => [],
+		'identifier' => [],
 		'property_3' => [],
-		'property_20' => [],
-		'matched_accounts' => [],
+		'property_4' => [],
+		'property_5' => [],
+		'matched_accounts' => ['readonly' => true],
 	),
 	
 	'event/export/event' => array(
 		'status' => 'A',
 		'identifier' => 'B',
 		'account_id' => 'C',
-		'matched_accounts' => 'D',
 		'caption' => 'E',
 		'category' => 'F',
 		'begin_date' => 'G',
 		'end_date' => 'H',
-		'begin_time' => 'I',
-		'end_time' => 'J',
-		'location' => 'K',
-		'description' => 'L',
-		'property_1' => 'M',
-		'property_2' => 'N',
-		'property_3' => 'O',
-		'property_20' => 'P',
-		'matching_log' => 'Q',
-		'rewards' => 'R',
-		'feedbacks' => 'S',
+		'begin_time' => 'D',
+		'end_time' => 'E',
+		'location' => 'F',
+		'property_1' => 'G',
+		'property_2' => 'H',
+		'value' => 'I',
+		'description' => 'J',
+		'identifier' => 'K',
+		'matched_accounts' => 'L',
+		'property_3' => 'M',
+		'property_4' => 'N',
+		'property_5' => 'O',
+		'rewards' => 'S',
 	),
 
 	// Request
