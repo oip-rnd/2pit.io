@@ -17,19 +17,28 @@ Pull the repository:
 	git init    
     git remote add origin git://github.com/2pit-io/2pit.io
     git pull origin master
-    create a database on Mysql (let's say 2pit_io)
-
+    
+Create a database on Mysql (let's say 2pit_io)
 Load in mysql the full and all the incremental sql file in database/
 
 	cd database/
 	mysql -u'you sql user' -p'you sql password' 2pit_io < 2pit_io-full.sql
 	mysql -u'you sql user' -p'you sql password' 2pit_io < 2pit_io-1.0.05.sql
 	...
+	
+In your database you have a table named 'core_instance' with only one row. Change the fqdn value (which is localhost) to reflect the one of your site. The fqdn is for example of the form www.2pit.io.
+
+Install MDB Pro that you should get separately in public/MDB-Pro.
 
 The config/application.config.php file is ignored by git since it refers to your local modules and files. Create it by copying from the template
 
-	cd config/
+	cd ../config/
 	cp application.config.template.php application.config.php
+
+Ensure that all files are accessible to your web server (Apache on Linux in this example):
+    
+    chown -R www-data:www-data /path/to/2pit.io/
+    chmod -R 700 /path/to/2pit.io/
 
 The config/autoload/local.php file deals with security and so is ignored by git. Create it by copying from the template and protect it (let's say that www-data is the apache group and user names):
 
@@ -46,12 +55,6 @@ Adapt these three lines in config/autoload/global.php according to your own mysq
     ),
     'username' => 'yourmysqlusername',
     'password' => 'yourmysqlpassword',
-
-Ensure that all files are accessible to your web server (Apache on Linux in this example):
-    
-    cd /path/to/2pit.io/
-    chown -R www-data:www-data *
-    chmod -R 700 *
 
 Web Server Setup
 ----------------

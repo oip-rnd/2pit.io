@@ -447,6 +447,10 @@ function getEventListV2(params, major, dir) {
 
 function getAvailability() {
 	var id, accounts = '', first = true;
+    var begin = new Date($('#calendar').fullCalendar('getView').intervalStart);
+    begin = begin.toISOString().substring(0, 10);
+    var end = new Date($('#calendar').fullCalendar('getView').intervalEnd);
+    end = end.toISOString().substring(0, 10);
 //	$('#calendar').fullCalendar('removeEvents');
 	$('.account-checkbox').each(function () {
 		if (document.getElementById($(this).attr('id')).checked) {
@@ -456,7 +460,9 @@ function getAvailability() {
 			accounts += $('#account_' + id).val();
 		}
 	});
-	route = '<?php echo $this->url('account/getAvailability') ?>' + '?accounts=' + accounts + '&begin=' + viewBeginDate;
+	var route = '<?php echo $this->url('account/getAvailability') ?>' + '?accounts=' + accounts;
+    route += '&begin=' + begin;
+    route += '&end=' + end;
 	xhttp = new XMLHttpRequest();
 	xhttp.open("GET", route, true);
 	xhttp.onreadystatechange = function() {
