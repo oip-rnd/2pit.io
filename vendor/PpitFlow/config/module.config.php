@@ -1686,7 +1686,7 @@ table.note-report td {
 				'identifier' => array(
 					'type' => 'signOut',
 					'labels' => ['default' => 'Earn credits: ', 'fr_FR' => 'Gagnez des points'],
-					'placeholder' => ['default' => 'Enter Event code'],
+					'placeholder' => ['default' => 'Event code', 'fr_FR' => 'Code de l’événement'],
 					'message' => array(
 						'ok' => ['default' => 'You have been credited %s credit. Please refresh your page.'],
 						'unknown' => ['default' => 'No event matches this code, please try again'],
@@ -1698,8 +1698,7 @@ table.note-report td {
 				'publicMode' => ['type' => 'mode', 'value' => 'Public', 'labels' => ['default' => 'All events', 'fr_FR' => 'Tous les événements']],
 				'ownerMode' => ['type' => 'mode', 'value' => 'Owner', 'labels' => ['default' => 'My events', 'fr_FR' => 'Mes événements']],
 				'contributorMode' => ['type' => 'mode', 'value' => 'Contributor', 'labels' => ['default' => 'My attendance', 'fr_FR' => 'Ma participation']],
-				'begin_date' => ['type' => 'select', 'property' => 'begin_date', 'icon' => ['class' => 'fa fa-calendar'], 'modalities' => ['2018-11-05' => ['default' => '05/11/2018'], '2018-11-06' => ['default' => '06/11/2018'], '2018-11-07' => ['default' => '07/11/2018'], '2018-11-08' => ['default' => '08/11/2018'], '2018-11-09' => ['default' => '09/11/2018']], 'labels' => ['default' => 'Date', 'fr_FR' => 'Date']],
-				'location' => ['type' => 'select', 'property' => 'location', 'icon' => ['class' => 'fa fa-map-marker-alt'], 'modalities' => ['Tower Hill' => ['default' => 'Tower Hill'], 'Exchange House' => ['default' => 'Exchange House'], 'Bishops Square' => ['default' => 'Bishops Square'], 'St James Square' => ['default' => 'St James’s Square']], 'labels' => ['default' => 'Location', 'fr_FR' => 'Lieu']],
+				'begin_date' => ['type' => 'date', 'property' => 'begin_date', 'icon' => ['class' => 'fa fa-calendar'], 'labels' => ['default' => 'Date', 'fr_FR' => 'Date']],
 				'new' => ['type' => 'new', 'labels' => ['default' => 'New event', 'fr_FR' => 'Nouvel événement']],
 			),
 		),
