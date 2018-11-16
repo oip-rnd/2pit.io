@@ -1430,7 +1430,9 @@ function connectRegisterSalesForm()
     if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
     if (xhttp.readyState == 4 && xhttp.status == 200) {
       document.getElementById('register-sales-panel').innerHTML = xhttp.responseText;
-      location.href = '<?php echo $this->url('journal/export').'?min_update_time='.date('Y-m-d') ?>';
+      var exportRoute = '<?php echo $this->url('journal/export').'?min_update_time='.date('Y-m-d') ?>';
+      if ($('#search_place_id').val()) exportRoute += '&place_id='+ $('#search_place_id').val();
+      location.href = exportRoute;
     }
   }
   xhttp.send();
