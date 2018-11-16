@@ -949,12 +949,18 @@ table.note-report td {
 
 	'event/event/property/value' => array(
 		'definition' => 'inline',
-		'type' => 'number',
-		'minValue' => 0,
-		'maxValue' => 1000000000,
+		'type' => 'select',
+		'modalities' => array(
+			'1' => ['default' => '1 unit', 'fr_FR' => '1 unité'],
+			'2' => ['default' => '2 units', 'fr_FR' => '2 unités'],
+			'3' => ['default' => '3 units', 'fr_FR' => '3 unités'],
+			'5' => ['default' => '5 units', 'fr_FR' => '5 unités'],
+			'10' => ['default' => '10 units', 'fr_FR' => '10 unités'],
+			'20' => ['default' => '20 units', 'fr_FR' => '20 unités'],
+		),
 		'labels' => array(
-			'default' => 'Amount of credits offered',
-			'fr_FR' => 'Montant de crédits offerts',
+			'en_US' => 'Valuation',
+			'fr_FR' => 'Valorisation',
 		),
 	),
 	
@@ -1665,31 +1671,36 @@ table.note-report td {
 				'height' => 40,
 				'alt' => 'Pro bono corpo logo',
 			),
-			'intro_height' => '65%',
+			'intro_height' => '75%',
 			'background_image' => array(
-				'mask' => 'rgba-stylish-light',
-				'src' => ['default' => '/img/probonocorpo/bulles.png'],
+				'mask' => 'rgba-alpha',
+				'src' => ['default' => '/img/probonocorpo/illus-persos-light.jpg'],
 				'class' => 'img-fluid',
-				'alt' => 'Mountains',
+				'alt' => 'Group',
 			),
 		),
 	
 		'index' => array(
 			'signOut' => array(
-				'earned' => ['type' => 'credits', 'item' => 'earned', 'labels' => ['default' => 'Earned: %s', 'fr_FR' => 'Gagné : %s']],
-				'identifier' => ['type' => 'signOut', 'labels' => ['default' => 'Enter Event code', 'fr_FR' => 'Code de l’événement']],
+//				'earned' => ['type' => 'credits', 'item' => 'earned', 'labels' => ['default' => 'Earned: %s', 'fr_FR' => 'Acquis : %s']],
+				'identifier' => array(
+					'type' => 'signOut',
+					'labels' => ['default' => 'Earn credits: ', 'fr_FR' => 'Gagnez des points'],
+					'placeholder' => ['default' => 'Enter Event code'],
+					'message' => array(
+						'ok' => ['default' => 'You have been credited %s credit. Please refresh your page.'],
+						'unknown' => ['default' => 'No event matches this code, please try again'],
+						'duplicate' => ['default' => 'You have already been credited for this event'],
+					),
+				),
 			),
 			'navbar' => array(
 				'publicMode' => ['type' => 'mode', 'value' => 'Public', 'labels' => ['default' => 'All events', 'fr_FR' => 'Tous les événements']],
 				'ownerMode' => ['type' => 'mode', 'value' => 'Owner', 'labels' => ['default' => 'My events', 'fr_FR' => 'Mes événements']],
-				'contributorMode' => ['type' => 'mode', 'value' => 'Contributor', 'labels' => ['default' => 'My attendance', 'fr_FR' => 'Ma présence']],
-//				'skills' => ['type' => 'search', 'property' => 'property_2', 'labels' => ['default' => 'Keywords', 'fr_FR' => 'Mots clés']],
+				'contributorMode' => ['type' => 'mode', 'value' => 'Contributor', 'labels' => ['default' => 'My attendance', 'fr_FR' => 'Ma participation']],
 				'begin_date' => ['type' => 'select', 'property' => 'begin_date', 'icon' => ['class' => 'fa fa-calendar'], 'modalities' => ['2018-11-05' => ['default' => '05/11/2018'], '2018-11-06' => ['default' => '06/11/2018'], '2018-11-07' => ['default' => '07/11/2018'], '2018-11-08' => ['default' => '08/11/2018'], '2018-11-09' => ['default' => '09/11/2018']], 'labels' => ['default' => 'Date', 'fr_FR' => 'Date']],
 				'location' => ['type' => 'select', 'property' => 'location', 'icon' => ['class' => 'fa fa-map-marker-alt'], 'modalities' => ['Tower Hill' => ['default' => 'Tower Hill'], 'Exchange House' => ['default' => 'Exchange House'], 'Bishops Square' => ['default' => 'Bishops Square'], 'St James Square' => ['default' => 'St James’s Square']], 'labels' => ['default' => 'Location', 'fr_FR' => 'Lieu']],
 				'new' => ['type' => 'new', 'labels' => ['default' => 'New event', 'fr_FR' => 'Nouvel événement']],
-			),
-			'links' => array(
-				'request' => ['route' => ['flowEvent/index', ['type' => 'request']], 'icon' => ['class' => 'fa fa-hands-helping mr-2'], 'labels' => ['default' => 'Cooperate in Pro bono', 'fr_FR' => 'Coopérez en Pro bono']],
 			),
 		),
 	
@@ -1711,14 +1722,12 @@ table.note-report td {
 				),
 			),
 			'properties' => array(
-				'category' => ['definition' => 'event/event/property/property_3', 'labels' => ['default' => 'Type', 'fr_FR' => 'Type']],
-				'property_2' => ['feature' => 'keyword_skill', 'class' => 'col-md-12', 'definition' => 'inline', 'type' => 'chips', 'repository' => 'matching/skills', 'trigger' => 'property_1'],
 				'begin_date' => ['definition' => 'event/event/property/begin_date', 'format' => ['default' => 'l dS F', 'fr_FR' => 'd/m/Y']],
-				'begin_time' => ['definition' => 'event/event/property/begin_time'],
+				'begin_time' => ['definition' => 'event/event/property/begin_time', 'format' => ['default' => 'H:i']],
 				'location' => ['definition' => 'event/event/property/location'],
 			),
 			'mask' => array(
-				'format' => ['default' => '%s&nbsp;&nbsp;%s&nbsp;&nbsp;%s&nbsp;&nbsp;%s'],
+				'format' => ['default' => '%s&nbsp;&nbsp;%s&nbsp;&nbsp;%s'],
 			),
 		),
 	
@@ -1751,7 +1760,6 @@ table.note-report td {
 			),
 			'Public' => array(
 				'propose' => ['icon' => 'hand-point-up', 'labels' => ['default' => 'Propose my participation', 'fr_FR' => 'Proposer ma participation']],
-				'transfer' => ['icon' => 'hand-point-up', 'labels' => ['default' => 'Transfer to someone else', 'fr_FR' => 'Transférer à quelqu’un d’autre']],
 			),
 		),
 	
@@ -1769,20 +1777,14 @@ table.note-report td {
 				'category_example' => ['class' => 'col-md-6 grey-text', 'definition' => 'inline', 'type' => 'html', 'updatable' => false],
 				'description' => ['class' => 'col-md-6', 'definition' => 'event/event/property/description', 'mandatory' => true, 'rows' => 6],
 				'description_example' => ['class' => 'col-md-6 grey-text', 'definition' => 'inline', 'type' => 'html', 'updatable' => false],
-				'property_1' => ['feature' => 'skill', 'class' => 'col-md-6', 'definition' => 'inline', 'type' => 'keywords', 'labels' => ['default' => 'Expected skills', 'fr_FR' => 'Compétences attendues'], 'placeholder' => ['default' => 'Ex. finance, design thinking, video editing...', 'fr_FR' => 'Ex. finance, design thinking, montage vidéo...']],
-				'property_1_example' => ['class' => 'col-md-6 grey-text', 'definition' => 'inline', 'type' => 'html', 'updatable' => false],
-				'property_2' => ['feature' => 'keyword_skill', 'class' => 'col-md-6', 'definition' => 'inline', 'type' => 'chips', 'repository' => 'matching/skills', 'trigger' => 'property_1'],
-				['definition' => 'inline', 'type' => 'empty'],
 				'begin_date' => ['class' => 'col-md-6', 'definition' => 'event/event/property/begin_date', 'mandatory' => true],
+				['definition' => 'inline', 'type' => 'empty'],
 				'begin_time' => ['class' => 'col-md-6', 'definition' => 'event/event/property/begin_time', 'mandatory' => true],
-				'end_date' => ['class' => 'col-md-6', 'definition' => 'event/event/property/end_date'],
 				'end_time' => ['class' => 'col-md-6', 'definition' => 'event/event/property/end_time'],
 				'location' => ['class' => 'col-md-6', 'definition' => 'event/event/property/location', 'mandatory' => true],
-				['definition' => 'inline', 'type' => 'empty'],
-				'property_3' => ['class' => 'col-md-6', 'definition' => 'event/event/property/property_3', 'rows' => 4],
-				'property_3_example' => ['class' => 'col-md-6 grey-text', 'definition' => 'inline', 'type' => 'html', 'updatable' => false],
-				'property_20' => ['class' => 'col-md-6', 'definition' => 'event/event/property/property_3', 'rows' => 4],
-				'property_20_example' => ['class' => 'col-md-6 grey-text', 'definition' => 'inline', 'type' => 'html', 'updatable' => false],
+				'location_example' => ['class' => 'col-md-6 grey-text', 'definition' => 'inline', 'type' => 'html', 'updatable' => false],
+				'value' => ['class' => 'col-md-6', 'definition' => 'event/event/property/value'],
+				'value_example' => ['class' => 'col-md-6 grey-text', 'definition' => 'inline', 'type' => 'html', 'updatable' => false],
 			),
 			'submit' => array(
 				'class' => 'btn btn-light-blue btn-rounded',
@@ -1827,6 +1829,16 @@ table.note-report td {
 					'completed' => ['default' => 'This event is over', 'fr_FR' => 'Cet événement est terminé'],
 				),
 			),
+			'display' => array(
+				'type' => 'image',
+				'class' => array(
+					'information' => 'fa fa-question-circle fa-2x green-text',
+					'pro_bono_day' => 'fa fa-hands-helping fa-2x blue-text',
+					'innovation' => 'fa fa-tablet-alt fa-2x orange-text',
+					'team_building' => 'fa fa-users fa-2x grey-text',
+				),
+//				'image_name' => 'property_5',
+			),
 			'introduction' => array(
 			),
 			'properties' => array(
@@ -1835,13 +1847,11 @@ table.note-report td {
 				'description' => ['class' => 'col-md-12', 'definition' => 'event/event/property/description', 'mandatory' => true, 'rows' => 8],
 				'property_1' => ['feature' => 'skill', 'class' => 'col-md-12', 'definition' => 'inline', 'type' => 'keywords', 'labels' => ['default' => 'Expected skills', 'fr_FR' => 'Compétences attendues'], 'placeholder' => ['default' => 'Ex. finance, design thinking, video editing...', 'fr_FR' => 'Ex. finance, design thinking, montage vidéo...']],
 				'property_2' => ['feature' => 'keyword_skill', 'class' => 'col-md-12', 'definition' => 'inline', 'type' => 'chips', 'repository' => 'matching/skills', 'trigger' => 'property_1'],
-				'begin_date' => ['class' => 'col-md-6', 'definition' => 'event/event/property/begin_date', 'mandatory' => true],
-				'begin_time' => ['class' => 'col-md-6', 'definition' => 'event/event/property/begin_time', 'mandatory' => true],
-				'end_date' => ['class' => 'col-md-6', 'definition' => 'event/event/property/end_date'],
-				'end_time' => ['class' => 'col-md-6', 'definition' => 'event/event/property/end_time'],
+				'begin_date' => ['class' => 'col-md-6', 'definition' => 'event/event/property/begin_date', 'format' => ['default' => 'l dS F', 'fr_FR' => 'd/m/Y'], 'mandatory' => true],
+				'begin_time' => ['class' => 'col-md-6', 'definition' => 'event/event/property/begin_time', 'format' => ['default' => 'H:i'], 'mandatory' => true],
+				'end_time' => ['class' => 'col-md-6', 'definition' => 'event/event/property/end_time', 'format' => ['default' => 'H:i']],
 				'location' => ['class' => 'col-md-12', 'definition' => 'event/event/property/location'],
-				'property_3' => ['class' => 'col-md-12', 'definition' => 'event/event/property/property_3'],
-				'property_20' => ['class' => 'col-md-12', 'definition' => 'event/event/property/property_20'],
+				'value' => ['class' => 'col-md-12', 'definition' => 'event/event/property/value'],
 			),
 			'legal' => array(
 				array(
@@ -1868,16 +1878,6 @@ table.note-report td {
 			'properties' => array(
 				'n_fn' => [],
 				'email' => [],
-			),
-		),
-
-		'rewards' => array(
-			'brand' => 'Innocoin',
-			'balance' => array(
-				'goal' => ['labels' => ['default' => 'Goal', 'fr_FR' => 'Objectif'], 'precision' => 2],
-				'earned' => ['labels' => ['default' => 'My score', 'fr_FR' => 'Mon score'], 'precision' => 2],
-				'spent' => ['labels' => ['default' => 'Spent', 'fr_FR' => 'Dépensé'], 'precision' => 2],
-				'rank' => ['labels' => ['default' => 'My rank', 'fr_FR' => 'Mon rang'], 'precision' => 0]
 			),
 		),
 		
@@ -1917,8 +1917,8 @@ table.note-report td {
 					'type' => 'p',
 					'class' => 'section-description',
 					'text' => array(
-						'default' => 'The informations provided here serve only the event organization. They will never been communicated to third-parts without your agreement. For more information, contact us on <a href="mailto:contact@2pit.io?subject=Request for informations about data privacy in Pro Bono Corpo">contact@2pit.io</a>.',
-						'fr_FR' => 'Les informations saisies sont uniquement destinées à l’organisation de l’événement. Elles ne peuvent en aucun cas être communiquées à des tiers sans votre consentement. Pour en savoir plus, consultez nous sur <a href="mailto:contact@2pit.io?subject=Demande d’informations sur la protection des données dans Pro Bono Corpo">contact@2pit.io</a>.',
+						'default' => 'The informations provided here serve only the event organization. They will never been communicated to third-parts without your agreement.',
+						'fr_FR' => 'Les informations saisies sont uniquement destinées à l’organisation de l’événement. Elles ne peuvent en aucun cas être communiquées à des tiers sans votre consentement.',
 					),
 				),
 			),
@@ -1937,14 +1937,8 @@ table.note-report td {
 				'description_example' => array(
 					'default' => '<p class="font-weight-bold">Exemple</p><p>Venez le temps d’une journée faire connaître vos savoirs-faire, les exercer en rendant service à un collègue.<br>Réciproquement ce sera pour vous l’occasion d’obtenir de l’aide pour un besoin immédiat et sans réponse évidente pour vous...</p>',
 				),
-				'property_1_example' => array(
-					'default' => '<p class="font-weight-bold">Exemple informatif</p><p>Venez avec vos savoir-faires quels qu’ils soient...</p>',
-				),
-				'property_3_example' => array(
-					'default' => '<p class="font-weight-bold">Exemple</p><p>Tous collaborateurs et/ou managers</p>',
-				),
-				'property_20_example' => array(
-					'default' => '<p class="font-weight-bold">Exemple</p>L’événement a lieu à la salle de créativité',
+				'location_example' => array(
+					'default' => '<p class="font-weight-bold">Exemple informatif</p><p>France - Val-de-Fontenay - Les Dunes 3 B05009</p>',
 				),
 			),
 			array(
@@ -1953,15 +1947,6 @@ table.note-report td {
 				),
 				'description_example' => array(
 					'default' => '<p class="font-weight-bold">Exemple</p><p>Envie de vous entraîner à pitcher ? Inscrivez-vous ! c’est ludique et bienveillant car tous les participants viennent pour apprendre. Il y aura un coach qui saura vous donner de vrais conseils pratiques pour gagner rapidement en aisance dans cet exercice.</p>',
-				),
-				'property_1_example' => array(
-					'default' => '<p class="font-weight-bold">Exemple informatif</p><p>Pas de compétence particulière requise...</p>',
-				),
-				'property_3_example' => array(
-					'default' => '<p class="font-weight-bold">Exemple</p><p>Tous collaborateurs intéressés par l’innovation au sens large</p>',
-				),
-				'property_20_example' => array(
-					'default' => '<p class="font-weight-bold">Exemple</p>L’événement a lieu au plateau des Dunes',
 				),
 			),
 		),
