@@ -1880,6 +1880,16 @@ table.note-report td {
 				'email' => [],
 			),
 		),
+
+		'rewards' => array(
+			'brand' => 'Credits',
+/*				'balance' => array(
+			 'goal' => ['labels' => ['default' => 'Goal'], 'precision' => 2],
+				'earned' => ['labels' => ['default' => 'My score'], 'precision' => 2],
+				'spent' => ['labels' => ['default' => 'Spent'], 'precision' => 2],
+				'rank' => ['labels' => ['default' => 'My rank'], 'precision' => 0]
+			),*/
+		),
 		
 		'feedback' => array(
 			'title' => array(
