@@ -83,6 +83,7 @@ class EventPlanningViewHelper
 	    						'end_time' => $event->end_time,
 	    						'caption' => $event->caption,
 	    						'location' => $event->location,
+	    						'account_id' => $event->account_id,
 	    					);
 	    				}
     				}

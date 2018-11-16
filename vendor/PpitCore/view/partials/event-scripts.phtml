@@ -532,22 +532,11 @@ function getPlanning() {
 
 			jQuery.each(obj, function (name, value) {
 				var color = 'lightBlue', textColor = 'black';			
-/*				var title = '';
-				title += value.properties['caption'];
-				if (value.properties['location']) title += ' (' + value.properties['location'] + ')';
-				var event={
-					id:value.id,
-					title: title,
-					color: color,
-					textColor: textColor,
-					start:  $.fullCalendar.moment(value.properties['begin_date'] + ' ' + value.properties['begin_time']), 
-					end:  $.fullCalendar.moment(value.properties['begin_date'] + ' ' + value.properties['end_time'])
-				};*/
 	            var event={
 	              id: value.date,
 	              title: value.caption,
-	              color: color,
-                  textColor: textColor,
+	              color: $('#color_' + value.account_id).val(),
+                  textColor: $('#textColor_' + value.account_id).val(),
 			      start:  $.fullCalendar.moment(value.begin_date + ' ' + value.begin_time), 
 				  end:  $.fullCalendar.moment(value.begin_date + ' ' + value.end_time)
 	            };

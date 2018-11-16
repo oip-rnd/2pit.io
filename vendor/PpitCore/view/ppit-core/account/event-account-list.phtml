@@ -33,12 +33,19 @@
 			</tr>
 		
 			<input type="hidden" id="account-number" value="<?php echo count($accounts) ?>" />
+
+<?php 
+$colors = ['Silver', 'Gray', 'Black', 'Red', 'Maroon', 'Yellow', 'Olive', 'Lime', 'Green', 'Aqua', 'Teal', 'Blue', 'Navy', 'Fuchsia', 'Purple'];
+$textColors = ['Black', 'White', 'White', 'White', 'White', 'Black', 'White', 'Black', 'White', 'Black', 'White', 'White', 'White', 'White', 'White'];
+?>
 	
 <?php $i = 0; foreach ($accounts as $account) : ?>
 	
 			<input type="hidden"  id="account_<?php echo $i ?>" value="<?php echo $account->id ?>" />
+            <input type="hidden"  id="color_<?php echo $account->id ?>" value="<?php echo $colors[$i] ?>" />
+            <input type="hidden"  id="textColor_<?php echo $account->id ?>" value="<?php echo $textColors[$i] ?>" />
 		
-			<tr class="account">
+			<tr class="account" style="color: <?php echo $textColors[$i] ?>; background-color: <?php echo $colors[$i] ?>">
 				<td>
 					<input type="checkbox" class="account-checkbox" id="account-checkbox_<?php echo $i ?>"></input>
 				</td>
