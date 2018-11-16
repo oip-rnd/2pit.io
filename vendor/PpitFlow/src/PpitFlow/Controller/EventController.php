@@ -136,7 +136,7 @@ class EventController extends AbstractActionController
 		}
 
 		$panel = $this->params()->fromQuery('panel', null);
-		if ($type == 'request' && $charter_status == 'OK' /*&& $gtou_status == 'OK'*/ && !$panel && (!$account->properties['completeness'] || $account->properties['completeness'] == '0_not_completed')) $panel = 'modalProfileForm';
+		if ($type == 'request' /*&& $charter_status == 'OK' && $gtou_status == 'OK'*/ && !$panel && (!$account->properties['completeness'] || $account->properties['completeness'] == '0_not_completed')) $panel = 'modalProfileForm';
 
 		// Feed the layout
 		$this->layout('/layout/flow-layout');
