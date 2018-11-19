@@ -6,27 +6,31 @@
  * @copyright Copyright (c) 2016 Bruno Lartillot
  * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
  */
+namespace PpitCore;
+
+use Zend\Router\Http\Literal;
+use Zend\ServiceManager\Factory\InvokableFactory;
 
 return array(
 
 	'controllers' => array(
-		'invokables' => array(
-            'PpitCore\Controller\Account' => 'PpitCore\Controller\AccountController',
-        	'PpitCore\Controller\Community' => 'PpitCore\Controller\CommunityController',
-        	'PpitCore\Controller\Config' => 'PpitCore\Controller\ConfigController',
-        	'PpitCore\Controller\Credit' => 'PpitCore\Controller\CreditController',
-            'PpitCore\Controller\Home' => 'PpitCore\Controller\HomeController',
-        	'PpitCore\Controller\Document' => 'PpitCore\Controller\DocumentController',
-        	'PpitCore\Controller\Event' => 'PpitCore\Controller\EventController',
-        	'PpitCore\Controller\Interaction' => 'PpitCore\Controller\InteractionController',
-        	'PpitCore\Controller\Instance' => 'PpitCore\Controller\InstanceController',
-        	'PpitCore\Controller\Place' => 'PpitCore\Controller\PlaceController',
-        	'PpitCore\Controller\Product' => 'PpitCore\Controller\ProductController',
-        	'PpitCore\Controller\ProductOption' => 'PpitCore\Controller\ProductOptionController',
-        	'PpitCore\Controller\Public' => 'PpitCore\Controller\PublicController',
-        	'PpitCore\Controller\Request' => 'PpitCore\Controller\RequestController',
-        	'PpitCore\Controller\User' => 'PpitCore\Controller\UserController',
-        	'PpitCore\Controller\Vcard' => 'PpitCore\Controller\VcardController',
+		'factories' => array(
+            Controller\AccountController::class => InvokableFactory::class,
+        	Controller\CommunityController::class => InvokableFactory::class,
+        	Controller\ConfigController::class => InvokableFactory::class,
+        	Controller\CreditController::class => InvokableFactory::class,
+            Controller\HomeController::class => InvokableFactory::class,
+        	Controller\Controller::class => InvokableFactory::class,
+        	Controller\EventController::class => InvokableFactory::class,
+        	Controller\InteractionController::class => InvokableFactory::class,
+        	Controller\InstanceController::class => InvokableFactory::class,
+        	Controller\PlaceController::class => InvokableFactory::class,
+        	Controller\ProductController::class => InvokableFactory::class,
+        	Controller\ProductOptionController::class => InvokableFactory::class,
+        	Controller\PublicController::class => InvokableFactory::class,
+        	Controller\RequestController::class => InvokableFactory::class,
+        	Controller\UserController::class => InvokableFactory::class,
+        	Controller\VcardController::class => InvokableFactory::class,
         ),
     ),
 
@@ -37,7 +41,7 @@ return array(
 									'options' => array(
 											'route'    => 'instance serialize <id>',
 											'defaults' => array(
-													'controller' => 'PpitCore\Controller\Instance',
+													'controller' => Controller\InstanceController::class,
 													'action'     => 'serialize'
 											)
 									)
@@ -46,7 +50,7 @@ return array(
 									'options' => array(
 											'route'    => 'credit use [--live|-l] [--mailTo=]',
 											'defaults' => array(
-													'controller' => 'PpitCore\Controller\Credit',
+													'controller' => Controller\CreditController::class,
 													'action'     => 'use'
 											)
 									)
@@ -55,7 +59,7 @@ return array(
 									'options' => array(
 											'route'    => 'credit repair',
 											'defaults' => array(
-													'controller' => 'PpitCore\Controller\Credit',
+													'controller' => Controller\CreditController::class,
 													'action'     => 'repair'
 											)
 									)
@@ -67,21 +71,21 @@ return array(
     'router' => array(
         'routes' => array(
             'index' => array(
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => Literal::class,
                 'options' => array(
                     'route'    => '/',
                 	'defaults' => array(
-                        'controller' => 'PpitCore\Controller\Home',
+                        'controller' => Controller\HomeController::class,
                         'action'     => 'index',
                     ),
                 ),
             ),
         	'account' => array(
-                'type'    => 'literal',
+                'type'    => Literal::class,
                 'options' => array(
                     'route'    => '/account',
                     'defaults' => array(
-                        'controller' => 'PpitCore\Controller\Account',
+                        'controller' => Controller\AccountController::class,
                         'action'     => 'list',
                     ),
                 ),
@@ -355,8 +359,7 @@ return array(
                 'options' => array(
                     'route'    => '/home',
                 	'defaults' => array(
-                        '__NAMESPACE__' => 'PpitCore\Controller',
-                        'controller'    => 'Home',
+                        'controller' => Controller\HomeController::class,
                         'action'        => 'index',
                     ),
                 ),
@@ -374,11 +377,11 @@ return array(
                 ),
             ),
         	'community' => array(
-                'type'    => 'literal',
+                'type'    => Literal::class,
                 'options' => array(
                     'route'    => '/community',
                     'defaults' => array(
-                        'controller' => 'PpitCore\Controller\Community',
+                        'controller' => Controller\CommunityController::class,
                         'action'     => 'index',
                     ),
                 ),
@@ -450,11 +453,11 @@ return array(
 	       		),
         	),
         	'document' => array(
-                'type'    => 'literal',
+                'type'    => Literal::class,
                 'options' => array(
                     'route'    => '/document',
                     'defaults' => array(
-                        'controller' => 'PpitCore\Controller\Document',
+                        'controller' => Controller\DocumentController::class,
                         'action'     => 'index',
                     ),
                 ),
@@ -475,11 +478,11 @@ return array(
             		),
             ),
         	'event' => array(
-                'type'    => 'literal',
+                'type'    => Literal::class,
                 'options' => array(
                     'route'    => '/event',
                     'defaults' => array(
-                        'controller' => 'PpitCore\Controller\Event',
+                        'controller' => Controller\EventController::class,
                         'action'     => 'index',
                     ),
                 ),
@@ -644,11 +647,11 @@ return array(
             		),
             ),
         	'interaction' => array(
-                'type'    => 'literal',
+                'type'    => Literal::class,
                 'options' => array(
                     'route'    => '/interaction',
                     'defaults' => array(
-                        'controller' => 'PpitCore\Controller\Interaction',
+                        'controller' => Controller\InteractionController::class,
                         'action'     => 'index',
                     ),
                 ),
@@ -750,11 +753,11 @@ return array(
             		),
             ),
         	'instance' => array(
-                'type'    => 'literal',
+                'type'    => Literal::class,
                 'options' => array(
                     'route'    => '/instance',
                     'defaults' => array(
-                        'controller' => 'PpitCore\Controller\Instance',
+                        'controller' => Controller\InstanceController::class,
                         'action'     => 'index',
                     ),
                 ),
@@ -931,11 +934,11 @@ return array(
             		),
             ),
         	'place' => array(
-                'type'    => 'literal',
+                'type'    => Literal::class,
                 'options' => array(
                     'route'    => '/place',
                     'defaults' => array(
-                        'controller' => 'PpitCore\Controller\Place',
+                        'controller' => Controller\PlaceController::class,
                         'action'     => 'index',
                     ),
                 ),
@@ -1013,11 +1016,11 @@ return array(
 	       			),
 			),
         	'product' => array(
-        				'type'    => 'literal',
+        				'type'    => Literal::class,
         				'options' => array(
         						'route'    => '/product',
         						'defaults' => array(
-        								'controller' => 'PpitCore\Controller\Product',
+        								'controller' => Controller\ProductController::class,
         								'action'     => 'index',
         						),
         				),
@@ -1149,11 +1152,11 @@ return array(
 		        				),
         		),),
       		'productOption' => array(
-        				'type'    => 'literal',
+        				'type'    => Literal::class,
         				'options' => array(
         						'route'    => '/product-option',
         						'defaults' => array(
-        								'controller' => 'PpitCore\Controller\ProductOption',
+        								'controller' => Controller\ProductOptionController::class,
         								'action'     => 'index',
         						),
         				),
@@ -1211,11 +1214,11 @@ return array(
         				),
         		),
         	'public' => array(
-                'type'    => 'literal',
+                'type'    => Literal::class,
                 'options' => array(
                     'route'    => '/public',
                     'defaults' => array(
-                        'controller' => 'PpitCore\Controller\Public',
+                        'controller' => 'Controller\Public',
                         'action'     => 'displayPage',
                     ),
                 ),
@@ -1302,11 +1305,11 @@ return array(
             		),
         	),
 /*        	'request' => array(
-                'type'    => 'literal',
+                'type'    => Literal::class,
                 'options' => array(
                     'route'    => '/request',
                     'defaults' => array(
-                        'controller' => 'PpitCore\Controller\Request',
+                        'controller' => 'Controller\Request',
                         'action'     => 'index',
                     ),
                 ),
@@ -1384,14 +1387,14 @@ return array(
             		),
             ),*/
         	'user' => array(
-                'type'    => 'literal',
+                'type'    => Literal::class,
                 'options' => array(
                     'route'    => '/user',
                     'constraints' => array(
                     	'id'     => '[0-9]*',
                     ),
                     'defaults' => array(
-                        'controller' => 'PpitCore\Controller\User',
+                        'controller' => Controller\UserController::class,
                         'action'     => 'index',
                     ),
                 ),
@@ -1656,11 +1659,11 @@ return array(
 	       		),
 	       	),
         	'vcard' => array(
-                'type'    => 'literal',
+                'type'    => Literal::class,
                 'options' => array(
                     'route'    => '/vcard',
                     'defaults' => array(
-                        'controller' => 'PpitCore\Controller\Vcard',
+                        'controller' => Controller\VcardController::class,
                         'action'     => 'index',
                     ),
                 ),
@@ -1700,11 +1703,11 @@ return array(
 	       		),
 	       	),
 			'config' => array(
-				'type'    => 'literal',
+				'type'    => Literal::class,
 				'options' => array(
 					'route'    => '/config',
 					'defaults' => array(
-						'controller' => 'PpitCore\Controller\Config',
+						'controller' => Controller\ConfigController::class,
 						'action'     => 'v1',
 					),
 				),
@@ -1935,6 +1938,7 @@ return array(
            'ppit-core' => __DIR__ . '/../view',
         ),
     ),
+
 	'translator' => array(
 		'locale' => 'fr_FR',
 		'translation_file_patterns' => array(
@@ -2039,13 +2043,6 @@ return array(
 			'core_vcard' => new \PpitCore\Model\Vcard,
 	),
 
-	'ppitContactDependencies' => array(
-			'user' => new \PpitCore\Model\User,
-	),
-	
-	'ppitCustomerDependencies' => array(
-			'user' => new \PpitCore\Model\User,
-	),
 	'ppitUser/index' => array(
 			'title' => array('en_US' => 'P-PIT Admin', 'fr_FR' => 'P-PIT Admin'),
 	),
@@ -2224,7 +2221,7 @@ return array(
 	),
 		
 	'creditConsumers' => array(
-			'\PpitCore\Model\Community::consumeCredits',
+			'\Model\Community::consumeCredits',
 	),
 		
 	'credit' => array(
@@ -5366,23 +5363,23 @@ table.note-report td {
 	// Interaction
 /*
 	'interaction/type/app' => array(
-			'controller' => '\PpitCore\Model\App::controlInteraction',
-			'processor' => '\PpitCore\Model\App::processInteraction',
+			'controller' => '\Model\App::controlInteraction',
+			'processor' => '\Model\App::processInteraction',
 	),
 
 	'interaction/type/document' => array(
-			'controller' => '\PpitCore\Model\Document::controlInteraction',
-			'processor' => '\PpitCore\Model\Document::processInteraction',
+			'controller' => '\Model\Document::controlInteraction',
+			'processor' => '\Model\Document::processInteraction',
 	),*/
 
 	'interaction/type/config' => array(
-			'controller' => '\PpitCore\Model\Config::controlInteraction',
-			'processor' => '\PpitCore\Model\Config::processInteraction',
+			'controller' => '\Model\Config::controlInteraction',
+			'processor' => '\Model\Config::processInteraction',
 	),
 
 	'interaction/type/event' => array(
-		'controller' => '\PpitCore\Model\Event::controlInteraction',
-		'processor' => '\PpitCore\Model\Event::processInteraction',
+		'controller' => '\Model\Event::controlInteraction',
+		'processor' => '\Model\Event::processInteraction',
 	),
 	
 	'interaction/type' => array(

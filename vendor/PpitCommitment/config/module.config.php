@@ -989,11 +989,7 @@ return array(
             'PpitCommitment' => __DIR__ . '/../view',
         ),
     ),
-/*	'service_manager' => array(
-		'factories' => array(
-				'translator' => 'Zend\Mvc\Service\TranslatorServiceFactory',
-		),
-	),*/
+
 	'translator' => array(
 		'locale' => 'fr_FR',
 		'translation_file_patterns' => array(

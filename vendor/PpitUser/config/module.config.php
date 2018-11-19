@@ -1,4 +1,5 @@
 <?php
+namespace PpitUser;
 
 return array(
     'controllers' => array(
