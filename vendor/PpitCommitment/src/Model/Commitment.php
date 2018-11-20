@@ -826,6 +826,7 @@ class Commitment
 				}
 				elseif ($propertyId == 'account_id') $where->equalTo('account_id', $params['account_id']);
 				elseif ($propertyId == 'account_name') $where->like('core_account.name', '%'.$params[$propertyId].'%');
+				elseif ($propertyId == 'account_status') $where->in('core_account.status', array_map('trim', explode(',', $value)));
 				elseif ($propertyId == 'n_fn') $where->like('core_vcard.n_fn', '%'.$params[$propertyId].'%');
 				elseif ($propertyId == 'product_identifier') $where->like('product_identifier', '%'.$params[$propertyId].'%');
 				elseif ($propertyId == 'min_account_date_1') $where->greaterThanOrEqualTo('core_account.date_1', $params[$propertyId]);
@@ -838,7 +839,7 @@ class Commitment
 				elseif ($propertyId == 'max_account_date_3') $where->lessThanOrEqualTo('core_account.date_3', $params[$propertyId]);
 				elseif ($propertyId == 'max_account_date_4') $where->lessThanOrEqualTo('core_account.date_4', $params[$propertyId]);
 				elseif ($propertyId == 'max_account_date_5') $where->lessThanOrEqualTo('core_account.date_5', $params[$propertyId]);
-				elseif ($propertyId == 'account_property_4') $where->equalTo('core_account.property_4', $params[$propertyId]);
+				elseif ($propertyId == 'account_property_4') $where->in('core_account.property_4', array_map('trim', explode(',', $value)));
 				elseif ($propertyId == 'account_property_6') $where->equalTo('core_account.property_6', $params[$propertyId]);
 				elseif ($propertyId == 'account_property_10') $where->equalTo('core_account.property_10', $params[$propertyId]);
 				elseif ($propertyId == 'account_property_15') $where->equalTo('core_account.property_15', $params[$propertyId]);
