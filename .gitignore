@@ -2,6 +2,7 @@ config/autoload/*
 !config/autoload/*global.php
 !config/autoload/*template.php
 config/application.config.php
+config/modules.config.php
 data
 module/*
 !module/Application
