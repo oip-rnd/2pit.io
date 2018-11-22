@@ -495,7 +495,7 @@ class TermController extends AbstractActionController
     	$content['PmtInf']['PmtTpInf']['SvcLvl']['Cd'] = 'SEPA';
     	$content['PmtInf']['PmtTpInf']['LclInstrm'] = array();
     	$content['PmtInf']['PmtTpInf']['LclInstrm']['Cd'] = 'CORE';
-    	$content['PmtInf']['PmtTpInf']['SeqTp'] = 'OOFF';
+    	$content['PmtInf']['PmtTpInf']['SeqTp'] = 'RCUR';
     	$content['PmtInf']['ReqdColltnDt'] = ($collection_date) ? $collection_date : date('Y-m-d');
     	$content['PmtInf']['Cdtr'] = array();
     	$content['PmtInf']['Cdtr']['Nm'] = $config['Cdtr/Nm'];

@@ -271,6 +271,63 @@ class Module implements ConfigProviderInterface
                     $resultSetPrototype->setArrayObjectPrototype(new Model\Vcard());
                     return new TableGateway('core_vcard', $dbAdapter, null, $resultSetPrototype);
                 },
+
+                // Data transfer
+
+                Model\AccountSourceTable::class =>  function($sm) {
+                	$tableGateway = $sm->get(Model\AccountSourceTableGateway::class);
+                	return new Model\GenericTable($tableGateway);
+                },
+                Model\AccountSourceTableGateway::class => function ($sm) {
+                	$dbAdapter = $sm->get(AdapterInterface::class);
+                	$resultSetPrototype = new ResultSet();
+                	$resultSetPrototype->setArrayObjectPrototype(new Model\AccountSource());
+                	return new TableGateway('core_account_source', $dbAdapter, null, $resultSetPrototype);
+                },
+                
+                Model\EventSourceTable::class =>  function($sm) {
+                	$tableGateway = $sm->get(Model\EventSourceTableGateway::class);
+                	return new Model\GenericTable($tableGateway);
+                },
+                Model\EventSourceTableGateway::class => function ($sm) {
+                	$dbAdapter = $sm->get(AdapterInterface::class);
+                	$resultSetPrototype = new ResultSet();
+                	$resultSetPrototype->setArrayObjectPrototype(new Model\EventSource());
+                	return new TableGateway('core_event_source', $dbAdapter, null, $resultSetPrototype);
+                },
+
+                Model\UserSourceTable::class =>  function($sm) {
+                	$tableGateway = $sm->get(Model\UserSourceTableGateway::class);
+                	return new Model\UserTable($tableGateway);
+                },
+                Model\UserSourceTableGateway::class => function ($sm) {
+                	$dbAdapter = $sm->get(AdapterInterface::class);
+                	$resultSetPrototype = new ResultSet();
+                	$resultSetPrototype->setArrayObjectPrototype(new Model\UserSource());
+                	return new TableGateway('core_user_source', $dbAdapter, null, $resultSetPrototype);
+                },
+
+                Model\UserContactSourceTable::class =>  function($sm) {
+                	$tableGateway = $sm->get(Model\UserContactSourceTableGateway::class);
+                	return new Model\GenericTable($tableGateway);
+                },
+                Model\UserContactSourceTableGateway::class => function ($sm) {
+                	$dbAdapter = $sm->get(AdapterInterface::class);
+                	$resultSetPrototype = new ResultSet();
+                	$resultSetPrototype->setArrayObjectPrototype(new Model\UserContactSource());
+                	return new TableGateway('core_user_contact_source', $dbAdapter, null, $resultSetPrototype);
+                },
+                
+                Model\VcardSourceTable::class =>  function($sm) {
+                	$tableGateway = $sm->get(Model\VcardSourceTableGateway::class);
+                	return new Model\GenericTable($tableGateway);
+                },
+                Model\VcardSourceTableGateway::class => function ($sm) {
+                	$dbAdapter = $sm->get(AdapterInterface::class);
+                	$resultSetPrototype = new ResultSet();
+                	$resultSetPrototype->setArrayObjectPrototype(new Model\VcardSource());
+                	return new TableGateway('core_vcard_source', $dbAdapter, null, $resultSetPrototype);
+                },
             ),
         );
     }

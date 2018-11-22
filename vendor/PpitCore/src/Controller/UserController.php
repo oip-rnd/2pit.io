@@ -9,6 +9,9 @@
 
 namespace PpitCore\Controller;
 
+use FacebookAds\Api;
+use FacebookAds\Http\RequestInterface;
+use FacebookAds\Object\Ad;
 use PpitCore\Model\ContactMessage;
 use PpitCore\Form\CsrfForm;
 use PpitCore\Model\Account;
@@ -1127,5 +1130,52 @@ class UserController extends AbstractActionController
 		echo json_encode($content, JSON_PRETTY_PRINT);
 		ob_end_flush();
 		return $this->response;
+	}
+	
+	public function fbwebhookAction()
+	{
+		$writer = new Writer\Stream('data/log/ppitUser_demo.txt');
+		$logger = new Logger();
+		$logger->addWriter($writer);
+		
+		// Challenge for authorizing my App to access data on Facebook
+		$challenge = $_REQUEST['hub_challenge'];
+		$verify_token = $_REQUEST['hub_verify_token'];
+		
+		if ($verify_token === 'abc123') {
+			echo $challenge;
+		}
+
+		$input = json_decode(file_get_contents('php://input'), true);
+		$logger->info(print_r($input, true));
+		
+		// Initialize a new Session and instantiate an API object
+/*		Api::init(
+			'{your-app-id}', // App ID
+			'{your-app-secret}',
+			$_SESSION['facebook_access_token'] // Your user access token
+		);
+		
+		// Grant read access on leads for a user
+		$params = array(
+			'user_id' => '<USER_ID>',
+		);
+		
+		$response = Api::instance()->call(
+			'/me/leadgen_whitelisted_users',
+			RequestInterface::METHOD_POST,
+			$params
+		);
+
+
+		// Get all the leads on an ad
+		$ad = new Ad('<AD_ID>');
+		$leads = $ad->getLeads();*/
+		
+		return $this->response;
+	}
+	
+	public function fbpageaccessAction()
+	{		
 	}
 }
