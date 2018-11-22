@@ -33,6 +33,11 @@ use PpitCore\Model\UserTable;
 use PpitCore\Model\Token;
 use PpitCore\Model\UserContact;
 use PpitCore\Model\Vcard;
+use PpitCore\Model\AccountSource;
+use PpitCore\Model\EventSource;
+use PpitCore\Model\UserSource;
+use PpitCore\Model\UserContactSource;
+use PpitCore\Model\VcardSource;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
@@ -325,7 +330,64 @@ class Module //implements AutoloaderProviderInterface, ConfigProviderInterface
                     $resultSetPrototype->setArrayObjectPrototype(new Vcard());
                     return new TableGateway('core_vcard', $dbAdapter, null, $resultSetPrototype);
                 },
-            ),
+
+                // Data transfer
+
+                'PpitCore\Model\AccountSourceTable' =>  function($sm) {
+                	$tableGateway = $sm->get('AccountSourceTableGateway');
+                	return new GenericTable($tableGateway);
+                },
+                'AccountSourceTableGateway' => function ($sm) {
+                	$dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                	$resultSetPrototype = new ResultSet();
+                	$resultSetPrototype->setArrayObjectPrototype(new Model\AccountSource());
+                	return new TableGateway('core_account_source', $dbAdapter, null, $resultSetPrototype);
+                },
+                
+                'PpitCore\Model\EventSourceTable' =>  function($sm) {
+                	$tableGateway = $sm->get('EventSourceTableGateway');
+                	return new GenericTable($tableGateway);
+                },
+                'EventSourceTableGateway' => function ($sm) {
+                	$dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                	$resultSetPrototype = new ResultSet();
+                	$resultSetPrototype->setArrayObjectPrototype(new Model\EventSource());
+                	return new TableGateway('core_event_source', $dbAdapter, null, $resultSetPrototype);
+                },
+
+                'PpitCore\Model\UserSourceTable' =>  function($sm) {
+                	$tableGateway = $sm->get('UserSourceTableGateway');
+                	return new UserTable($tableGateway);
+                },
+                'UserSourceTableGateway' => function ($sm) {
+                	$dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                	$resultSetPrototype = new ResultSet();
+                	$resultSetPrototype->setArrayObjectPrototype(new Model\UserSource());
+                	return new TableGateway('core_user_source', $dbAdapter, null, $resultSetPrototype);
+                },
+
+                'PpitCore\Model\UserContactSourceTable' =>  function($sm) {
+                	$tableGateway = $sm->get('UserContactSourceTableGateway');
+                	return new GenericTable($tableGateway);
+                },
+                'UserContactSourceTableGateway' => function ($sm) {
+                	$dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                	$resultSetPrototype = new ResultSet();
+                	$resultSetPrototype->setArrayObjectPrototype(new Model\UserContactSource());
+                	return new TableGateway('core_user_contact_source', $dbAdapter, null, $resultSetPrototype);
+                },
+                
+                'PpitCore\Model\VcardSourceTable' =>  function($sm) {
+                	$tableGateway = $sm->get('VcardSourceTableGateway');
+                	return new GenericTable($tableGateway);
+                },
+                'VcardSourceTableGateway' => function ($sm) {
+                	$dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                	$resultSetPrototype = new ResultSet();
+                	$resultSetPrototype->setArrayObjectPrototype(new Model\VcardSource());
+                	return new TableGateway('core_vcard_source', $dbAdapter, null, $resultSetPrototype);
+                },
+                ),
         );
     }
 }

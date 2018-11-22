@@ -11,6 +11,11 @@ use PpitCore\Model\Event;
 use PpitCore\Model\GroupAccount;
 use PpitCore\Model\Place;
 use PpitCore\Model\Vcard;
+use PpitCore\Model\AccountSource;
+use PpitCore\Model\EventSource;
+use PpitCore\Model\UserSource;
+use PpitCore\Model\UserContactSource;
+use PpitCore\Model\VcardSource;
 use Zend\Http\Headers;
 use Zend\Http\Request;
 use Zend\Http\Response\Stream;
@@ -1772,7 +1777,7 @@ var_dump($rank);
 			case 3: $ending = ($rank / 10) % 10 === 1 ?  "th" : "rd"; break;
 			default: $ending = "th";
 		}
-		echo $equalSign . " " . (string)$rank . $ending;*/
+		echo $equalSign . " " . (string)$rank . $ending;
 
 		$accounts = Account::getList('pbc', [], '+name', null);
 		$computed = array();
@@ -1786,7 +1791,14 @@ var_dump($rank);
 				$account->credits['earned'] = $computed[$account->id];
 				$account->update(null);
 			}
-		}
+		}*/
+
+		VcardSource::instanciate()->add();
+		UserSource::instanciate()->add();
+		UserContactSource::instanciate()->add();
+		AccountSource::instanciate()->add();
+		EventSource::instanciate()->add();
+		
 		echo "Done\n";
 		return $this->response;
 	}
