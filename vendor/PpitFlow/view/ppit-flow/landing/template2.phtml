@@ -28,6 +28,9 @@
             <div id="mdb-lightbox-ui"></div>
             <div class="mdb-lightbox <?php if (array_key_exists('margin', $section) && !$section['margin']) echo 'no-margin' ?>">
               <div class="view overlay">
+    
+            <!-- Card content -->
+            <div class="card-body">
 
   <?php elseif ($section['type'] == 'feature-box') : ?>
           <section class="section feature-box wow fadeIn" data-wow-delay="0.3s">
@@ -48,6 +51,19 @@
                     <div class="resizable ui-widget-content">
                       <span class="ui-widget-header">Drag for resizing</span>
                     </div>
+    
+      <?php if ($section['type'] == 'card') : ?>
+                    <div class="card">
+                      <!-- Card image -->
+         <?php if (array_key_exists('href', $column['img'])) : ?>
+                      <a href="<?php echo $column['img']['href'] ?>" target="_blank">
+         <?php endif;?>
+                        <img class="<?php echo $column['img']['class']?>" src="<?php echo $column['img']['src']?>" alt="<?php echo $column['img']['alt']?>">
+         <?php if (array_key_exists('href', $column['img'])) : ?>
+                      </a>
+         <?php endif;?>
+                      <div class="card-body pt-0">
+      <?php endif;?>
 
       <?php foreach ($column['paragraphs'] as $paragraphId => $paragraph) : ?>
                     <<?php echo $paragraph['type']?> class="<?php if (array_key_exists('class', $paragraph)) echo $paragraph['class'] ?>" style="<?php if (array_key_exists('style', $paragraph)) echo $paragraph['style'] ?>">
@@ -102,6 +118,11 @@
                     </<?php echo $paragraph['type']?>>
       <?php endforeach;?>
 
+      <?php if ($section['type'] == 'card') : ?>
+                      </div>
+                    </div>
+      <?php endif;?>
+
                   </figure>
     <?php endforeach;?>
                 </div>
@@ -111,7 +132,7 @@
               </div>
             </div>
           </section>
-	
+
   <?php elseif ($section['type'] == 'feature-box') : ?>
           </section>
 

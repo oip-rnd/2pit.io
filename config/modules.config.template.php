@@ -27,6 +27,7 @@ return [
 	'PpitCommitment',
 	'PpitCore',
 	'PpitFlow',
+	'PpitStudies',
 	'PpitUser',
     'Application',
 ];

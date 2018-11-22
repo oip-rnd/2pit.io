@@ -1655,6 +1655,24 @@ return array(
 	       						'action' => 'v1',
 	       					)
 	       				)
+	       			),
+	       			'fbwebhook' => array(
+	       				'type' => 'segment',
+	       				'options' => array(
+	       					'route' => '/fbwebhook',
+	       					'defaults' => array(
+	       						'action' => 'fbwebhook',
+	       					)
+	       				)
+	       			),
+	       			'fbpageaccess' => array(
+	       				'type' => 'segment',
+	       				'options' => array(
+	       					'route' => '/fbpageaccess',
+	       					'defaults' => array(
+	       						'action' => 'fbpageaccess',
+	       					)
+	       				)
 	       			)
 	       		),
 	       	),
@@ -1914,6 +1932,8 @@ return array(
 /*				array('route' => 'user/getAuthenticate', 'roles' => array('guest')),
 				array('route' => 'user/getApplications', 'roles' => array('guest')),*/
 				array('route' => 'user/v1', 'roles' => array('guest')),
+				array('route' => 'user/fbwebhook', 'roles' => array('guest')),
+				array('route' => 'user/fbpageaccess', 'roles' => array('guest')),
 				
 				array('route' => 'vcard/photo', 'roles' => array('user')),
 				array('route' => 'vcard/demoMode', 'roles' => array('user')),

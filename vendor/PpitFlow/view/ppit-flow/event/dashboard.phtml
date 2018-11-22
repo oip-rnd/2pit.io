@@ -43,7 +43,13 @@
 
 <?php if (array_key_exists('links', $content['index'])) foreach ($content['index']['links'] as $link) : ?>
             <div class="h6 text-center my-4">
+  
+  <?php if (array_key_exists('route', $link)) : ?>
               <a class="text-secondary" href="<?php echo $this->url($link['route'][0], $link['route'][1]) ?>">
+  <?php else : ?>
+              <a class="text-secondary" href="<?php echo $link['uri'] ?>" target="_blank">
+  <?php endif;?>
+  
   <?php if (array_key_exists('icon', $link)) : ?>
                 <i class="<?php echo $link['icon']['class']?>"></i>
   <?php endif;?>
