@@ -1146,9 +1146,6 @@ class Account
 			$entity = Account::$model['properties'][$propertyKey]['entity'];
 			$column = Account::$model['properties'][$propertyKey]['column'];
 				
-/*			if ($propertyId == 'status') $where->in('core_account.status', explode(',', $value));
-			elseif ($propertyId == 'n_fn') $where->like('core_vcard.n_fn', '%'.$value.'%');
-			elseif ($propertyId == 'email') $where->like('core_vcard.email', '%'.$value.'%');*/
 			if ($propertyId == 'gender') $where->equalTo('core_vcard.gender', $value);
 			elseif ($propertyId == 'adr_zip') $where->like('core_vcard.adr_zip', '%'.$value.'%');
 			elseif ($propertyId == 'locale') $where->like('core_vcard.locale', '%'.$value.'%');
@@ -1599,6 +1596,7 @@ class Account
 
     	// Isolation check
     	if ($update_time && $account->update_time > $update_time) return 'Isolation';
+    	
     	if ($this->contact_1) $this->contact_1->update($this->contact_1->update_time);
     	Account::getTable()->save($this);
     	return 'OK';
@@ -1729,7 +1727,7 @@ class Account
     	return 'OK';
     }
 
-    // Unused in Zpit
+    // Unused in 2pit
     public function setInputFilter(InputFilterInterface $inputFilter)
     {
         throw new \Exception("Not used");

@@ -323,7 +323,7 @@
 				<td style="text-align: left"><?php echo $context->decodeDate($term->due_date) ?></td>
 				<td style="text-align: left"><?php echo $context->decodeDate($term->settlement_date) ?></td>
 				<td style="text-align: left"><?php echo $context->decodeDate($term->collection_date) ?></td>
-				<td style="text-align: left"><?php if ($term->status) echo $context->getConfig('commitmentTerm')['properties']['status']['modalities'][$term->status][$context->getLocale()] ?></td>
+				<td style="text-align: left"><?php if ($term->status) echo $termProperties['status']['modalities'][$term->status][$context->getLocale()] ?></td>
 				<td style="text-align: right; <?php if ($term->status != 'settled' && $term->status != 'collected' && $term->due_date <= date('Y-m-d')) echo 'color: red' ?>"><?php echo $context->formatFloat($term->amount, 2) ?></td>
 				<td>
 	<?php if ($term->document) : ?>

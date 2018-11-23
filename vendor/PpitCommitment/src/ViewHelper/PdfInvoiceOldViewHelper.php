@@ -286,7 +286,7 @@ class PdfInvoiceOldViewHelper
     	$pdf->SetFillColor(239, 239, 239);
     	$pdf->SetTextColor(0);
     	// Data
-    	$terms = Term::getList(array('commitment_id' => $commitment->id), 'due_date', 'ASC', 'search');
+    	$terms = Term::getList($commitment->type, array('commitment_id' => $commitment->id), '+due_date');
     	$settledAmount = 0;
     	$color = 0;
     	foreach($terms as $term) {

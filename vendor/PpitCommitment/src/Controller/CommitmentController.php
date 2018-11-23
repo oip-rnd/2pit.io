@@ -51,16 +51,6 @@ class CommitmentController extends AbstractActionController
 		return $properties;
 	}
 
-	public function getTermProperties() {
-		$context = Context::getCurrent();
-		$properties = array();
-		foreach($context->getConfig('commitmentTerm')['properties'] as $propertyId => $property) {
-			if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
-			$properties[$propertyId] = $property;
-		}
-		return $properties;
-	}
-
 	public function indexAction()
     {
     	$context = Context::getCurrent();
@@ -73,7 +63,7 @@ class CommitmentController extends AbstractActionController
 		$applicationName = 'P-PIT Engagements';
 		$instance = Instance::get($context->getInstanceId());
 		$configProperties = $this->getConfigProperties($type);
-		$termProperties = $this->getTermProperties($type);
+		$termDescription = Term::getDescription($type);
 		$types = Context::getCurrent()->getConfig('commitment/types')['modalities'];
 
 		$params = $this->getFilters($this->params(), $type);
@@ -81,7 +71,7 @@ class CommitmentController extends AbstractActionController
     	return new ViewModel(array(
     			'context' => $context,
 				'configProperties' => $configProperties,
-				'termProperties' => $termProperties,
+				'termProperties' => $termDescription['properties'],
 	    		'config' => $context->getConfig(),
     			'place' => $place,
     			'app' => $app,
@@ -100,9 +90,9 @@ class CommitmentController extends AbstractActionController
 				'detailPage' => $context->getConfig('commitment/detail/'.$type),
 				'updatePage' => $context->getConfig('commitment/update/'.$type),
     			'groupPage' => $context->getConfig('commitment/group/'.$type),
-    			'termSearchPage' => $context->getConfig('commitmentTerm/search'),
-				'termUpdatePage' => $context->getConfig('commitmentTerm/update'),
-				'termGroupPage' => $context->getConfig('commitmentTerm/group'),
+    			'termSearchPage' => $termDescription['search'],
+				'termUpdatePage' => $termDescription['update'],
+				'termGroupPage' => $termDescription['groupUpdate'],
     	));
     }
 	
@@ -235,6 +225,7 @@ class CommitmentController extends AbstractActionController
     	
     	// Retrieve the type
 		$type = $this->params()->fromRoute('type', 0);
+		$termProperties = Term::getConfig($type);
 
 		$id = (int) $this->params()->fromRoute('id', 0);
     	if ($id) $commitment = Commitment::get($id);
@@ -245,6 +236,7 @@ class CommitmentController extends AbstractActionController
     		'type' => $type,
     		'id' => $commitment->id,
     		'commitment' => $commitment,
+    		'termProperties' => $termProperties,
     		'products' => Product::getList($commitment->type, array()),
     		'options' => ProductOption::getList(null, array('type' => $commitment->type, 'is_available' => true), null, null, 'search'),
     	));
@@ -620,7 +612,7 @@ class CommitmentController extends AbstractActionController
 	    			$connection->beginTransaction();
 	    			try {
 	    				if ($commitment->loadData($data) != 'OK') throw new \Exception('View error');
-	    			    $terms = Term::getList(array('commitment_id' => $commitment->id));
+	    			    $terms = Term::getList($type, array('commitment_id' => $commitment->id));
 	    				$commitment->id = null;
 	    				$commitment->identifier = 0;
 	    				$commitment->status = 'new';
@@ -844,7 +836,7 @@ class CommitmentController extends AbstractActionController
 
     	if (array_key_exists('terms', $invoiceSpecs)) $invoice['terms'] = array();
 	    $settledAmount = 0;
-	    foreach(Term::getList(array('commitment_id' => $commitment->id), 'due_date', 'ASC', 'search') as $term) {
+	    foreach(Term::getList($type, array('commitment_id' => $commitment->id), '+due_date') as $term) {
 	    	if ($term->status != 'expected') $settledAmount += $term->amount;
 	    	if (array_key_exists('terms', $invoiceSpecs)) {
 		    	$line[] = array();
@@ -1244,7 +1236,7 @@ class CommitmentController extends AbstractActionController
     						$data['status'] = $request->getPost('term_status-'.$i);
     						$data['amount'] = $request->getPost('term_amount-'.$i);
     						$data['document'] = $request->getPost('term_document-'.$i);
-    						$term = Term::instanciate();
+    						$term = Term::instanciate($commitment->type);
 		    				$rc = $term->loadData($data, $request->getFiles()->toArray());
 		    				if ($rc != 'OK') throw new \Exception('View error');
 		    				$rc = $term->add();
@@ -1278,6 +1270,8 @@ class CommitmentController extends AbstractActionController
     	// Retrieve the parameters
     	$type = $this->params()->fromRoute('type');
     	$description = $this->getConfigProperties($type);
+    	$termDescription = Term::getDescription($type);
+
     	$id = (int) $this->params()->fromRoute('id', 0);
     	$commitment = Commitment::get($id);
     	$accounts = Account::getList('business', [], '+name', null);
@@ -1354,7 +1348,7 @@ class CommitmentController extends AbstractActionController
     						break;
     					}
 
-				    	$term = Term::instanciate($subCommitment->id);
+				    	$term = Term::instanciate($type, $subCommitment->id);
 				    	$termData['commitment_caption'] = $subCommitment->caption;
 				    	$termData['means_of_payment'] = $paymentMean;
     					$termData['due_date'] = $termDate;
@@ -1385,6 +1379,7 @@ class CommitmentController extends AbstractActionController
     	$view = new ViewModel(array(
     		'context' => $context,
     		'description' => $description,
+    		'termProperties' => $termDescription['properties'],
     		'accounts' => $accounts,
     		'subData' => $subData,
     		'update_time' => $commitment->update_time,
@@ -1573,7 +1568,7 @@ class CommitmentController extends AbstractActionController
     			else {
 
     				for ($i=0; $i < $this->request->getPost('number_of_terms'); $i++) {
-    					$term = Term::instanciate($commitment->id);
+    					$term = Term::instanciate($type, $commitment->id);
     					$data = array(
     							'status' => ($this->request->getPost('term_status_'.$i)) ? $this->request->getPost('term_status_'.$i) : 'expected',
     							'caption' => ($this->request->getPost('term_caption_'.$i)) ? $this->request->getPost('term_caption_'.$i) : 'Echéance '.($i+1),

@@ -1172,6 +1172,8 @@ class UserController extends AbstractActionController
 		$ad = new Ad('<AD_ID>');
 		$leads = $ad->getLeads();*/
 		
+		$this->getResponse()->setStatusCode('200');
+		$this->getResponse()->setReasonPhrase('OK');
 		return $this->response;
 	}
 	
