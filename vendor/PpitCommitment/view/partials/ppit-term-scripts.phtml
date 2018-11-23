@@ -17,11 +17,15 @@ function termGetParams() {
 	<?php if (in_array($property['type'], array('date', 'time', 'datetime', 'number'))) : ?>
 	
 	var min_<?php echo $propertyId ?> = document.getElementById('search_min_<?php echo $propertyId ?>').value;
+  <?php if (in_array($property['type'], ['date', 'datetime'])) : ?>
 	if (min_<?php echo $propertyId ?>) min_<?php echo $propertyId ?> = encodeDate(min_<?php echo $propertyId ?>);
+  <?php endif;?>
 	if (min_<?php echo $propertyId ?>.length >= 2) { params += 'min_<?php echo $propertyId ?>=' + min_<?php echo $propertyId ?> + '&'; todo = false; }
 
 	var max_<?php echo $propertyId ?> = document.getElementById('search_max_<?php echo $propertyId ?>').value;
+  <?php if (in_array($property['type'], ['date', 'datetime'])) : ?>
 	if (max_<?php echo $propertyId ?>) max_<?php echo $propertyId ?> = encodeDate(max_<?php echo $propertyId ?>);
+  <?php endif;?>
 	if (max_<?php echo $propertyId ?>.length >= 2) { params += 'max_<?php echo $propertyId ?>=' + max_<?php echo $propertyId ?> + '&'; todo = false; }
 
 	<?php elseif ($property['type'] == 'select') : ?>
@@ -170,7 +174,7 @@ function connectTermSearchInputs() {
 function getTermList(params, major, dir) {		
 
 	// Execute the ajax request
-	route = '<?php echo $this->url('commitmentTerm/list') ?>' + params + '&major=' + major + ((dir =='ASC') ? '&dir=ASC' : '&dir=DESC');
+	route = '<?php echo $this->url('commitmentTerm/list', ['type' => $type]) ?>' + params + '&major=' + major + ((dir =='ASC') ? '&dir=ASC' : '&dir=DESC');
 	xhttp = new XMLHttpRequest();
 	xhttp.open("GET", route, true);
 	xhttp.onreadystatechange = function() {
@@ -263,7 +267,7 @@ function connectAuditPanel()
 function invoice(id, requestType) {
 
 	var xhttp = new XMLHttpRequest();
-	var route = '<?php echo $this->url('commitmentTerm/invoice') ?>/' + id;
+	var route = '<?php echo $this->url('commitmentTerm/invoice', ['type' => $type]) ?>/' + id;
 
 	xhttp.open(requestType, route, true);
 	xhttp.onreadystatechange = function() {
@@ -285,8 +289,8 @@ function invoice(id, requestType) {
 <?php 
 $properties = array();
 
-foreach ($termUpdatePage as $propertyId => $options) {
-	$property = $termProperties[$propertyId];
+foreach ($termUpdatePage as $propertyId => $property) {
+	$options = $property['options'];
 	if ($property['type'] == 'number') $properties[$propertyId] = array('type' => $property['type'], 'mandatory' => $options['mandatory'], 'minValue' => $property['minValue'], 'maxValue' => $property['maxValue']);
 	else $properties[$propertyId] = array('type' => $property['type'], 'mandatory' => $options['mandatory'], 'maxSize' => ($property['type'] == 'textarea') ? 2047 : 255);
 }
@@ -341,7 +345,7 @@ function connectTermUpdateForm(commitment_id, id, action, target)
 
 			var xhttp = new XMLHttpRequest();
 			var route;
-			route = '<?php echo $this->url('commitmentTerm/update') ?>/' + commitment_id + '/' + id;
+			route = '<?php echo $this->url('commitmentTerm/update', ['type' => $type]) ?>/' + commitment_id + '/' + id;
 			if (action) route += '/' + action;
 			xhttp.open('POST', route, true);
 			// Set up a handler for when the request finishes.
@@ -362,7 +366,7 @@ function connectTermUpdateForm(commitment_id, id, action, target)
 function getTermUpdate(commitment_id, id, action, target) {
 
 	var xhttp = new XMLHttpRequest();
-	var route = '<?php echo $this->url('commitmentTerm/update') ?>/' + commitment_id + '/' + id;
+	var route = '<?php echo $this->url('commitmentTerm/update', ['type' => $type]) ?>/' + commitment_id + '/' + id;
 	if (action) route += '/' + action;
 
 	xhttp.open('GET', route, true);
@@ -413,7 +417,7 @@ function getTermDetail(id) {
 	// Anchor to the new panel
 	$(location).attr('hash', 'term-detail-row_' + id);
 
-	var route = '<?php echo $this->url('commitmentTerm/detail') ?>/' + id;
+	var route = '<?php echo $this->url('commitmentTerm/detail', ['type' => $type]) ?>/' + id;
 
 	// Execute the ajax request
 	xhttp = new XMLHttpRequest();
@@ -471,7 +475,7 @@ function connectDebitForm()
 		}
 	}
 
-	window.open('<?php echo $this->url('commitmentTerm/debitXml') ?>/' + $('#place_id').val() + '?terms=' + terms, '_blank');
+	window.open('<?php echo $this->url('commitmentTerm/debitXml', ['type' => $type]) ?>/' + $('#place_id').val() + '?terms=' + terms, '_blank');
 }
 
 function getDebitForm() {
@@ -507,7 +511,7 @@ function getDebit() {
 		}
 	}
 
-	var route = '<?php echo $this->url('commitmentTerm/debit') ?>' + '?terms=' + terms;
+	var route = '<?php echo $this->url('commitmentTerm/debit', ['type' => $type]) ?>' + '?terms=' + terms;
 
 	// Execute the ajax request
 	xhttp = new XMLHttpRequest();
@@ -539,7 +543,7 @@ function getCheckDeposit() {
     }
   }
 
-  var route = '<?php echo $this->url('commitmentTerm/checkDeposit') ?>' + '?terms=' + terms;
+  var route = '<?php echo $this->url('commitmentTerm/checkDeposit', ['type' => $type]) ?>' + '?terms=' + terms;
 
   // Execute the ajax request
   xhttp = new XMLHttpRequest();
@@ -613,7 +617,7 @@ function postTermGroup()
 
 			var xhttp = new XMLHttpRequest();
 			var route, target;
-			route = '<?php echo $this->url('commitmentTerm/group') ?>';
+			route = '<?php echo $this->url('commitmentTerm/group', ['type' => $type]) ?>';
 			xhttp.open('POST', route, true);
 			xhttp.onload = function () {
 				if (xhttp.readyState == 4 <?php if (!$context->getConfig()['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
@@ -639,7 +643,7 @@ function getTermGroup() {
 
 	// Disabled the list checkboxes
 	$('.term-checkbox').attr('disabled', 'disabled');
-	var route = '<?php echo $this->url('commitmentTerm/group') ?>';
+	var route = '<?php echo $this->url('commitmentTerm/group', ['type' => $type]) ?>';
 	var formData = new FormData();
 
 	var termNumber = $('#term-number').val();
@@ -713,7 +717,7 @@ function getTermGroup() {
 function activateTerm() {
 
 	// Load the search panel and highlight the menu entry
-	loadPanel('index_action', '<?php echo $this->url('commitmentTerm/search') ?>');
+	loadPanel('index_action', '<?php echo $this->url('commitmentTerm/search', ['type' => $type]) ?>');
 
 	<?php
 	$todoTitle = (isset ($termSearchPage['todoTitle']) ? $termSearchPage['todoTitle'][$context->getLocale()] : $this->translate('todo list', 'ppit-core', $context->getLocale()));

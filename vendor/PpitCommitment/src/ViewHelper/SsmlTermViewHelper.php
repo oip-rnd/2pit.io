@@ -5,12 +5,12 @@ use PpitCore\Model\Context;
 
 class SsmlTermViewHelper
 {
-	public static function formatXls($workbook, $view)
+	public static function formatXls($description, $workbook, $view)
 	{
 		$context = Context::getCurrent();
 		$translator = $context->getServiceManager()->get(\Zend\I18n\Translator\TranslatorInterface::class);
 
-		$title = (isset ($context->getConfig('commitment/search')['title']) ? $context->getConfig('commitmentTerm/search')['title'][$context->getLocale()] : $this->translate('Terms', 'ppit-commitment', $context->getLocale()));
+		$title = $translator->translate('Terms', 'ppit-commitment', $context->getLocale());
 		
 		// Set document properties
 		$workbook->getProperties()->setCreator('P-PIT')
@@ -23,10 +23,8 @@ class SsmlTermViewHelper
 
 		$sheet = $workbook->getActiveSheet();
 		
-		foreach($context->getConfig('commitmentTerm/export'.(($view->type) ? '/'.$view->type: '')) as $propertyId => $colName) {
-			$property = $context->getConfig('commitmentTerm'.(($view->type) ? '/'.$view->type: ''))['properties'][$propertyId];
-			if (!$property) $property = $context->getConfig('commitmentTerm')['properties'][$propertyId];
-			if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
+		foreach($description['export'] as $propertyId => $property) {
+			$colName = $property['options'];
 			$sheet->setCellValue($colName.'1', $property['labels'][$context->getLocale()]);
 			$sheet->getStyle($colName.'1')->getFont()->getColor()->setRGB(substr($context->getConfig('styleSheet')['panelHeadingColor'], 1, 6));
 			$sheet->getStyle($colName.'1')->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setRGB(substr($context->getConfig('styleSheet')['panelHeadingBackground'], 1, 6));
@@ -37,11 +35,10 @@ class SsmlTermViewHelper
 		$j = 1;
 		foreach ($view->terms as $term) {
 			$j++;
-			foreach($context->getConfig('commitmentTerm/export'.(($view->type) ? '/'.$view->type: '')) as $propertyId => $colName) {
-				$property = $context->getConfig('commitmentTerm'.(($view->type) ? '/'.$view->type: ''))['properties'][$propertyId];
-				if (!$property) $property = $context->getConfig('commitmentTerm')['properties'][$propertyId];
-				if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
-				if ($property['type'] == 'date') $sheet->setCellValue($colName.$j, $term->properties[$propertyId]);
+			foreach($description['export'] as $propertyId => $property) {
+				$colName = $property['options'];
+				if ($propertyId == 'place_id') $sheet->setCellValue($colName.$j, $term->place_caption);
+				elseif ($property['type'] == 'date') $sheet->setCellValue($colName.$j, $context->decodeDate($term->properties[$propertyId]));
 				elseif ($property['type'] == 'number') {
 					$sheet->setCellValue($colName.$j, $term->properties[$propertyId]);
 					$sheet->getStyle($colName.$j)->getNumberFormat()->setFormatCode('### ##0.00');
@@ -50,7 +47,8 @@ class SsmlTermViewHelper
 				else $sheet->setCellValue($colName.$j, $term->properties[$propertyId]);
 			}
 		}
-		foreach($context->getConfig('commitmentTerm/export'.(($view->type) ? '/'.$view->type: '')) as $propertyId => $colName) {
+		foreach($description['export'] as $propertyId => $property) {
+			$colName = $property['options'];
 			$sheet->getColumnDimension($colName)->setAutoSize(true);
 		}
 	}

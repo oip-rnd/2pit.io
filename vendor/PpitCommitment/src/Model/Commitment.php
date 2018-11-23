@@ -919,7 +919,7 @@ class Commitment
     	$commitment->properties = $commitment->getProperties();
     	$commitment->subscriptions = Subscription::getList(array(), 'product_identifier', 'ASC');
 
-    	$commitment->terms = Term::getList(array('commitment_id' => $commitment->id), 'due_date', 'ASC', 'search');
+    	$commitment->terms = Term::getList($commitment->type, array('commitment_id' => $commitment->id), '+due_date');
     	$commitment->termSum = 0;
     	foreach ($commitment->terms as $term) $commitment->termSum += $term->amount;
 
@@ -929,7 +929,7 @@ class Commitment
     public static function getArray($id, $column = 'id')
     {
     	$commitment = Commitment::getTable()->get($id, $column);
-    	$commitment->terms = Term::getList(array('commitment_id' => $commitment->id), 'due_date', 'ASC', 'search');
+    	$commitment->terms = Term::getList($commitment->type, array('commitment_id' => $commitment->id), '+due_date');
     	$commitment->termSum = 0;
     	foreach ($commitment->terms as $term) $commitment->termSum += $term->amount;
     	$data = $commitment->toarray();
