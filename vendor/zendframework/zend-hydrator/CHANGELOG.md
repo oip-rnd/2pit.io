@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.4.1 - 2018-11-19
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- [#69](https://github.com/zendframework/zend-hydrator/pull/69) adds support for special pre/post characters in formats passed to the
+  `DateTimeFormatterStrategy`. When used, the `DateTime` instances created
+  during hydration will (generally) omit the time element, allowing for more
+  accurate comparisons.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 2.4.0 - 2018-04-30
 
 ### Added

@@ -9,6 +9,7 @@ module/*
 public/MDB-Pro
 public/photos/*
 public/img/*
+!public/img/carre80.png
 !public/img/2pit_io
 !public/img/flags
 public/logos/*

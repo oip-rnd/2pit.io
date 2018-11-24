@@ -37,7 +37,7 @@ return array(
 	'console' => array(
 			'router' => array(
 					'routes' => array(
-							'updateInstance' => array(
+/*							'updateInstance' => array(
 									'options' => array(
 											'route'    => 'instance serialize <id>',
 											'defaults' => array(
@@ -63,7 +63,7 @@ return array(
 													'action'     => 'repair'
 											)
 									)
-							),
+							),*/
 					)
 			)
 	),
@@ -928,6 +928,15 @@ return array(
             								'route' => '/admin[/:app]',
             								'defaults' => array(
             										'action' => 'admin',
+            								),
+            						),
+            				),
+            				'serialize' => array(
+            						'type' => 'segment',
+            						'options' => array(
+            								'route' => '/serialize',
+            								'defaults' => array(
+            										'action' => 'serialize',
             								),
             						),
             				),
@@ -1851,7 +1860,8 @@ return array(
 				array('route' => 'instance/addLogo', 'roles' => array('admin')),
 				array('route' => 'instance/pullImg', 'roles' => array('admin')),
 				array('route' => 'instance/admin', 'roles' => array('admin')),
-						
+				array('route' => 'instance/serialize', 'roles' => array('admin')),
+				
 				array('route' => 'place', 'roles' => array('admin')),
 				array('route' => 'place/index', 'roles' => array('admin')),
 				array('route' => 'place/search', 'roles' => array('admin')),

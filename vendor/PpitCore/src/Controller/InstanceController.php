@@ -449,17 +449,8 @@ class InstanceController extends AbstractActionController
     {
     	$context = Context::getCurrent();
     	$config = $context->getConfig();
-    	$request = $this->getRequest();
 
-    	// Make sure that we are running in a console and the user has not tricked our
-    	// application into running this action from a public web server.
-    	if (!$request instanceof ConsoleRequest){
-    		throw new \RuntimeException('You can only use this action from a console!');
-    	}
-    	
-    	// Get user email from console and check if the user used --verbose or -v flag
-    	$id = $request->getParam('id');
-    	$instance = Instance::get($id);
+    	$instance = $context->getInstance();
 		$instance->specifications = array();
 		$places = array();
     	foreach ($config['specifications'] as $paramId => $param) {
@@ -468,10 +459,8 @@ class InstanceController extends AbstractActionController
     	}
     	$instance->specifications = $config['specifications'];
     	$instance->update($instance->update_time);
-/*		echo '<code>'.json_encode($instance->specifications, JSON_PRETTY_PRINT).'</code>';
-    	echo '<code>'.json_encode($places, JSON_PRETTY_PRINT).'</code>';*/
     	
-    	return "Done\n";
+    	return $this->response;
     }
 
     public function addImageAction() {
