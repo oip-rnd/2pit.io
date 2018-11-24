@@ -15,6 +15,7 @@ public/img/*
 public/logos/*
 !public/logos/2pit_io
 vendor/dropbox
+vendor/TCPDF-master
 vendor/Ppit*
 !vendor/PpitCommitment
 !vendor/PpitCore
