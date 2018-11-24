@@ -42,6 +42,7 @@ class ComposerStaticInit85293ecee4f033dd340b761c2c703716
             'Zend\\Escaper\\' => 13,
             'Zend\\Db\\' => 8,
             'Zend\\Crypt\\' => 11,
+            'Zend\\Console\\' => 13,
             'Zend\\Config\\' => 12,
             'Zend\\ComponentInstaller\\' => 24,
             'Zend\\Code\\' => 10,
@@ -184,6 +185,10 @@ class ComposerStaticInit85293ecee4f033dd340b761c2c703716
         'Zend\\Crypt\\' => 
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-crypt/src',
+        ),
+        'Zend\\Console\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-console/src',
         ),
         'Zend\\Config\\' => 
         array (

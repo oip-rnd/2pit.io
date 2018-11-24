@@ -32,6 +32,7 @@ return array(
     'Zend\\Escaper\\' => array($vendorDir . '/zendframework/zend-escaper/src'),
     'Zend\\Db\\' => array($vendorDir . '/zendframework/zend-db/src'),
     'Zend\\Crypt\\' => array($vendorDir . '/zendframework/zend-crypt/src'),
+    'Zend\\Console\\' => array($vendorDir . '/zendframework/zend-console/src'),
     'Zend\\Config\\' => array($vendorDir . '/zendframework/zend-config/src'),
     'Zend\\ComponentInstaller\\' => array($vendorDir . '/zendframework/zend-component-installer/src'),
     'Zend\\Code\\' => array($vendorDir . '/zendframework/zend-code/src'),
