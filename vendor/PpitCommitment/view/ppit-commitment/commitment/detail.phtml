@@ -54,7 +54,7 @@
 <?php endif;?>
 
 <!-- Invoiced commitment -->
-<?php if ($commitment->status == 'invoiced') : ?>
+<?php if (in_array($commitment->status, ['invoiced', 'registered'])) : ?>
 		<div class="form-group">
 			<div class="alert alert-warning" style="text-align: center">
 				<?php echo $this->translate('This commitment is invoiced and cannot be updated anymore.', 'ppit-commitment', $context->getLocale()) ?>
@@ -103,7 +103,7 @@
 
 <?php if ($commitment->id) : ?>
 	<div>
-	<?php if (in_array($commitment->status, array('invoiced', 'settled'))) : ?>
+	<?php if (in_array($commitment->status, array('invoiced', 'settled', 'registered'))) : ?>
 		<a target="_blank" href="<?php echo $this->url('commitmentMessage/downloadInvoice', array('id' => $commitment->invoice_message_id)) ?>"><?php echo $this->translate('Invoice', 'ppit-commitment', $context->getLocale()) ?></a>
 		&nbsp;&nbsp;|&nbsp;&nbsp;
 	<?php endif;?>

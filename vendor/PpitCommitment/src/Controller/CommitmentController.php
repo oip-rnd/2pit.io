@@ -1673,14 +1673,12 @@ class CommitmentController extends AbstractActionController
     				$logo_src = $context->getConfig('headerParams')['logo'];
     				$commitment->properties['logo_height'] = $context->getConfig('headerParams')['logo-height'];
     			}
-    			$basePath = $context->getServiceManager()->get('viewhelpermanager')->get('basePath');
-    			$link = $context->getConfig()['ppitCoreSettings']['domainName'].$basePath('logos/');
+    			$basePath = $this->getRequest()->getUri()->getPath();
+    			$link = $context->getConfig()['ppitCoreSettings']['domainName'].$basePath.'/logos/';
     			$commitment->properties['logo_src'] = $link.$context->getInstance()->caption.'/'.$logo_src;
 
 				$commitmentMessage = CommitmentMessage::get($commitment->invoice_message_id);
-				$url = $context->getServiceManager()->get('viewhelpermanager')->get('url');
-				$commitment->properties['invoice_route'] = $url('commitmentMessage/guestDownloadInvoice', ['id' => $commitment->invoice_message_id], ['force_canonical' => true]).'?hash='.$commitmentMessage->authentication_token;
-//				$commitment->properties['invoice_route'] = $context->getConfig()['ppitCoreSettings']['domainName'].$this->url()->fromRoute('commitmentMessage/guestDownloadInvoice', ['id' => $commitment->invoice_message_id]).'?hash='.$commitmentMessage->authentication_token;
+				$commitment->properties['invoice_route'] = $this->url()->fromRoute('commitmentMessage/guestDownloadInvoice', ['id' => $commitment->invoice_message_id], ['force_canonical' => true]).'?hash='.$commitmentMessage->authentication_token;
 
     			$data = array();
     			$data['account_name'] = $commitment->account_name;
