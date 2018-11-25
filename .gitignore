@@ -14,6 +14,7 @@ public/img/*
 !public/img/flags
 public/logos/*
 !public/logos/2pit_io
+public/style/*
 vendor/dropbox
 vendor/TCPDF-master
 vendor/Ppit*
