@@ -689,7 +689,7 @@ class Interaction
     {
     	if (!Interaction::$table) {
     		$sm = Context::getCurrent()->getServiceManager();
-    		Interaction::$table = $sm->get('Model\InteractionTable');
+    		Interaction::$table = $sm->get(InteractionTable::class);
     	}
     	return Interaction::$table;
     }
