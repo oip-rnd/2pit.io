@@ -1227,7 +1227,7 @@ return array(
                 'options' => array(
                     'route'    => '/public',
                     'defaults' => array(
-                        'controller' => 'Controller\Public',
+                        'controller' => Controller\PublicController::class,
                         'action'     => 'displayPage',
                     ),
                 ),
