@@ -445,7 +445,7 @@ class CommitmentMessage
     {
     	if (!CommitmentMessage::$table) {
     		$sm = Context::getCurrent()->getServiceManager();
-    		CommitmentMessage::$table = $sm->get(Model\CommitmentMessageTable::class);
+    		CommitmentMessage::$table = $sm->get(CommitmentMessageTable::class);
     	}
     	return CommitmentMessage::$table;
     }

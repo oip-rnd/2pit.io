@@ -1674,7 +1674,7 @@ class CommitmentController extends AbstractActionController
     				$commitment->properties['logo_height'] = $context->getConfig('headerParams')['logo-height'];
     			}
     			$basePath = $this->getRequest()->getUri()->getPath();
-    			$link = $context->getConfig()['ppitCoreSettings']['domainName'].$basePath.'/logos/';
+    			$link = $context->getInstance()->fqdn.$basePath.'/logos/';
     			$commitment->properties['logo_src'] = $link.$context->getInstance()->caption.'/'.$logo_src;
 
 				$commitmentMessage = CommitmentMessage::get($commitment->invoice_message_id);
