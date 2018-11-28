@@ -30,7 +30,7 @@ class LandingController extends AbstractActionController
 		}
 		
 		if ($context->getConfig('specificationMode') == 'config') {
-			$content = $context->getConfig('landing/'.$place->identifier);
+			$content = $context->getConfig('landing/'.$place_identifier);
 			if (!$content) $content = $context->getConfig('landing/generic');
 		}
 		else $content = Config::get($place->identifier.'_landing', 'identifier', $place->id)->content;
