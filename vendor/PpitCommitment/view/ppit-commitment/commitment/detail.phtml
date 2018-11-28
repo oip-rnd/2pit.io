@@ -54,7 +54,7 @@
 <?php endif;?>
 
 <!-- Invoiced commitment -->
-<?php if ($commitment->status == 'invoiced') : ?>
+<?php if (in_array($commitment->status, ['invoiced', 'registered'])) : ?>
 		<div class="form-group">
 			<div class="alert alert-warning" style="text-align: center">
 				<?php echo $this->translate('This commitment is invoiced and cannot be updated anymore.', 'ppit-commitment', $context->getLocale()) ?>
@@ -103,7 +103,7 @@
 
 <?php if ($commitment->id) : ?>
 	<div>
-	<?php if (in_array($commitment->status, array('invoiced', 'settled'))) : ?>
+	<?php if (in_array($commitment->status, array('invoiced', 'settled', 'registered'))) : ?>
 		<a target="_blank" href="<?php echo $this->url('commitmentMessage/downloadInvoice', array('id' => $commitment->invoice_message_id)) ?>"><?php echo $this->translate('Invoice', 'ppit-commitment', $context->getLocale()) ?></a>
 		&nbsp;&nbsp;|&nbsp;&nbsp;
 	<?php endif;?>
@@ -323,7 +323,7 @@
 				<td style="text-align: left"><?php echo $context->decodeDate($term->due_date) ?></td>
 				<td style="text-align: left"><?php echo $context->decodeDate($term->settlement_date) ?></td>
 				<td style="text-align: left"><?php echo $context->decodeDate($term->collection_date) ?></td>
-				<td style="text-align: left"><?php if ($term->status) echo $context->getConfig('commitmentTerm')['properties']['status']['modalities'][$term->status][$context->getLocale()] ?></td>
+				<td style="text-align: left"><?php if ($term->status) echo $termProperties['status']['modalities'][$term->status][$context->getLocale()] ?></td>
 				<td style="text-align: right; <?php if ($term->status != 'settled' && $term->status != 'collected' && $term->due_date <= date('Y-m-d')) echo 'color: red' ?>"><?php echo $context->formatFloat($term->amount, 2) ?></td>
 				<td>
 	<?php if ($term->document) : ?>
@@ -357,9 +357,11 @@
 					<button type="button" class="btn btn-default action-btn btn-xs term-generate-anchor" title="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale())?>" id="term-generate-anchor" <?php if (in_array($commitment->credit_status, array('blocked', 'suspended', 'closed')) || in_array($commitment->status, array('invoiced', 'settled')) && !$context->hasRole('admin')) echo 'disabled="disabled"' ?>>
 						<?php echo $this->translate('Generate schedule', 'ppit-commitment', $context->getLocale())?>
 					</button>
-          <button type="button" class="btn btn-default action-btn btn-xs subrogate-anchor" title="<?php echo $this->translate('Generate subrogation', 'ppit-commitment', $context->getLocale())?>" id="subrogate-anchor" <?php if (in_array($commitment->credit_status, array('blocked', 'suspended', 'closed')) || in_array($commitment->status, array('invoiced', 'settled')) && !$context->hasRole('admin')) echo 'disabled="disabled"' ?>>
-            <?php echo $this->translate('Generate subrogation', 'ppit-commitment', $context->getLocale())?>
-          </button>
+<?php if ($type == 'p-pit-studies') : ?>
+                    <button type="button" class="btn btn-default action-btn btn-xs subrogate-anchor" title="<?php echo $this->translate('Generate subrogation', 'ppit-commitment', $context->getLocale())?>" id="subrogate-anchor" <?php if (in_array($commitment->credit_status, array('blocked', 'suspended', 'closed')) || in_array($commitment->status, array('invoiced', 'settled')) && !$context->hasRole('admin')) echo 'disabled="disabled"' ?>>
+                      <?php echo $this->translate('Generate subrogation', 'ppit-commitment', $context->getLocale())?>
+                    </button>
+<?php endif;?>
 				</td>
 			</tr>
 			<tr class="term term-tr" id="term-tr_<?php echo $i ?>" style="display: none">
