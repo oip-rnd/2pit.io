@@ -192,6 +192,10 @@
               <li>
         <?php if ($link['target'] == 'modal') : ?>
 	           <a data-toggle="modal" data-target="#<?php echo $link['data-target'] ?>"><?php echo $context->localize($link['html'], $locale) ?></a>
+
+        <?php else : ?>
+             <a href="<?php echo $link['href']['uri'] ?>" target="_blank"><?php echo $context->localize($link['html'], $locale) ?></a>
+
         <?php endif;?>
               </li>
       <?php endforeach;?>

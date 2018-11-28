@@ -245,7 +245,9 @@ function public<?php echo $action_id ?>Action(request_id) {
         });
 
         $('#modalRequestActionForm').modal('show');
-<?php if ($action_id != 'transfer') : ?>
+<?php if ($action_id == 'transfer') : ?>
+        $('#transfer-email').show();
+<?php else : ?>
         $('#transfer-email').hide();
 <?php endif; ?>
       }

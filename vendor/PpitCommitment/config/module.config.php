@@ -726,7 +726,7 @@ return array(
         						'search' => array(
         								'type' => 'segment',
         								'options' => array(
-        										'route' => '/search',
+        										'route' => '/search[/:type]',
         										'defaults' => array(
         												'action' => 'search',
         										),
@@ -735,7 +735,7 @@ return array(
         						'list' => array(
         								'type' => 'segment',
         								'options' => array(
-        										'route' => '/list',
+        										'route' => '/list[/:type]',
         										'defaults' => array(
         												'action' => 'list',
         										),
@@ -753,7 +753,7 @@ return array(
 	       						'detail' => array(
         								'type' => 'segment',
         								'options' => array(
-        										'route' => '/detail[/:id]',
+        										'route' => '/detail[/:type][/:id]',
         										'constraints' => array(
         												'id' => '[0-9]*',
         										),
@@ -765,7 +765,7 @@ return array(
 		        				'generate' => array(
 		        						'type' => 'segment',
 		        						'options' => array(
-		        								'route' => '/generate[/:commitment_id]',
+		        								'route' => '/generate[/:type][/:commitment_id]',
 		        								'defaults' => array(
 		        										'action' => 'generate',
 		        								),
@@ -774,7 +774,7 @@ return array(
 	       						'update' => array(
 		        						'type' => 'segment',
 		        						'options' => array(
-		        								'route' => '/update[/:commitment_id][/:id][/:act]',
+		        								'route' => '/update[/:type][/:commitment_id][/:id][/:act]',
 		        								'constraints' => array(
 		        										'commitment_id'     => '[0-9]*',
 		        										'id'     => '[0-9]*',
@@ -787,7 +787,7 @@ return array(
 	       						'invoice' => array(
 		        						'type' => 'segment',
 		        						'options' => array(
-		        								'route' => '/invoice[/:id]',
+		        								'route' => '/invoice[/:type][/:id]',
 		        								'constraints' => array(
 		        										'id' => '[0-9]*',
 		        								),
@@ -799,7 +799,7 @@ return array(
 								'group' => array(
 										'type' => 'segment',
 										'options' => array(
-												'route' => '/group',
+												'route' => '/group[/:type]',
 												'defaults' => array(
 														'action' => 'group',
 												),
@@ -808,7 +808,7 @@ return array(
 		        				'debit' => array(
 		        						'type' => 'segment',
 		        						'options' => array(
-		        								'route' => '/debit',
+		        								'route' => '/debit[/:type]',
 		        								'defaults' => array(
 		        										'action' => 'debit',
 		        								),
@@ -817,7 +817,7 @@ return array(
 		        				'debitSsml' => array(
 		        						'type' => 'segment',
 		        						'options' => array(
-		        								'route' => '/debit-ssml[/:place_id]',
+		        								'route' => '/debit-ssml[/:type][/:place_id]',
 		        								'defaults' => array(
 		        										'action' => 'debitSsml',
 		        								),
@@ -826,7 +826,7 @@ return array(
 	       						'debitXml' => array(
 		        						'type' => 'segment',
 		        						'options' => array(
-		        								'route' => '/debit-xml[/:place_id]',
+		        								'route' => '/debit-xml[/:type][/:place_id]',
 		        								'defaults' => array(
 		        										'action' => 'debitXml',
 		        								),
@@ -835,7 +835,7 @@ return array(
 		        				'checkDeposit' => array(
 		        						'type' => 'segment',
 		        						'options' => array(
-		        								'route' => '/check-deposit',
+		        								'route' => '/check-deposit[/:type]',
 		        								'defaults' => array(
 		        										'action' => 'checkDeposit',
 		        								),
@@ -844,7 +844,7 @@ return array(
 	       						'checkDepositSsml' => array(
 		        						'type' => 'segment',
 		        						'options' => array(
-		        								'route' => '/check-deposit-ssml[/:place_id]',
+		        								'route' => '/check-deposit-ssml[/:type][/:place_id]',
 		        								'defaults' => array(
 		        										'action' => 'checkDepositSsml',
 		        								),
@@ -853,7 +853,7 @@ return array(
 	       						'delete' => array(
 				                    'type' => 'segment',
 				                    'options' => array(
-				                        'route' => '/delete[/:id]',
+				                        'route' => '/delete[/:type][/:id]',
 					                    'constraints' => array(
 					                    	'id' => '[0-9]*',
 					                    ),
@@ -989,11 +989,7 @@ return array(
             'PpitCommitment' => __DIR__ . '/../view',
         ),
     ),
-/*	'service_manager' => array(
-		'factories' => array(
-				'translator' => 'Zend\Mvc\Service\TranslatorServiceFactory',
-		),
-	),*/
+
 	'translator' => array(
 		'locale' => 'fr_FR',
 		'translation_file_patterns' => array(
@@ -3347,234 +3343,302 @@ table.note-report td {
 	),
 	
 	// Term
-	
-	'commitmentTerm' => array(
-			'statuses' => array(),
-			'properties' => array(
-					'name' => array(
-							'definition' => 'inline',
-							'type' => 'input',
-							'labels' => array(
-									'en_US' => 'Name',
-									'fr_FR' => 'Nom',
-							),
-					),
-					'status' => array(
-							'definition' => 'inline',
-							'type' => 'select',
-							'modalities' => array(
-									'expected' => array('fr_FR' => 'Attendu', 'en_US' => 'Expected'),
-									'to_invoice' => array('fr_FR' => 'A facturer', 'en_US' => 'To invoice'),
-									'settled' => array('fr_FR' => 'Réglé', 'en_US' => 'Settled'),
-									'collected' => array('fr_FR' => 'Encaissé', 'en_US' => 'Collected'),
-									'invoiced' => array('fr_FR' => 'Facturé', 'en_US' => 'Invoiced'),
-									'rejected' => array('fr_FR' => 'Rejeté', 'en_US' => 'Rejected'),
-							),
-							'labels' => array(
-									'en_US' => 'Status',
-									'fr_FR' => 'Statut',
-							),
-					),
-					'place_id' => array(
-							'definition' => 'inline',
-							'type' => 'select',
-							'modalities' => array(
-							),
-							'labels' => array(
-									'en_US' => 'Place',
-									'fr_FR' => 'Etablissement',
-							),
-					),
-					'caption' => array(
-							'definition' => 'inline',
-							'type' => 'input',
-							'labels' => array(
-									'en_US' => 'Caption',
-									'fr_FR' => 'Libellé',
-							),
-					),
-					'due_date' => array(
-							'definition' => 'inline',
-							'type' => 'date',
-							'labels' => array(
-									'en_US' => 'Due date',
-									'fr_FR' => 'Date d\'échéance',
-							),
-					),
-					'settlement_date' => array(
-							'definition' => 'inline',
-							'type' => 'date',
-							'labels' => array(
-									'en_US' => 'Settlement date',
-									'fr_FR' => 'Date de règlement',
-							),
-					),
-					'collection_date' => array(
-							'definition' => 'inline',
-							'type' => 'date',
-							'labels' => array(
-									'en_US' => 'Collection date',
-									'fr_FR' => 'Date d\'encaissement',
-							),
-					),
-					'amount' => array(
-							'definition' => 'inline',
-							'type' => 'number',
-							'minValue' => -99999999,
-							'maxValue' => 99999999,
-							'labels' => array(
-									'en_US' => 'Amount',
-									'fr_FR' => 'Montant',
-							),
-					),
-					'means_of_payment' => array(
-							'definition' => 'inline',
-							'type' => 'select',
-							'modalities' => array(
-									'bank_card' => array('fr_FR' => 'CB', 'en_US' => 'Bank card'),
-									'transfer' => array('fr_FR' => 'Virement', 'en_US' => 'Transfer'),
-									'direct_debit' => array('fr_FR' => 'Prélèvement', 'en_US' => 'Direct debit'),
-									'check' => array('fr_FR' => 'Chèque', 'en_US' => 'Check'),
-									'cash' => array('fr_FR' => 'Espèces', 'en_US' => 'Cash'),
-							),
-							'labels' => array(
-									'en_US' => 'Means of payment',
-									'fr_FR' => 'Mode de règlement',
-							),
-					),
-					'bank_name' => array(
-							'definition' => 'inline',
-							'type' => 'input',
-							'labels' => array(
-									'en_US' => 'Bank name',
-									'fr_FR' => 'Nom de la banque',
-							),
-					),
-					'invoice_n_last' => array(
-							'definition' => 'inline',
-							'type' => 'input',
-							'labels' => array(
-									'en_US' => 'Payer name',
-									'fr_FR' => 'Nom du payeur',
-							),
-					),
-					'reference' => array(
-							'definition' => 'inline',
-							'type' => 'input',
-							'labels' => array(
-									'en_US' => 'Reference',
-									'fr_FR' => 'Référence',
-							),
-					),
-					'comment' => array(
-							'definition' => 'inline',
-							'type' => 'textarea',
-							'labels' => array(
-									'en_US' => 'Comment',
-									'fr_FR' => 'Commentaire',
-							),
-					),
-					'document' => array(
-							'definition' => 'inline',
-							'type' => 'dropbox',
-							'labels' => array(
-									'en_US' => 'Attachment',
-									'fr_FR' => 'Justificatif',
-							),
-					),
-					'commitment_caption' => array('definition' => 'commitment/property/caption'),
-					'account_status' => array('definition' => 'commitment/property/account_status'),
-					'account_date_1' => array('definition' => 'core_account/generic/property/date_1'),
-					'account_date_2' => array('definition' => 'core_account/generic/property/date_2'),
-					'account_date_3' => array('definition' => 'core_account/generic/property/date_3'),
-					'account_date_4' => array('definition' => 'core_account/generic/property/date_4'),
-					'account_date_5' => array('definition' => 'core_account/generic/property/date_5'),
-					'account_property_1' => array('definition' => 'core_account/generic/property/property_1'),
-					'account_property_2' => array('definition' => 'core_account/generic/property/property_2'),
-					'account_property_3' => array('definition' => 'core_account/generic/property/property_3'),
-					'account_property_4' => array('definition' => 'core_account/p-pit-studies/property/property_4'),
-					'account_property_5' => array('definition' => 'core_account/generic/property/property_5'),
-					'account_property_6' => array('definition' => 'core_account/p-pit-studies/property/property_6'),
-					'account_property_7' => array('definition' => 'core_account/generic/property/property_7'),
-					'account_property_8' => array('definition' => 'core_account/generic/property/property_8'),
-					'account_property_9' => array('definition' => 'core_account/generic/property/property_9'),
-					'account_property_10' => array('definition' => 'student/property/level'),
-					'account_property_11' => array('definition' => 'core_account/generic/property/property_11'),
-					'account_property_12' => array('definition' => 'core_account/generic/property/property_12'),
-					'account_property_13' => array('definition' => 'core_account/generic/property/property_13'),
-					'account_property_14' => array('definition' => 'core_account/generic/property/property_14'),
-					'account_property_15' => array('definition' => 'core_account/p-pit-studies/property/property_15'),
-					'account_property_16' => array('definition' => 'core_account/generic/property/property_16'),
-			),
-	),
-	'commitmentTerm/index' => array(
-			'title' => array('en_US' => 'P-PIT Commitments', 'fr_FR' => 'P-PIT Engagements'),
-	),
-	'commitmentTerm/search' => array(
-			'title' => array('en_US' => 'Terms', 'fr_FR' => 'Echéances'),
-			'todoTitle' => array('en_US' => 'todo list', 'fr_FR' => 'todo list'),
-			'properties' => array(
-				'place_id' => ['multiple' => true],
-				'name' => [],
-				'status' => ['multiple' => true],
-				'account_status' => ['multiple' => true],
-				'due_date' => [],
-				'collection_date' => [],
-				'means_of_payment' => [],
-				'amount' => [],
-				'reference' => [],
-				'comment' => [],
-			),
-	),
-	'commitmentTerm/list' => array(
-			'properties' => array(
-				'name' => [],
-				'status' => [],
-				'due_date' => [],
-				'collection_date' => [],
-				'amount' => [],
-			),
-	),
-	'commitmentTerm/detail' => array(
-			'title' => array('en_US' => 'Term detail', 'fr_FR' => 'Détail de l\'échéance'),
-			'displayAudit' => true,
+
+	'commitmentTerm/generic/property/commitment_id' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'en_US' => 'Commitment',
+			'fr_FR' => 'Engagement',
+		),
 	),
 	
-	'commitmentTerm/update' => array(
-			'status' => ['mandatory' => true],
-			'caption' => ['mandatory' => true],
-			'due_date' => ['mandatory' => true],
-			'settlement_date' => ['mandatory' => false],
-			'collection_date' => ['mandatory' => false],
-			'amount' => ['mandatory' => true],
-			'means_of_payment' => ['mandatory' => false],
-			'bank_name' => ['mandatory' => false],
-			'invoice_n_last' => ['mandatory' => false],
-			'reference' => ['mandatory' => false],
-			'comment' => ['mandatory' => false],
-			'document' => ['mandatory' => false],
+	'commitmentTerm/generic/property/name' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'en_US' => 'Name',
+			'fr_FR' => 'Nom',
+		),
+	),
+	
+	'commitmentTerm/generic/property/status' => array(
+		'definition' => 'inline',
+		'type' => 'select',
+		'modalities' => array(
+			'expected' => array('fr_FR' => 'Attendu', 'en_US' => 'Expected'),
+			'to_invoice' => array('fr_FR' => 'A facturer', 'en_US' => 'To invoice'),
+			'settled' => array('fr_FR' => 'Réglé', 'en_US' => 'Settled'),
+			'collected' => array('fr_FR' => 'Encaissé', 'en_US' => 'Collected'),
+			'invoiced' => array('fr_FR' => 'Facturé', 'en_US' => 'Invoiced'),
+			'rejected' => array('fr_FR' => 'Rejeté', 'en_US' => 'Rejected'),
+		),
+		'labels' => array(
+			'en_US' => 'Status',
+			'fr_FR' => 'Statut',
+		),
+	),
+	
+	'commitmentTerm/generic/property/place_id' => array(
+		'definition' => 'inline',
+		'type' => 'select',
+		'modalities' => array(
+		),
+		'labels' => array(
+			'en_US' => 'Place',
+			'fr_FR' => 'Etablissement',
+		),
+	),
+	
+	'commitmentTerm/generic/property/invoice_account_id' => array(
+		'definition' => 'inline',
+		'type' => 'select',
+		'labels' => array(
+			'en_US' => 'Invoice account',
+			'fr_FR' => 'Compte de facturation',
+		),
+	),
+	
+	'commitmentTerm/generic/property/caption' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'en_US' => 'Caption',
+			'fr_FR' => 'Libellé',
+		),
+	),
+	
+	'commitmentTerm/generic/property/due_date' => array(
+		'definition' => 'inline',
+		'type' => 'date',
+		'labels' => array(
+			'en_US' => 'Due date',
+			'fr_FR' => 'Date d\'échéance',
+		),
+	),
+	
+	'commitmentTerm/generic/property/settlement_date' => array(
+		'definition' => 'inline',
+		'type' => 'date',
+		'labels' => array(
+			'en_US' => 'Settlement date',
+			'fr_FR' => 'Date de règlement',
+		),
+	),
+	
+	'commitmentTerm/generic/property/collection_date' => array(
+		'definition' => 'inline',
+		'type' => 'date',
+		'labels' => array(
+			'en_US' => 'Collection date',
+			'fr_FR' => 'Date d\'encaissement',
+		),
 	),
 
-	'commitmentTerm/export' => array(
-		'name' => 'A',
-		'commitment_caption' => 'B',
-		'status' => 'C',
-		'caption' => 'D',
-		'due_date' => 'E',
-		'settlement_date' => 'F',
-		'collection_date' => 'G',
-		'amount' => 'H',
-		'means_of_payment' => 'I',
-		'bank_name' => 'J',
-		'invoice_n_last' => 'K',
-		'reference' => 'L',
-		'comment' => 'M',
-		'document' => 'N',
+	'commitmentTerm/generic/property/quantity' => array(
+		'definition' => 'inline',
+		'type' => 'number',
+		'minValue' => -99999999,
+		'maxValue' => 99999999,
+		'labels' => array(
+			'en_US' => 'Quantity',
+			'fr_FR' => 'Quantité',
+		),
+	),
+
+	'commitmentTerm/generic/property/unit_price' => array(
+		'definition' => 'inline',
+		'type' => 'number',
+		'minValue' => -99999999,
+		'maxValue' => 99999999,
+		'labels' => array(
+			'en_US' => 'Unit price',
+			'fr_FR' => 'Prix unitaire',
+		),
 	),
 	
-	'commitmentTerm/group' => array(
+	'commitmentTerm/generic/property/amount' => array(
+		'definition' => 'inline',
+		'type' => 'number',
+		'minValue' => -99999999,
+		'maxValue' => 99999999,
+		'labels' => array(
+			'en_US' => 'Amount',
+			'fr_FR' => 'Montant',
+		),
+	),
+	
+	'commitmentTerm/generic/property/means_of_payment' => array(
+		'definition' => 'inline',
+		'type' => 'select',
+		'modalities' => array(
+			'bank_card' => array('fr_FR' => 'CB', 'en_US' => 'Bank card'),
+			'transfer' => array('fr_FR' => 'Virement', 'en_US' => 'Transfer'),
+			'direct_debit' => array('fr_FR' => 'Prélèvement', 'en_US' => 'Direct debit'),
+			'check' => array('fr_FR' => 'Chèque', 'en_US' => 'Check'),
+			'cash' => array('fr_FR' => 'Espèces', 'en_US' => 'Cash'),
+		),
+		'labels' => array(
+			'en_US' => 'Means of payment',
+			'fr_FR' => 'Mode de règlement',
+		),
+	),
+	
+	'commitmentTerm/generic/property/bank_name' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'en_US' => 'Bank name',
+			'fr_FR' => 'Nom de la banque',
+		),
+	),
+	
+	'commitmentTerm/generic/property/invoice_n_last' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'en_US' => 'Payer name',
+			'fr_FR' => 'Nom du payeur',
+		),
+	),
+	
+	'commitmentTerm/generic/property/reference' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'en_US' => 'Reference',
+			'fr_FR' => 'Référence',
+		),
+	),
+	
+	'commitmentTerm/generic/property/comment' => array(
+		'definition' => 'inline',
+		'type' => 'textarea',
+		'labels' => array(
+			'en_US' => 'Comment',
+			'fr_FR' => 'Commentaire',
+		),
+	),
+	
+	'commitmentTerm/generic/property/document' => array(
+		'definition' => 'inline',
+		'type' => 'dropbox',
+		'labels' => array(
+			'en_US' => 'Attachment',
+			'fr_FR' => 'Justificatif',
+		),
+	),
+	
+	'commitmentTerm/generic/property/commitment_caption' => array('definition' => 'commitment/property/caption'),
+	'commitmentTerm/generic/property/account_status' => array('definition' => 'commitment/property/account_status'),
+	'commitmentTerm/generic/property/account_date_1' => array('definition' => 'core_account/generic/property/date_1'),
+	'commitmentTerm/generic/property/account_date_2' => array('definition' => 'core_account/generic/property/date_2'),
+	'commitmentTerm/generic/property/account_date_3' => array('definition' => 'core_account/generic/property/date_3'),
+	'commitmentTerm/generic/property/account_date_4' => array('definition' => 'core_account/generic/property/date_4'),
+	'commitmentTerm/generic/property/account_date_5' => array('definition' => 'core_account/generic/property/date_5'),
+	'commitmentTerm/generic/property/account_property_1' => array('definition' => 'core_account/generic/property/property_1'),
+	'commitmentTerm/generic/property/account_property_2' => array('definition' => 'core_account/generic/property/property_2'),
+	'commitmentTerm/generic/property/account_property_3' => array('definition' => 'core_account/generic/property/property_3'),
+	'commitmentTerm/generic/property/account_property_4' => array('definition' => 'core_account/p-pit-studies/property/property_4'),
+	'commitmentTerm/generic/property/account_property_5' => array('definition' => 'core_account/generic/property/property_5'),
+	'commitmentTerm/generic/property/account_property_6' => array('definition' => 'core_account/p-pit-studies/property/property_6'),
+	'commitmentTerm/generic/property/account_property_7' => array('definition' => 'core_account/generic/property/property_7'),
+	'commitmentTerm/generic/property/account_property_8' => array('definition' => 'core_account/generic/property/property_8'),
+	'commitmentTerm/generic/property/account_property_9' => array('definition' => 'core_account/generic/property/property_9'),
+	'commitmentTerm/generic/property/account_property_10' => array('definition' => 'student/property/level'),
+	'commitmentTerm/generic/property/account_property_11' => array('definition' => 'core_account/generic/property/property_11'),
+	'commitmentTerm/generic/property/account_property_12' => array('definition' => 'core_account/generic/property/property_12'),
+	'commitmentTerm/generic/property/account_property_13' => array('definition' => 'core_account/generic/property/property_13'),
+	'commitmentTerm/generic/property/account_property_14' => array('definition' => 'core_account/generic/property/property_14'),
+	'commitmentTerm/generic/property/account_property_15' => array('definition' => 'core_account/p-pit-studies/property/property_15'),
+	'commitmentTerm/generic/property/account_property_16' => array('definition' => 'core_account/generic/property/property_16'),
+	
+	'commitmentTerm/generic' => array(
+		'statuses' => array(),
+		'properties' => array(
+				'commitment_id', 'name', 'status', 'place_id', 'caption', 'invoice_account_id', 'due_date', 'settlement_date', 'collection_date',
+				'quantity', 'unit_price', 'amount', 'means_of_payment', 'bank_name', 'invoice_n_last', 'reference', 'comment', 'document', 'commitment_caption', 
+				'account_status', 'account_date_1', 'account_date_2', 'account_date_3', 'account_date_4', 'account_date_5',
+				'account_property_1', 'account_property_2', 'account_property_3', 'account_property_4', 'account_property_5', 'account_property_6', 'account_property_7', 'account_property_8', 'account_property_9',
+				'account_property_10', 'account_property_11', 'account_property_12', 'account_property_13', 'account_property_14', 'account_property_15', 'account_property_16',
+		),
+	),
+	
+	'commitmentTerm/index/generic' => array(
+		'title' => array('en_US' => 'P-PIT Commitments', 'fr_FR' => 'P-PIT Engagements'),
+	),
+	
+	'commitmentTerm/search/generic' => array(
+		'title' => array('en_US' => 'Terms', 'fr_FR' => 'Echéances'),
+		'todoTitle' => array('en_US' => 'todo list', 'fr_FR' => 'todo list'),
+		'properties' => array(
+			'place_id' => ['multiple' => true],
+			'name' => [],
+//			'invoice_account_id' => [],
+			'status' => ['multiple' => true],
+			'account_status' => ['multiple' => true],
+			'due_date' => [],
+			'collection_date' => [],
+			'means_of_payment' => [],
+			'amount' => [],
+			'reference' => [],
+			'comment' => [],
+		),
+	),
+	'commitmentTerm/list/generic' => array(
+		'properties' => array(
+			'name' => [],
+//			'invoice_account_id' => [],
+			'status' => [],
+			'due_date' => [],
+			'collection_date' => [],
+			'amount' => [],
+		),
+	),
+	'commitmentTerm/detail/generic' => array(
+		'title' => array('en_US' => 'Term detail', 'fr_FR' => 'Détail de l\'échéance'),
+		'displayAudit' => true,
+	),
+	
+	'commitmentTerm/update/generic' => array(
+//		'invoice_account_id' => [],
+		'status' => ['mandatory' => true],
+		'caption' => ['mandatory' => true],
+		'due_date' => ['mandatory' => true],
+		'settlement_date' => [],
+		'collection_date' => [],
+		'quantity' => ['readonly' => true],
+		'unit_price' => ['mandatory' => true],
+		'amount' => ['readonly' => true],
+		'means_of_payment' => [],
+		'bank_name' => [],
+		'invoice_n_last' => [],
+		'reference' => [],
+		'comment' => [],
+		'document' => [],
+	),
+
+	'commitmentTerm/groupUpdate/generic' => array(
 		'status' => [],
 		'caption' => [],
+	),
+	
+	'commitmentTerm/export/generic' => array(
+		'name' => 'A',
+//		'invoice_account_id' => 'B',
+		'commitment_caption' => 'C',
+		'status' => 'D',
+		'caption' => 'E',
+		'due_date' => 'F',
+		'settlement_date' => 'G',
+		'collection_date' => 'H',
+		'amount' => 'I',
+		'means_of_payment' => 'J',
+		'bank_name' => 'K',
+		'invoice_n_last' => 'L',
+		'reference' => 'M',
+		'comment' => 'N',
+		'document' => 'O',
 	),
 	
 	'commitmentTerm/debit' => array(
