@@ -1,104 +1,223 @@
-2pit.io
-=======
+# ZendSkeletonApplication
 
-Introduction
-------------
-This is the minimal 2pit application. It is based on a standard ZF2 installation. It is packaged with the core module (\vendor\PpitCore) and the default security manager (\vendor\PpitUser), providing a classic authentication mode based on login/password in a form.
+## Introduction
 
-Please note that only the 2pit application is under GPL license. Each file under GPL mentions it explicitly. The ZF2 application on which is packaged 2pit has it own license which is not affected by 2pit.
+This is a skeleton application using the Zend Framework MVC layer and module
+systems. This application is meant to be used as a starting place for those
+looking to get their feet wet with Zend Framework.
 
-Installation
-------------
+## Installation using Composer
 
-Pull the repository:
+The easiest way to create a new Zend Framework project is to use
+[Composer](https://getcomposer.org/).  If you don't have it already installed,
+then please install as per the [documentation](https://getcomposer.org/doc/00-intro.md).
 
-	mkdir /path/to/2pit.io/
-    cd /path/to/2pit.io/
-	git init    
-    git remote add origin git://github.com/2pit-io/2pit.io
-    git pull origin master
-    
-Create a database on Mysql (let's say 2pit_io)
-Load in mysql the full and all the incremental sql file in database/
+To create your new Zend Framework project:
 
-	cd database/
-	mysql -u'you sql user' -p'you sql password' 2pit_io < 2pit_io-full.sql
-	mysql -u'you sql user' -p'you sql password' 2pit_io < 2pit_io-1.0.05.sql
-	...
-	
-In your database you have a table named 'core_instance' with only one row. Change the fqdn value (which is localhost) to reflect the one of your site. The fqdn is for example of the form www.2pit.io.
+```bash
+$ composer create-project -sdev zendframework/skeleton-application path/to/install
+```
 
-Install MDB Pro that you should get separately in public/MDB-Pro.
+Once installed, you can test it out immediately using PHP's built-in web server:
 
-The config/application.config.php file is ignored by git since it refers to your local modules and files. Create it by copying from the template
-
-	cd ../config/
-	cp application.config.template.php application.config.php
-
-Ensure that all files are accessible to your web server (Apache on Linux in this example):
-    
-    chown -R www-data:www-data /path/to/2pit.io/
-    chmod -R 700 /path/to/2pit.io/
-
-The config/autoload/local.php file deals with security and so is ignored by git. Create it by copying from the template and protect it (let's say that www-data is the apache group and user names):
-
-	cd autoload/
-	cp local.template.php local.php
-	chown www-data:www-data local.php
-	chmod 500 local.php
-
-Adapt these three lines in config/autoload/global.php according to your own mysql settings:
-
-    'dsn' => 'mysql:dbname=yourdbname;host=localhost',
-    'driver_options' => array(
-        PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
-    ),
-    'username' => 'yourmysqlusername',
-    'password' => 'yourmysqlpassword',
-
-Web Server Setup
-----------------
-
-### PHP CLI Server
-
-The simplest way to get started if you are using PHP 5.4 or above is to start the internal PHP cli-server in the root directory:
-
-    php -S 0.0.0.0:8080 -t public/ public/index.php
+```bash
+$ cd path/to/install
+$ php -S 0.0.0.0:8080 -t public/ public/index.php
+# OR use the composer alias:
+$ composer run --timeout 0 serve
+```
 
 This will start the cli-server on port 8080, and bind it to all network
-interfaces.
+interfaces. You can then visit the site at http://localhost:8080/
+- which will bring up Zend Framework welcome page.
 
-**Note: ** The built-in CLI server is *for development only*.
+**Note:** The built-in CLI server is *for development only*.
 
-### Apache Setup
+## Development mode
+
+The skeleton ships with [zf-development-mode](https://github.com/zfcampus/zf-development-mode)
+by default, and provides three aliases for consuming the script it ships with:
+
+```bash
+$ composer development-enable  # enable development mode
+$ composer development-disable # disable development mode
+$ composer development-status  # whether or not development mode is enabled
+```
+
+You may provide development-only modules and bootstrap-level configuration in
+`config/development.config.php.dist`, and development-only application
+configuration in `config/autoload/development.local.php.dist`. Enabling
+development mode will copy these files to versions removing the `.dist` suffix,
+while disabling development mode will remove those copies.
+
+Development mode is automatically enabled as part of the skeleton installation process. 
+After making changes to one of the above-mentioned `.dist` configuration files you will
+either need to disable then enable development mode for the changes to take effect,
+or manually make matching updates to the `.dist`-less copies of those files.
+
+## Running Unit Tests
+
+To run the supplied skeleton unit tests, you need to do one of the following:
+
+- During initial project creation, select to install the MVC testing support.
+- After initial project creation, install [zend-test](https://zendframework.github.io/zend-test/):
+
+  ```bash
+  $ composer require --dev zendframework/zend-test
+  ```
+
+Once testing support is present, you can run the tests using:
+
+```bash
+$ ./vendor/bin/phpunit
+```
+
+If you need to make local modifications for the PHPUnit test setup, copy
+`phpunit.xml.dist` to `phpunit.xml` and edit the new file; the latter has
+precedence over the former when running tests, and is ignored by version
+control. (If you want to make the modifications permanent, edit the
+`phpunit.xml.dist` file.)
+
+## Using Vagrant
+
+This skeleton includes a `Vagrantfile` based on ubuntu 16.04 (bento box)
+with configured Apache2 and PHP 7.0. Start it up using:
+
+```bash
+$ vagrant up
+```
+
+Once built, you can also run composer within the box. For example, the following
+will install dependencies:
+
+```bash
+$ vagrant ssh -c 'composer install'
+```
+
+While this will update them:
+
+```bash
+$ vagrant ssh -c 'composer update'
+```
+
+While running, Vagrant maps your host port 8080 to port 80 on the virtual
+machine; you can visit the site at http://localhost:8080/
+
+> ### Vagrant and VirtualBox
+>
+> The vagrant image is based on ubuntu/xenial64. If you are using VirtualBox as
+> a provider, you will need:
+>
+> - Vagrant 1.8.5 or later
+> - VirtualBox 5.0.26 or later
+
+For vagrant documentation, please refer to [vagrantup.com](https://www.vagrantup.com/)
+
+## Using docker-compose
+
+This skeleton provides a `docker-compose.yml` for use with
+[docker-compose](https://docs.docker.com/compose/); it
+uses the `Dockerfile` provided as its base. Build and start the image using:
+
+```bash
+$ docker-compose up -d --build
+```
+
+At this point, you can visit http://localhost:8080 to see the site running.
+
+You can also run composer from the image. The container environment is named
+"zf", so you will pass that value to `docker-compose run`:
+
+```bash
+$ docker-compose run zf composer install
+```
+
+## Web server setup
+
+### Apache setup
 
 To setup apache, setup a virtual host to point to the public/ directory of the
 project and you should be ready to go! It should look something like below:
 
-    <VirtualHost *:80>
-        ServerName 2pit.io.localhost
-        DocumentRoot /path/to/2pit.io/public
-        SetEnv APPLICATION_ENV "development"
-        <Directory /path/to/2pit.io/public>
-            DirectoryIndex index.php
-            AllowOverride All
-            Order allow,deny
-            Allow from all
-        </Directory>
-    </VirtualHost>
+```apache
+<VirtualHost *:80>
+    ServerName zfapp.localhost
+    DocumentRoot /path/to/zfapp/public
+    <Directory /path/to/zfapp/public>
+        DirectoryIndex index.php
+        AllowOverride All
+        Order allow,deny
+        Allow from all
+        <IfModule mod_authz_core.c>
+        Require all granted
+        </IfModule>
+    </Directory>
+</VirtualHost>
+```
 
-Receiving emails
-----------------
+### Nginx setup
 
-Ensure that your server is configured to send emails via SMTP.
+To setup nginx, open your `/path/to/nginx/nginx.conf` and add an
+[include directive](http://nginx.org/en/docs/ngx_core_module.html#include) below
+into `http` block if it does not already exist:
 
-Adapt this line in config/autoload/local.php, replacing the value with your email between quotes:
+```nginx
+http {
+    # ...
+    include sites-enabled/*.conf;
+}
+```
 
-    'mailTo' => 'no-reply@2pit.io', // Overrides the real email if not NULL (for test purposes)
-    
-Specifying here an email has the result that each email sent by 2pit is routed to this address, regardless the real destination email (depending on the context). This parameter should be set to null in production environment to end email to real addresses.
 
-Login
------
+Create a virtual host configuration file for your project under `/path/to/nginx/sites-enabled/zfapp.localhost.conf`
+it should look something like below:
 
-At this stage, you should get the 2pit login page when browsing to your website. The default admin account (for development only!) is admin admin.
+```nginx
+server {
+    listen       80;
+    server_name  zfapp.localhost;
+    root         /path/to/zfapp/public;
+
+    location / {
+        index index.php;
+        try_files $uri $uri/ @php;
+    }
+
+    location @php {
+        # Pass the PHP requests to FastCGI server (php-fpm) on 127.0.0.1:9000
+        fastcgi_pass   127.0.0.1:9000;
+        fastcgi_param  SCRIPT_FILENAME /path/to/zfapp/public/index.php;
+        include fastcgi_params;
+    }
+}
+```
+
+Restart the nginx, now you should be ready to go!
+
+## QA Tools
+
+The skeleton does not come with any QA tooling by default, but does ship with
+configuration for each of:
+
+- [phpcs](https://github.com/squizlabs/php_codesniffer)
+- [phpunit](https://phpunit.de)
+
+Additionally, it comes with some basic tests for the shipped
+`Application\Controller\IndexController`.
+
+If you want to add these QA tools, execute the following:
+
+```bash
+$ composer require --dev phpunit/phpunit squizlabs/php_codesniffer zendframework/zend-test
+```
+
+We provide aliases for each of these tools in the Composer configuration:
+
+```bash
+# Run CS checks:
+$ composer cs-check
+# Fix CS errors:
+$ composer cs-fix
+# Run PHPUnit tests:
+$ composer test
+```

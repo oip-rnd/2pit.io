@@ -2,7 +2,7 @@
 	<div class="panel-heading" style="background: <?php echo $context->getConfig('styleSheet')['panelHeadingBackground'] ?>; color: <?php echo $context->getConfig('styleSheet')['panelHeadingColor'] ?>">
 		<strong>
 			<?php 
-			$title = (isset ($context->getConfig('commitmentTerm/search')['title']) ? $context->getConfig('commitmentTerm/search')['title'][$context->getLocale()] : $this->translate('Terms', 'ppit-commitment', $context->getLocale()));
+			$title = (isset ($searchPage['title']) ? $context->localize($searchPage['title']) : $this->translate('Terms', 'ppit-commitment', $context->getLocale()));
 			echo $title;
 			?>
 			(<span id="mode-text"></span>)
@@ -20,9 +20,11 @@
 
 <!-- Filters -->
 		
-<?php foreach ($searchPage['properties'] as $propertyId => $options) : ?>
-	<?php $property = $termProperties[$propertyId]; ?>
-	<?php $label = $property['labels'][$context->getLocale()] ?>
+<?php foreach ($searchPage['properties'] as $propertyId => $property) : ?>
+	<?php 
+	$label = $context->localize($property['labels']);
+	$options = (array_key_exists('options', $property)) ? $property['options'] : [];
+	?>
 
 	<?php if (in_array($property['type'], array('date', 'time', 'datetime', 'number'))) : ?>
 
@@ -49,6 +51,9 @@
 		
 		if ($propertyId == 'place_id') foreach ($places as $place) {
 			$modalities[$place->id] = $place->caption;
+		} 
+		elseif ($propertyId == 'invoice_account_id') foreach ($accounts as $account) {
+			if ($account->name) $modalities[$account->id] = $account->name;
 		} 
 		elseif ($property['type'] == 'select') {
 			foreach ($property['modalities'] as $modalityId => $modality) {
