@@ -79,6 +79,7 @@ class TermController extends AbstractActionController
     	$context = Context::getCurrent();
     	$type = $this->params()->fromRoute('type', 'generic');
     	$description = Term::getDescription($type);
+    	$accounts = Account::getList(null, ['status' => 'active,converted,committed,undefined'], '+name', null);
 
     	// Return the link list
     	$view = new ViewModel(array(
@@ -86,6 +87,7 @@ class TermController extends AbstractActionController
 				'termProperties' => $description['properties'],
     			'config' => $context->getconfig(),
     			'places' => Place::getList(array()),
+    			'accounts' => $accounts,
     			'searchPage' => $description['search'],
     	));
     	$view->setTerminal(true);
@@ -98,7 +100,7 @@ class TermController extends AbstractActionController
     	$context = Context::getCurrent();
     	$type = $this->params()->fromRoute('type');
     	$description = Term::getDescription($type);
-
+    	 
     	$params = $this->getFilters($description, $this->params());
 		$limit = $this->params()->fromQuery('limit');
     	$major = $this->params()->fromQuery('major', 'due_date');
@@ -137,7 +139,7 @@ class TermController extends AbstractActionController
     	$view = $this->getList();
     	$type = $this->params()->fromRoute('type', 'generic');
     	$description = Term::getDescription($type);
-
+    	 
    		include 'public/PHPExcel_1/Classes/PHPExcel.php';
    		include 'public/PHPExcel_1/Classes/PHPExcel/Writer/Excel2007.php';
 
@@ -186,7 +188,8 @@ class TermController extends AbstractActionController
     	$term->commitment_caption = $commitment->caption;
     	$term->default_means_of_payment = $commitment->default_means_of_payment;
     	$termProperties = Term::getConfig($commitment->type);
-    
+    	$accounts = Account::getList('business', [], '+name', null);
+
     	// Instanciate the csrf form
     	$csrfForm = new CsrfForm();
     	$csrfForm->addCsrfElement('csrf');
@@ -199,6 +202,7 @@ class TermController extends AbstractActionController
     		if ($csrfForm->isValid()) { // CSRF check
     
     			// Load the input data
+    			$invoice_account_id = $request->getPost('term-invoice_account_id');
     			$numberOfTerms = $request->getPost('number_of_terms');
     			$termDate = $request->getPost('first_term_date');
 				$year = substr($termDate, 0, 4);
@@ -207,10 +211,13 @@ class TermController extends AbstractActionController
 				$periodicity = $request->getPost('periodicity');
     			$sameDayOfMonth = $request->getPost('same_day_of_month');
     			$status = $request->getPost('term-status');
+    			$quantityToDivide = $request->getPost('quantity_to_divide');
+    			$unit_price = $request->getPost('term-unit_price');
     			$amountToDivide = $request->getPost('amount_to_divide');
     			$paymentMean = $request->getPost('means_of_payment');
     			$termAmount = round($amountToDivide / $numberOfTerms, 2);
     			$cumulativeAmount = 0;
+
     			// Atomically save
     			$connection = Term::getTable()->getAdapter()->getDriver()->getConnection();
     			$connection->beginTransaction();
@@ -257,6 +264,9 @@ class TermController extends AbstractActionController
 
     	$view = new ViewModel(array(
     		'context' => $context,
+    		'accounts' => $accounts,
+    		'quantityToDivide' => $commitment->quantity,
+    		'unitPrice' => $commitment->unit_price,
     		'amountToDivide' => $commitment->tax_inclusive,
     		'term' => $term,
     		'termProperties' => $termProperties,
@@ -274,7 +284,7 @@ class TermController extends AbstractActionController
     	$context = Context::getCurrent();
     	$type = $this->params()->fromRoute('type', 'generic');
     	
-    	$description = Term::getDescription('type');
+    	$description = Term::getDescription($type);
     	$configProperties = $description['properties'];
     	$updatePage = $description['update'];
 
@@ -303,7 +313,9 @@ class TermController extends AbstractActionController
 	    	}
     	}
     	else $dropbox = null;
-    	 
+ 
+    	$accounts = Account::getList(null, ['status' => 'active,converted,committed,undefined'], '+name', null);
+
     	// Instanciate the csrf form
     	$csrfForm = new CsrfForm();
     	$csrfForm->addCsrfElement('csrf');
@@ -321,9 +333,12 @@ class TermController extends AbstractActionController
 
     			// Load the input data
 		    	$data = array();
-		    	foreach($updatePage as $propertyId => $unused) {
-					$property = $configProperties[$propertyId];
-		    		$data[$propertyId] = $request->getPost(($propertyId));
+		    	foreach($updatePage as $propertyId => $property) {
+					$options = $property['options'];
+		    		if ((!$options || !array_key_exists('readonly', $options) || !$options['readonly']) && $property['type'] != 'title') {
+		    			$property = $configProperties[$propertyId];
+		    			$data[$propertyId] = $request->getPost(('term-'.$propertyId));
+		    		}
 		    	}
 				if ($term->loadData($data, $request->getFiles()->toArray()) != 'OK') throw new \Exception('View error');
 
@@ -356,6 +371,7 @@ class TermController extends AbstractActionController
     			'id' => $id,
     			'action' => $action,
     			'term' => $term,
+    			'accounts' => $accounts,
 	    		'dropbox' => $dropbox,
 	    		'documentList' => $documentList,
     			'csrfForm' => $csrfForm,

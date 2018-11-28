@@ -77,29 +77,42 @@ if ($term->id && $action != 'update' || $message == 'OK') $isDisabled = true; el
 		</div>
 
 <?php foreach ($updatePage as $propertyId => $property) : ?>
-  <?php $options = $property['options'] ?>
-		<div class="form-group" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_' : '').$propertyId ?>_group">
+  <?php 
+  $options = $property['options'];
+  if ($options && array_key_exists('readonly', $options) && $options['readonly']) $readonly = true;
+  else $readonly = false;
+  ?>
+		<div class="form-group" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_term-' : '').$propertyId ?>_group">
 			<label class="col-sm-5 control-label">
-				<?php if ($options['mandatory']) echo '* ' ?><?php echo $property['labels'][$context->getLocale()] ?>
+				<?php if (array_key_exists('mandatory', $options) && $options['mandatory']) echo '* ' ?><?php echo $property['labels'][$context->getLocale()] ?>
 	<?php if ($term->document && $property['type'] == 'dropbox') : ?>
 				<a class="glyphicon glyphicon-paperclip" href="<?php echo $this->url('commitment/dropboxLink', array('document' => $term->document)) ?>" title="<?php echo $this->translate('Attachment', 'ppit-document', $context->getLocale()) ?>" target=".blank"></a>
 	<?php endif;?>
 			</label>
 			<div class="col-sm-7">
 				
-	<?php if ($property['type'] == 'date') : ?>
-				<input type="hidden" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
-				<input class="form-control" id="input_<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php echo $context->decodeDate($term->properties[$propertyId]) ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?> />
+
+    <?php if ($propertyId == 'invoice_account_id') : ?>
+        <select class="form-control" id="term-<?php echo $propertyId ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
+            <option />
+      <?php foreach ($accounts as $account) : ?>
+            <option value="<?php echo $account->id ?>" <?php if ($account->id == $term->invoice_account_id) echo 'selected="selected"' ?>><?php echo $account->name ?></option>
+      <?php endforeach;?>
+        </select>
+
+	<?php elseif ($property['type'] == 'date') : ?>
+				<input type="hidden" id="term-<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
+				<input class="form-control" id="input_term-<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php echo $context->decodeDate($term->properties[$propertyId]) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
 
 	<?php elseif ($property['type'] == 'number') : ?>
-				<input type="hidden" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
-				<input class="form-control" id="input_<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php echo $context->formatFloat($term->properties[$propertyId], 2) ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?> />
+				<input type="hidden" id="term-<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
+				<input class="form-control" id="input_term-<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php echo $context->formatFloat($term->properties[$propertyId], 2) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
 
 	<?php elseif ($property['type'] == 'textarea') : ?>
-				<textarea class="form-control" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?>><?php echo $term->properties[$propertyId] ?></textarea>
+				<textarea class="form-control" id="term-<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>><?php echo $term->properties[$propertyId] ?></textarea>
 
 	<?php elseif ($property['type'] == 'select') : ?>
-				<select class="form-control" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?>>
+				<select class="form-control" id="term-<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
 	    			<option />
 		<?php foreach ($property['modalities'] as $key => $labels) : ?>
 	    			<option value="<?php echo $key ?>" <?php if ($term->properties[$propertyId] == $key) echo 'selected="selected"' ?>><?php echo $labels[$context->getLocale()] ?></option>
@@ -107,7 +120,7 @@ if ($term->id && $action != 'update' || $message == 'OK') $isDisabled = true; el
 				</select>
 	
 	<?php elseif ($property['type'] == 'dropbox') : ?>
-				<select class="form-control" id="<?php echo $propertyId ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?>>
+				<select class="form-control" id="term-<?php echo $propertyId ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
 					<option />
 		<?php foreach ($documentList as $document) : ?>
 					<option value="<?php echo $document ?>" <?php if ($term->document == $document) echo 'selected="selected"' ?>><?php echo $document ?></option>
@@ -115,11 +128,11 @@ if ($term->id && $action != 'update' || $message == 'OK') $isDisabled = true; el
 				</select>
 	
 	<?php else : ?>
-				<input class="form-control" id="<?php echo $propertyId ?>" value="<?php echo $term->properties[$propertyId] ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?> />
+				<input class="form-control" id="term-<?php echo $propertyId ?>" value="<?php echo $term->properties[$propertyId] ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
 
 	<?php endif;?>
 			</div>
-			<div class="col-sm-12"><p class="help-block" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_' : '').$propertyId ?>_error"></p></div>
+			<div class="col-sm-12"><p class="help-block" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_term-' : '').$propertyId ?>_error"></p></div>
 		</div>
 
 <?php endforeach;?>

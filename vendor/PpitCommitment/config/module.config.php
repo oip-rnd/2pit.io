@@ -3390,6 +3390,15 @@ table.note-report td {
 		),
 	),
 	
+	'commitmentTerm/generic/property/invoice_account_id' => array(
+		'definition' => 'inline',
+		'type' => 'select',
+		'labels' => array(
+			'en_US' => 'Invoice account',
+			'fr_FR' => 'Compte de facturation',
+		),
+	),
+	
 	'commitmentTerm/generic/property/caption' => array(
 		'definition' => 'inline',
 		'type' => 'input',
@@ -3423,6 +3432,28 @@ table.note-report td {
 		'labels' => array(
 			'en_US' => 'Collection date',
 			'fr_FR' => 'Date d\'encaissement',
+		),
+	),
+
+	'commitmentTerm/generic/property/quantity' => array(
+		'definition' => 'inline',
+		'type' => 'number',
+		'minValue' => -99999999,
+		'maxValue' => 99999999,
+		'labels' => array(
+			'en_US' => 'Quantity',
+			'fr_FR' => 'Quantité',
+		),
+	),
+
+	'commitmentTerm/generic/property/unit_price' => array(
+		'definition' => 'inline',
+		'type' => 'number',
+		'minValue' => -99999999,
+		'maxValue' => 99999999,
+		'labels' => array(
+			'en_US' => 'Unit price',
+			'fr_FR' => 'Prix unitaire',
 		),
 	),
 	
@@ -3525,8 +3556,8 @@ table.note-report td {
 	'commitmentTerm/generic' => array(
 		'statuses' => array(),
 		'properties' => array(
-				'commitment_id', 'name', 'status', 'place_id', 'caption', 'due_date', 'settlement_date', 'collection_date',
-				'amount', 'means_of_payment', 'bank_name', 'invoice_n_last', 'reference', 'comment', 'document', 'commitment_caption', 
+				'commitment_id', 'name', 'status', 'place_id', 'caption', 'invoice_account_id', 'due_date', 'settlement_date', 'collection_date',
+				'quantity', 'unit_price', 'amount', 'means_of_payment', 'bank_name', 'invoice_n_last', 'reference', 'comment', 'document', 'commitment_caption', 
 				'account_status', 'account_date_1', 'account_date_2', 'account_date_3', 'account_date_4', 'account_date_5',
 				'account_property_1', 'account_property_2', 'account_property_3', 'account_property_4', 'account_property_5', 'account_property_6', 'account_property_7', 'account_property_8', 'account_property_9',
 				'account_property_10', 'account_property_11', 'account_property_12', 'account_property_13', 'account_property_14', 'account_property_15', 'account_property_16',
@@ -3543,6 +3574,7 @@ table.note-report td {
 		'properties' => array(
 			'place_id' => ['multiple' => true],
 			'name' => [],
+//			'invoice_account_id' => [],
 			'status' => ['multiple' => true],
 			'account_status' => ['multiple' => true],
 			'due_date' => [],
@@ -3556,6 +3588,7 @@ table.note-report td {
 	'commitmentTerm/list/generic' => array(
 		'properties' => array(
 			'name' => [],
+//			'invoice_account_id' => [],
 			'status' => [],
 			'due_date' => [],
 			'collection_date' => [],
@@ -3568,18 +3601,21 @@ table.note-report td {
 	),
 	
 	'commitmentTerm/update/generic' => array(
+//		'invoice_account_id' => [],
 		'status' => ['mandatory' => true],
 		'caption' => ['mandatory' => true],
 		'due_date' => ['mandatory' => true],
-		'settlement_date' => ['mandatory' => false],
-		'collection_date' => ['mandatory' => false],
-		'amount' => ['mandatory' => true],
-		'means_of_payment' => ['mandatory' => false],
-		'bank_name' => ['mandatory' => false],
-		'invoice_n_last' => ['mandatory' => false],
-		'reference' => ['mandatory' => false],
-		'comment' => ['mandatory' => false],
-		'document' => ['mandatory' => false],
+		'settlement_date' => [],
+		'collection_date' => [],
+		'quantity' => ['readonly' => true],
+		'unit_price' => ['mandatory' => true],
+		'amount' => ['readonly' => true],
+		'means_of_payment' => [],
+		'bank_name' => [],
+		'invoice_n_last' => [],
+		'reference' => [],
+		'comment' => [],
+		'document' => [],
 	),
 
 	'commitmentTerm/groupUpdate/generic' => array(
@@ -3589,19 +3625,20 @@ table.note-report td {
 	
 	'commitmentTerm/export/generic' => array(
 		'name' => 'A',
-		'commitment_caption' => 'B',
-		'status' => 'C',
-		'caption' => 'D',
-		'due_date' => 'E',
-		'settlement_date' => 'F',
-		'collection_date' => 'G',
-		'amount' => 'H',
-		'means_of_payment' => 'I',
-		'bank_name' => 'J',
-		'invoice_n_last' => 'K',
-		'reference' => 'L',
-		'comment' => 'M',
-		'document' => 'N',
+//		'invoice_account_id' => 'B',
+		'commitment_caption' => 'C',
+		'status' => 'D',
+		'caption' => 'E',
+		'due_date' => 'F',
+		'settlement_date' => 'G',
+		'collection_date' => 'H',
+		'amount' => 'I',
+		'means_of_payment' => 'J',
+		'bank_name' => 'K',
+		'invoice_n_last' => 'L',
+		'reference' => 'M',
+		'comment' => 'N',
+		'document' => 'O',
 	),
 	
 	'commitmentTerm/debit' => array(

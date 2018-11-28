@@ -291,8 +291,10 @@ $properties = array();
 
 foreach ($termUpdatePage as $propertyId => $property) {
 	$options = $property['options'];
-	if ($property['type'] == 'number') $properties[$propertyId] = array('type' => $property['type'], 'mandatory' => $options['mandatory'], 'minValue' => $property['minValue'], 'maxValue' => $property['maxValue']);
-	else $properties[$propertyId] = array('type' => $property['type'], 'mandatory' => $options['mandatory'], 'maxSize' => ($property['type'] == 'textarea') ? 2047 : 255);
+	if ((!$options || !array_key_exists('readonly', $options) || !$options['readonly']) && $property['type'] != 'title') {
+		if ($property['type'] == 'number') $properties['term-'.$propertyId] = array('type' => $property['type'], 'mandatory' => (array_key_exists('mandatory', $options)) ? $options['mandatory'] : false, 'minValue' => $property['minValue'], 'maxValue' => $property['maxValue']);
+		else $properties['term-'.$propertyId] = array('type' => $property['type'], 'mandatory' => (array_key_exists('mandatory', $options)) ? $options['mandatory'] : false, 'maxSize' => ($property['type'] == 'textarea') ? 2047 : 255);
+	}
 }
 
 $properties['term_update_time'] = array('type' => 'hidden');

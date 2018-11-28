@@ -17,7 +17,7 @@ class Term
 			'commitment' => 		['table' => 'commitment'],
 			'core_account' => 		['table' => 'core_account'],
 			'core_place' => 		['table' => 'core_place'],
-			'invoice_contact' => 	['table' => 'core_vcard', 'foreign_key' => 'invoice_contact_id'],
+			'invoice_account' => 	['table' => 'core_account', 'foreign_key' => 'invoice_account_id'],
 		),
 		'properties' => array(
 			'status' => 					['entity' => 'commitment_term', 'column' => 'status'],
@@ -29,8 +29,8 @@ class Term
 			'place_id' => 					['entity' => 'commitment', 'column' => 'place_id'],
 			'place_identifier' => 			['entity' => 'core_place', 'column' => 'place_identifier'],
 			'place_caption' => 				['entity' => 'core_place', 'column' => 'place_caption'],
-			'invoice_contact_id' => 		['entity' => 'commitment_term', 'column' => 'invoice_contact_id'],
-			'invoice_contact_n_fn' => 		['entity' => 'invoice_contact', 'column' => 'n_fn'],
+			'invoice_account_id' => 		['entity' => 'commitment_term', 'column' => 'invoice_account_id'],
+			'invoice_account_name' => 		['entity' => 'invoice_account', 'column' => 'name'],
 			'caption' => 					['entity' => 'commitment_term', 'column' => 'caption'],
 			'due_date' => 					['entity' => 'commitment_term', 'column' => 'due_date'],
 			'settlement_date' => 			['entity' => 'commitment_term', 'column' => 'settlement_date'],
@@ -118,6 +118,9 @@ class Term
 				if ($propertyId == 'place_id') {
 					$property['modalities'] = array();
 					foreach (Place::getList(array()) as $place) $property['modalities'][$place->id] = $place->caption;
+				}
+				elseif ($propertyId == 'invoice_account_id') {
+					$property['modalities'] = array();
 				}
 				elseif (in_array($property['type'], ['select', 'multiselect']) && array_key_exists('definition', $property['modalities']) && $property['modalities']['definition'] != 'inline') {
 					$definition = $context->getConfig($property['modalities']['definition']);
@@ -233,7 +236,7 @@ class Term
 	public $status;
 	public $type;
 	public $commitment_id;
-	public $invoice_contact_id;
+	public $invoice_account_id;
 	public $caption;
 	public $due_date;
 	public $settlement_date;
@@ -260,7 +263,7 @@ class Term
 	public $place_id;
 	public $place_caption;
 	public $place_identifier;
-	public $invoice_contact_n_fn;
+	public $invoice_account_name;
 	
 	public $default_means_of_payment;
 	public $transfer_order_id;
@@ -341,7 +344,7 @@ class Term
 		$this->status = (isset($data['status'])) ? $data['status'] : null;
 		$this->type = (isset($data['type'])) ? $data['type'] : null;
 		$this->commitment_id = (isset($data['commitment_id'])) ? $data['commitment_id'] : null;
-		$this->invoice_contact_id = (isset($data['invoice_contact_id'])) ? $data['invoice_contact_id'] : null;
+		$this->invoice_account_id = (isset($data['invoice_account_id'])) ? $data['invoice_account_id'] : null;
 		$this->caption = (isset($data['caption'])) ? $data['caption'] : null;
 		$this->due_date = (isset($data['due_date'])) ? $data['due_date'] : null;
 		$this->settlement_date = (isset($data['settlement_date'])) ? (($data['settlement_date'] == '9999-12-31') ? null : $data['settlement_date']) : null;
@@ -368,7 +371,7 @@ class Term
 		$this->place_id = (isset($data['place_id'])) ? $data['place_id'] : null;
 		$this->place_caption = (isset($data['place_caption'])) ? $data['place_caption'] : null;
 		$this->place_identifier = (isset($data['place_identifier'])) ? $data['place_identifier'] : null;
-		$this->invoice_contact_n_fn = (isset($data['invoice_contact_n_fn'])) ? $data['invoice_contact_n_fn'] : null;
+		$this->invoice_account_name = (isset($data['invoice_account_name'])) ? $data['invoice_account_name'] : null;
 
 		$this->default_means_of_payment = (isset($data['default_means_of_payment'])) ? $data['default_means_of_payment'] : null;
 		$this->transfer_order_id = (isset($data['transfer_order_id'])) ? $data['transfer_order_id'] : null;
@@ -438,7 +441,7 @@ class Term
 		$data['status'] = $this->status;
 		$data['type'] = $this->type;
 		$data['commitment_id'] = (int) $this->commitment_id;
-		$data['invoice_contact_id'] = (int) $this->invoice_contact_id;
+		$data['invoice_account_id'] = (int) $this->invoice_account_id;
 		$data['caption'] = $this->caption;
 		$data['due_date'] =  ($this->due_date) ? $this->due_date : null;
 		$data['settlement_date'] = ($this->settlement_date) ? $this->settlement_date : null;
@@ -464,7 +467,7 @@ class Term
 		$data['place_caption'] = $this->place_caption;
 		$data['place_identifier'] = $this->place_identifier;
 		$data['place_id'] = $this->place_id;
-		$data['invoice_contact_n_fn'] = $this->invoice_contact_n_fn;
+		$data['invoice_account_name'] = $this->invoice_account_name;
 		$data['default_means_of_payment'] = $this->default_means_of_payment;
 		$data['transfer_order_id'] = $this->transfer_order_id;
 		$data['transfer_order_date'] = $this->transfer_order_date;
@@ -552,7 +555,7 @@ class Term
 		unset($data['place_caption']);
 		unset($data['place_identifier']);
 		unset($data['place_id']);
-		unset($data['invoice_contact_n_fn']);
+		unset($data['invoice_account_name']);
 		unset($data['default_means_of_payment']);
 		unset($data['transfer_order_id']);
 		unset($data['transfer_order_date']);
@@ -623,10 +626,10 @@ class Term
 		$order = explode(',', $order);
     	foreach ($order as &$criterion) $criterion = substr($criterion, 1).' '.((substr($criterion, 0, 1) == '-') ? 'DESC' : 'ASC');
 		$select = Term::getTable()->getSelect()
-			->join('commitment', 'commitment.id = commitment_term.commitment_id', array('commitment_caption' => 'caption', 'commitment_property_1' => 'property_1', 'commitment_property_2' => 'property_2', 'commitment_property_3' => 'property_3', 'commitment_property_4' => 'property_4', 'commitment_property_5' => 'property_5', 'commitment_property_6' => 'property_6', 'commitment_property_7' => 'property_7', 'commitment_property_8' => 'property_8', 'commitment_property_9' => 'property_9', 'commitment_property_10' => 'property_10', 'commitment_property_11' => 'property_11', 'commitment_property_12' => 'property_12', 'commitment_property_13' => 'property_13', 'commitment_property_14' => 'property_14', 'commitment_property_15' => 'property_15', 'commitment_property_16' => 'property_16', 'commitment_property_17' => 'property_17', 'commitment_property_18' => 'property_18', 'commitment_property_19' => 'property_19', 'commitment_property_20' => 'property_20', 'commitment_property_21' => 'property_21', 'commitment_property_22' => 'property_22', 'commitment_property_23' => 'property_23', 'commitment_property_24' => 'property_24', 'commitment_property_25' => 'property_25', 'commitment_property_26' => 'property_26', 'commitment_property_27' => 'property_27', 'commitment_property_28' => 'property_28', 'commitment_property_29' => 'property_29', 'commitment_property_30' => 'property_30'), 'left')
-			->join('core_account', 'core_account.id = commitment.account_id', array('account_status' => 'status', 'place_id', 'name', 'default_means_of_payment', 'transfer_order_id', 'transfer_order_date', 'bank_identifier', 'account_date_1' => 'date_1', 'account_date_2' => 'date_2', 'account_date_3' => 'date_3', 'account_date_4' => 'date_4', 'account_date_5' => 'date_5', 'account_property_1' => 'property_1', 'account_property_2' => 'property_2', 'account_property_3' => 'property_3', 'account_property_4' => 'property_4', 'account_property_5' => 'property_5', 'account_property_6' => 'property_6', 'account_property_7' => 'property_7', 'account_property_8' => 'property_8', 'account_property_9' => 'property_9', 'account_property_10' => 'property_10', 'account_property_11' => 'property_11', 'account_property_12' => 'property_12', 'account_property_13' => 'property_13', 'account_property_14' => 'property_14', 'account_property_15' => 'property_15', 'account_property_16' => 'property_16'), 'left')
-			->join('core_place', 'core_account.place_id = core_place.id', array('place_caption' => 'caption', 'place_identifier' => 'identifier'), 'left')
-			->join('core_vcard', 'core_vcard.id = commitment_term.invoice_contact_id', array('invoice_contact_n_fn' => 'n_fn'), 'left')
+			->join('commitment', 'commitment.id = commitment_term.commitment_id', ['commitment_caption' => 'caption', 'commitment_property_1' => 'property_1', 'commitment_property_2' => 'property_2', 'commitment_property_3' => 'property_3', 'commitment_property_4' => 'property_4', 'commitment_property_5' => 'property_5', 'commitment_property_6' => 'property_6', 'commitment_property_7' => 'property_7', 'commitment_property_8' => 'property_8', 'commitment_property_9' => 'property_9', 'commitment_property_10' => 'property_10', 'commitment_property_11' => 'property_11', 'commitment_property_12' => 'property_12', 'commitment_property_13' => 'property_13', 'commitment_property_14' => 'property_14', 'commitment_property_15' => 'property_15', 'commitment_property_16' => 'property_16', 'commitment_property_17' => 'property_17', 'commitment_property_18' => 'property_18', 'commitment_property_19' => 'property_19', 'commitment_property_20' => 'property_20', 'commitment_property_21' => 'property_21', 'commitment_property_22' => 'property_22', 'commitment_property_23' => 'property_23', 'commitment_property_24' => 'property_24', 'commitment_property_25' => 'property_25', 'commitment_property_26' => 'property_26', 'commitment_property_27' => 'property_27', 'commitment_property_28' => 'property_28', 'commitment_property_29' => 'property_29', 'commitment_property_30' => 'property_30'], 'left')
+			->join('core_account', 'core_account.id = commitment.account_id', ['account_status' => 'status', 'place_id', 'name', 'default_means_of_payment', 'transfer_order_id', 'transfer_order_date', 'bank_identifier', 'account_date_1' => 'date_1', 'account_date_2' => 'date_2', 'account_date_3' => 'date_3', 'account_date_4' => 'date_4', 'account_date_5' => 'date_5', 'account_property_1' => 'property_1', 'account_property_2' => 'property_2', 'account_property_3' => 'property_3', 'account_property_4' => 'property_4', 'account_property_5' => 'property_5', 'account_property_6' => 'property_6', 'account_property_7' => 'property_7', 'account_property_8' => 'property_8', 'account_property_9' => 'property_9', 'account_property_10' => 'property_10', 'account_property_11' => 'property_11', 'account_property_12' => 'property_12', 'account_property_13' => 'property_13', 'account_property_14' => 'property_14', 'account_property_15' => 'property_15', 'account_property_16' => 'property_16'], 'left')
+			->join('core_place', 'core_account.place_id = core_place.id', ['place_caption' => 'caption', 'place_identifier' => 'identifier'], 'left')
+			->join(['invoice_account' => 'core_account'], 'invoice_account.id = commitment_term.invoice_account_id', ['invoice_account_name' => 'name'], 'left')
 			->order($order);
 
 		if ($columns) $select->columns($columns);
@@ -760,6 +763,12 @@ class Term
 		    	$term->account_property_15 = $account->property_15;
 		    	$term->account_property_16 = $account->property_16;
 			}
+			if ($term->invoice_account_id) {
+				$invoiceAccount = Account::get($term->invoice_account_id);
+				if ($invoiceAccount) {
+					$term->invoice_account_name = $invoiceAccount->name;
+				}
+			}
 		}
 		$term->properties = $term->getProperties();
 		return $term;
@@ -771,7 +780,9 @@ class Term
 		$term->type = $type;
 		$term->status = 'expected';
 		$term->commitment_id = $commitment_id;
+		$term->quantity = 1;
 		$term->audit = array();
+		$term->properties = $term->getProperties();
 		return $term;
 	}
 
@@ -809,8 +820,8 @@ class Term
 				}
 				elseif ($property['type'] == 'id') $value = (int) $value;
 				elseif ($property['type'] == 'number') {
-					if (array_key_exists('precision', $property) && $property['precision'] > 0) $value = (float) $value;
-					else $value = (int) $value;
+					/*if (array_key_exists('precision', $property) && $property['precision'] > 0) */$value = (float) $value;
+//					else $value = (int) $value;
 				}
 
 				// Private data protection
@@ -820,7 +831,7 @@ class Term
     				 
 				if ($propertyId == 'status') $this->status = $value;
 				elseif ($propertyId == 'commitent_id') $this->commitent_id = $value;
-				elseif ($propertyId == 'invoice_contact_id') $this->invoice_contact_id = $value;
+				elseif ($propertyId == 'invoice_account_id') $this->invoice_account_id = $value;
 				elseif ($propertyId == 'caption') $this->caption = $value;
 				elseif ($propertyId == 'due_date') $this->due_date = $value;
 				elseif ($propertyId == 'settlement_date') $this->settlement_date = $value;
@@ -846,6 +857,7 @@ class Term
 			}
 		}
 
+		$this->amount = $this->quantity * $this->unit_price; // For historical reasons but should be computed when needed and not stored
 		$this->properties = $this->toArray();
 		$this->files = $files;
 		if ($errors) return 'Integrity';

@@ -38,6 +38,7 @@ class SsmlTermViewHelper
 			foreach($description['export'] as $propertyId => $property) {
 				$colName = $property['options'];
 				if ($propertyId == 'place_id') $sheet->setCellValue($colName.$j, $term->place_caption);
+				elseif ($propertyId == 'invoice_account_id') $sheet->setCellValue($colName.$j, $term->invoice_account_name);
 				elseif ($property['type'] == 'date') $sheet->setCellValue($colName.$j, $context->decodeDate($term->properties[$propertyId]));
 				elseif ($property['type'] == 'number') {
 					$sheet->setCellValue($colName.$j, $term->properties[$propertyId]);
