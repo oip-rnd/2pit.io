@@ -13,6 +13,6 @@ ADD `invoice_n_last` VARCHAR(255) NULL DEFAULT NULL AFTER `bank_name`;
 
 ALTER TABLE `commitment_term` 
 ADD `type` VARCHAR(255) NULL DEFAULT NULL AFTER `status`,
-ADD `invoice_contact_id` INT NULL DEFAULT NULL AFTER `commitment_id`,
+ADD `invoice_account_id` INT NULL DEFAULT NULL AFTER `commitment_id`,
 ADD `quantity` DECIMAL(14,4) NULL DEFAULT NULL AFTER `collection_date`, 
 ADD `unit_price` DECIMAL(14,4) NULL DEFAULT NULL AFTER `quantity`;

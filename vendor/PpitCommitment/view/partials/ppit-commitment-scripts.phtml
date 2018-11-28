@@ -724,7 +724,27 @@ function connectCommitmentGenerateTermForm(id)
 			}
 		}
       
-  // Amount to divide
+    // Quantity to divide
+    var quantityToDivide = $('#quantity_to_divide').val();
+    error = checkNumber(quantityToDivide, 0, 1000000);
+    if (error) {
+      $('#quantity_to_divide-error').text(error);
+      $('#quantity_to_divide-error').show();
+      document.getElementById('quantity_to_divide').focus();
+      validity = false;
+    }
+      
+    // Unit price
+    var unitPrice = $('#term-unit_price').val();
+    error = checkNumber(unitPrice, 0, 1000000);
+    if (error) {
+      $('#term-unit_price-error').text(error);
+      $('#term-unit_price-error').show();
+      document.getElementById('term-unit_price').focus();
+      validity = false;
+    }
+      
+    // Amount to divide
     var amountToDivide = $('#amount_to_divide').val();
     error = checkNumber(amountToDivide, 0, 1000000);
     if (error) {
@@ -768,9 +788,12 @@ function connectCommitmentGenerateTermForm(id)
 	
 			// Create a new FormData object.
 			var formData = new FormData();
+            formData.append('term-invoice_account_id', $('#term-invoice_account_id').val());
 			formData.append('number_of_terms', $('#number_of_terms').val());
 			formData.append('first_term_date', $('#first_term_date').val());
             formData.append('term-status', $('#term-status').val());
+            formData.append('quantity_to_divide', $('#quantity_to_divide').val());
+            formData.append('term-unit_price', $('#term-unit_price').val());
             formData.append('amount_to_divide', $('#amount_to_divide').val());
 			formData.append('means_of_payment', $('#means_of_payment').val());
 			formData.append('periodicity', $('#periodicity').val());
