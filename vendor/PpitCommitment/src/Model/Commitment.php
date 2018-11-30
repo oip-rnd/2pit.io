@@ -978,7 +978,6 @@ class Commitment
     	$commitmentYear = CommitmentYear::getCurrent();
     	if ($commitmentYear) $commitment->year = $commitmentYear->year;
     	$commitment->status = 'new';
-    	$commitment->quantity = 1;
     	$commitment->properties = $commitment->toArray();
     	$commitment->subscriptions = Subscription::getList(array('type' => $type), 'product_identifier', 'ASC');
     	$commitment->options = array();

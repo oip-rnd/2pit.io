@@ -283,7 +283,9 @@ class SecurityAgent
     			$container = new Container('Zend_Auth');
     			$container->user_id = $user->user_id;
     			$container->token_value = null; // Login-based session prevals on the previously token-based session
-    			
+
+//    			Context::updateFromUserId($context->getConfig(), $user->user_id);
+    			 
     			return 'OK';
     		}
     	}
