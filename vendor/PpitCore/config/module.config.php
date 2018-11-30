@@ -343,6 +343,15 @@ return array(
 		        								),
 		        						),
 		        				),
+	       						'fbgetleads' => array(
+		        						'type' => 'segment',
+		        						'options' => array(
+		        								'route' => '/fbgetleads[/:type]',
+		        								'defaults' => array(
+		        										'action' => 'fbgetleads',
+		        								),
+		        						),
+		        				),
 	       			'v1' => array(
         						'type' => 'segment',
         						'options' => array(
@@ -1795,8 +1804,9 @@ return array(
 				array('route' => 'account/updateContactAlt', 'roles' => array('operational_management', 'sales_manager', 'manager')),
 				array('route' => 'account/subscription', 'roles' => array('guest')),
 				array('route' => 'account/indexCard', 'roles' => array('operational_management', 'sales_manager', 'manager')),
+				array('route' => 'account/fbgetleads', 'roles' => array('operational_management', 'sales_manager', 'manager')),
 				array('route' => 'account/v1', 'roles' => array('guest')),
-						
+
 				array('route' => 'community', 'roles' => array('admin')),
 				array('route' => 'community/dataList', 'roles' => array('admin')),
 				array('route' => 'community/delete', 'roles' => array('admin')),
@@ -3019,6 +3029,7 @@ return array(
 			'cooptation' => array('en_US' => 'Cooptation', 'fr_FR' => 'Cooptation'),
 			'file' => array('en_US' => 'File', 'fr_FR' => 'Fichier'),
 			'e_mailing' => array('en_US' => 'e-mailing', 'fr_FR' => 'e-mailing'),
+			'facebook' => array('default' => 'Facebook'),
 		),
 		'labels' => array(
 			'en_US' => 'Origine',
@@ -5415,7 +5426,7 @@ table.note-report td {
 	'interaction/type' => array(
 			'type' => 'select',
 			'modalities' => array(
-					'app' => array('en_US' => 'Apps', 'fr_FR' => 'Apps'),
+					'application' => array('en_US' => 'Apps', 'fr_FR' => 'Apps'),
 					'config' => array('en_US' => 'Config', 'fr_FR' => 'Config'),
 					'event' => array('en_US' => 'Events', 'fr_FR' => 'Evènements'),
 					'web_service' => array('en_US' => 'Web service', 'fr_FR' => 'Web service'),

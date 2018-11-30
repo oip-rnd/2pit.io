@@ -79,28 +79,28 @@
       </div>
     </div>
 
-    <div class="form-group" id="quantity_to_divide-group">
-      <label class="col-sm-5 control-label">* <?php echo $this->translate('Quantity to divide', 'ppit-commitment', $context->getLocale()) ?></label>
+    <div class="form-group" id="amountToDivide-group">
+      <label class="col-sm-5 control-label">* <?php echo $this->translate('Tax incl. amount to divide', 'ppit-commitment', $context->getLocale()) ?></label>
       <div class="col-sm-7">
-        <input class="form-control" id="quantity_to_divide" value="<?php echo ($quantityToDivide) ? $context->formatFLoat($quantityToDivide, 2)  : '' ?>" />
+        <input class="form-control" id="amountToDivide" value="<?php echo ($amountToDivide) ? $context->formatFLoat($amountToDivide, 2) : '' ?>" />
       </div>
-      <div class="col-sm-12"><p class="help-block" id="quantity_to_divide-error"></p></div>
+      <div class="col-sm-12"><p class="help-block" id="amountToDivide-error"></p></div>
+    </div>
+
+    <div class="form-group" id="quantityToDivide-group">
+      <label class="col-sm-5 control-label">* <?php echo $this->translate('Or Quantity to divide', 'ppit-commitment', $context->getLocale()) ?></label>
+      <div class="col-sm-7">
+        <input class="form-control" id="quantityToDivide" value="<?php echo ($quantityToDivide) ? $context->formatFLoat($quantityToDivide, 2)  : '' ?>" />
+      </div>
+      <div class="col-sm-12"><p class="help-block" id="quantityToDivide-error"></p></div>
     </div>
 
     <div class="form-group" id="term-unit_price-group">
-      <label class="col-sm-5 control-label">* <?php echo $this->translate('Unit price', 'ppit-commitment', $context->getLocale()) ?></label>
+      <label class="col-sm-5 control-label">* <?php echo $this->translate('Tax excl. unit price', 'ppit-commitment', $context->getLocale()) ?></label>
       <div class="col-sm-7">
-        <input class="form-control" id="term-unit_price" value="<?php echo ($unitPrice) ? $context->formatFLoat($unitPrice, 2)  : '' ?>" />
+        <input class="form-control" id="term-unit_price" value="<?php echo ($unit_price) ? $context->formatFLoat($unitPrice, 2)  : '' ?>" />
       </div>
       <div class="col-sm-12"><p class="help-block" id="term-unit_price-error"></p></div>
-    </div>
-
-    <div class="form-group" id="amount_to_divide-group">
-      <label class="col-sm-5 control-label">* <?php echo $this->translate('Or amount to divide', 'ppit-commitment', $context->getLocale()) ?></label>
-      <div class="col-sm-7">
-        <input class="form-control" id="amount_to_divide" value="<?php echo ($amountToDivide) ? $context->formatFLoat($amountToDivide, 2) : '' ?>" />
-      </div>
-      <div class="col-sm-12"><p class="help-block" id="amount_to_divide-error"></p></div>
     </div>
 
 <?php $meansOfPayment = $termProperties['means_of_payment'] ?>

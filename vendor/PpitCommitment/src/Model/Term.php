@@ -446,9 +446,9 @@ class Term
 		$data['due_date'] =  ($this->due_date) ? $this->due_date : null;
 		$data['settlement_date'] = ($this->settlement_date) ? $this->settlement_date : null;
 		$data['collection_date'] = ($this->collection_date) ? $this->collection_date : null;
-		$data['quantity'] = $this->quantity;
-		$data['unit_price'] = $this->unit_price;
-		$data['amount'] = $this->amount;
+		$data['quantity'] = ($this->quantity) ? $this->quantity : null;
+		$data['unit_price'] = ($this->unit_price) ? $this->unit_price : null;
+		$data['amount'] = ($this->amount) ? $this->amount : null;
 		$data['means_of_payment'] = $this->means_of_payment;
 		$data['bank_name'] = $this->bank_name;
 		$data['reference'] = $this->reference;
@@ -857,7 +857,8 @@ class Term
 			}
 		}
 
-		$this->amount = $this->quantity * $this->unit_price; // For historical reasons but should be computed when needed and not stored
+		if ($this->quantity) $this->amount = round($this->quantity * $this->unit_price, 2) * 1.2; // Amount is tax inclusive historically (and it's bad)
+			
 		$this->properties = $this->toArray();
 		$this->files = $files;
 		if ($errors) return 'Integrity';

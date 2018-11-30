@@ -1261,7 +1261,7 @@ class CommitmentController extends AbstractActionController
     	}
     	return $this->response;
     }
-
+/*
     public function subrogateAction()
     {
     	// Retrieve the context
@@ -1390,7 +1390,7 @@ class CommitmentController extends AbstractActionController
     	));
     	$view->setTerminal(true);
     	return $view;
-    }
+    }*/
     
     public function suspendAction()
     {

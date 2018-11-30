@@ -388,6 +388,9 @@ function getTermUpdate(commitment_id, id, action, target) {
 			    });
 			});
 
+            $('#input_term-quantity').change(function() { if ($('#input_term-quantity').val()) $('#input_term-amount').val(''); });
+            $('#input_term-amount').change(function() { if ($('#input_term-amount').val()) { $('#input_term-quantity').val(''); $('#input_term-unit_price').val(''); } });
+
 			if (id) {
 				$('#term-update-anchor').click(function () { getTermUpdate(commitment_id, id, 'update', target); });
 				$('#term-delete-anchor').click(function () { getTermUpdate(commitment_id, id, 'delete', target); });
@@ -493,7 +496,7 @@ function getDebitForm() {
 	}
 
 	$('#term-debit-button').show();
-	location.href = '<?php echo $this->url('commitmentTerm/debitSsml') ?>/' + $('#place_id').val() + '?terms=' + terms, '_blank';
+	location.href = '<?php echo $this->url('commitmentTerm/debitSsml', ['type' => $type]) ?>/' + $('#place_id').val() + '?terms=' + terms, '_blank';
 	$('#term-debit-alert').show();
 	$('#term-debit-button').click(function () { connectDebitForm(); });
 }
