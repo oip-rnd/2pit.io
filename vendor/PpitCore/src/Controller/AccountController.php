@@ -1413,7 +1413,7 @@ class AccountController extends AbstractActionController
 								elseif ($property['name'] == 'first_name') $data['n_first'] = $property['values'][0];
 								elseif ($property['name'] == 'last_name') $data['n_last'] = $property['values'][0];
 								elseif ($property['name'] == 'phone_number') $data['tel_cell'] = $property['values'][0];
-								elseif ($property['name'] == 'stree_address') $data['adr_street'] = $property['values'][0];
+								elseif ($property['name'] == 'street_address') $data['adr_street'] = $property['values'][0];
 								elseif ($property['name'] == 'city') $data['adr_city'] = $property['values'][0];
 								elseif ($property['name'] == 'post_code') $data['adr_zip'] = $property['values'][0];
 								elseif ($property['name'] == 'country') $data['adr_country'] = $property['values'][0];
@@ -1422,7 +1422,6 @@ class AccountController extends AbstractActionController
 							$data['contact_history'] = $rest;
 							$rc = $account->loadAndAdd($data, Account::getConfig($type));
 							echo $lead['id'].' '.$rc[0]."<br>\n";
-							return $this->response;
 						}
 					}
 				}
