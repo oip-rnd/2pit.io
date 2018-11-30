@@ -792,9 +792,9 @@ function connectCommitmentGenerateTermForm(id)
 			formData.append('number_of_terms', $('#number_of_terms').val());
 			formData.append('first_term_date', $('#first_term_date').val());
             formData.append('term-status', $('#term-status').val());
-            formData.append('quantity_to_divide', $('#quantity_to_divide').val());
+            formData.append('quantityToDivide', $('#quantityToDivide').val());
             formData.append('term-unit_price', $('#term-unit_price').val());
-            formData.append('amount_to_divide', $('#amount_to_divide').val());
+            formData.append('amountToDivide', $('#amountToDivide').val());
 			formData.append('means_of_payment', $('#means_of_payment').val());
 			formData.append('periodicity', $('#periodicity').val());
             formData.append('same_day_of_month', (document.getElementById('same_day_of_month').checked) ? 1 : 0);
@@ -824,13 +824,14 @@ function getCommitmentGenerateTerm(id)
 		if (xhttp.readyState == 4 <?php if (!$context->getConfig()['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
 			document.getElementById('term-generate-panel').innerHTML = xhttp.responseText;
 			$('#input_first_term_date').datepicker();
-			
+			$('#quantityToDivide').change(function() { $('#amountToDivide').val(''); });
+            $('#amountToDivide').change(function() { $('#quantityToDivide').val(''); $('#term-unit_price').val(''); });
 			connectCommitmentGenerateTermForm(id);
 		}
 	};
 	xhttp.send();
 }
-
+/*
 function connectSubrogateForm(id)
 {
   var form = document.getElementById('subrogate-form');
@@ -931,7 +932,7 @@ function connectSubrogateForm(id)
     
       var xhttp = new XMLHttpRequest();
       var route, target;
-      route = '<?php echo $this->url('commitment/subrogate', ['type' => 'learning']) ?>/' + id;
+      route = '<?php //echo $this->url('commitment/subrogate', ['type' => 'learning']) ?>/' + id;
       xhttp.open('POST', route, true);
       xhttp.onload = function () {
         if (xhttp.readyState == 4 && xhttp.status == 200) {
@@ -948,7 +949,7 @@ function getSubrogate(id)
 {
   var xhttp = new XMLHttpRequest();
   var route, target;
-  route = '<?php echo $this->url('commitment/subrogate', ['type' => 'learning']) ?>/' + id;
+  route = '<?php //echo $this->url('commitment/subrogate', ['type' => 'learning']) ?>/' + id;
   xhttp.open('GET', route, true);
   xhttp.onload = function () {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
@@ -959,7 +960,7 @@ function getSubrogate(id)
     }
   };
   xhttp.send();
-}
+}*/
 
 function connectCommitmentUpdateTermForm(id)
 {
@@ -1248,12 +1249,12 @@ function getCommitmentDetail(id) {
 				$('#term-tr').show();
 				getCommitmentGenerateTerm($('#term_commitment_id').val());
 			});
-
+/*
       $('#subrogate-anchor').click(function () {
         $('.term-tr').hide();
         $('#subrogate-tr').show();
         getSubrogate($('#term_commitment_id').val());
-      });
+      });*/
 
 			$('#product_identifier').change(fillRowPrice);
 

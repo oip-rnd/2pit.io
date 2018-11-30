@@ -261,7 +261,7 @@ return array(
         								),
         						),
         				),
-        				'subrogate' => array(
+/*        				'subrogate' => array(
         						'type' => 'segment',
         						'options' => array(
         								'route' => '/subrogate[/:type][/:id]',
@@ -272,7 +272,7 @@ return array(
         										'action' => 'subrogate',
         								),
         						),
-        				),
+        				),*/
         				'suspend' => array(
         						'type' => 'segment',
         						'options' => array(
@@ -796,7 +796,19 @@ return array(
 		        								),
 		        						),
 		        				),
-								'group' => array(
+		        				'downloadInvoice' => array(
+		        						'type' => 'segment',
+		        						'options' => array(
+		        								'route' => '/download-invoice[/:id]',
+		        								'constraints' => array(
+		        										'id'     => '[0-9]*',
+		        								),
+		        								'defaults' => array(
+		        										'action' => 'downloadInvoice',
+		        								),
+		        						),
+		        				),
+	       						'group' => array(
 										'type' => 'segment',
 										'options' => array(
 												'route' => '/group[/:type]',
@@ -911,7 +923,7 @@ return array(
             	array('route' => 'commitment/updateProduct', 'roles' => array('sales_manager')),
             	array('route' => 'commitment/updateOption', 'roles' => array('sales_manager')),
             	array('route' => 'commitment/updateTerm', 'roles' => array('sales_manager')),
-            	array('route' => 'commitment/subrogate', 'roles' => array('sales_manager')),
+//            	array('route' => 'commitment/subrogate', 'roles' => array('sales_manager')),
             	array('route' => 'commitment/suspend', 'roles' => array('admin')),
             	array('route' => 'commitment/serviceAdd', 'roles' => array('guest')),
 //            	array('route' => 'commitment/workflow', 'roles' => array('sales_manager')),
@@ -969,6 +981,7 @@ return array(
             	array('route' => 'commitmentTerm/checkDeposit', 'roles' => array('sales_manager')),
             	array('route' => 'commitmentTerm/checkDepositSsml', 'roles' => array('sales_manager')),
             	array('route' => 'commitmentTerm/invoice', 'roles' => array('sales_manager', 'accountant')),
+            	array('route' => 'commitmentTerm/downloadInvoice', 'roles' => array('sales_manager', 'accountant')),
             )
         )
     ),
@@ -3441,8 +3454,8 @@ table.note-report td {
 		'minValue' => -99999999,
 		'maxValue' => 99999999,
 		'labels' => array(
-			'en_US' => 'Quantity',
-			'fr_FR' => 'Quantité',
+			'en_US' => 'Or quantity',
+			'fr_FR' => 'Ou quantité',
 		),
 	),
 
@@ -3452,8 +3465,8 @@ table.note-report td {
 		'minValue' => -99999999,
 		'maxValue' => 99999999,
 		'labels' => array(
-			'en_US' => 'Unit price',
-			'fr_FR' => 'Prix unitaire',
+			'en_US' => 'Tax. excl. unit price',
+			'fr_FR' => 'Prix unitaire HT',
 		),
 	),
 	
@@ -3463,8 +3476,8 @@ table.note-report td {
 		'minValue' => -99999999,
 		'maxValue' => 99999999,
 		'labels' => array(
-			'en_US' => 'Amount',
-			'fr_FR' => 'Montant',
+			'en_US' => 'Tax incl. amount',
+			'fr_FR' => 'Montant TTC',
 		),
 	),
 	
@@ -3607,9 +3620,9 @@ table.note-report td {
 		'due_date' => ['mandatory' => true],
 		'settlement_date' => [],
 		'collection_date' => [],
-		'quantity' => ['readonly' => true],
-		'unit_price' => ['mandatory' => true],
-		'amount' => ['readonly' => true],
+//		'quantity' => ['readonly' => true],
+//		'unit_price' => ['mandatory' => true],
+		'amount' => ['mandatory' => true],
 		'means_of_payment' => [],
 		'bank_name' => [],
 		'invoice_n_last' => [],

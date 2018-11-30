@@ -409,8 +409,6 @@ class UserController extends AbstractActionController
 
 		$instance_caption = $this->params()->fromRoute('instance_caption', null);
     	if ($instance_caption) Context::$instance = Instance::get($instance_caption, 'caption');
-    
-    	$place = Place::get($context->getPlaceId());
     	
     	// Instanciate the csrf form
     	$csrfForm = new CsrfForm();
@@ -431,6 +429,9 @@ class UserController extends AbstractActionController
 		    	$rc = $context->getSecurityAgent()->authenticate($identity, $credential);
 		    	if ($rc == 'OK') {
 		    		// Redirect
+/*		    		if ($request->getUri()->getHost() != $context->getInstance()->fqdn) {
+		    			if ($context->getInstance()->fqdn) return $this->redirect()->toUrl('https://'.$context->getInstance()->fqdn);
+		    		}*/
 		    		if ($this->params()->fromQuery('redirect')) {
 		    			return $this->redirect()->toRoute($this->params()->fromQuery('redirect'), array(), array('query' => $this->params()->fromQuery()));
 		    		}
@@ -466,7 +467,6 @@ class UserController extends AbstractActionController
     	$view = new ViewModel(array(
     			'context' => Context::getCurrent(),
 				'config' => $context->getconfig(),
-    			'place' => $place,
     			'redirect' => $this->params()->fromQuery('redirect'),
     			'active' => 'login',
     			'csrfForm' => $csrfForm,

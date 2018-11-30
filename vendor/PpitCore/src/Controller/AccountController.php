@@ -1363,7 +1363,74 @@ class AccountController extends AbstractActionController
 		$content = $pdf->Output('index-card-'.$context->getInstance()->caption.'-'.$account->name.'.pdf', 'I');
 		return $this->response;
 	}
-    
+
+	public function fbgetleadsAction()
+	{
+		$context = Context::getCurrent();
+		$type = $this->params()->fromRoute('type', 'generic');
+	
+		$client = new Client(
+			'https://graph.facebook.com/v3.2/2213184422239422/leadgen_forms',
+			['adapter' => 'Zend\Http\Client\Adapter\Curl', 'maxredirects' => 0, 'timeout' => 30]
+		);
+		$client->setEncType('application/json');
+		$client->getRequest()->getHeaders()->addHeaders(array('Authorization' => 'Bearer EAAIWKgrCgLgBAHnXpwxHKDz77IIETg5OMfHRyOzyLJ40om3IpGEEZBQaaJtoE55OtgepAZB07sjDEov9sI435RUMFgXnzZAZAbdGBeJNLxdgpL2o9sPhj0UbtCalPcpcDcwNZAM7CZAUZBqRjllizs9Ig1usL38yqApeh9Sbhe7ZCKaS0K72ZCP3a'));
+		$client->setMethod('GET');
+		$response = $client->send();
+		if ($response->getStatusCode() != 200) {
+			echo $response->renderStatusLine()."<br>";
+			echo $response->getContent();
+			return $this->response;
+		}
+		$pages = json_decode(gzdecode($response->getContent()), true);
+		foreach ($pages['data'] as $page) {
+			$client = new Client(
+				'https://graph.facebook.com/v3.2/'.$page['id'].'/leads',
+				['adapter' => 'Zend\Http\Client\Adapter\Curl', 'maxredirects' => 0, 'timeout' => 30]
+			);
+			$client->setEncType('application/json');
+			$client->getRequest()->getHeaders()->addHeaders(array('Authorization' => 'Bearer EAAIWKgrCgLgBAHnXpwxHKDz77IIETg5OMfHRyOzyLJ40om3IpGEEZBQaaJtoE55OtgepAZB07sjDEov9sI435RUMFgXnzZAZAbdGBeJNLxdgpL2o9sPhj0UbtCalPcpcDcwNZAM7CZAUZBqRjllizs9Ig1usL38yqApeh9Sbhe7ZCKaS0K72ZCP3a'));
+			$client->setMethod('GET');
+			$response = $client->send();
+			if ($response->getStatusCode() == 200) {
+				$leads = gzdecode($response->getContent());
+				if ($leads) {
+					$leads = json_decode($leads, true)['data'];
+					foreach ($leads as $lead) {
+						$existing = Account::get('FB-'.$lead['id'], 'identifier');
+						if (!$existing) {
+							$account = Account::instanciate($type);
+							$data = array();
+							$data['identifier'] = 'FB-'.$lead['id'];
+							$data['status'] = 'suspect';
+							$data['origine'] = 'facebook';
+							$data['opening_date'] = substr($lead['created_time'], 0, 10);
+							$data['callback_date'] = date('Y-m-d');
+							$data['date_1'] = date('Y-m-d');
+							$rest = 'Facebook data:';
+							foreach ($lead['field_data'] as $property) {
+								if ($property['name'] == 'email') $data['email'] = $property['values'][0];
+								elseif ($property['name'] == 'first_name') $data['n_first'] = $property['values'][0];
+								elseif ($property['name'] == 'last_name') $data['n_last'] = $property['values'][0];
+								elseif ($property['name'] == 'phone_number') $data['tel_cell'] = $property['values'][0];
+								elseif ($property['name'] == 'stree_address') $data['adr_street'] = $property['values'][0];
+								elseif ($property['name'] == 'city') $data['adr_city'] = $property['values'][0];
+								elseif ($property['name'] == 'post_code') $data['adr_zip'] = $property['values'][0];
+								elseif ($property['name'] == 'country') $data['adr_country'] = $property['values'][0];
+								else $rest .= (' '.$property['name'].': '.$property['values'][0]);
+							}
+							$data['contact_history'] = $rest;
+							$rc = $account->loadAndAdd($data, Account::getConfig($type));
+							echo $lead['id'].' '.$rc[0]."<br>\n";
+							return $this->response;
+						}
+					}
+				}
+			}
+		}
+		return $this->response;
+	}
+	
 	/**
 	 * Restfull implementation
 	 * TODO : authorization + error description

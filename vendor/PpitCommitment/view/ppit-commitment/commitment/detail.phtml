@@ -357,7 +357,7 @@
 					<button type="button" class="btn btn-default action-btn btn-xs term-generate-anchor" title="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale())?>" id="term-generate-anchor" <?php if (in_array($commitment->credit_status, array('blocked', 'suspended', 'closed')) || in_array($commitment->status, array('invoiced', 'settled')) && !$context->hasRole('admin')) echo 'disabled="disabled"' ?>>
 						<?php echo $this->translate('Generate schedule', 'ppit-commitment', $context->getLocale())?>
 					</button>
-<?php if ($type == 'p-pit-studies') : ?>
+<?php if  (false) : // ($type == 'p-pit-studies') : ?>
                     <button type="button" class="btn btn-default action-btn btn-xs subrogate-anchor" title="<?php echo $this->translate('Generate subrogation', 'ppit-commitment', $context->getLocale())?>" id="subrogate-anchor" <?php if (in_array($commitment->credit_status, array('blocked', 'suspended', 'closed')) || in_array($commitment->status, array('invoiced', 'settled')) && !$context->hasRole('admin')) echo 'disabled="disabled"' ?>>
                       <?php echo $this->translate('Generate subrogation', 'ppit-commitment', $context->getLocale())?>
                     </button>
