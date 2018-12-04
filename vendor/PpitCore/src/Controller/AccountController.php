@@ -51,6 +51,8 @@ class AccountController extends AbstractActionController
     	if (array_key_exists('options', $description) && array_key_exists('internal_identifier', $description['options'])) $internalIdentifier = $description['options']['internal_identifier'];
     	else $internalIdentifier = false;
 		$vcardProperties = Vcard::getConfig();
+		if ($type == 'p-pit-studies') $commitmentProperties = \PpitCommitment\Model\Commitment::getDescription('p-pit-studies')['update'];
+		else $commitmentProperties = null;
 
     	// Retrieve the available email templates and the signature to use in the emails
     	$templates = array();
@@ -87,6 +89,7 @@ class AccountController extends AbstractActionController
     			'updatePage' => Account::getConfigUpdate($type, $configProperties),
 				'updateContactPage' => $context->getConfig('core_account/updateContact/'.$type),
     			'groupUpdatePage' => Account::getConfigGroupUpdate($type, $configProperties),
+    			'commitmentProperties' => $commitmentProperties,
     			'templates' => $templates,
     			'status' => $status,
     	));
@@ -1367,6 +1370,13 @@ class AccountController extends AbstractActionController
 	public function fbgetleadsAction()
 	{
 		$context = Context::getCurrent();
+		
+		// Authentication
+		if (!$context->isAuthenticated() && !$context->wsAuthenticate($this->getEvent())) {
+			$this->getResponse()->setStatusCode('401');
+			return $this->getResponse();
+		}
+		
 		$type = $this->params()->fromRoute('type', 'generic');
 	
 		$client = new Client(
@@ -1402,7 +1412,7 @@ class AccountController extends AbstractActionController
 							$account = Account::instanciate($type);
 							$data = array();
 							$data['identifier'] = 'FB-'.$lead['id'];
-							$data['status'] = 'suspect';
+							$data['status'] = 'new';
 							$data['origine'] = 'facebook';
 							$data['opening_date'] = substr($lead['created_time'], 0, 10);
 							$data['callback_date'] = date('Y-m-d');

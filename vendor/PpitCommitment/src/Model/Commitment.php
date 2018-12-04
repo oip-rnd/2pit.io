@@ -22,28 +22,309 @@ use Zend\Log\Writer;
 
 class Commitment
 {
-    public $id;
+	public static $model = array(
+		'entities' => array(
+			'commitment' => 		['table' => 'commitment'],
+			'core_account' => 		['table' => 'core_account'],
+			'core_vcard' => 		['table' => 'core_vcard', 'foreign_key' => 'contact_1_id'],
+			'core_contact_2' => 	['table' => 'core_vcard', 'foreign_key' => 'contact_2_id'],
+			'core_contact_3' => 	['table' => 'core_vcard', 'foreign_key' => 'contact_3_id'],
+			'core_contact_4' => 	['table' => 'core_vcard', 'foreign_key' => 'contact_4_id'],
+			'core_contact_5' => 	['table' => 'core_vcard', 'foreign_key' => 'contact_5_id'],
+			'core_place' => 		['table' => 'core_place'],
+		),
+		'properties' => array(
+			'status' => 						['entity' => 'commitment', 'column' => 'status'],
+			'year' => 							['entity' => 'commitment', 'column' => 'year'],
+			
+			'account_id' => 					['entity' => 'commitment', 'column' => 'account_id'],
+			'place_id' => 						['entity' => 'core_account', 'column' => 'place_id'],
+			'place_caption' => 					['entity' => 'core_place', 'column' => 'caption'],
+			'place_identifier' => 				['entity' => 'core_place', 'column' => 'identifier'],
+			'place_suport_email' => 			['entity' => 'core_place', 'column' => 'support_email'],
+			'place_logo_height' => 				['entity' => 'core_place', 'column' => 'logo_height'],
+			'place_logo_src' => 				['entity' => 'core_place', 'column' => 'logo_src'],
+			'place_config' => 					['entity' => 'core_place', 'column' => 'config'],
+			
+			'default_means_of_payment' => 		['entity' => 'core_account', 'column' => 'default_means_of_payment'],
+			'account_status' => 				['entity' => 'core_account', 'column' => 'status'],
+			'account_name' => 					['entity' => 'core_account', 'column' => 'name'],
+			'account_identifier' => 			['entity' => 'core_account', 'column' => 'identifier'],
+			'account_date_1' => 				['entity' => 'core_account', 'column' => 'date_1'],
+			'account_date_2' => 				['entity' => 'core_account', 'column' => 'date_2'],
+			'account_date_3' => 				['entity' => 'core_account', 'column' => 'date_3'],
+			'account_date_4' => 				['entity' => 'core_account', 'column' => 'date_4'],
+			'account_date_5' => 				['entity' => 'core_account', 'column' => 'date_5'],
+			'account_property_1' => 			['entity' => 'core_account', 'column' => 'property_1'],
+			'account_property_2' => 			['entity' => 'core_account', 'column' => 'property_2'],
+			'account_property_3' => 			['entity' => 'core_account', 'column' => 'property_3'],
+			'account_property_4' => 			['entity' => 'core_account', 'column' => 'property_4'],
+			'account_property_5' => 			['entity' => 'core_account', 'column' => 'property_5'],
+			'account_property_6' => 			['entity' => 'core_account', 'column' => 'property_6'],
+			'account_property_7' => 			['entity' => 'core_account', 'column' => 'property_7'],
+			'account_property_8' => 			['entity' => 'core_account', 'column' => 'property_8'],
+			'account_property_9' => 			['entity' => 'core_account', 'column' => 'property_9'],
+			'account_property_10' => 			['entity' => 'core_account', 'column' => 'property_10'],
+			'account_property_11' => 			['entity' => 'core_account', 'column' => 'property_11'],
+			'account_property_12' => 			['entity' => 'core_account', 'column' => 'property_12'],
+			'account_property_13' => 			['entity' => 'core_account', 'column' => 'property_13'],
+			'account_property_14' => 			['entity' => 'core_account', 'column' => 'property_14'],
+			'account_property_15' => 			['entity' => 'core_account', 'column' => 'property_15'],
+			'account_property_16' => 			['entity' => 'core_account', 'column' => 'property_16'],
+			
+			'contact_1_status' => 				['entity' => 'core_account', 'column' => 'contact_1_status'],
+			'contact_2_status' => 				['entity' => 'core_account', 'column' => 'contact_2_status'],
+			'contact_3_status' => 				['entity' => 'core_account', 'column' => 'contact_3_status'],
+			'contact_4_status' => 				['entity' => 'core_account', 'column' => 'contact_4_status'],
+			'contact_5_status' => 				['entity' => 'core_account', 'column' => 'contact_5_status'],
+			
+			'contact_n_title' => 				['entity' => 'core_vcard', 'column' => 'n_title'],
+			'contact_n_first' => 				['entity' => 'core_vcard', 'column' => 'n_first'],
+			'contact_n_last' => 				['entity' => 'core_vcard', 'column' => 'n_last'],
+			'contact_n_fn' => 					['entity' => 'core_vcard', 'column' => 'n_fn'],
+			'contact_email' => 					['entity' => 'core_vcard', 'column' => 'email'],
+			'contact_tel_work' => 				['entity' => 'core_vcard', 'column' => 'tel_work'],
+			'contact_tel_cell' => 				['entity' => 'core_vcard', 'column' => 'tel_cell'],
+
+			'contact_n_title_2' => 				['entity' => 'contact_2', 'column' => 'n_title'],
+			'contact_n_first_2' => 				['entity' => 'contact_2', 'column' => 'n_first'],
+			'contact_n_last_2' => 				['entity' => 'contact_2', 'column' => 'n_last'],
+			'contact_n_fn_2' => 				['entity' => 'contact_2', 'column' => 'n_fn'],
+			'contact_email_2' => 				['entity' => 'contact_2', 'column' => 'email'],
+			'contact_tel_work_2' => 			['entity' => 'contact_2', 'column' => 'tel_work'],
+			'contact_tel_cell_2' => 			['entity' => 'contact_2', 'column' => 'tel_cell'],
+
+			'contact_n_title_3' => 				['entity' => 'contact_3', 'column' => 'n_title'],
+			'contact_n_first_3' => 				['entity' => 'contact_3', 'column' => 'n_first'],
+			'contact_n_last_3' => 				['entity' => 'contact_3', 'column' => 'n_last'],
+			'contact_n_fn_3' => 				['entity' => 'contact_3', 'column' => 'n_fn'],
+			'contact_email_3' => 				['entity' => 'contact_3', 'column' => 'email'],
+			'contact_tel_work_3' => 			['entity' => 'contact_3', 'column' => 'tel_work'],
+			'contact_tel_cell_3' => 			['entity' => 'contact_3', 'column' => 'tel_cell'],
+
+			'contact_n_title_4' => 				['entity' => 'contact_4', 'column' => 'n_title'],
+			'contact_n_first_4' => 				['entity' => 'contact_4', 'column' => 'n_first'],
+			'contact_n_last_4' => 				['entity' => 'contact_4', 'column' => 'n_last'],
+			'contact_n_fn_4' => 				['entity' => 'contact_4', 'column' => 'n_fn'],
+			'contact_email_4' => 				['entity' => 'contact_4', 'column' => 'email'],
+			'contact_tel_work_4' => 			['entity' => 'contact_4', 'column' => 'tel_work'],
+			'contact_tel_cell_4' => 			['entity' => 'contact_4', 'column' => 'tel_cell'],
+
+			'contact_n_title_5' => 				['entity' => 'contact_5', 'column' => 'n_title'],
+			'contact_n_first_5' => 				['entity' => 'contact_5', 'column' => 'n_first'],
+			'contact_n_last_5' => 				['entity' => 'contact_5', 'column' => 'n_last'],
+			'contact_n_fn_5' => 				['entity' => 'contact_5', 'column' => 'n_fn'],
+			'contact_email_5' => 				['entity' => 'contact_5', 'column' => 'email'],
+			'contact_tel_work_5' => 			['entity' => 'contact_5', 'column' => 'tel_work'],
+			'contact_tel_cell_5' => 			['entity' => 'contact_5', 'column' => 'tel_cell'],
+				
+			'caption' => 						['entity' => 'commitment', 'column' => 'caption'],
+			'description' => 					['entity' => 'commitment', 'column' => 'description'],
+			'product_identifier' => 			['entity' => 'commitment', 'column' => 'product_identifier'],
+			'product_brand' => 					['entity' => 'commitment', 'column' => 'product_brand'],
+			'product_caption' => 				['entity' => 'commitment', 'column' => 'product_caption'],
+			'quantity' => 						['entity' => 'commitment', 'column' => 'quantity'],
+			'unit_price' => 					['entity' => 'commitment', 'column' => 'unit_price'],
+			'amount' => 						['entity' => 'commitment', 'column' => 'amount'],
+			'taxable_1_amount' => 				['entity' => 'commitment', 'column' => 'taxable_1_amount'],
+			'taxable_2_amount' => 				['entity' => 'commitment', 'column' => 'taxable_2_amount'],
+			'taxable_3_amount' => 				['entity' => 'commitment', 'column' => 'taxable_3_amount'],
+			'options' => 						['entity' => 'commitment', 'column' => 'options'],
+			'including_options_amount' => 		['entity' => 'commitment', 'column' => 'including_options_amount'],
+			'taxable_1_total' => 				['entity' => 'commitment', 'column' => 'taxable_1_total'],
+			'taxable_2_total' => 				['entity' => 'commitment', 'column' => 'taxable_2_total'],
+			'taxable_3_total' => 				['entity' => 'commitment', 'column' => 'taxable_3_total'],
+			'identifier' => 					['entity' => 'commitment', 'column' => 'identifier'],
+			'invoice_identifier' => 			['entity' => 'commitment', 'column' => 'invoice_identifier'],
+			'commitment_date' => 				['entity' => 'commitment', 'column' => 'commitment_date'],
+			'property_1' => 					['entity' => 'commitment', 'column' => 'property_1'],
+			'property_2' => 					['entity' => 'commitment', 'column' => 'property_2'],
+			'property_3' => 					['entity' => 'commitment', 'column' => 'property_3'],
+			'property_4' => 					['entity' => 'commitment', 'column' => 'property_4'],
+			'property_5' => 					['entity' => 'commitment', 'column' => 'property_5'],
+			'property_6' => 					['entity' => 'commitment', 'column' => 'property_6'],
+			'property_7' => 					['entity' => 'commitment', 'column' => 'property_7'],
+			'property_8' => 					['entity' => 'commitment', 'column' => 'property_8'],
+			'property_9' => 					['entity' => 'commitment', 'column' => 'property_9'],
+			'property_10' => 					['entity' => 'commitment', 'column' => 'property_10'],
+			'property_11' => 					['entity' => 'commitment', 'column' => 'property_11'],
+			'property_12' => 					['entity' => 'commitment', 'column' => 'property_12'],
+			'property_13' => 					['entity' => 'commitment', 'column' => 'property_13'],
+			'property_14' => 					['entity' => 'commitment', 'column' => 'property_14'],
+			'property_15' => 					['entity' => 'commitment', 'column' => 'property_15'],
+			'property_16' => 					['entity' => 'commitment', 'column' => 'property_16'],
+			'property_17' => 					['entity' => 'commitment', 'column' => 'property_17'],
+			'property_18' => 					['entity' => 'commitment', 'column' => 'property_18'],
+			'property_19' => 					['entity' => 'commitment', 'column' => 'property_19'],
+			'property_20' => 					['entity' => 'commitment', 'column' => 'property_20'],
+			'property_21' => 					['entity' => 'commitment', 'column' => 'property_21'],
+			'property_22' => 					['entity' => 'commitment', 'column' => 'property_22'],
+			'property_23' => 					['entity' => 'commitment', 'column' => 'property_23'],
+			'property_24' => 					['entity' => 'commitment', 'column' => 'property_24'],
+			'property_25' => 					['entity' => 'commitment', 'column' => 'property_25'],
+			'property_26' => 					['entity' => 'commitment', 'column' => 'property_26'],
+			'property_27' => 					['entity' => 'commitment', 'column' => 'property_27'],
+			'property_28' => 					['entity' => 'commitment', 'column' => 'property_28'],
+			'property_29' => 					['entity' => 'commitment', 'column' => 'property_29'],
+			'property_30' => 					['entity' => 'commitment', 'column' => 'property_30'],
+			'retraction_limit' => 				['entity' => 'commitment', 'column' => 'retraction_limit'],
+			'retraction_date' => 				['entity' => 'commitment', 'column' => 'retraction_date'],
+			'expected_shipment_limit' => 		['entity' => 'commitment', 'column' => 'expected_shipment_limit'],
+			'shipment_date' => 					['entity' => 'commitment', 'column' => 'shipment_date'],
+			'expected_delivery_date' => 		['entity' => 'commitment', 'column' => 'expected_delivery_date'],
+			'delivery_date' => 					['entity' => 'commitment', 'column' => 'delivery_date'],
+			'expected_commissioning_date' =>	['entity' => 'commitment', 'column' => 'expected_commissioning_date'],
+			'commissioning_date' => 			['entity' => 'commitment', 'column' => 'commissioning_date'],
+			'due_date' => 						['entity' => 'commitment', 'column' => 'due_date'],
+			'invoice_date' => 					['entity' => 'commitment', 'column' => 'invoice_date'],
+			'order_form_id' => 					['entity' => 'commitment', 'column' => 'order_form_id'],
+			'excluding_tax' => 					['entity' => 'commitment', 'column' => 'excluding_tax'],
+			'tax_regime' => 					['entity' => 'commitment', 'column' => 'tax_regime'],
+			'tax_1_amount' => 					['entity' => 'commitment', 'column' => 'tax_1_amount'],
+			'tax_2_amount' => 					['entity' => 'commitment', 'column' => 'tax_2_amount'],
+			'tax_3_amount' => 					['entity' => 'commitment', 'column' => 'tax_3_amount'],
+			'tax_amount' => 					['entity' => 'commitment', 'column' => 'tax_amount'],
+			'tax_inclusive' => 					['entity' => 'commitment', 'column' => 'tax_inclusive'],
+			'means_of_paiement' => 				['entity' => 'commitment', 'column' => 'means_of_paiement'],
+			'update_time' => 					['entity' => 'commitment', 'column' => 'update_time'],
+		),
+	);
+
+	public static function getConfig($type) {
+		$context = Context::getCurrent();
+		$properties = array();
+		$description = $context->getConfig('commitment/'.$type);
+		if (!$description) $description = $context->getConfig('commitment/generic');
+		foreach($description['properties'] as $propertyId) {
+			$property = $context->getConfig('commitment/'.$type.'/property/'.$propertyId);
+			if (!$property) $property = $context->getConfig('commitment/generic/property/'.$propertyId);
+			if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
+			if (!array_key_exists('private', $property)) $property['private'] = false;
+			if (!$property['private'] || $context->hasRole('dpo')) {
+				if ($propertyId == 'place_id') {
+					$property['modalities'] = array();
+					foreach (Place::getList(array()) as $place) $property['modalities'][$place->id] = $place->caption;
+				}
+				elseif ($propertyId == 'account_id') {
+					$property['modalities'] = array();
+				}
+				elseif (in_array($property['type'], ['select', 'multiselect']) && array_key_exists('definition', $property['modalities']) && $property['modalities']['definition'] != 'inline') {
+					$definition = $context->getConfig($property['modalities']['definition']);
+					$property['modalities'] = array();
+					foreach ($definition as $modalityId => $modality) {
+						$property['modalities'][$modalityId] = $modality['labels'];
+					}
+				}
+				$properties[$propertyId] = $property;
+			}
+		}
+		return $properties;
+	}
+	
+	public static function getConfigSearch($type, $configProperties)
+	{
+		$context = Context::getCurrent();
+		$configSearch = $context->getConfig('commitment/search/'.$type);
+		if (!$configSearch) $configSearch = $context->getConfig('commitment/search/generic');
+		$properties = array();
+		foreach ($configSearch['properties'] as $propertyId => $options) {
+			$property = $configProperties[$propertyId];
+			$properties[$propertyId] = $property;
+			$properties[$propertyId]['options'] = $options;
+		}
+		$configSearch['properties'] = $properties;
+		return $configSearch;
+	}
+	
+	public static function getConfigList($type, $configProperties)
+	{
+		$context = Context::getCurrent();
+		$configList = $context->getConfig('commitment/list/'.$type);
+		if (!$configList) $configList = $context->getConfig('commitment/list/generic');
+		$properties = array();
+		foreach ($configList['properties'] as $propertyId => $options) {
+			$property = $configProperties[$propertyId];
+			$properties[$propertyId] = $property;
+			$properties[$propertyId]['options'] = $options;
+		}
+		$configList['properties'] = $properties;
+		return $configList;
+	}
+	
+	public static function getConfigUpdate($type, $configProperties)
+	{
+		$context = Context::getCurrent();
+		$configUpdate = $context->getConfig('commitment/update/'.$type);
+		if (!$configUpdate) $configUpdate = $context->getConfig('commitment/update/generic');
+		$properties = array();
+		foreach ($configUpdate as $propertyId => $options) {
+			if (array_key_exists($propertyId, $configProperties)) {
+				$property = $configProperties[$propertyId];
+				$property['options'] = $options;
+				$properties[$propertyId] = $property;
+			}
+		}
+		return $properties;
+	}
+
+	public static function getConfigGroup($type, $configProperties)
+	{
+		$context = Context::getCurrent();
+		$configUpdate = $context->getConfig('commitment/group/'.$type);
+		if (!$configUpdate) $configUpdate = $context->getConfig('commitment/group/generic');
+		$properties = array();
+		foreach ($configUpdate as $propertyId => $options) {
+			if (array_key_exists($propertyId, $configProperties)) {
+				$property = $configProperties[$propertyId];
+				$property['options'] = $options;
+				$properties[$propertyId] = $property;
+			}
+		}
+		return $properties;
+	}
+	
+	public static function getConfigExport($type, $configProperties)
+	{
+		$context = Context::getCurrent();
+		$configExport = $context->getConfig('commitment/export/'.$type);
+		if (!$configExport) $configExport = $context->getConfig('commitment/export/generic');
+		$properties = array();
+		foreach ($configExport as $propertyId => $options) {
+			if (array_key_exists($propertyId, $configProperties)) {
+				$property = $configProperties[$propertyId];
+				$properties[$propertyId] = $property;
+				$properties[$propertyId]['options'] = $options;
+			}
+		}
+		return $properties;
+	}
+	
+	public static function getDescription($type)
+	{
+		$context = Context::getCurrent();
+		$config = $context->getConfig('commitment/'.$type);
+		if (!$config) $config = $context->getConfig('commitment/generic');
+	
+		$description = array();
+		$description['type'] = $type;
+		$description['options'] = (array_key_exists('options', $config)) ? $config['options'] : array();
+		$description['properties'] = Commitment::getConfig($type);
+		$description['search'] = Commitment::getConfigSearch($type, $description['properties']);
+		$description['list'] = Commitment::getConfigList($type, $description['properties']);
+		$description['update'] = Commitment::getConfigUpdate($type, $description['properties']);
+		$description['group'] = Commitment::getConfigGroup($type, $description['properties']);
+		$description['export'] = Commitment::getConfigEXport($type, $description['properties']);
+		return $description;
+	}
+	
+	public $id;
     public $instance_id;
-    public $credit_status;
-    public $next_credit_consumption_date;
-    public $last_credit_consumption_date;
     public $year;
     public $type;
-	public $subscription_id;
 	public $account_id;
 	public $status;
 	public $caption;
 	public $description;
-	public $customer_identifier;
-	public $customer_invoice_name;
-	public $customer_n_fn;
-	public $customer_adr_street;
-	public $customer_adr_extended;
-	public $customer_adr_post_office_box;
-	public $customer_adr_zip;
-	public $customer_adr_city;
-	public $customer_adr_state;
-	public $customer_adr_country;
 	public $product_identifier;
 	public $product_brand;
 	public $product_caption;
@@ -58,11 +339,8 @@ class Commitment
 	public $taxable_1_total;
 	public $taxable_2_total;
 	public $taxable_3_total;
-	public $cgv;
 	public $identifier;
-	public $quotation_identifier;
 	public $invoice_identifier;
-	public $credit_identifier;
 	public $commitment_date;
 	public $retraction_limit;
     public $retraction_date;
@@ -74,8 +352,6 @@ class Commitment
 	public $commissioning_date;
 	public $due_date;
 	public $invoice_date;
-	public $expected_settlement_date;
-	public $settlement_date;
 	public $order_form_id;
 	public $property_1;
 	public $property_2;
@@ -123,7 +399,6 @@ class Commitment
 	public $delivery_message_id;
 	public $commissioning_message_id;
 	public $invoice_message_id;
-	public $settlement_message_id;
 	public $notification_time;
 	public $update_time;
 
@@ -136,24 +411,12 @@ class Commitment
 	public $place_logo_src;
     public $place_config;
     public $properties;
-    
+
     public $default_means_of_payment;
-    public $transfer_order_id;
+/*    public $transfer_order_id;
     public $transfer_order_date;
-    public $bank_identifier;
+    public $bank_identifier;*/
     
-    public $contact_1_status;
-    public $contact_2_status;
-    public $contact_3_status;
-    public $contact_4_status;
-    public $contact_5_status;
-    public $n_title;
-    public $n_first;
-    public $n_last;
-    public $n_fn;
-    public $email;
-    public $tel_work;
-    public $tel_cell;
     public $account_status;
     public $account_name;
 	public $account_identifier;
@@ -179,6 +442,20 @@ class Commitment
 	public $account_property_15;
 	public $account_property_16;
 
+	public $contact_1_status;
+	public $contact_2_status;
+	public $contact_3_status;
+	public $contact_4_status;
+	public $contact_5_status;
+	
+	public $n_title;
+	public $n_first;
+	public $n_last;
+	public $n_fn;
+	public $email;
+	public $tel_work;
+	public $tel_cell;
+	
 	public $n_title_2;
 	public $n_first_2;
 	public $n_last_2;
@@ -225,8 +502,6 @@ class Commitment
 	
 	public $terms;
 	public $termSum;
-	public $subscriptions;
-	public $subscription;
 	public $breadcrumb;
     public $vat_rate;
     public $files;
@@ -248,26 +523,12 @@ class Commitment
     {
         $this->id = (isset($data['id'])) ? $data['id'] : null;
         $this->instance_id = (isset($data['instance_id'])) ? $data['instance_id'] : null;
-        $this->credit_status = (isset($data['credit_status'])) ? $data['credit_status'] : null;
-        $this->next_credit_consumption_date = (isset($data['next_credit_consumption_date'])) ? $data['next_credit_consumption_date'] : null;
-        $this->last_credit_consumption_date = (isset($data['last_credit_consumption_date'])) ? $data['last_credit_consumption_date'] : null;
         $this->year = (isset($data['year'])) ? $data['year'] : null;
         $this->type = (isset($data['type'])) ? $data['type'] : null;
         $this->account_id = (isset($data['account_id'])) ? $data['account_id'] : null;
-        $this->subscription_id = (isset($data['subscription_id'])) ? $data['subscription_id'] : null;
         $this->status = (isset($data['status'])) ? $data['status'] : null;
         $this->caption = (isset($data['caption'])) ? $data['caption'] : null;
         $this->description = (isset($data['description'])) ? $data['description'] : null;
-        $this->customer_identifier = (isset($data['customer_identifier'])) ? $data['customer_identifier'] : null;
-        $this->customer_invoice_name = (isset($data['customer_invoice_name'])) ? $data['customer_invoice_name'] : null;
-        $this->customer_n_fn = (isset($data['customer_n_fn'])) ? $data['customer_n_fn'] : null;
-        $this->customer_adr_street = (isset($data['customer_adr_street'])) ? $data['customer_adr_street'] : null;
-        $this->customer_adr_extended = (isset($data['customer_adr_extended'])) ? $data['customer_adr_extended'] : null;
-        $this->customer_adr_post_office_box = (isset($data['customer_adr_post_office_box'])) ? $data['customer_adr_post_office_box'] : null;
-        $this->customer_adr_zip = (isset($data['customer_adr_zip'])) ? $data['customer_adr_zip'] : null;
-        $this->customer_adr_city = (isset($data['customer_adr_city'])) ? $data['customer_adr_city'] : null;
-        $this->customer_adr_state = (isset($data['customer_adr_state'])) ? $data['customer_adr_state'] : null;
-        $this->customer_adr_country = (isset($data['customer_adr_country'])) ? $data['customer_adr_country'] : null;
         $this->product_identifier = (isset($data['product_identifier'])) ? $data['product_identifier'] : null;
         $this->product_brand = (isset($data['product_brand'])) ? $data['product_brand'] : null;
         $this->product_caption = (isset($data['product_caption'])) ? $data['product_caption'] : null;
@@ -282,11 +543,8 @@ class Commitment
         $this->taxable_1_total = (isset($data['taxable_1_total'])) ? $data['taxable_1_total'] : null;
         $this->taxable_2_total = (isset($data['taxable_2_total'])) ? $data['taxable_2_total'] : null;
         $this->taxable_3_total = (isset($data['taxable_3_total'])) ? $data['taxable_3_total'] : null;
-        $this->cgv = (isset($data['cgv'])) ? $data['cgv'] : null;
         $this->identifier = (isset($data['identifier'])) ? $data['identifier'] : null;
-        $this->quotation_identifier = (isset($data['quotation_identifier'])) ? $data['quotation_identifier'] : null;
         $this->invoice_identifier = (isset($data['invoice_identifier'])) ? $data['invoice_identifier'] : null;
-        $this->credit_identifier = (isset($data['credit_identifier'])) ? $data['credit_identifier'] : null;
         $this->commitment_date = (isset($data['commitment_date'])) ? $data['commitment_date'] : null;
         $this->retraction_limit = (isset($data['retraction_limit'])) ? $data['retraction_limit'] : null;
         $this->retraction_date = (isset($data['retraction_date'])) ? $data['retraction_date'] : null;
@@ -298,8 +556,6 @@ class Commitment
         $this->commissioning_date = (isset($data['commissioning_date'])) ? $data['commissioning_date'] : null;
         $this->due_date = (isset($data['due_date'])) ? $data['due_date'] : null;
         $this->invoice_date = (isset($data['invoice_date'])) ? $data['invoice_date'] : null;
-        $this->expected_settlement_date = (isset($data['expected_settlement_date'])) ? $data['expected_settlement_date'] : null;
-        $this->settlement_date = (isset($data['settlement_date'])) ? $data['settlement_date'] : null;
         $this->order_form_id = (isset($data['order_form_id'])) ? $data['order_form_id'] : null;
         $this->property_1 = (isset($data['property_1'])) ? $data['property_1'] : null;
         $this->property_2 = (isset($data['property_2'])) ? $data['property_2'] : null;
@@ -347,7 +603,6 @@ class Commitment
         $this->delivery_message_id = (isset($data['delivery_message_id'])) ? $data['delivery_message_id'] : null;
         $this->commissioning_message_id = (isset($data['commissioning_message_id'])) ? $data['commissioning_message_id'] : null;
         $this->invoice_message_id = (isset($data['invoice_message_id'])) ? $data['invoice_message_id'] : null;
-        $this->settlement_message_id = (isset($data['settlement_message_id'])) ? $data['settlement_message_id'] : null;
         $this->notification_time = (isset($data['notification_time'])) ? $data['notification_time'] : null;
         $this->update_time = (isset($data['update_time'])) ? $data['update_time'] : null;
 
@@ -445,26 +700,12 @@ class Commitment
     public function getProperties() {
     	$data = array();
     	$data['id'] = (int) $this->id;
-    	$data['credit_status'] = $this->credit_status;
-    	$data['next_credit_consumption_date'] = ($this->next_credit_consumption_date) ? $this->next_credit_consumption_date : null;
-    	$data['last_credit_consumption_date'] = ($this->last_credit_consumption_date) ? $this->last_credit_consumption_date : null;
     	$data['year'] = $this->year;
     	$data['type'] = $this->type;
     	$data['account_id'] = $this->account_id;
-    	$data['subscription_id'] = $this->subscription_id;
     	$data['status'] = $this->status;
     	$data['caption'] = $this->caption;
     	$data['description'] = $this->description;
-    	$data['customer_identifier'] = $this->customer_identifier;
-    	$data['customer_invoice_name'] = $this->customer_invoice_name;
-    	$data['customer_n_fn'] = $this->customer_n_fn;
-    	$data['customer_adr_street'] = $this->customer_adr_street;
-    	$data['customer_adr_extended'] = $this->customer_adr_extended;
-    	$data['customer_adr_post_office_box'] = $this->customer_adr_post_office_box;
-    	$data['customer_adr_zip'] = $this->customer_adr_zip;
-    	$data['customer_adr_city'] = $this->customer_adr_city;
-    	$data['customer_adr_state'] = $this->customer_adr_state;
-    	$data['customer_adr_country'] = $this->customer_adr_country;
     	$data['product_identifier'] = $this->product_identifier;
     	$data['product_brand'] = $this->product_brand;
     	$data['product_caption'] = $this->product_caption;
@@ -479,11 +720,8 @@ class Commitment
     	$data['taxable_1_total'] = $this->taxable_1_total;
     	$data['taxable_2_total'] = $this->taxable_2_total;
     	$data['taxable_3_total'] = $this->taxable_3_total;
-    	$data['cgv'] = $this->cgv;
     	$data['identifier'] = $this->identifier;
-    	$data['quotation_identifier'] = $this->quotation_identifier;
     	$data['invoice_identifier'] = $this->invoice_identifier;
-    	$data['credit_identifier'] = $this->credit_identifier;
     	$data['commitment_date'] = ($this->commitment_date) ? $this->commitment_date : null;
     	$data['retraction_limit'] = ($this->retraction_limit) ? $this->retraction_limit : null;
     	$data['retraction_date'] = ($this->retraction_date) ? $this->retraction_date : null;
@@ -495,8 +733,6 @@ class Commitment
     	$data['commissioning_date'] = ($this->commissioning_date) ? $this->commissioning_date: null;
     	$data['due_date'] = ($this->due_date) ? $this->due_date: null;
     	$data['invoice_date'] = ($this->invoice_date) ? $this->invoice_date: null;
-    	$data['expected_settlement_date'] = ($this->expected_settlement_date) ? $this->expected_settlement_date: null;
-    	$data['settlement_date'] = ($this->settlement_date) ? $this->settlement_date: null;
     	$data['order_form_id'] = $this->order_form_id;
     	$data['property_1'] = $this->property_1;
     	$data['property_2'] = $this->property_2;
@@ -544,7 +780,6 @@ class Commitment
     	$data['delivery_message_id'] = $this->delivery_message_id;
     	$data['commissioning_message_id'] = $this->commissioning_message_id;
     	$data['invoice_message_id'] = $this->invoice_message_id;
-    	$data['settlement_message_id'] = $this->settlement_message_id;
     	$data['notification_time'] = ($this->notification_time) ? $this->notification_time : null;
     	$data['update_time'] = ($this->update_time) ? $this->update_time : null;
   
@@ -917,7 +1152,6 @@ class Commitment
 	    	$commitment->place_config = $place->config;
         }
     	$commitment->properties = $commitment->getProperties();
-    	$commitment->subscriptions = Subscription::getList(array(), 'product_identifier', 'ASC');
 
     	$commitment->terms = Term::getList($commitment->type, array('commitment_id' => $commitment->id), '+due_date');
     	$commitment->termSum = 0;
@@ -952,7 +1186,6 @@ class Commitment
 				if ($this->status == 'delivered') $start = $this->delivery_date;
 				if ($this->status == 'commissioned') $start = $this->commissioning_date;
 				if ($this->status == 'invoiced') $start = $this->invoice_date;
-				if ($this->status == 'settled') $start = $this->settlement_date;
 
 				// Compute the expected target date
 				$targetDate = strtotime(($deadline['period']) ? $start.' +'.$deadline['period'].' '.$deadline['unit'] : $start);
@@ -961,25 +1194,18 @@ class Commitment
 				if ($step == 'delivery') $this->expected_delivery_date = date('Y-m-d', $targetDate);
 				if ($step == 'commissioning') $this->expected_commissioning_date = date('Y-m-d', $targetDate);
 				if ($step == 'invoice') $this->due_date = date('Y-m-d', $targetDate);
-				if ($step == 'settlement') $this->expected_settlement_date = date('Y-m-d', $targetDate);
 			}
 		}
     }
 
-    public static function instanciate($type, $subscription = null)
+    public static function instanciate($type)
     {
     	$commitment = new Commitment;
     	$commitment->type = $type;
-    	if ($subscription) {
-    		$commitment->subscription_id = $subscription->id;
-    		$commitment->subscription = $subscription;
-    		$commitment->description = $subscription->description;
-    	}
     	$commitmentYear = CommitmentYear::getCurrent();
     	if ($commitmentYear) $commitment->year = $commitmentYear->year;
     	$commitment->status = 'new';
     	$commitment->properties = $commitment->toArray();
-    	$commitment->subscriptions = Subscription::getList(array('type' => $type), 'product_identifier', 'ASC');
     	$commitment->options = array();
     	$commitment->terms = array();
     	return $commitment;
@@ -1017,7 +1243,7 @@ class Commitment
     
     	return $commitment;
     }
-    
+ /*   
     public function computeHeader($proforma = false)
     {
     	$context = Context::getCurrent();
@@ -1025,7 +1251,6 @@ class Commitment
     	$type = $this->type;
     	if ($context->getConfig($specsId.(($type) ? '/'.$type : ''))) $invoiceSpecs = $context->getConfig($specsId.(($type) ? '/'.$type : ''));
     	else $invoiceSpecs = $context->getConfig($specsId);
-    	$this->customer_invoice_name = '';
     	$first = true;
     	foreach($invoiceSpecs['header'] as $line) {
     		$arguments = array();
@@ -1081,7 +1306,7 @@ class Commitment
     	$this->customer_adr_city = $invoicingContact->adr_city;
     	$this->customer_adr_state = $invoicingContact->adr_state;
     	$this->customer_adr_country = $invoicingContact->adr_country;
-    }
+    }*/
     
     public function computeFooter() 
     {
@@ -1136,11 +1361,7 @@ class Commitment
 			if (strlen($this->type) > 255) return 'Integrity';
 		}
 		
-		if (array_key_exists('next_credit_consumption_date', $data)) $this->next_credit_consumption_date = $data['next_credit_consumption_date'];
-		
 		if (array_key_exists('account_id', $data)) $this->account_id = (int) $data['account_id'];
-
-		if (array_key_exists('subscription_id', $data)) $this->subscription_id = (int) $data['subscription_id'];
 
 		if (array_key_exists('caption', $data)) {
 		    $this->caption = trim(strip_tags($data['caption']));
@@ -1152,54 +1373,9 @@ class Commitment
 		    if (strlen($this->description) > 2047) return 'Integrity';
 		}
 
-		if (array_key_exists('customer_identifier', $data)) {
-			$this->customer_identifier = trim(strip_tags($data['customer_identifier']));
-			if (strlen($this->customer_identifier) > 255) return 'Integrity';
-		}
-
 		if (array_key_exists('account_name', $data)) {
 			$this->account_name = trim(strip_tags($data['account_name']));
 			if (strlen($this->account_name) > 255) return 'Integrity';
-		}
-
-		if (array_key_exists('customer_n_fn', $data)) {
-			$this->customer_n_fn = trim(strip_tags($data['customer_n_fn']));
-			if (!$this->customer_identifier || strlen($this->customer_n_fn) > 255) return 'Integrity';
-		}
-
-		if (array_key_exists('customer_adr_street', $data)) {
-			$this->customer_adr_street = trim(strip_tags($data['customer_adr_street']));
-			if (strlen($this->customer_adr_street) > 255) return 'Integrity';
-		}
-
-		if (array_key_exists('customer_adr_extended', $data)) {
-			$this->customer_adr_extended = trim(strip_tags($data['customer_adr_extended']));
-			if (strlen($this->customer_adr_extended) > 255) return 'Integrity';
-		}
-
-		if (array_key_exists('customer_adr_post_office_box', $data)) {
-			$this->customer_adr_post_office_box = trim(strip_tags($data['customer_adr_post_office_box']));
-			if (strlen($this->customer_adr_post_office_box) > 255) return 'Integrity';
-		}
-
-		if (array_key_exists('customer_adr_zip', $data)) {
-			$this->customer_adr_zip = trim(strip_tags($data['customer_adr_zip']));
-			if (strlen($this->customer_adr_zip) > 255) return 'Integrity';
-		}
-
-		if (array_key_exists('customer_adr_city', $data)) {
-			$this->customer_adr_city = trim(strip_tags($data['customer_adr_city']));
-			if (strlen($this->customer_adr_city) > 255) return 'Integrity';
-		}
-
-		if (array_key_exists('customer_adr_state', $data)) {
-			$this->customer_adr_state = trim(strip_tags($data['customer_adr_state']));
-			if (strlen($this->customer_adr_state) > 255) return 'Integrity';
-		}
-
-		if (array_key_exists('customer_adr_country', $data)) {
-			$this->customer_adr_country = trim(strip_tags($data['customer_adr_country']));
-			if (strlen($this->customer_adr_country) > 255) return 'Integrity';
 		}
 
 		if (array_key_exists('product_caption', $data)) {
@@ -1262,19 +1438,9 @@ class Commitment
 		
 		$this->computeFooter();
 		
-		if (array_key_exists('cgv', $data)) {
-			$this->cgv = trim(strip_tags($data['cgv']));
-			if (strlen($this->cgv) > 16777215) return 'Integrity';
-		}
-		
 		if (array_key_exists('identifier', $data)) {
 			$this->identifier = $data['identifier'];
 			if (strlen($this->identifier) > 255) return 'Integrity';
-		}
-		
-		if (array_key_exists('quotation_identifier', $data)) {
-			$this->quotation_identifier = $data['quotation_identifier'];
-			if (strlen($this->quotation_identifier) > 255) return 'Integrity';
 		}
 		
 		if (array_key_exists('invoice_identifier', $data)) {
@@ -1335,16 +1501,6 @@ class Commitment
 		if (array_key_exists('invoice_date', $data)) {
 			$this->invoice_date = trim(strip_tags($data['invoice_date']));
 			if ($this->invoice_date && !checkdate(substr($this->invoice_date, 5, 2), substr($this->invoice_date, 8, 2), substr($this->invoice_date, 0, 4))) return 'Integrity';
-		}
-
-		if (array_key_exists('expected_settlement_date', $data)) {
-			$this->expected_settlement_date = trim(strip_tags($data['expected_settlement_date']));
-			if ($this->expected_settlement_date && !checkdate(substr($this->expected_settlement_date, 5, 2), substr($this->expected_settlement_date, 8, 2), substr($this->expected_settlement_date, 0, 4))) return 'Integrity';
-		}
-		
-		if (array_key_exists('settlement_date', $data)) {
-			$this->settlement_date = trim(strip_tags($data['settlement_date']));
-			if ($this->settlement_date && !checkdate(substr($this->settlement_date, 5, 2), substr($this->settlement_date, 8, 2), substr($this->settlement_date, 0, 4))) return 'Integrity';
 		}
 		
 		if (array_key_exists('property_1', $data)) {
@@ -1721,194 +1877,6 @@ class Commitment
 	    			ContactMessage::sendMail($contact->email, $text, $title, null);
 	    		}
 	    	}
-		}
-    }
-
-    public static function consumeCredits($live, $mailTo)
-    {
-    	$context = Context::getCurrent();
-    	$config = $context->getConfig();
-    	
-    	// Open log
-    	if ($live) {
-    		$writer = new Writer\Stream('data/log/console.txt');
-	    	$logger = new Logger();
-	    	$logger->addWriter($writer);
-    	}
- 
-    	// Retrieve instances
-    	$select = Instance::getTable()->getSelect();
-    	$cursor = Instance::getTable()->selectWith($select);
-    	$instances = array();
-    	$instanceIds = array();
-    	foreach ($cursor as $instance) {
-    		$unlimitedCredits = (array_key_exists('credit', $instance->specifications) && array_key_exists('unlimitedCredits', $instance->specifications['credit'])) ? $instance->specifications['credit']['unlimitedCredits'] : false;
-    		
-    		// Log
-    		if ($config['isTraceActive']) {
-	    		$logText = 'Instance : id='.$instance->id.', caption='.$instance->caption.', unlimitedCredits='.(($unlimitedCredits) ? 'true' : 'false');
-	    		if ($live) $logger->info($logText);
-	    		else print_r($logText."\n");
-			}
-
-    		if (!$unlimitedCredits) {
-    			$instance->administrators = array();
-    			$instances[$instance->id] = $instance;
-    			$instanceIds[] = $instance->id;
-    		}
-    	}
-
-    	// Retrieve credits
-    	$select = Credit::getTable()->getSelect();
-    	$where = new Where();
-    	$where->in('instance_id', $instanceIds);
-    	$where->equalTo('type', 'p-pit-engagements');
-    	$select->where($where);
-    	$cursor = Credit::getTable()->transSelectWith($select);
-    	$credits = array();
-    	foreach ($cursor as $credit) {
-    		$credit->consumers = array();
-    		$credits[$credit->instance_id] = $credit;
-    	}
-    	 
-    	// Retrieve commitments and count
-    	$select = Commitment::getTable()->getSelect()
-    		->join('core_instance', 'commitment.instance_id = core_instance.id', array(), 'left')
-    		->join('core_account', 'commitment.account_id = core_account.id', array('account_name' => 'name'), 'left');
-    	$where = new Where();
-    	$where->in('commitment.instance_id', $instanceIds);
-		$where->notEqualTo('commitment.credit_status', 'closed');
-		$where->notEqualTo('commitment.credit_status', 'suspended');
-		$select->where($where);
-		$cursor = Commitment::getTable()->transSelectWith($select);
-		foreach ($cursor as $commitment) {
-			if (array_key_exists($commitment->instance_id, $credits)) $credits[$commitment->instance_id]->consumers[] = $commitment;
-		}
-
-		// Retrieve administrators to be notified
-		$select = Vcard::getTable()->getSelect();
-		$where = new Where;
-		$where->like('roles', '%admin%');
-		$select->where($where);
-		$cursor = Vcard::getTable()->transSelectWith($select);
-		foreach ($cursor as $contact) {
-			if ($contact->is_notified) $instances[$contact->instance_id]->administrators[] = $contact;
-		}
-		
-		// Check enough credits are available
-		foreach ($credits as $credit) {
-		 
-			// Compute the credit consumption at -7 days and at due date
-    		$counter7 = 0;
-			$counter0 = 0;
-			$dailyConsumption = 0;
-			$creditModified = false;
-			$blocked = array();
-			foreach($credit->consumers as $commitment) {
-				if ($commitment->credit_status == 'blocked') $blocked[] = $commitment->account_name.' - '.$commitment->caption;
-    			else {
-					if ($commitment->next_credit_consumption_date <= date('Y-m-d', strtotime(date('Y-m-d').' + 7 days'))) $counter7++;
-	    			if ($commitment->next_credit_consumption_date <= date('Y-m-d')) $counter0++;
-	    			if ($commitment->next_credit_consumption_date <= date('Y-m-d')) {
-	    				if ($credit->quantity > 0) {
-		    				// Consume 1 credit
-		    				$credit->quantity--;
-		    				$credit_consumption_date = $commitment->next_credit_consumption_date;
-							$commitment->next_credit_consumption_date = date('Y-m-d', strtotime($credit_consumption_date.' + 31 days'));
-							$commitment->last_credit_consumption_date = $credit_consumption_date;
-			    			$credit->audit[] = array(
-		    						'period' => date('Y-m'),
-			    					'quantity' => -1,
-			    					'status' => 'used',
-			    					'reference' => $commitment->account_name.' - '.$commitment->caption,
-			    					'time' => Date('Y-m-d G:i:s'),
-			    					'n_fn' => 'P-PIT',
-			    					'comment' => 'Utilisation mensuelle pour la période du '.$context->decodeDate($commitment->last_credit_consumption_date).' au '.$context->decodeDate($commitment->next_credit_consumption_date),
-			    			);
-								
-		    				// Log
-		    				if ($config['isTraceActive']) {
-		   						$logText = 'Commitment : instance_id='.$commitment->instance_id.', id='.$commitment->id.', caption='.$commitment->identifier.', status='.$commitment->credit_status;
-		    					if ($live) $logger->info($logText);
-		    					else print_r($logText."\n");
-		    				}
-	    				}
-	    				else {
-	    					$blocked[] = $commitment->identifier;
-	    					$commitment->credit_status = 'blocked';
-			    			$credit->audit[] = array(
-		    						'period' => date('Y-m'),
-			    					'quantity' => 0,
-			    					'status' => 'blocked',
-			    					'reference' => $commitment->account_name.' - '.$commitment->caption,
-			    					'time' => Date('Y-m-d G:i:s'),
-			    					'n_fn' => 'P-PIT',
-			    					'comment' => array(
-										'en_US' => 'Record suspended due to lack of credit',
-										'fr_FR' => 'Dossier suspendu faute de crédit suffisant',
-									),
-			    			);
-	    				}
-	    				$creditModified = true;
-	    				if ($live) Commitment::getTable()->transSave($commitment);
-	    			}
-    			}
-			}
-			if ($creditModified && $live) Credit::getTable()->transSave($credit);
-
-			// Notify a suspension of service
-    		if ($blocked) {
-
-    			// Log
-    			$logText = 'ALERT : Not enough credits for P-Pit Engagements available on instance '.$credit->instance_id.'. Available='.$credit->quantity.', 7 days estimation='.$counter7;
-    			if ($live) $logger->info($logText);
-    			else print_r($logText."\n");
-    			
-    			// Notify
-    			if ($live) {
-    				$url = $config['ppitCoreSettings']['domainName'];
-    				$instance = $instances[$credit->instance_id];
-    				foreach ($instance->administrators as $contact) {
-    					if (!$mailTo || !strcmp($contact->email, $mailTo)) { // Restriction on the given mailTo parameter
-    						$title = sprintf($config['commitment/consumeCredit']['messages']['suspendedServiceTitle'][$contact->locale], 'P-PIT Communities');
-    						$text = sprintf(
-    								$config['commitment/consumeCredit']['messages']['suspendedServiceText'][$contact->locale],
-    								$contact->n_first,
-    								$instance->caption,
-    								implode("\n", $blocked),
-    								$credit->quantity
-    						);
-    						ContactMessage::sendMail($contact->email, $text, $title);
-    					}
-    				}
-    			}
-    		}
-    		elseif ($credit->quantity >= 0 && $credit->quantity - $counter7 < 0) {
-    
-    			// Log
-    			$logText = 'ALERT : Risk of credits lacking for P-PIT Commitments on instance '.$credit->instance_id.'. Available='.$credit->quantity.', 7 days estimation='.$counter7;
-    			if ($live) $logger->info($logText);
-    			else print_r($logText."\n");
-    
-    			// Notify
-    			if ($live) {
-    				$url = $config['ppitCoreSettings']['domainName'];
-    				$instance = $instances[$credit->instance_id];
-    				foreach ($instance->administrators as $contact) {
-    					if (!$mailTo || !strcmp($contact->email, $mailTo)) { // Restriction on the given mailTo parameter
-    						$title = sprintf($config['commitment/consumeCredit']['messages']['availabilityAlertTitle'][$contact->locale], 'P-PIT Communities');
-    						$text = sprintf(
-    								$config['commitment/consumeCredit']['messages']['availabilityAlertText'][$contact->locale],
-    								$contact->n_first,
-    								$instance->caption,
-    								$credit->quantity,
-    								$counter7
-    						);
-    						ContactMessage::sendMail($contact->email, $text, $title);
-    					}
-    				}
-    			}
-    		}
 		}
     }
     

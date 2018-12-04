@@ -20,9 +20,11 @@
 
 <!-- Filters -->
 		
-<?php foreach ($searchPage['main'] as $propertyId => $options) : ?>
-	<?php $property = $configProperties[$propertyId] ?>
-	<?php $label = $property['labels'][$context->getLocale()] ?>
+<?php foreach ($searchPage['properties'] as $propertyId => $property) : ?>
+	<?php 
+	$label = $context->localize($property['labels']);
+	$options = (array_key_exists('options', $property)) ? $property['options'] : [];
+	?>
 
 	<?php if (in_array($property['type'], array('date', 'time', 'datetime', 'number'))) : ?>
 
@@ -42,25 +44,18 @@
 	    	<input class="form-control" type="text" class="search_input" id="search_max_<?php echo $propertyId ?>" class="form-control" placeholder="<?php echo $this->translate('Max', 'ppit-core', $context->getLocale()) ?>" />
 		</div>
 
-	<?php elseif ($property['type'] == 'select') : ?>
+	<?php elseif (in_array($property['type'], ['select', 'multiselect'])) : ?>
 
-		<?php
-		$modalities = array();
-		
-		if ($propertyId == 'place_id') foreach ($places as $place) {
-			$modalities[$place->id] = $place->caption;
-		} 
-		elseif ($property['type'] == 'select') {
-			foreach ($property['modalities'] as $modalityId => $modality) {
-				$modalities[$modalityId] = $modality[$context->getLocale()];
-			}
-		}
-		else {
-			foreach ($context->getConfig($property['name'])['modalities'] as $modalityId => $modality) {
-				$modalities[$modalityId] = $modality[$context->getLocale()];
-			}
-		}
-		?>
+      <?php
+  	  $modalities = array();
+  
+      if ($propertyId == 'place_id') foreach ($places as $place) {
+        $modalities[$place->id] = $place->caption;
+      } 
+      else foreach ($property['modalities'] as $modalityId => $modality) {
+        $modalities[$modalityId] = $context->localize($modality);
+      }
+      ?>
 
 		<label class="col-sm-6 control-label search"><?php echo $property['labels'][$context->getLocale()] ?></label>
 		<div class="input-group search">
@@ -69,8 +64,8 @@
 			</span>
 			<select id="search_<?php echo $propertyId ?>" class="selectpicker" <?php if (array_key_exists('multiple', $options) && $options['multiple']) echo 'multiple' ?>>
 				<option value=""></option>
-		<?php foreach ($modalities as $modalityId => $modalityLabel) : ?>
-		    	<option value="<?php echo $modalityId ?>" <?php if ($propertyId == 'type' && $modalityId === $type) echo 'selected="selected"' ?>><?php echo $modalityLabel ?></option>
+		<?php foreach ($property['modalities'] as $modalityId => $modality) : ?>
+		    	<option value="<?php echo $modalityId ?>" <?php if ($propertyId == 'type' && $modalityId === $type) echo 'selected="selected"' ?>><?php echo $modalities[$modalityId] ?></option>
 		<?php endforeach;?>
 		    </select>
 		</div>

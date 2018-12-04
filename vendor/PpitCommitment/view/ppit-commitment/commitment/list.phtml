@@ -39,8 +39,7 @@
 		<th>&nbsp;</th>
 		<th>&nbsp;</th>
 
-<?php $first = true; foreach ($listPage as $propertyId => $rendering) : ?>
-	<?php $property = $configProperties[$propertyId] ?>
+<?php $first = true; foreach ($listPage['properties'] as $propertyId => $property) : ?>
 		<th align="center">
 			<button type="button" class="btn btn-default btn-xs ppit-sort-anchor" id="<?php echo $propertyId ?>-anchor">
 				<span><?php echo $context->localize($property['labels']) ?></span>
@@ -86,7 +85,7 @@
 	
 	<input type="hidden"  id="commitment_<?php echo $i ?>" value="<?php echo $commitment->id ?>" />
 	
-	<tr class="commitment" <?php if (in_array($commitment->credit_status, array('blocked', 'suspended', 'closed'))) echo 'style="font-style: italic"' ?>>
+	<tr class="commitment">
 		<td>
 			<input type="checkbox" class="commitment-checkbox" id="commitment-checkbox_<?php echo $i ?>"></input>
 		</td>
@@ -101,22 +100,18 @@
 <?php endif;?>
 		</td>
 
-	<?php foreach ($listPage as $propertyId => $rendering) : ?>
-		<?php $property = $configProperties[$propertyId] ?>
-			
-		<?php if ($propertyId == 'place_id') : ?>
-				<td><?php if ($commitment->properties[$propertyId]) echo $places[$commitment->properties[$propertyId]]->caption ?></td>
+	<?php foreach ($listPage['properties'] as $propertyId => $property) : ?>
+      
+        <?php if ($propertyId == 'place_id') : ?>
+        <td><?php echo ($commitment->properties[$propertyId]) ? $property['modalities'][$commitment->properties[$propertyId]] : '' ?></td>
 	
-		<?php elseif ($propertyId == 'account_name') : ?>
-		<td><?php echo $commitment->account_name ?></td>
-	
-		<?php elseif ($rendering == 'text') : ?>
+		<?php elseif ($property['type'] == 'input') : ?>
 		<td><?php echo $commitment->properties[$propertyId] ?></td>
 	
-		<?php elseif ($rendering == 'select') : ?>
-		<td><?php echo ($commitment->properties[$propertyId]) ? $property['modalities'][$commitment->properties[$propertyId]][$context->getLocale()] : '' ?></td>
+		<?php elseif ($property['type'] == 'select') : ?>
+		<td><?php echo ($commitment->properties[$propertyId]) ? $context->localize($property['modalities'][$commitment->properties[$propertyId]]) : '' ?></td>
 	
-		<?php elseif ($rendering == 'number') : ?>
+		<?php elseif ($property['type'] == 'number') : ?>
 		<td style="text-align: right"><?php echo $context->formatFloat($commitment->properties[$propertyId], 2) ?></td>
 	
 		<?php else : ?>
@@ -159,8 +154,7 @@
 	<tr>
 		<th>&nbsp;</th>
 		<th>&nbsp;</th>
-<?php foreach ($listPage as $propertyId => $unused) : ?>
-	<?php $property = $configProperties[$propertyId] ?>
+<?php foreach ($listPage['properties'] as $propertyId => $property) : ?>
 		<th>
 	<?php if ($propertyId == $major) : ?>
 			<?php echo $this->translate('Number', 'ppit-core', $context->getLocale()) ?>:&nbsp;<?php echo $count.'<br>' ?>

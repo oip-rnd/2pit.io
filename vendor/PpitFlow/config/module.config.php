@@ -1815,7 +1815,7 @@ table.note-report td {
 				),
 				'Contributor' => array(
 					'new' => ['default' => 'Wishing to participate to this event?', 'fr_FR' => 'Envie de participer à cet événement ?'],
-					'linked' => ['default' => 'The organizer is notified of your subscription request', 'fr_FR' => 'L’organisateur est notifié votre demande d’inscription'],
+					'linked' => ['default' => 'The organizer is notified of your subscription request', 'fr_FR' => 'L’organisateur est notifié de votre demande d’inscription'],
 					'contributor_feedback' => ['default' => 'This event is waiting for a feedback from your side', 'fr_FR' => 'Cet événement est en attente de feedback de votre part'],
 					'requestor_feedback' => ['default' => 'This event is waiting for a feedback from the organizer’s side', 'fr_FR' => 'Cet événement est en attente de feedback de la part de l’organisateur'],
 					'completed' => ['default' => 'This event is over. Thank you for your participation', 'fr_FR' => 'Cet événement est terminé. Merci de votre participation'],

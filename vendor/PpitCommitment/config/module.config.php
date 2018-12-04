@@ -273,18 +273,6 @@ return array(
         								),
         						),
         				),*/
-        				'suspend' => array(
-        						'type' => 'segment',
-        						'options' => array(
-        								'route' => '/suspend[/:id]',
-        								'constraints' => array(
-        										'id'     => '[0-9]*',
-        								),
-        								'defaults' => array(
-        										'action' => 'suspend',
-        								),
-        						),
-        				),
         				'serviceAdd' => array(
         						'type' => 'segment',
         						'options' => array(
@@ -924,7 +912,6 @@ return array(
             	array('route' => 'commitment/updateOption', 'roles' => array('sales_manager')),
             	array('route' => 'commitment/updateTerm', 'roles' => array('sales_manager')),
 //            	array('route' => 'commitment/subrogate', 'roles' => array('sales_manager')),
-            	array('route' => 'commitment/suspend', 'roles' => array('admin')),
             	array('route' => 'commitment/serviceAdd', 'roles' => array('guest')),
 //            	array('route' => 'commitment/workflow', 'roles' => array('sales_manager')),
             	array('route' => 'commitment/serviceSettle', 'roles' => array('accountant')),
@@ -1112,10 +1099,6 @@ return array(
 			'default' => '2pit Commitments',
 			'fr_FR' => 'P-Pit Engagements',
 		),
-	),
-
-	'creditConsumers' => array(
-			'\PpitCommitment\Model\Commitment::consumeCredits',
 	),
 		
 	'perimeters' => array(
@@ -2144,8 +2127,27 @@ table.note-report td {
 	),
 	
 	// Commitments
-
-	'commitment/property/account_status' => array(
+	
+	'commitment/generic/property/status' => array(
+		'definition' => 'inline',
+		'type' => 'select',
+		'modalities' => array(
+			'new' => array('en_US' => 'New', 'fr_FR' => 'Nouveau'),
+			'confirmed' => array('en_US' => 'Confirmed', 'fr_FR' => 'Confirmé'),
+			'approved' => array('en_US' => 'Approved', 'fr_FR' => 'Validé'),
+			'delivered' => array('en_US' => 'Delivered', 'fr_FR' => 'Livré'),
+			'commissioned' => array('en_US' => 'Commissioned', 'fr_FR' => 'Mis en service'),
+			'settled' => array('en_US' => 'Settled', 'fr_FR' => 'Réglé'),
+			'invoiced' => array('en_US' => 'Invoiced', 'fr_FR' => 'Facturé'),
+			'registered' => array('en_US' => 'Registered', 'fr_FR' => 'Comptabilisé'),
+		),
+		'labels' => array(
+			'en_US' => 'Status',
+			'fr_FR' => 'Statut',
+		),
+	),
+	
+	'commitment/generic/property/account_status' => array(
 		'definition' => 'inline',
 		'type' => 'select',
 		'modalities' => array(
@@ -2162,302 +2164,352 @@ table.note-report td {
 		),
 	),
 	
-	'commitment/property/year' => array(
-			'type' => 'text',
-			'labels' => array(
-					'en_US' => 'Accounting year',
-					'fr_FR' => 'Année comptable',
-			),
+	'commitment/generic/property/year' => array(
+		'definition' => 'inline',
+		'type' => 'text',
+		'labels' => array(
+			'en_US' => 'Accounting year',
+			'fr_FR' => 'Année comptable',
+		),
 	),
+/*	
 	'commitment/types' => array(
-			'type' => 'select',
-			'modalities' => array(
-					'rental' => array('en_US' => 'Rental', 'fr_FR' => 'Location'),
-					'service' => array('en_US' => 'Service', 'fr_FR' => 'Prestation'),
-					'human_service' => array('en_US' => 'Human service', 'fr_FR' => 'Service à la personne'),
-					'learning' => array('en_US' => 'Learning', 'fr_FR' => 'Formation'),
-					'p-pit-studies' => array('en_US' => 'Subscription', 'fr_FR' => 'Inscription'),
-//					'p-pit-stays' => array('en_US' => 'Stay', 'fr_FR' => 'Séjour'),
-			),
-			'labels' => array('en_US' => 'Type', 'fr_FR' => 'Type'),
+		'definition' => 'inline',
+		'type' => 'select',
+		'modalities' => array(
+			'rental' => array('en_US' => 'Rental', 'fr_FR' => 'Location'),
+			'service' => array('en_US' => 'Service', 'fr_FR' => 'Prestation'),
+			'human_service' => array('en_US' => 'Human service', 'fr_FR' => 'Service à la personne'),
+			'learning' => array('en_US' => 'Learning', 'fr_FR' => 'Formation'),
+			'p-pit-studies' => array('en_US' => 'Subscription', 'fr_FR' => 'Inscription'),
+		),
+		'labels' => array('en_US' => 'Type', 'fr_FR' => 'Type'),
+	),*/
+
+	'commitment/generic/property/place_id' => ['definition' => 'core_account/generic/property/place_id'],
+	'commitment/generic/property/place_caption' => ['definition' => 'core_account/generic/property/place_caption'],
+
+	'commitment/generic/property/account_id' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'en_US' => 'Client',
+			'fr_FR' => 'Client',
+		),
 	),
-	'commitment/property/place_id' => array(
-			'type' => 'select',
-			'modalities' => array(
-			),
-			'labels' => array(
-					'en_US' => 'Place',
-					'fr_FR' => 'Etablissement',
-			),
-	),
-	'commitment/property/place_caption' => array(
-			'type' => 'input',
-			'labels' => array(
-					'en_US' => 'Place',
-					'fr_FR' => 'Centre',
-			),
-	),
-	'commitment/property/account_id' => array(
-			'type' => 'input',
-			'labels' => array(
-					'en_US' => 'Client',
-					'fr_FR' => 'Client',
-			),
-	),
-	'commitment/property/account_name' => array(
-			'type' => 'input',
-			'labels' => array(
-					'en_US' => 'Name',
-					'fr_FR' => 'Nom',
-			),
-	),
-	'commitment/property/account_identifier' => array(
-			'type' => 'input',
-			'labels' => array(
-					'en_US' => 'Client identifier',
-					'fr_FR' => 'Référence client',
-			),
-	),
-	'commitment/property/invoice_n_fn' => array(
-			'type' => 'input',
-			'labels' => array(
-					'en_US' => 'Payer',
-					'fr_FR' => 'Payeur',
-			),
-	),
-	'commitment/property/caption' => array(
-			'type' => 'input',
-			'labels' => array(
-					'en_US' => 'Caption',
-					'fr_FR' => 'Libellé',
-			),
-	),
-	'commitment/property/description' => array(
-			'type' => 'textarea',
-			'labels' => array(
-					'en_US' => 'Description',
-					'fr_FR' => 'Description',
-			),
-	),
-	'commitment/property/product_caption' => array(
-			'type' => 'input',
-			'labels' => array(
-					'en_US' => 'Product caption',
-					'fr_FR' => 'Libellé du produit',
-			),
-	),
-	'commitment/property/quantity' => array(
-			'type' => 'number',
-			'minValue' => 0,
-			'maxValue' => 1000000,
-			'labels' => array(
-					'en_US' => 'Quantity',
-					'fr_FR' => 'Quantité',
-			),
-	),
-	'commitment/property/unit_price' => array(
-			'type' => 'number',
-			'minValue' => 0,
-			'maxValue' => 1000000,
-			'labels' => array(
-					'en_US' => 'Unit price',
-					'fr_FR' => 'Prix unitaire',
-			),
-	),
-	'commitment/property/amount' => array(
-			'type' => 'number',
-			'min_value' => 0,
-			'max_value' => 1000000,
-			'labels' => array(
-					'en_US' => 'Amount',
-					'fr_FR' => 'Montant',
-			),
-	),
-	'commitment/property/including_options_amount' => array(
-			'type' => 'number',
-			'labels' => array(
-					'en_US' => 'Including options',
-					'fr_FR' => 'Options incluses',
-			),
-	),
-	'commitment/property/invoice_identifier' => array(
-			'type' => 'input',
-			'labels' => array(
-					'en_US' => 'Invoice identifier',
-					'fr_FR' => 'Numéro de facture',
-			),
-	),
-	'commitment/property/invoice_date' => array(
-			'type' => 'date',
-			'labels' => array(
-					'en_US' => 'Invoice date',
-					'fr_FR' => 'Date de facture',
-			),
-	),
-	'commitment/property/tax_amount' => array(
-			'type' => 'number',
-			'labels' => array(
-					'en_US' => 'Tax amount',
-					'fr_FR' => 'Montant TVA',
-			),
-	),
-	'commitment/property/tax_inclusive' => array(
-			'type' => 'number',
-			'labels' => array(
-					'en_US' => 'Tax inclusive',
-					'fr_FR' => 'TTC',
-			),
-	),
-	'commitment/property/default_means_of_payment' => array(
-			'type' => 'select',
-			'modalities' => array(
-					'bank_card' => array('fr_FR' => 'CB', 'en_US' => 'Bank card'),
-					'transfer' => array('fr_FR' => 'Virement', 'en_US' => 'Transfer'),
-					'direct_debit' => array('fr_FR' => 'Prélèvement', 'en_US' => 'Direct debit'),
-					'check' => array('fr_FR' => 'Chèque', 'en_US' => 'Check'),
-					'cash' => array('fr_FR' => 'Espèces', 'en_US' => 'Cash'),
-			),
-			'labels' => array(
-					'en_US' => 'Default means of payment',
-					'fr_FR' => 'Mode de règlement par défaut',
-			),
-	),
-	'commitment/property/update_time' => array(
-			'type' => 'datetime',
-			'labels' => array(
-					'en_US' => 'Update time',
-					'fr_FR' => 'Date de mise à jour',
-			),
+	
+	'commitment/generic/property/account_name' => ['definition' => 'core_account/generic/property/name'],
+	'commitment/generic/property/n_fn' => ['definition' => 'core_account/generic/property/n_fn'],
+
+	'commitment/generic/property/account_identifier' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'en_US' => 'Client identifier',
+			'fr_FR' => 'Référence client',
+		),
 	),
 
-	'commitment' => array(
-			'currencySymbol' => '€',
-			'tax' => 'excluding',
-			'properties' => array(
-					'year' => array('definition' => 'commitment/property/year'),
-					'type' => array(
-							'type' => 'repository', // Deprecated
-							'definition' => 'commitment/types',
-					),
-					'status' => array(
-							'definition' => 'inline',
-							'type' => 'select',
-							'modalities' => array(
-									'new' => array('en_US' => 'New', 'fr_FR' => 'Nouveau'),
-									'confirmed' => array('en_US' => 'Confirmed', 'fr_FR' => 'Confirmé'),
-									'approved' => array('en_US' => 'Approved', 'fr_FR' => 'Validé'),
-									'delivered' => array('en_US' => 'Delivered', 'fr_FR' => 'Livré'),
-									'commissioned' => array('en_US' => 'Commissioned', 'fr_FR' => 'Mis en service'),
-									'settled' => array('en_US' => 'Settled', 'fr_FR' => 'Réglé'),
-									'invoiced' => array('en_US' => 'Invoiced', 'fr_FR' => 'Facturé'),
-									'registered' => array('en_US' => 'Registered', 'fr_FR' => 'Comptabilisé'),
-							),
-							'labels' => array(
-									'en_US' => 'Status',
-									'fr_FR' => 'Statut',
-							),
-					),
-					'place_id' => array('definition' => 'commitment/property/place_id'),
-					'place_caption' => array('definition' => 'commitment/property/place_caption'),
-					'account_id' => array('definition' => 'commitment/property/account_id'),
-					'account_status' => array('definition' => 'commitment/property/account_status'),
-					'account_name' => array('definition' => 'commitment/property/account_id'),
-					'account_identifier' => array('definition' => 'commitment/property/account_identifier'),
-					'invoice_n_fn' => array('definition' => 'commitment/property/invoice_n_fn'),
-					'caption' => array('definition' => 'commitment/property/caption'),
-					'description' => array('definition' => 'commitment/property/description'),
-					'product_caption' => array('definition' => 'commitment/property/product_caption'),
-					'quantity' => array('definition' => 'commitment/property/quantity'),
-					'unit_price' => array('definition' => 'commitment/property/unit_price'),
-					'amount' => array('definition' => 'commitment/property/amount'),
-					'including_options_amount' => array('definition' => 'commitment/property/including_options_amount'),
-					'invoice_identifier' => array('definition' => 'commitment/property/invoice_identifier'),
-					'invoice_date' => array('definition' => 'commitment/property/invoice_date'),
-					'tax_amount' => array('definition' => 'commitment/property/tax_amount'),
-					'tax_inclusive' => array('definition' => 'commitment/property/tax_inclusive'),
-					'default_means_of_payment' => array('definition' => 'commitment/property/default_means_of_payment'),
-					'update_time' => array('definition' => 'commitment/property/update_time'),
-			),
-			'order' => 'account_name ASC',
-			'todo' => array(
-					'sales_manager' => array(
-							'status' => array('selector' => 'in', 'value' => array('new')),
-					),
-			),
-			'actions' => array(
-					'confirm' => array(
-							'currentStatuses' => array('new' => null),
-							'targetStatus' => 'confirmed',
-							'label' => array('en_US' => 'Confirm', 'fr_FR' => 'Confirmer'),
-							'properties' => array(
-							),
-					),
-					'reject' => array(
-							'currentStatuses' => array('new' => null),
-							'targetStatus' => 'rejected',
-							'label' => array('en_US' => 'Reject', 'fr_FR' => 'Rejeter'),
-							'properties' => array(
-							),
-					),
-					'settle' => array(
-							'currentStatuses' => array('approved' => null),
-							'targetStatus' => 'settled',
-							'label' => array('en_US' => 'Settle', 'fr_FR' => 'Régler'),
-							'properties' => array(
-							),
-					),
-					'invoice' => array(
-							'currentStatuses' => array('settled' => null),
-							'targetStatus' => 'invoiced',
-							'label' => array('en_US' => 'Invoice', 'fr_FR' => 'Facturer'),
-							'properties' => array(
-							),
-					),
-			),
+	'commitment/generic/property/account_date_1' => ['definition' => 'core_account/generic/property/date_1'],
+	'commitment/generic/property/account_date_2' => ['definition' => 'core_account/generic/property/date_2'],
+	'commitment/generic/property/account_date_3' => ['definition' => 'core_account/generic/property/date_3'],
+	'commitment/generic/property/account_date_4' => ['definition' => 'core_account/generic/property/date_4'],
+	'commitment/generic/property/account_date_5' => ['definition' => 'core_account/generic/property/date_5'],
+
+	'commitment/generic/property/account_property_1' => ['definition' => 'core_account/generic/property/property_1'],
+	'commitment/generic/property/account_property_2' => ['definition' => 'core_account/generic/property/property_2'],
+	'commitment/generic/property/account_property_3' => ['definition' => 'core_account/generic/property/property_3'],
+	'commitment/generic/property/account_property_4' => ['definition' => 'core_account/generic/property/property_4'],
+	'commitment/generic/property/account_property_5' => ['definition' => 'core_account/generic/property/property_5'],
+	'commitment/generic/property/account_property_6' => ['definition' => 'core_account/generic/property/property_6'],
+	'commitment/generic/property/account_property_7' => ['definition' => 'core_account/generic/property/property_7'],
+	'commitment/generic/property/account_property_8' => ['definition' => 'core_account/generic/property/property_8'],
+	'commitment/generic/property/account_property_9' => ['definition' => 'core_account/generic/property/property_9'],
+	'commitment/generic/property/account_property_10' => ['definition' => 'core_account/generic/property/property_10'],
+	'commitment/generic/property/account_property_11' => ['definition' => 'core_account/generic/property/property_11'],
+	'commitment/generic/property/account_property_12' => ['definition' => 'core_account/generic/property/property_12'],
+	'commitment/generic/property/account_property_13' => ['definition' => 'core_account/generic/property/property_13'],
+	'commitment/generic/property/account_property_14' => ['definition' => 'core_account/generic/property/property_14'],
+	'commitment/generic/property/account_property_15' => ['definition' => 'core_account/generic/property/property_15'],
+	'commitment/generic/property/account_property_16' => ['definition' => 'core_account/generic/property/property_16'],
+	
+	'commitment/generic/property/invoice_n_fn' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'en_US' => 'Payer',
+			'fr_FR' => 'Payeur',
+		),
+	),
+	
+	'commitment/generic/property/caption' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'en_US' => 'Caption',
+			'fr_FR' => 'Libellé',
+		),
+	),
+	
+	'commitment/generic/property/description' => array(
+		'definition' => 'inline',
+		'type' => 'textarea',
+		'labels' => array(
+			'en_US' => 'Description',
+			'fr_FR' => 'Description',
+		),
+	),
+	
+	'commitment/generic/property/product_brand' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'en_US' => 'Product brand',
+			'fr_FR' => 'Marque du produit',
+		),
 	),
 
-	'commitment/index' => array(
-			'title' => array('en_US' => 'P-PIT Commitments', 'fr_FR' => 'P-PIT Engagements'),
+	'commitment/generic/property/product_caption' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'en_US' => 'Product caption',
+			'fr_FR' => 'Libellé du produit',
+		),
+	),
+	
+	'commitment/generic/property/quantity' => array(
+		'definition' => 'inline',
+		'type' => 'number',
+		'minValue' => 0,
+		'maxValue' => 1000000,
+		'labels' => array(
+			'en_US' => 'Quantity',
+			'fr_FR' => 'Quantité',
+		),
+	),
+
+	'commitment/generic/property/unit_price' => array(
+		'definition' => 'inline',
+		'type' => 'number',
+		'minValue' => 0,
+		'maxValue' => 1000000,
+		'labels' => array(
+			'en_US' => 'Unit price',
+			'fr_FR' => 'Prix unitaire',
+		),
+	),
+	
+	'commitment/generic/property/amount' => array(
+		'definition' => 'inline',
+		'type' => 'number',
+		'min_value' => 0,
+		'max_value' => 1000000,
+		'labels' => array(
+			'en_US' => 'Amount',
+			'fr_FR' => 'Montant',
+		),
+	),
+
+	'commitment/generic/property/including_options_amount' => array(
+		'definition' => 'inline',
+		'type' => 'number',
+		'labels' => array(
+			'en_US' => 'Including options',
+			'fr_FR' => 'Options incluses',
+		),
+	),
+
+	'commitment/generic/property/invoice_identifier' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'en_US' => 'Invoice identifier',
+			'fr_FR' => 'Numéro de facture',
+		),
+	),
+	
+	'commitment/generic/property/invoice_date' => array(
+		'definition' => 'inline',
+		'type' => 'date',
+		'labels' => array(
+			'en_US' => 'Invoice date',
+			'fr_FR' => 'Date de facture',
+		),
+	),
+	
+	'commitment/generic/property/tax_amount' => array(
+		'definition' => 'inline',
+		'type' => 'number',
+		'labels' => array(
+			'en_US' => 'Tax amount',
+			'fr_FR' => 'Montant TVA',
+		),
+	),
+	
+	'commitment/generic/property/tax_inclusive' => array(
+		'definition' => 'inline',
+		'type' => 'number',
+		'labels' => array(
+			'en_US' => 'Tax inclusive',
+			'fr_FR' => 'TTC',
+		),
+	),
+	
+	'commitment/generic/property/default_means_of_payment' => array(
+		'definition' => 'inline',
+		'type' => 'select',
+		'modalities' => array(
+			'bank_card' => array('fr_FR' => 'CB', 'en_US' => 'Bank card'),
+			'transfer' => array('fr_FR' => 'Virement', 'en_US' => 'Transfer'),
+			'direct_debit' => array('fr_FR' => 'Prélèvement', 'en_US' => 'Direct debit'),
+			'check' => array('fr_FR' => 'Chèque', 'en_US' => 'Check'),
+			'cash' => array('fr_FR' => 'Espèces', 'en_US' => 'Cash'),
+		),
+		'labels' => array(
+			'en_US' => 'Default means of payment',
+			'fr_FR' => 'Mode de règlement par défaut',
+		),
+	),
+	
+	'commitment/generic/property/update_time' => array(
+		'definition' => 'inline',
+		'type' => 'datetime',
+		'labels' => array(
+			'en_US' => 'Update time',
+			'fr_FR' => 'Date de mise à jour',
+		),
+	),
+
+	'commitment/generic' => array(
+		'currencySymbol' => '€',
+		'tax' => 'excluding',
+		'properties' => array(
+			'year', 'status', 'place_id', 'place_caption', 
+			'account_id', 'account_status', 'account_name', 'account_identifier',
+			'invoice_n_fn',
+			'caption', 'description', 'product_caption',
+			'quantity', 'unit_price', 'amount', 'including_options_amount', 'invoice_identifier', 'invoice_date', 'tax_amount', 'tax_inclusive',
+			'default_means_of_payment', 'update_time',
+		),
+		'order' => 'account_name ASC',
+		'todo' => array(
+			'sales_manager' => array(
+				'status' => array('selector' => 'in', 'value' => array('new')),
+			),
+		),
+		'actions' => array(
+			'confirm' => array(
+				'currentStatuses' => array('new' => null),
+				'targetStatus' => 'confirmed',
+				'label' => array('en_US' => 'Confirm', 'fr_FR' => 'Confirmer'),
+				'properties' => array(
+				),
+			),
+			'reject' => array(
+				'currentStatuses' => array('new' => null),
+				'targetStatus' => 'rejected',
+				'label' => array('en_US' => 'Reject', 'fr_FR' => 'Rejeter'),
+				'properties' => array(
+				),
+			),
+			'settle' => array(
+				'currentStatuses' => array('approved' => null),
+				'targetStatus' => 'settled',
+				'label' => array('en_US' => 'Settle', 'fr_FR' => 'Régler'),
+				'properties' => array(
+				),
+			),
+			'invoice' => array(
+				'currentStatuses' => array('settled' => null),
+				'targetStatus' => 'invoiced',
+				'label' => array('en_US' => 'Invoice', 'fr_FR' => 'Facturer'),
+				'properties' => array(
+				),
+			),
+		),
+	),
+
+	'commitment/index/generic' => array(
+		'title' => array('en_US' => 'P-PIT Commitments', 'fr_FR' => 'P-PIT Engagements'),
 	),
 		
-	'commitment/search' => array(
-			'title' => array('en_US' => 'Commitments', 'fr_FR' => 'Engagements'),
-			'todoTitle' => array('en_US' => 'active', 'fr_FR' => 'actifs'),
-			'main' => array(
-					'place_id' => 'select',
-					'type' => 'select',
-					'status' => 'select',
-					'account_status' => 'select',
-					'year' => 'contains',
-					'including_options_amount' => 'range',
-					'account_name' => 'contains',
-			),
-	),
-
-	'commitment/list' => array(
+	'commitment/search/generic' => array(
+		'title' => array('en_US' => 'Commitments', 'fr_FR' => 'Engagements'),
+		'todoTitle' => array('en_US' => 'active', 'fr_FR' => 'actifs'),
+		'properties' => array(
 			'place_id' => 'select',
-			'type' => 'select',
-			'year' => 'text',
 			'status' => 'select',
 			'account_status' => 'select',
-			'account_name' => 'text',
-			'caption' => 'text',
-			'quantity' => 'number',
-			'unit_price' => 'number',
-			'amount' => 'number',
-			'including_options_amount' => 'number',
-			'update_time' => 'datetime',
+			'year' => 'contains',
+			'including_options_amount' => 'range',
+			'account_name' => 'contains',
+		),
 	),
 
+	'commitment/list/generic' => array(
+		'properties' => array(
+			'place_id' => [],
+			'year' => [],
+			'status' => [],
+			'account_status' => [],
+			'account_name' => [],
+			'caption' => [],
+			'quantity' => [],
+			'unit_price' => [],
+			'amount' => [],
+			'including_options_amount' => [],
+			'update_time' => [],
+		),
+	),
+
+	'commitment/update/generic' => array(
+		'year' => array('mandatory' => true),
+		'invoice_date' => array('mandatory' => true),
+		'account_id' => array('mandatory' => true),
+		'caption' => array('mandatory' => true),
+		'description' => array('mandatory' => false),
+	),
+
+	'commitment/group/generic' => array(
+		'status' => [],
+		'caption' => [],
+		'description' => [],
+	),
+	
+	'commitment/export/generic' => array(
+		'year' => 'A',
+		'invoice_date' => 'B',
+		'account_name' => 'C',
+		'caption' => 'D',
+		'description' => 'E',
+		'product_caption' => 'F',
+		'unit_price' => 'G',
+		'quantity' => 'H',
+		'amount' => 'I',
+		'including_options_amount' => 'J',
+		'tax_amount' => 'K',
+		'tax_inclusive' => 'L',
+		'default_means_of_payment' => 'M',
+	),
+	
+	// Business
+	
 	'commitment/update/business' => array(
-			'year' => array('mandatory' => true),
-			'invoice_date' => array('mandatory' => true),
-			'account_id' => array('mandatory' => true),
-			'caption' => array('mandatory' => true),
-			'description' => array('mandatory' => false),
-			'amount' => array('mandatory' => false),
+		'year' => array('mandatory' => true),
+		'invoice_date' => array('mandatory' => true),
+		'account_id' => array('mandatory' => true),
+		'caption' => array('mandatory' => true),
+		'description' => array('mandatory' => false),
+		'amount' => array('mandatory' => false),
 	),
 
+	'commitment/group/business' => array(
+		'status' => [],
+		'caption' => [],
+		'description' => [],
+	),
+	
 	'commitment/export/business' => array(
 		'year' => 'A',
 		'invoice_identifier' => 'B',
@@ -2476,38 +2528,22 @@ table.note-report td {
 		'default_means_of_payment' => 'O',
 	),
 	
-	'commitment/update/generic' => array(
-			'year' => array('mandatory' => true),
-			'invoice_date' => array('mandatory' => true),
-			'caption' => array('mandatory' => true),
-			'description' => array('mandatory' => false),
-			'amount' => array('mandatory' => false),
-	),
-
-	'commitment/export/generic' => array(
-		'year' => 'A',
-		'invoice_date' => 'B',
-		'account_name' => 'C',
-		'caption' => 'D',
-		'description' => 'E',
-		'product_caption' => 'F',
-		'unit_price' => 'G',
-		'quantity' => 'H',
-		'amount' => 'I',
-		'including_options_amount' => 'J',
-		'tax_amount' => 'K',
-		'tax_inclusive' => 'L',
-		'default_means_of_payment' => 'M',
-	),
+	// B2C
 	
 	'commitment/update/b2c' => array(
-			'year' => array('mandatory' => true),
-			'invoice_date' => array('mandatory' => true),
-			'caption' => array('mandatory' => true),
-			'description' => array('mandatory' => false),
-			'amount' => array('mandatory' => false),
+		'year' => array('mandatory' => true),
+		'invoice_date' => array('mandatory' => true),
+		'caption' => array('mandatory' => true),
+		'description' => array('mandatory' => false),
+		'amount' => array('mandatory' => false),
 	),
-
+	
+	'commitment/group/b2c' => array(
+		'status' => [],
+		'caption' => [],
+		'description' => [],
+	),
+	
 	'commitment/export/b2c' => array(
 		'year' => 'A',
 		'invoice_identifier' => 'B',
@@ -2525,37 +2561,9 @@ table.note-report td {
 		'tax_inclusive' => 'N',
 		'default_means_of_payment' => 'O',
 	),
-	
-	'commitment/update' => array(
-			'year' => array('mandatory' => true),
-			'invoice_date' => array('mandatory' => true),
-			'account_id' => array('mandatory' => true),
-			'caption' => array('mandatory' => true),
-			'description' => array('mandatory' => false),
-	),
-	'commitment/group/generic' => array(
-			'status' => [],
-			'caption' => [],
-			'description' => [],
-	),
-	'commitment/group/business' => array(
-			'status' => [],
-			'caption' => [],
-			'description' => [],
-	),
-	'commitment/group/learning' => array(
-			'status' => [],
-			'caption' => [],
-			'description' => [],
-	),
-	'commitment/group/b2c' => array(
-			'status' => [],
-			'caption' => [],
-			'description' => [],
-	),
 
 	'place_config/default' => array(
-			'commitment/invoice_header' => null,
+		'commitment/invoice_header' => null,
 	),
 	
 	'commitment/invoice_identifier_mask' => array(
@@ -2568,158 +2576,147 @@ table.note-report td {
 	'commitment/invoice_footer_mention_2' => null,
 	'commitment/invoice_footer_mention_3' => null,
 	'commitment/invoice' => array(
-			'header' => array(
-					array(
-							'format' => array('en_US' => '%s', 'fr_FR' => '%s'),
-							'params' => array('account_name'),
-					),
+		'header' => array(
+			array(
+				'format' => array('en_US' => '%s', 'fr_FR' => '%s'),
+				'params' => array('account_name'),
 			),
-			'description' => array(
-					array(
-							'left' => array('en_US' => 'Caption', 'fr_FR' => 'Libellé'),
-							'right' => array('en_US' => '%s', 'fr_FR' => '%s'),
-							'params' => array('caption'),
-					),
-					array(
-							'left' => array('en_US' => 'Description', 'fr_FR' => 'Description'),
-							'right' => array('en_US' => '%s', 'fr_FR' => '%s'),
-							'params' => array('description'),
-					),
+		),
+		'description' => array(
+			array(
+				'left' => array('en_US' => 'Caption', 'fr_FR' => 'Libellé'),
+				'right' => array('en_US' => '%s', 'fr_FR' => '%s'),
+				'params' => array('caption'),
 			),
-			'tax' => false,
-			'terms' => true,
+			array(
+				'left' => array('en_US' => 'Description', 'fr_FR' => 'Description'),
+				'right' => array('en_US' => '%s', 'fr_FR' => '%s'),
+				'params' => array('description'),
+			),
+		),
+		'tax' => false,
+		'terms' => true,
 	),
 		
 	'commitment/supplierIdentificationSheet' => array(
-			'ID' => '',
-			'Name' => '',
-			'CityName' => '',
-			'PostalZone' => '',
-			'AddressLine1' => '',
-			'AddressLine2' => '',
-			'Country' => '',
-			'TaxSchemeID' => '',
-			'TaxSchemeName' => '',
-			'RegistrationName' => '',
-			'LegalEntityID' => '',
-			'LegalEntityCityName' => '',
-			'LegalEntityPostalZone' => '',
-			'LegalEntityAddressLine1' => '',
-			'LegalEntityAddressLine2' => '',
-			'LegalEntityCountry' => '',
-			'CorporateRegistrationScheme' => '',
-			'ContactID' => '',
-			'ContactName' => '',
-			'ContactTelephone' => '',
-			'ContactTelefax' => '',
-			'ContactElectronicMail' => '',
-			'PaymentMeansCodelistID' => '',
-			'PaymentMeansCodelistAgencyID' => '',
-			'PaymentMeansCodelistAgencyName' => '',
-			'PaymentMeansCode' => '',
-			'PaymentChannelCode' => '',
-			'InstructionNote' => '',
-			'PayeeFinancialAccount' => '',
-			'PaymentTerms' => 'taux d\'intérêt légal x 1,5 sur montant impayé',
+		'ID' => '',
+		'Name' => '',
+		'CityName' => '',
+		'PostalZone' => '',
+		'AddressLine1' => '',
+		'AddressLine2' => '',
+		'Country' => '',
+		'TaxSchemeID' => '',
+		'TaxSchemeName' => '',
+		'RegistrationName' => '',
+		'LegalEntityID' => '',
+		'LegalEntityCityName' => '',
+		'LegalEntityPostalZone' => '',
+		'LegalEntityAddressLine1' => '',
+		'LegalEntityAddressLine2' => '',
+		'LegalEntityCountry' => '',
+		'CorporateRegistrationScheme' => '',
+		'ContactID' => '',
+		'ContactName' => '',
+		'ContactTelephone' => '',
+		'ContactTelefax' => '',
+		'ContactElectronicMail' => '',
+		'PaymentMeansCodelistID' => '',
+		'PaymentMeansCodelistAgencyID' => '',
+		'PaymentMeansCodelistAgencyName' => '',
+		'PaymentMeansCode' => '',
+		'PaymentChannelCode' => '',
+		'InstructionNote' => '',
+		'PayeeFinancialAccount' => '',
+		'PaymentTerms' => 'taux d\'intérêt légal x 1,5 sur montant impayé',
 	),
 		
 	'commitment/try' => array(
-			'caption' => array('mandatory' => true),
-			'n_title' => array('mandatory' => true),
-			'n_first' => array('mandatory' => true),
-			'n_last' => array('mandatory' => true),
-			'email' => array('mandatory' => true),
-			'tel_work' => array('mandatory' => false),
-			'tel_cell' => array('mandatory' => false),
+		'caption' => array('mandatory' => true),
+		'n_title' => array('mandatory' => true),
+		'n_first' => array('mandatory' => true),
+		'n_last' => array('mandatory' => true),
+		'email' => array('mandatory' => true),
+		'tel_work' => array('mandatory' => false),
+		'tel_cell' => array('mandatory' => false),
 	),
 
 	// Rental
-		
+	
+	'commitment/rental/property/status' => array(
+		'definition' => 'inline',
+		'type' => 'select',
+		'modalities' => array(
+			'new' => array('en_US' => 'New', 'fr_FR' => 'Nouveau'),
+			'confirmed' => array('en_US' => 'Confirmed', 'fr_FR' => 'Confirmé'),
+			'settled' => array('en_US' => 'Settled', 'fr_FR' => 'Réglé'),
+			'invoiced' => array('en_US' => 'Invoiced', 'fr_FR' => 'Facturé'),
+			'registered' => array('en_US' => 'Registered', 'fr_FR' => 'Comptabilisé'),
+		),
+		'labels' => array(
+			'en_US' => 'Status',
+			'fr_FR' => 'Statut',
+		),
+	),
+	
 	'commitment/rental' => array(
-			'currencySymbol' => '€',
-			'tax' => 'excluding',
-			'properties' => array(
-					'type' => array(
-							'type' => 'repository',
-							'definition' => 'commitment/types',
-					),
-					'status' => array(
-							'definition' => 'inline',
-							'type' => 'select',
-							'modalities' => array(
-									'new' => array('en_US' => 'New', 'fr_FR' => 'Nouveau'),
-									'confirmed' => array('en_US' => 'Confirmed', 'fr_FR' => 'Confirmé'),
-									'settled' => array('en_US' => 'Settled', 'fr_FR' => 'Réglé'),
-									'invoiced' => array('en_US' => 'Invoiced', 'fr_FR' => 'Facturé'),
-									'registered' => array('en_US' => 'Registered', 'fr_FR' => 'Comptabilisé'),
-							),
-							'labels' => array(
-									'en_US' => 'Status',
-									'fr_FR' => 'Statut',
-							),
-					),
-					'year' => array('definition' => 'commitment/property/year'),
-					'place_id' => array('definition' => 'commitment/property/place_id'),
-					'account_id' => array('definition' => 'commitment/property/account_id'),
-					'account_name' => array('definition' => 'commitment/property/account_id'),
-					'invoice_n_fn' => array('definition' => 'commitment/property/invoice_n_fn'),
-					'account_identifier' => array('definition' => 'commitment/property/account_identifier'),
-					'caption' => array('definition' => 'commitment/property/caption'),
-					'description' => array('definition' => 'commitment/property/description'),
-					'product_caption' => array('definition' => 'commitment/property/product_caption'),
-					'quantity' => array('definition' => 'commitment/property/quantity'),
-					'unit_price' => array('definition' => 'commitment/property/unit_price'),
-					'amount' => array('definition' => 'commitment/property/amount'),
-					'including_options_amount' => array('definition' => 'commitment/property/including_options_amount'),
-					'invoice_identifier' => array('definition' => 'commitment/property/invoice_identifier'),
-					'invoice_date' => array('definition' => 'commitment/property/invoice_date'),
-					'tax_amount' => array('definition' => 'commitment/property/tax_amount'),
-					'tax_inclusive' => array('definition' => 'commitment/property/tax_inclusive'),
-					'default_means_of_payment' => array('definition' => 'commitment/property/default_means_of_payment'),
-					'update_time' => array('definition' => 'commitment/property/update_time'),
+		'currencySymbol' => '€',
+		'tax' => 'excluding',
+		'properties' => array(
+			'status', 'year', 'place_id', 'account_id', 'account_name', 'invoice_n_fn', 'account_identifier',
+			'caption', 'description', 'product_caption',
+			'quantity', 'unit_price', 'amount', 'including_options_amount', 'invoice_identifier', 'invoice_date', 'tax_amount', 'tax_inclusive',
+			'default_means_of_payment', 'update_time',
+		),
+		'todo' => array(
+			'sales_manager' => array(
+				'status' => array('selector' => 'in', 'value' => array('new')),
 			),
-			'todo' => array(
-					'sales_manager' => array(
-							'status' => array('selector' => 'in', 'value' => array('new')),
-					),
-			),
+		),
 	),
 
 	'commitment/index/rental' => array(
-			'title' => array('en_US' => 'P-PIT Commitments', 'fr_FR' => 'P-PIT Engagements'),
+		'title' => array('en_US' => 'P-PIT Commitments', 'fr_FR' => 'P-PIT Engagements'),
 	),
 	
 	'commitment/search/rental' => array(
-			'title' => array('en_US' => 'Rental', 'fr_FR' => 'Location'),
-			'todoTitle' => array('en_US' => 'active', 'fr_FR' => 'actifs'),
-			'main' => array(
-					'place_id' => 'select',
-					'type' => 'select',
-					'status' => 'select',
-					'year' => 'contains',
-					'including_options_amount' => 'range',
-					'account_name' => 'contains',
-			),
+		'title' => array('en_US' => 'Rental', 'fr_FR' => 'Location'),
+		'todoTitle' => array('en_US' => 'active', 'fr_FR' => 'actifs'),
+		'properties' => array(
+			'place_id' => 'select',
+			'status' => 'select',
+			'year' => 'contains',
+			'including_options_amount' => 'range',
+			'account_name' => 'contains',
+		),
 	),
 	
 	'commitment/list/rental' => array(
-			'place_id' => 'input',
-			'account_name' => 'text',
-			'year' => 'text',
-			'caption' => 'input',
-			'including_options_amount' => 'number',
-			'status' => 'select',
-			'update_time' => 'datetime',
+		'properties' => array(
+			'place_id' => [],
+			'account_name' => [],
+			'year' => [],
+			'caption' => [],
+			'including_options_amount' => [],
+			'status' => [],
+			'update_time' => [],
+		),
 	),
 		
 	'commitment/update/rental' => array(
-			'year' => array('mandatory' => true),
-			'invoice_date' => array('mandatory' => true),
-			'account_id' => array('mandatory' => true),
-			'caption' => array('mandatory' => true),
-			'description' => array('mandatory' => false),
+		'year' => array('mandatory' => true),
+		'invoice_date' => array('mandatory' => true),
+		'account_id' => array('mandatory' => true),
+		'caption' => array('mandatory' => true),
+		'description' => array('mandatory' => false),
 	),
 
+	'commitment/group/rental' => array(
+		'status' => [],
+		'caption' => [],
+		'description' => [],
+	),
+	
 	'commitment/export/rental' => array(
 		'year' => 'A',
 		'invoice_identifier' => 'B',
@@ -2737,107 +2734,79 @@ table.note-report td {
 		'tax_inclusive' => 'N',
 		'default_means_of_payment' => 'O',
 	),
-	
-	'commitment/group/rental' => array(
-			'status' => [],
-			'caption' => [],
-			'description' => [],
-	),
 
 	// Service
 	
+	'commitment/service/property/status' => array(
+		'definition' => 'inline',
+		'type' => 'select',
+		'modalities' => array(
+			'new' => array('en_US' => 'New', 'fr_FR' => 'Nouveau'),
+			'confirmed' => array('en_US' => 'Confirmed', 'fr_FR' => 'Confirmé'),
+			'settled' => array('en_US' => 'Settled', 'fr_FR' => 'Réglé'),
+			'invoiced' => array('en_US' => 'Invoiced', 'fr_FR' => 'Facturé'),
+			'registered' => array('en_US' => 'Registered', 'fr_FR' => 'Comptabilisé'),
+		),
+		'labels' => array(
+			'en_US' => 'Status',
+			'fr_FR' => 'Statut',
+		),
+	),
+	
 	'commitment/service' => array(
-			'currencySymbol' => '€',
-			'tax' => 'excluding',
-			'properties' => array(
-					'type' => array('definition' => 'commitment/types'),
-					'status' => array(
-							'definition' => 'inline',
-							'type' => 'select',
-							'modalities' => array(
-									'new' => array('en_US' => 'New', 'fr_FR' => 'Nouveau'),
-									'confirmed' => array('en_US' => 'Confirmed', 'fr_FR' => 'Confirmé'),
-									'settled' => array('en_US' => 'Settled', 'fr_FR' => 'Réglé'),
-									'invoiced' => array('en_US' => 'Invoiced', 'fr_FR' => 'Facturé'),
-									'registered' => array('en_US' => 'Registered', 'fr_FR' => 'Comptabilisé'),
-							),
-							'labels' => array(
-									'en_US' => 'Status',
-									'fr_FR' => 'Statut',
-							),
-					),
-					'account_name' => array(
-							'definition' => 'inline',
-							'type' => 'input',
-							'labels' => array(
-									'en_US' => 'Name',
-									'fr_FR' => 'Nom',
-							),
-					),
-					'year' => array('definition' => 'commitment/property/year'),
-					'place_id' => array('definition' => 'commitment/property/place_id'),
-					'account_id' => array('definition' => 'commitment/property/account_id'),
-					'account_name' => array('definition' => 'commitment/property/account_id'),
-					'invoice_n_fn' => array('definition' => 'commitment/property/invoice_n_fn'),
-					'caption' => array('definition' => 'commitment/property/caption'),
-					'product_caption' => array('definition' => 'commitment/property/product_caption'),
-					'description' => array('definition' => 'commitment/property/description'),
-					'quantity' => array('definition' => 'commitment/property/quantity'),
-					'unit_price' => array('definition' => 'commitment/property/unit_price'),
-					'amount' => array('definition' => 'commitment/property/amount'),
-					'including_options_amount' => array('definition' => 'commitment/property/including_options_amount'),
-					'invoice_identifier' => array('definition' => 'commitment/property/invoice_identifier'),
-					'invoice_date' => array('definition' => 'commitment/property/invoice_date'),
-					'tax_amount' => array('definition' => 'commitment/property/tax_amount'),
-					'tax_inclusive' => array('definition' => 'commitment/property/tax_inclusive'),
-					'default_means_of_payment' => array('definition' => 'commitment/property/default_means_of_payment'),
-					'update_time' => array('definition' => 'commitment/property/update_time'),
+		'currencySymbol' => '€',
+		'tax' => 'excluding',
+		'properties' => array(
+			'status', 'year', 'place_id', 'account_id', 'account_name', 'invoice_n_fn',
+			'caption', 'product_caption', 'description', 
+			'quantity', 'unit_price', 'amount', 'including_options_amount', 'invoice_identifier', 'invoice_date', 'tax_amount', 'tax_inclusive',
+			'default_means_of_payment', 'update_time',
+		),
+		'todo' => array(
+			'sales_manager' => array(
+				'status' => array('selector' => 'in', 'value' => array('new')),
 			),
-			'todo' => array(
-					'sales_manager' => array(
-							'status' => array('selector' => 'in', 'value' => array('new')),
-					),
-			),
+		),
 	),
 
 	'commitment/index/service' => array(
-			'title' => array('en_US' => 'P-PIT Commitments', 'fr_FR' => 'P-PIT Engagements'),
+		'title' => array('en_US' => 'P-PIT Commitments', 'fr_FR' => 'P-PIT Engagements'),
 	),
 	
 	'commitment/search/service' => array(
-			'title' => array('en_US' => 'Learning', 'fr_FR' => 'Formations'),
-			'todoTitle' => array('en_US' => 'active', 'fr_FR' => 'actifs'),
-			'main' => array(
-					'place_id' => 'select',
-					'type' => 'select',
-					'status' => 'select',
-					'year' => 'contains',
-					'account_name' => 'contains',
-					'caption' => 'contains',
-					'including_options_amount' => 'range',
-			),
+		'title' => array('en_US' => 'Learning', 'fr_FR' => 'Formations'),
+		'todoTitle' => array('en_US' => 'active', 'fr_FR' => 'actifs'),
+		'properties' => array(
+			'place_id' => 'select',
+			'status' => 'select',
+			'year' => 'contains',
+			'account_name' => 'contains',
+			'caption' => 'contains',
+			'including_options_amount' => 'range',
+		),
 	),
 		
 	'commitment/list/service' => array(
-			'place_id' => 'select',
-			'type' => 'select',
-			'status' => 'select',
-			'year' => 'text',
-			'account_name' => 'text',
-			'caption' => 'text',
-			'quantity' => 'number',
-			'unit_price' => 'number',
-			'amount' => 'number',
-			'including_options_amount' => 'number',
-			'update_time' => 'datetime',
+		'properties' => array(
+			'place_id' => [],
+			'status' => [],
+			'year' => [],
+			'account_name' => [],
+			'caption' => [],
+			'quantity' => [],
+			'unit_price' => [],
+			'amount' => [],
+			'including_options_amount' => [],
+			'update_time' => [],
+		),
 	),
 		
 	'commitment/update/service' => array(
-			'year' => array('mandatory' => true),
-			'invoice_date' => array('mandatory' => true),
-			'account_id' => array('mandatory' => true),
-			'caption' => array('mandatory' => true),
-			'description' => array('mandatory' => false),
+		'year' => array('mandatory' => true),
+		'invoice_date' => array('mandatory' => true),
+		'account_id' => array('mandatory' => true),
+		'caption' => array('mandatory' => true),
+		'description' => array('mandatory' => false),
 	),
 
 	'commitment/export/service' => array(
@@ -2859,107 +2828,85 @@ table.note-report td {
 	),
 	
 	'commitment/group/service' => array(
-			'year' => [],
-			'status' => [],
-			'invoice_date' => [],
-			'caption' => [],
-			'description' => [],
+		'year' => [],
+		'status' => [],
+		'invoice_date' => [],
+		'caption' => [],
+		'description' => [],
 	),
 
 	// Human service
 	
+	'commitment/human_service/property/status' => array(
+		'definition' => 'inline',
+		'type' => 'select',
+		'modalities' => array(
+			'new' => array('en_US' => 'New', 'fr_FR' => 'Nouveau'),
+			'confirmed' => array('en_US' => 'Confirmed', 'fr_FR' => 'Confirmé'),
+			'settled' => array('en_US' => 'Settled', 'fr_FR' => 'Réglé'),
+			'invoiced' => array('en_US' => 'Invoiced', 'fr_FR' => 'Facturé'),
+			'registered' => array('en_US' => 'Registered', 'fr_FR' => 'Comptabilisé'),
+		),
+		'labels' => array(
+			'en_US' => 'Status',
+			'fr_FR' => 'Statut',
+		),
+	),
+	
 	'commitment/human_service' => array(
-			'currencySymbol' => '€',
-			'tax' => 'none',
-			'properties' => array(
-					'type' => array('definition' => 'commitment/types'),
-					'status' => array(
-							'definition' => 'inline',
-							'type' => 'select',
-							'modalities' => array(
-									'new' => array('en_US' => 'New', 'fr_FR' => 'Nouveau'),
-									'confirmed' => array('en_US' => 'Confirmed', 'fr_FR' => 'Confirmé'),
-									'settled' => array('en_US' => 'Settled', 'fr_FR' => 'Réglé'),
-									'invoiced' => array('en_US' => 'Invoiced', 'fr_FR' => 'Facturé'),
-									'registered' => array('en_US' => 'Registered', 'fr_FR' => 'Comptabilisé'),
-							),
-							'labels' => array(
-									'en_US' => 'Status',
-									'fr_FR' => 'Statut',
-							),
-					),
-					'account_name' => array(
-							'definition' => 'inline',
-							'type' => 'input',
-							'labels' => array(
-									'en_US' => 'Name',
-									'fr_FR' => 'Nom',
-							),
-					),
-					'year' => array('definition' => 'commitment/property/year'),
-					'place_id' => array('definition' => 'commitment/property/place_id'),
-					'account_id' => array('definition' => 'commitment/property/account_id'),
-					'account_name' => array('definition' => 'commitment/property/account_id'),
-					'invoice_n_fn' => array('definition' => 'commitment/property/invoice_n_fn'),
-					'n_fn' => array('definition' => 'commitment/property/n_fn'),
-					'caption' => array('definition' => 'commitment/property/caption'),
-					'description' => array('definition' => 'commitment/property/description'),
-					'product_caption' => array('definition' => 'commitment/property/product_caption'),
-					'quantity' => array('definition' => 'commitment/property/quantity'),
-					'unit_price' => array('definition' => 'commitment/property/unit_price'),
-					'amount' => array('definition' => 'commitment/property/amount'),
-					'including_options_amount' => array('definition' => 'commitment/property/including_options_amount'),
-					'invoice_identifier' => array('definition' => 'commitment/property/invoice_identifier'),
-					'invoice_date' => array('definition' => 'commitment/property/invoice_date'),
-					'tax_amount' => array('definition' => 'commitment/property/tax_amount'),
-					'tax_inclusive' => array('definition' => 'commitment/property/tax_inclusive'),
-					'default_means_of_payment' => array('definition' => 'commitment/property/default_means_of_payment'),
-					'update_time' => array('definition' => 'commitment/property/update_time'),
+		'currencySymbol' => '€',
+		'tax' => 'none',
+		'properties' => array(
+			'status', 'account_name', 'year', 'place_id', 'account_id', 'account_name', 'invoice_n_fn', 'n_fn',
+			'caption', 'description', 'product_caption',
+			'quantity', 'unit_price',
+			'amount', 'including_options_amount', 'invoice_identifier', 'invoice_date', 'tax_amount', 'tax_inclusive',
+			'default_means_of_payment', 'update_time',
+		),
+		'todo' => array(
+			'sales_manager' => array(
+				'status' => array('selector' => 'in', 'value' => array('new')),
 			),
-			'todo' => array(
-					'sales_manager' => array(
-							'status' => array('selector' => 'in', 'value' => array('new')),
-					),
-			),
+		),
 	),
 	
 	'commitment/index/human_service' => array(
-			'title' => array('en_US' => 'P-PIT Commitments', 'fr_FR' => 'P-PIT Engagements'),
+		'title' => array('en_US' => 'P-PIT Commitments', 'fr_FR' => 'P-PIT Engagements'),
 	),
 	
 	'commitment/search/human_service' => array(
-			'todoTitle' => array('en_US' => 'active', 'fr_FR' => 'actifs'),
-			'main' => array(
-					'place_id' => 'select',
-					'type' => 'select',
-					'status' => 'select',
-					'year' => 'contains',
-					'account_name' => 'contains',
-					'caption' => 'contains',
-					'including_options_amount' => 'range',
-			),
+		'todoTitle' => array('en_US' => 'active', 'fr_FR' => 'actifs'),
+		'properties' => array(
+			'place_id' => 'select',
+			'status' => 'select',
+			'year' => 'contains',
+			'account_name' => 'contains',
+			'caption' => 'contains',
+			'including_options_amount' => 'range',
+		),
 	),
 	
 	'commitment/list/human_service' => array(
-			'place_id' => 'select',
-			'type' => 'select',
-			'status' => 'select',
-			'year' => 'text',
-			'account_name' => 'text',
-			'caption' => 'text',
-			'quantity' => 'number',
-			'unit_price' => 'number',
-			'amount' => 'number',
-			'including_options_amount' => 'number',
-			'update_time' => 'datetime',
+		'properties' => array(
+			'place_id' => [],
+			'status' => [],
+			'year' => [],
+			'account_name' => [],
+			'caption' => [],
+			'quantity' => [],
+			'unit_price' => [],
+			'amount' => [],
+			'including_options_amount' => [],
+			'update_time' => [],
+		),
 	),
 	
 	'commitment/update/human_service' => array(
-			'year' => array('mandatory' => true),
-			'invoice_date' => array('mandatory' => true),
-			'account_id' => array('mandatory' => true),
-			'caption' => array('mandatory' => true),
-			'description' => array('mandatory' => false),
+		'year' => array('mandatory' => true),
+		'invoice_date' => array('mandatory' => true),
+		'account_id' => array('mandatory' => true),
+		'caption' => array('mandatory' => true),
+		'description' => array('mandatory' => false),
 	),
 
 	'commitment/export/human_service' => array(
@@ -2981,36 +2928,36 @@ table.note-report td {
 	),
 	
 	'commitment/group/human_service' => array(
-			'year' => [],
-			'invoice_date' => [],
-			'caption' => [],
-			'description' => [],
+		'year' => [],
+		'invoice_date' => [],
+		'caption' => [],
+		'description' => [],
 	),
 		
 	'commitment/invoice/human_service' => array(
-			'header' => array(
-					array(
-							'format' => array('en_US' => '%s', 'fr_FR' => '%s'),
-							'params' => array('account_name'),
-					),
+		'header' => array(
+			array(
+				'format' => array('en_US' => '%s', 'fr_FR' => '%s'),
+				'params' => array('account_name'),
 			),
-			'description' => array(
-					array(
-							'left' => array('en_US' => 'Beneficiary', 'fr_FR' => 'Bénéficiaire'),
-							'right' => array('en_US' => '%s', 'fr_FR' => '%s'),
-							'params' => array('account_name'),
-					),
-					array(
-							'left' => array('en_US' => 'Caption', 'fr_FR' => 'Libellé'),
-							'right' => array('en_US' => '%s', 'fr_FR' => '%s'),
-							'params' => array('caption'),
-					),
-					array(
-							'left' => array('en_US' => 'Description', 'fr_FR' => 'Description'),
-							'right' => array('en_US' => '%s', 'fr_FR' => '%s'),
-							'params' => array('description'),
-					),
+		),
+		'description' => array(
+			array(
+				'left' => array('en_US' => 'Beneficiary', 'fr_FR' => 'Bénéficiaire'),
+				'right' => array('en_US' => '%s', 'fr_FR' => '%s'),
+				'params' => array('account_name'),
 			),
+			array(
+				'left' => array('en_US' => 'Caption', 'fr_FR' => 'Libellé'),
+				'right' => array('en_US' => '%s', 'fr_FR' => '%s'),
+				'params' => array('caption'),
+			),
+			array(
+				'left' => array('en_US' => 'Description', 'fr_FR' => 'Description'),
+				'right' => array('en_US' => '%s', 'fr_FR' => '%s'),
+				'params' => array('description'),
+			),
+		),
 	),
 
 	'commitment/send-message/human_service' => array(
@@ -3054,249 +3001,212 @@ table.note-report td {
 	
 	// Learning
 
-	'commitment/property_10/learning' => array(
-			'type' => 'input',
-			'labels' => array('en_US' => 'File reference', 'fr_FR' => 'Référence du dossier'),
+	'commitment/learning/property/status' => array(
+		'definition' => 'inline',
+		'type' => 'select',
+		'modalities' => array(
+			'new' => array('en_US' => 'To be confirmed', 'fr_FR' => 'A confirmer'),
+			'confirmed' => array('en_US' => 'Confirmed', 'fr_FR' => 'Confirmé'),
+			'settled' => array('en_US' => 'Settled', 'fr_FR' => 'Réglé'),
+			'invoiced' => array('en_US' => 'Invoiced', 'fr_FR' => 'Facturé'),
+			'registered' => array('en_US' => 'Registered', 'fr_FR' => 'Comptabilisé'),
+		),
+		'labels' => array(
+			'en_US' => 'Status',
+			'fr_FR' => 'Statut',
+		),
+	),
+	
+	'commitment/learning/property/property_1' => array(
+		'definition' => 'inline',
+		'type' => 'select',
+		'modalities' => array(
+			'A1' => array('en_US' => 'Non applicable', 'fr_FR' => 'A1 - Entreprise - Formation salarié hors professionalisation'),
+			'A1p' => array('en_US' => 'Non applicable', 'fr_FR' => 'A1\' - Entreprise - Formation salarié professionalisation'),
+			'A2a' => array('en_US' => 'Non applicable', 'fr_FR' => 'A2a - Collecteur paritaire agréé - Plan de formation'),
+			'A2b' => array('en_US' => 'Non applicable', 'fr_FR' => 'A2b - Collecteur paritaire agréé - Professionnalisation'),
+			'A2c' => array('en_US' => 'Non applicable', 'fr_FR' => 'A2c - Collecteur paritaire agréé - Compte personnel de formation'),
+			'A2d' => array('en_US' => 'Non applicable', 'fr_FR' => 'A2d - Collecteur paritaire agréé - Congé individuel de formation'),
+			'A2e' => array('en_US' => 'Non applicable', 'fr_FR' => 'A2e - Fonds assurance formation de non-salariés'),
+			'A3a' => array('en_US' => 'Non applicable', 'fr_FR' => 'A3a - Pouvoirs publics - Agents'),
+			'A3b' => array('en_US' => 'Non applicable', 'fr_FR' => 'A3b - Pouvoirs publics - Spécifique instances européennes'),
+			'A3c' => array('en_US' => 'Non applicable', 'fr_FR' => 'A3c - Pouvoirs publics - Spécifique états'),
+			'A3d' => array('en_US' => 'Non applicable', 'fr_FR' => 'A3d - Pouvoirs publics - Spécifique conseils régionaux'),
+			'A3e' => array('en_US' => 'Non applicable', 'fr_FR' => 'A3e - Pouvoirs publics - Spécifique Pôle emploi'),
+			'A3f' => array('en_US' => 'Non applicable', 'fr_FR' => 'A3f - Pouvoirs publics - Spécifique Autres ressources publiques'),
+			'A4' => array('en_US' => 'Non applicable', 'fr_FR' => 'A4 - Contrat conclus avec particuliers'),
+			'A5' => array('en_US' => 'Non applicable', 'fr_FR' => 'A4 - Contrat conclus avec autres organismes de formation'),
+		),
+		'labels' => array(
+			'en_US' => 'Non applicable',
+			'fr_FR' => 'Origine produits (BF)',
+		),
+	),
+	
+	'commitment/learning/property/property_2' => array(
+		'definition' => 'inline',
+		'type' => 'select',
+		'modalities' => array(
+			'A1a' => array('en_US' => 'Non applicable', 'fr_FR' => 'A1a - Salariés financement employeur hors professionnalisation'),
+			'A1b' => array('en_US' => 'Non applicable', 'fr_FR' => 'A1b - Salariés financement employeur professionnalisation'),
+			'A2' => array('en_US' => 'Non applicable', 'fr_FR' => 'A2 - Demandeurs d\'emploi financement public'),
+			'A3' => array('en_US' => 'Non applicable', 'fr_FR' => 'A3 - Particuliers à leurs propres frais'),
+			'A4' => array('en_US' => 'Non applicable', 'fr_FR' => 'A4 - Autres stagiaires'),
+		),
+		'labels' => array(
+			'en_US' => 'Non applicable',
+			'fr_FR' => 'A - Type stagiaires',
+		),
+	),
+	'commitment/learning/property/property_3' => array(
+		'definition' => 'inline',
+		'type' => 'select',
+		'modalities' => array(
+			'B1' => array('en_US' => 'Non applicable', 'fr_FR' => 'B1 - Formés par votre organisme pour son propre compte'),
+			'B2' => array('en_US' => 'Non applicable', 'fr_FR' => 'B1 - Formés par votre organisme pour le compte d\'un autre organisme'),
+			'B3' => array('en_US' => 'Non applicable', 'fr_FR' => 'B1 - Confiés par votre organisme à un autre organisme de formation'),
+		),
+		'labels' => array(
+			'en_US' => 'Non applicable',
+			'fr_FR' => 'B - Activité propre',
+		),
+	),
+	
+	'commitment/learning/property/property_4' => array(
+		'definition' => 'inline',
+		'type' => 'select',
+		'modalities' => array(
+			'C1a' => array('en_US' => 'Non applicable', 'fr_FR' => 'C1a - Certification enregistrée au RNCP - Niveau I et II'),
+			'C1b' => array('en_US' => 'Non applicable', 'fr_FR' => 'C1b - Certification enregistrée au RNCP - Niveau III'),
+			'C1c' => array('en_US' => 'Non applicable', 'fr_FR' => 'C1c - Certification enregistrée au RNCP - Niveau IV'),
+			'C1d' => array('en_US' => 'Non applicable', 'fr_FR' => 'C1d - Certification enregistrée au RNCP - Niveau V'),
+			'C2' => array('en_US' => 'Non applicable', 'fr_FR' => 'C2 - Autres formations professionnelles continues'),
+			'C3a' => array('en_US' => 'Non applicable', 'fr_FR' => 'C3 - Prestations d\'orientation et d\'accompagnement - Hors bilan'),
+			'C3b' => array('en_US' => 'Non applicable', 'fr_FR' => 'C3 - Prestations d\'orientation et d\'accompagnement - Bilan'),
+		),
+		'labels' => array(
+			'en_US' => 'Non applicable',
+			'fr_FR' => 'C - Objectif formation',
+		),
+	),
+	
+	'commitment/learning/property/property_5' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'en_US' => 'Non applicable',
+			'fr_FR' => 'Spécialités formation',
+		),
+	),
+	
+	'commitment/learning/property/property_10' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array('en_US' => 'File reference', 'fr_FR' => 'Référence du dossier'),
 	),
 
-	'commitment/property_11/learning' => array(
-			'type' => 'input',
-			'labels' => array('en_US' => 'Student name', 'fr_FR' => 'Nom de l’étudiant'),
+	'commitment/learning/property/property_11' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array('en_US' => 'Student name', 'fr_FR' => 'Nom de l’étudiant'),
 	),
 
-	'commitment/property_12/learning' => array(
-			'type' => 'input',
-			'labels' => array('en_US' => 'Training', 'fr_FR' => 'Formation'),
+	'commitment/learning/property/property_12' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array('en_US' => 'Training', 'fr_FR' => 'Formation'),
 	),
 
-	'commitment/property_13/learning' => array(
-			'type' => 'input',
-			'labels' => array('en_US' => 'Training start date', 'fr_FR' => 'Date début de formation'),
+	'commitment/learning/property/property_13' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array('en_US' => 'Training start date', 'fr_FR' => 'Date début de formation'),
 	),
 
-	'commitment/property_14/learning' => array(
-			'type' => 'input',
-			'labels' => array('en_US' => 'Original commitment', 'fr_FR' => 'Engagement d’origine'),
+	'commitment/learning/property/property_14' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array('en_US' => 'Original commitment', 'fr_FR' => 'Engagement d’origine'),
 	),
 		
 	'commitment/learning' => array(
-			'tax' => 'excluding',
-			'currencySymbol' => '€',
-			'properties' => array(
-					'type' => array(
-							'type' => 'repository',
-							'definition' => 'commitment/types',
-					),
-					'status' => array(
-							'definition' => 'inline',
-							'type' => 'select',
-							'modalities' => array(
-									'new' => array('en_US' => 'To be confirmed', 'fr_FR' => 'A confirmer'),
-									'confirmed' => array('en_US' => 'Confirmed', 'fr_FR' => 'Confirmé'),
-									'settled' => array('en_US' => 'Settled', 'fr_FR' => 'Réglé'),
-									'invoiced' => array('en_US' => 'Invoiced', 'fr_FR' => 'Facturé'),
-									'registered' => array('en_US' => 'Registered', 'fr_FR' => 'Comptabilisé'),
-							),
-							'labels' => array(
-									'en_US' => 'Status',
-									'fr_FR' => 'Statut',
-							),
-					),
-					'year' => array('definition' => 'commitment/property/year'),
-					'place_id' => array('definition' => 'commitment/property/place_id'),
-					'account_id' => array('definition' => 'commitment/property/account_id'),
-					'account_name' => array('definition' => 'commitment/property/account_id'),
-					'invoice_n_fn' => array('definition' => 'commitment/property/invoice_n_fn'),
-					'product_caption' => array('definition' => 'commitment/property/product_caption'),
-					'quantity' => array('definition' => 'commitment/property/quantity'),
-					'unit_price' => array('definition' => 'commitment/property/unit_price'),
-					'amount' => array('definition' => 'commitment/property/amount'),
-					'name' => array(
-							'definition' => 'inline',
-							'type' => 'input',
-							'labels' => array(
-									'en_US' => 'Name',
-									'fr_FR' => 'Nom',
-							),
-					),
-					'caption' => array(
-							'definition' => 'inline',
-							'type' => 'input',
-							'labels' => array(
-									'en_US' => 'Caption',
-									'fr_FR' => 'Libellé',
-							),
-					),
-					'description' => array(
-							'definition' => 'inline',
-							'type' => 'textarea',
-							'labels' => array(
-									'en_US' => 'Description',
-									'fr_FR' => 'Description',
-							),
-					),
-					'property_1' => array(
-							'definition' => 'inline',
-							'type' => 'select',
-							'modalities' => array(
-									'A1' => array('en_US' => 'Non applicable', 'fr_FR' => 'A1 - Entreprise - Formation salarié hors professionalisation'),
-									'A1p' => array('en_US' => 'Non applicable', 'fr_FR' => 'A1\' - Entreprise - Formation salarié professionalisation'),
-									'A2a' => array('en_US' => 'Non applicable', 'fr_FR' => 'A2a - Collecteur paritaire agréé - Plan de formation'),
-									'A2b' => array('en_US' => 'Non applicable', 'fr_FR' => 'A2b - Collecteur paritaire agréé - Professionnalisation'),
-									'A2c' => array('en_US' => 'Non applicable', 'fr_FR' => 'A2c - Collecteur paritaire agréé - Compte personnel de formation'),
-									'A2d' => array('en_US' => 'Non applicable', 'fr_FR' => 'A2d - Collecteur paritaire agréé - Congé individuel de formation'),
-									'A2e' => array('en_US' => 'Non applicable', 'fr_FR' => 'A2e - Fonds assurance formation de non-salariés'),
-									'A3a' => array('en_US' => 'Non applicable', 'fr_FR' => 'A3a - Pouvoirs publics - Agents'),
-									'A3b' => array('en_US' => 'Non applicable', 'fr_FR' => 'A3b - Pouvoirs publics - Spécifique instances européennes'),
-									'A3c' => array('en_US' => 'Non applicable', 'fr_FR' => 'A3c - Pouvoirs publics - Spécifique états'),
-									'A3d' => array('en_US' => 'Non applicable', 'fr_FR' => 'A3d - Pouvoirs publics - Spécifique conseils régionaux'),
-									'A3e' => array('en_US' => 'Non applicable', 'fr_FR' => 'A3e - Pouvoirs publics - Spécifique Pôle emploi'),
-									'A3f' => array('en_US' => 'Non applicable', 'fr_FR' => 'A3f - Pouvoirs publics - Spécifique Autres ressources publiques'),
-									'A4' => array('en_US' => 'Non applicable', 'fr_FR' => 'A4 - Contrat conclus avec particuliers'),
-									'A5' => array('en_US' => 'Non applicable', 'fr_FR' => 'A4 - Contrat conclus avec autres organismes de formation'),
-							),
-							'labels' => array(
-									'en_US' => 'Non applicable',
-									'fr_FR' => 'Origine produits (BF)',
-							),
-					),
-					'property_2' => array(
-							'definition' => 'inline',
-							'type' => 'select',
-							'modalities' => array(
-									'A1a' => array('en_US' => 'Non applicable', 'fr_FR' => 'A1a - Salariés financement employeur hors professionnalisation'),
-									'A1b' => array('en_US' => 'Non applicable', 'fr_FR' => 'A1b - Salariés financement employeur professionnalisation'),
-									'A2' => array('en_US' => 'Non applicable', 'fr_FR' => 'A2 - Demandeurs d\'emploi financement public'),
-									'A3' => array('en_US' => 'Non applicable', 'fr_FR' => 'A3 - Particuliers à leurs propres frais'),
-									'A4' => array('en_US' => 'Non applicable', 'fr_FR' => 'A4 - Autres stagiaires'),
-							),
-							'labels' => array(
-									'en_US' => 'Non applicable',
-									'fr_FR' => 'A - Type stagiaires',
-							),
-					),
-					'property_3' => array(
-							'definition' => 'inline',
-							'type' => 'select',
-							'modalities' => array(
-									'B1' => array('en_US' => 'Non applicable', 'fr_FR' => 'B1 - Formés par votre organisme pour son propre compte'),
-									'B2' => array('en_US' => 'Non applicable', 'fr_FR' => 'B1 - Formés par votre organisme pour le compte d\'un autre organisme'),
-									'B3' => array('en_US' => 'Non applicable', 'fr_FR' => 'B1 - Confiés par votre organisme à un autre organisme de formation'),
-							),
-							'labels' => array(
-									'en_US' => 'Non applicable',
-									'fr_FR' => 'B - Activité propre',
-							),
-					),
-					'property_4' => array(
-							'definition' => 'inline',
-							'type' => 'select',
-							'modalities' => array(
-									'C1a' => array('en_US' => 'Non applicable', 'fr_FR' => 'C1a - Certification enregistrée au RNCP - Niveau I et II'),
-									'C1b' => array('en_US' => 'Non applicable', 'fr_FR' => 'C1b - Certification enregistrée au RNCP - Niveau III'),
-									'C1c' => array('en_US' => 'Non applicable', 'fr_FR' => 'C1c - Certification enregistrée au RNCP - Niveau IV'),
-									'C1d' => array('en_US' => 'Non applicable', 'fr_FR' => 'C1d - Certification enregistrée au RNCP - Niveau V'),
-									'C2' => array('en_US' => 'Non applicable', 'fr_FR' => 'C2 - Autres formations professionnelles continues'),
-									'C3a' => array('en_US' => 'Non applicable', 'fr_FR' => 'C3 - Prestations d\'orientation et d\'accompagnement - Hors bilan'),
-									'C3b' => array('en_US' => 'Non applicable', 'fr_FR' => 'C3 - Prestations d\'orientation et d\'accompagnement - Bilan'),
-							),
-							'labels' => array(
-									'en_US' => 'Non applicable',
-									'fr_FR' => 'C - Objectif formation',
-							),
-					),
-					'property_5' => array(
-							'definition' => 'inline',
-							'type' => 'input',
-							'labels' => array(
-									'en_US' => 'Non applicable',
-									'fr_FR' => 'Spécialités formation',
-							),
-					),
-					'property_10' => array('type' => 'repository', 'definition' => 'commitment/property_10/learning'),
-					'property_11' => array('type' => 'repository', 'definition' => 'commitment/property_11/learning'),
-					'property_12' => array('type' => 'repository', 'definition' => 'commitment/property_12/learning'),
-					'property_13' => array('type' => 'repository', 'definition' => 'commitment/property_13/learning'),
-					'property_14' => array('type' => 'repository', 'definition' => 'commitment/property_14/learning'),
-					'including_options_amount' => array(
-							'definition' => 'inline',
-							'type' => 'number',
-							'labels' => array(
-									'en_US' => 'Amount',
-									'fr_FR' => 'Montant',
-							),
-					),
-					'default_means_of_payment' => array('definition' => 'commitment/property/default_means_of_payment'),
-					'invoice_date' => array(
-							'definition' => 'inline',
-							'type' => 'date',
-							'labels' => array(
-									'en_US' => 'Invoice date',
-									'fr_FR' => 'Date de facture',
-							),
-					),
-					'update_time' => array('definition' => 'commitment/property/update_time'),
+		'tax' => 'excluding',
+		'currencySymbol' => '€',
+		'properties' => array(
+			'status', 'year', 'place_id', 'account_id', 'account_name', 'invoice_n_fn',
+			'product_caption', 'quantity', 'unit_price', 'amount', 'name', 'caption', 'description',
+			'property_1', 'property_2', 'property_3', 'property_4', 'property_5',
+			'property_10', 'property_11', 'property_12', 'property_13', 'property_14',
+			'including_options_amount',
+			'default_means_of_payment', 'invoice_date', 'update_time',
+		),
+		'todo' => array(
+			'sales_manager' => array(
 			),
-			'todo' => array(
-					'sales_manager' => array(
-//							'status' => array('selector' => 'in', 'value' => array('new')),
-					),
-			),
+		),
 	),
 
 	'commitment/index/learning' => array(
-			'title' => array('en_US' => 'P-PIT Commitments', 'fr_FR' => 'P-PIT Engagements'),
+		'title' => array('en_US' => 'P-PIT Commitments', 'fr_FR' => 'P-PIT Engagements'),
 	),
 	
 	'commitment/search/learning' => array(
-			'title' => array('en_US' => 'Learning', 'fr_FR' => 'Formations'),
-			'todoTitle' => array('en_US' => 'active', 'fr_FR' => 'actifs'),
-			'main' => array(
-					'status' => 'select',
-					'year' => 'contains',
-					'account_name' => 'contains',
-					'property_11' => 'contains',
-					'property_12' => 'contains',
-					'property_1' => 'select',
-					'property_2' => 'select',
-					'property_3' => 'select',
-					'property_4' => 'select',
-					'property_5' => 'contains',
-			),
+		'title' => array('en_US' => 'Learning', 'fr_FR' => 'Formations'),
+		'todoTitle' => array('en_US' => 'active', 'fr_FR' => 'actifs'),
+		'properties' => array(
+			'status' => 'select',
+			'year' => 'contains',
+			'account_name' => 'contains',
+			'property_11' => 'contains',
+			'property_12' => 'contains',
+			'property_1' => 'select',
+			'property_2' => 'select',
+			'property_3' => 'select',
+			'property_4' => 'select',
+			'property_5' => 'contains',
+		),
 	),
 	
 	'commitment/list/learning' => array(
-			'place_id' => 'select',
-			'year' => 'text',
-			'status' => 'select',
-			'account_name' => 'text',
-			'property_11' => 'text',
-			'property_12' => 'text',
-			'caption' => 'text',
-			'quantity' => 'number',
-			'unit_price' => 'number',
-			'including_options_amount' => 'number',
-			'update_time' => 'datetime',
+		'properties' => array(
+			'place_id' => [],
+			'year' => [],
+			'status' => [],
+			'account_name' => [],
+			'property_11' => [],
+			'property_12' => [],
+			'caption' => [],
+			'quantity' => [],
+			'unit_price' => [],
+			'including_options_amount' => [],
+			'update_time' => [],
+		),
 	),
 	
 	'commitment/update/learning' => array(
-			'year' => array('mandatory' => true),
-			'invoice_date' => array('mandatory' => true),
-			'account_id' => array('mandatory' => true),
-			'property_10' => array('mandatory' => false),
-			'property_11' => array('mandatory' => false),
-			'property_12' => array('mandatory' => false),
-			'property_13' => array('mandatory' => false),
-			'caption' => array('mandatory' => true),
-			'description' => array('mandatory' => false),
-			'property_1' => array('mandatory' => false),
-			'property_2' => array('mandatory' => false),
-			'property_3' => array('mandatory' => false),
-			'property_4' => array('mandatory' => false),
-			'property_5' => array('mandatory' => false),
-			'property_11' => array('mandatory' => false),
+		'year' => array('mandatory' => true),
+		'invoice_date' => array('mandatory' => true),
+		'account_id' => array('mandatory' => true),
+		'property_10' => array('mandatory' => false),
+		'property_11' => array('mandatory' => false),
+		'property_12' => array('mandatory' => false),
+		'property_13' => array('mandatory' => false),
+		'caption' => array('mandatory' => true),
+		'description' => array('mandatory' => false),
+		'property_1' => array('mandatory' => false),
+		'property_2' => array('mandatory' => false),
+		'property_3' => array('mandatory' => false),
+		'property_4' => array('mandatory' => false),
+		'property_5' => array('mandatory' => false),
+		'property_11' => array('mandatory' => false),
 	),
 
+	'commitment/group/learning' => array(
+		'status' => [],
+		'caption' => [],
+		'description' => [],
+	),
+	
 	'commitment/export/learning' => array(
 		'year' => 'A',
 		'invoice_identifier' => 'B',
@@ -3542,8 +3452,8 @@ table.note-report td {
 		),
 	),
 	
-	'commitmentTerm/generic/property/commitment_caption' => array('definition' => 'commitment/property/caption'),
-	'commitmentTerm/generic/property/account_status' => array('definition' => 'commitment/property/account_status'),
+	'commitmentTerm/generic/property/commitment_caption' => array('definition' => 'commitment/generic/property/caption'),
+	'commitmentTerm/generic/property/account_status' => array('definition' => 'commitment/generic/property/account_status'),
 	'commitmentTerm/generic/property/account_date_1' => array('definition' => 'core_account/generic/property/date_1'),
 	'commitmentTerm/generic/property/account_date_2' => array('definition' => 'core_account/generic/property/date_2'),
 	'commitmentTerm/generic/property/account_date_3' => array('definition' => 'core_account/generic/property/date_3'),
@@ -3875,83 +3785,7 @@ support@p-pit.fr
 ',
 				),
 		),
-		
-	'commitment/consumeCredit' => array(
-			'messages' => array(
-					'availabilityAlertTitle' => array(
-							'en_US' => 'P-PIT Commitments credits available',
-							'fr_FR' => 'Crédits P-PIT Engagements disponibles',
-					),
-					'availabilityAlertText' => array(
-							'en_US' => 'Hello %s,
-							
-Your available P-PIT Commitments credits reserve for %s is almost out of stock (*). 
-In order to avoid the risk of suffering use restrictions, you can right now renew your subscription, for the desired period of time.
-Our tip : Have peace of mind by renewing for a 1-year period of time.
-					
-(*) Your current P-PIT Commitments reserve rises %s units. Your next monthly consumption is estimated up to now to %s units, estimation based on the current active subscriptions.
 
-We hope that our services are giving you full satisfaction. Plesase send your requests or questions to the P-PIT support: support@p-pit.fr or 06 29 87 90 02.
-					
-Best regards,
-
-The P-PIT staff
-',
-							'fr_FR' => 'Bonjour %s,
-							
-Votre réserve de crédits P-PIT Engagements disponibles pour %s est bientôt épuisée (*). 
-Pour ne pas risquer de subir des restrictions à l\'utilisation, vous pouvez dès à présent renouveller en ligne votre souscription pour la durée que vous souhaitez.
-Notre conseil : Ayez l\'esprit tranquille en renouvelant pour un an.
-
-(*) Votre réserve actuelle P-PIT Engagements est de %s unités. Votre prochain décompte mensuel est estimé à ce jour à %s unités, estimation basée sur le nombre de dossiers actifs à ce jour.
-
-Nous espérons que nos services vous donnent entière satisfaction. Veuillez adresser toute requête ou question au support P-PIT : support@p-pit.fr ou 06 29 87 90 02.
-					
-Bien cordialement,
-
-L\'équipe P-PIT
-',
-					),
-					'suspendedServiceTitle' => array(
-							'en_US' => 'P-Pit Commitments records suspended',
-							'fr_FR' => 'Dossiers P-Pit Engagements suspendus',
-					),
-					'suspendedServiceText' => array(
-							'en_US' => 'Hello %s,
-							
-Your available P-Pit Commitments credits reserve for %s is out of stock (*). 
-Please note that the access has been automatically suspended for the records listed below until a new subscription of credits occurs:
-%s
-							
-Our tip : Have peace of mind by renewing for a record average life-time (for example 6 monthly credits per the yearly average number of records).
-					
-(*) Your current P-Pit Commitments solde rises %s units.
-
-We hope that our services are giving you satisfaction. Please send your requests or questions to the P-Pit support: support@p-pit.fr or 06 29 87 90 02.
-					
-Best regards,
-
-The P-Pit staff
-',
-							'fr_FR' => 'Bonjour %s,
-							
-Votre réserve de crédits P-Pit Engagements pour %s est épuisée (*). 
-Veuillez noter que l\'accès a été automatiquement suspendu pour les dossiers listées ci-après jusqu\'à la souscription de nouveaux crédits :
-%s
-							
-Notre conseil : Ayez l\'esprit tranquille en souscrivant le nombre de crédits pour la durée de vie moyenne de vos dossiers (par exemple 6 crédits mensuels par le nombre moyen de dossiers par an).
-
-(*) Votre solde actuel P-Pit Engagements est de %s unités.
-
-Nous espérons que nos services vous donnent entière satisfaction. Veuillez adresser toute requête ou question au support P-Pit : support@p-pit.fr ou 06 29 87 90 02.
-					
-Bien cordialement,
-
-L\'équipe P-Pit
-',
-					),
-			),
-	),
 	'commitment/index' => array(
 			'title' => array('en_US' => 'P-PIT Commitments', 'fr_FR' => 'P-PIT Engagements'),
 	),

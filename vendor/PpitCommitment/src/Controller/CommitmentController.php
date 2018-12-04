@@ -7,7 +7,6 @@ use PpitContact\Model\ContactMessage;
 use PpitCommitment\Model\Commitment;
 use PpitCommitment\Model\CommitmentMessage;
 use PpitCommitment\Model\CommitmentYear;
-use PpitCommitment\Model\Subscription;
 use PpitCommitment\Model\Term;
 use PpitCommitment\ViewHelper\SsmlCommitmentViewHelper;
 use PpitCommitment\ViewHelper\PdfInvoiceViewHelper;
@@ -41,20 +40,9 @@ require_once('vendor/TCPDF-master/tcpdf.php');
 
 class CommitmentController extends AbstractActionController
 {	
-	public function getConfigProperties($type) {
-		$context = Context::getCurrent();
-		$properties = array();
-		foreach($context->getConfig('commitment'.(($type) ? '/'.$type : ''))['properties'] as $propertyId => $property) {
-			if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
-			$properties[$propertyId] = $property;
-		}
-		return $properties;
-	}
-
 	public function indexAction()
     {
     	$context = Context::getCurrent();
-//		if (!$context->isAuthenticated()) $this->redirect()->toRoute('home');
     	$place = Place::get($context->getPlaceId());
 
     	$type = $this->params()->fromRoute('type', null);
@@ -62,7 +50,7 @@ class CommitmentController extends AbstractActionController
     	$applicationId = 'p-pit-engagements';
 		$applicationName = 'P-PIT Engagements';
 		$instance = Instance::get($context->getInstanceId());
-		$configProperties = $this->getConfigProperties($type);
+		$description = Commitment::getDescription($type);
 		$termDescription = Term::getDescription($type);
 		$types = Context::getCurrent()->getConfig('commitment/types')['modalities'];
 
@@ -70,7 +58,7 @@ class CommitmentController extends AbstractActionController
 
     	return new ViewModel(array(
     			'context' => $context,
-				'configProperties' => $configProperties,
+				'configProperties' => $description['properties'],
 				'termProperties' => $termDescription['properties'],
 	    		'config' => $context->getConfig(),
     			'place' => $place,
@@ -84,18 +72,16 @@ class CommitmentController extends AbstractActionController
     			'params' => $params,
 	    		'products' => Product::getList(null, array()),
 	    		'options' => ProductOption::getList(null, array()),
-				'indexPage' => $context->getConfig('commitment/index/'.$type),
-    			'searchPage' => $context->getConfig('commitment/search/'.$type),
-				'listPage' => $context->getConfig('commitment/list/'.$type),
-				'detailPage' => $context->getConfig('commitment/detail/'.$type),
-				'updatePage' => $context->getConfig('commitment/update/'.$type),
-    			'groupPage' => $context->getConfig('commitment/group/'.$type),
+    			'searchPage' => $description['search'],
+				'listPage' => $description['list'],
+				'updatePage' => $description['update'],
+    			'groupPage' => $description['group'],
     			'termSearchPage' => $termDescription['search'],
 				'termUpdatePage' => $termDescription['update'],
 				'termGroupPage' => $termDescription['groupUpdate'],
     	));
     }
-	
+
 	public function getFilters($params, $type)
 	{
 		// Retrieve the context
@@ -103,7 +89,7 @@ class CommitmentController extends AbstractActionController
 		
 		// Retrieve the query parameters
 		$filters = array();
-		foreach ($context->getConfig('commitment/search'.(($type) ? '/'.$type : ''))['main'] as $propertyId => $unused) {
+		foreach ($context->getConfig('commitment/search/'.$type)['properties'] as $propertyId => $unused) {
 		
 			$property = ($params()->fromQuery($propertyId, null));
 			if ($property !== null) $filters[$propertyId] = $property;
@@ -125,18 +111,17 @@ class CommitmentController extends AbstractActionController
 
 		// Retrieve the type
 		$type = $this->params()->fromRoute('type', 0);
-		$configProperties = $this->getConfigProperties($type);
+		$description = Commitment::getDescription($type);
 		
    		// Return the link list
    		$view = new ViewModel(array(
    				'context' => $context,
-				'configProperties' => $configProperties,
+				'configProperties' => $description['properties'],
    				'config' => $context->getconfig(),
     			'places' => Place::getList(array()),
-   				'subscriptions' => Subscription::getList(array(), 'product_identifier', 'ASC'),
 //   				'statuses' => $context->getConfig('commitment'.(($type) ? '/'.$type : ''))['statuses'],
    				'type' => $type,
-    			'searchPage' => $context->getConfig('commitment/search/'.$type),
+    			'searchPage' => $description['search'],
    		));
 		$view->setTerminal(true);
        	return $view;
@@ -149,7 +134,7 @@ class CommitmentController extends AbstractActionController
 		$params = $this->getFilters($this->params(), $type);
 		$major = ($this->params()->fromQuery('major', 'including_options_amount'));
 		$dir = ($this->params()->fromQuery('dir', 'DESC'));
-		$configProperties = $this->getConfigProperties($type);
+		$description = Commitment::getDescription($type);
 		
 		if (count($params) == 0) $mode = 'todo'; else $mode = 'search';
 
@@ -158,7 +143,7 @@ class CommitmentController extends AbstractActionController
 		$sum = 0;
 		$distribution = array();
 		foreach ($commitments as $commitment) {
-			$majorSpecification = $configProperties[$major];
+			$majorSpecification = $description['properties'][$major];
 			if ($majorSpecification['type'] == 'number') $sum += $commitment->properties[$major];
 			elseif ($majorSpecification['type'] == 'select') {
 				if (array_key_exists($commitment->properties[$major], $distribution)) $distribution[$commitment->properties[$major]]++;
@@ -166,11 +151,11 @@ class CommitmentController extends AbstractActionController
 			}
 		}
 		$average = (count($commitments)) ? round($sum / count($commitments), 1) : null;
-		
+
    		// Return the link list
    		$view = new ViewModel(array(
    				'context' => $context,
-				'configProperties' => $configProperties,
+				'configProperties' => $description['properties'],
    				'config' => $context->getconfig(),
     			'places' => Place::getList(array()),
    				'type' => $type,
@@ -185,7 +170,7 @@ class CommitmentController extends AbstractActionController
     			'sum' => $sum,
     			'average' => $average,
 				'distribution' => $distribution,
-				'listPage' => $context->getConfig('commitment/list/'.$type),
+				'listPage' => $description['list'],
    		));
 		$view->setTerminal(true);
        	return $view;
@@ -203,13 +188,15 @@ class CommitmentController extends AbstractActionController
    	
    	public function exportAction()
    	{
+   		$type = $this->params()->fromRoute('type');
    		$view = $this->getList();
-
+   		$description = Commitment::getDescription($type);
+   		 
    		include 'public/PHPExcel_1/Classes/PHPExcel.php';
    		include 'public/PHPExcel_1/Classes/PHPExcel/Writer/Excel2007.php';
 
 		$workbook = new \PHPExcel;
-		(new SsmlCommitmentViewHelper)->formatXls($workbook, $view);		
+		(new SsmlCommitmentViewHelper)->formatXls($description, $workbook, $view);		
 		$writer = new \PHPExcel_Writer_Excel2007($workbook);
 
 		header('Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -397,8 +384,8 @@ class CommitmentController extends AbstractActionController
     
     	// Retrieve the type
     	$type = $this->params()->fromRoute('type', null);
-    	$configProperties = $this->getConfigProperties($type);
-    	$updatePage = $context->getConfig('commitment/update/'.$type);
+		$description = Commitment::getDescription($type);
+    	$updatePage = $description['update'];
 
     	// Retrieve the account
     	$account_id = $this->params()->fromQuery('account_id', null);
@@ -411,7 +398,7 @@ class CommitmentController extends AbstractActionController
     	else $commitment = Commitment::instanciate($type);
 
     	$accountStatuses = array();
-    	foreach ($context->getConfig('commitment/property/account_status')['modalities'] as $modalityId => $unused) $accountStatuses[] = $modalityId;
+    	foreach ($context->getConfig('commitment/generic/property/account_status')['modalities'] as $modalityId => $unused) $accountStatuses[] = $modalityId;
 //    	$accounts = Account::getList(null, ['status' => implode(',', $accountStatuses)], '+name', null);
     	$accounts = Account::getList(null, ['status' => 'active,converted,committed,undefined'], '+name', null);
     	 
@@ -435,7 +422,7 @@ class CommitmentController extends AbstractActionController
     			if (!$commitment->id) $data['account_id'] = $account_id;
 				if (!$id) $data['type'] = $type;
     			foreach ($updatePage as $propertyId => $unused) {
-					$property = $configProperties[$propertyId];
+					$property = $description['properties'][$propertyId];
 					if ($property['type'] == 'file' && array_key_exists($propertyId, $request->getFiles()->toArray())) $files = $request->getFiles()->toArray()[$propertyId];
 					else $data[$propertyId] = $request->getPost('commitment-'.$propertyId);
     			}
@@ -447,14 +434,6 @@ class CommitmentController extends AbstractActionController
     			$connection->beginTransaction();
     			try {
     				if (!$commitment->id) {
-    					$commitment->credit_status = 'active';
-    					$commitment->next_credit_consumption_date = date('Y-m-d', strtotime(date('Y-m-d').' + 31 days'));
-    					if ($commitment->subscription_id) {
-    						$subscription = $commitment->subscriptions[$commitment->subscription_id];
-    						$commitment->description = $subscription->description;
-    						$commitment->product_identifier = $subscription->product_identifier;
-    						$commitment->unit_price = $subscription->unit_price;
-    					}
     					$rc = $commitment->add();
     				}
 	    			elseif ($action == 'delete') $rc = $commitment->delete($request->getPost(null /*'update_time'*/));
@@ -481,13 +460,13 @@ class CommitmentController extends AbstractActionController
 
     	$view = new ViewModel(array(
     			'context' => $context,
-				'configProperties' => $configProperties,
+				'configProperties' => $description['properties'],
     			'config' => $context->getconfig(),
     			'type' => $commitment->type,
     			'id' => $id,
     			'action' => $action,
     			'accounts' => $accounts,
-    			'properties' => $context->getConfig('commitment'.(($type) ? '/'.$type : ''))['properties'],
+//    			'properties' => $context->getConfig('commitment'.(($type) ? '/'.$type : ''))['properties'],
     			'commitment' => $commitment,
     			'csrfForm' => $csrfForm,
     			'error' => $error,
@@ -578,8 +557,8 @@ class CommitmentController extends AbstractActionController
     
     	// Retrieve the type
     	$type = $this->params()->fromRoute('type');
-    	$configProperties = $this->getConfigProperties($type);
-    
+		$description = Commitment::getDescription($type);
+    	
     	$request = $this->getRequest();
     	if (!$request->isPost()) return $this->redirect()->toRoute('home');
     	$nbCommitment = $request->getPost('nb-commitment');
@@ -650,12 +629,12 @@ class CommitmentController extends AbstractActionController
     	}
     	$view = new ViewModel(array(
     			'context' => $context,
-    			'configProperties' => $configProperties,
+    			'configProperties' => $description['properties'],
     			'type' => $type,
     			'commitments' => $commitments,
     			'input' => $input,
     			'places' => Place::getList(array()),
-    			'groupPage' => $context->getConfig('commitment/group/'.$type),
+    			'groupPage' => $description['group'],
     			'csrfForm' => $csrfForm,
     			'message' => $message,
     			'error' => $error,
@@ -894,7 +873,7 @@ class CommitmentController extends AbstractActionController
 
 				$type = $commitment->type;
 				$account = $commitment->account;
-				$commitment->computeHeader();
+//				$commitment->computeHeader();
 				$commitment->status = 'invoiced';
 				$year = CommitmentYear::getcurrent($account->place_id);
 				if (!$year) $year = CommitmentYear::instanciate(date('Y'));
@@ -980,7 +959,7 @@ class CommitmentController extends AbstractActionController
     	}
     			 
     			$type = $commitment->type;
-    			$commitment->computeHeader();
+//    			$commitment->computeHeader();
     			$commitment->status = 'invoiced';
     	
     			// Atomically save
@@ -1100,7 +1079,6 @@ class CommitmentController extends AbstractActionController
     			 
     			$type = $commitment->type;
     			$commitment->status = 'settled';
-    			if (!$context->getConfig('credit')['unlimitedCredits']) $commitment->credit_status = 'closed';
     			 
     			// Atomically save
     			$connection = Commitment::getTable()->getAdapter()->getDriver()->getConnection();
@@ -1269,7 +1247,7 @@ class CommitmentController extends AbstractActionController
     	
     	// Retrieve the parameters
     	$type = $this->params()->fromRoute('type');
-    	$description = $this->getConfigProperties($type);
+		$description = Commitment::getDescription($type);
     	$termDescription = Term::getDescription($type);
 
     	$id = (int) $this->params()->fromRoute('id', 0);
@@ -1391,56 +1369,6 @@ class CommitmentController extends AbstractActionController
     	$view->setTerminal(true);
     	return $view;
     }*/
-    
-    public function suspendAction()
-    {
-    	// Retrieve the context
-    	$context = Context::getCurrent();
-    
-    	// Retrieve the commitment
-    	$id = (int) $this->params()->fromRoute('id', 0);
-    	if (!$id) return $this->redirect()->toRoute('home');
-    	$commitment = Commitment::get($id);
-    
-    	// Instanciate the csrf form
-    	$csrfForm = new CsrfForm();
-    	$csrfForm->addCsrfElement('csrf');
-    	$error = null;
-    	$message = null;
-    	$request = $this->getRequest();
-    	if ($request->isPost()) {
-    		$csrfForm->setInputFilter((new Csrf('csrf'))->getInputFilter());
-    		$csrfForm->setData($request->getPost());
-    		 
-    		if ($csrfForm->isValid()) { // CSRF check
-    
-    			if ($commitment->credit_status == 'active') $commitment->credit_status = 'suspended';
-    			elseif ($commitment->credit_status == 'suspended') $commitment->credit_status = 'active';
-
-    			// Atomically save
-    			$connection = Commitment::getTable()->getAdapter()->getDriver()->getConnection();
-    			$connection->beginTransaction();
-    			try {
-    				$rc = $commitment->update($request->getPost('update_time'));
-    
-    				if ($rc != 'OK') {
-    					$connection->rollback();
-    					$error = $rc;
-    				}
-    				else {
-    					$connection->commit();
-    					$message = 'OK';
-    				}
-    			}
-    			catch (\Exception $e) {
-    				$connection->rollback();
-    				throw $e;
-    			}
-    			$action = null;
-    		}
-    	}
-    	return $this->response;
-    }
 
     public function serviceAddAction()
     {
@@ -1484,8 +1412,6 @@ class CommitmentController extends AbstractActionController
     			return $this->getResponse();
     		}
     		
-    		$data['credit_status'] = 'active';
-    		$data['next_credit_consumption_date'] = date('Y-m-d', strtotime(date('Y-m-d').' + 31 days'));
     		$data['status'] = 'new';
     		$data['account_id'] = $account->id;
     		foreach ($context->getConfig('commitment/update/service') as $propertyId => $unused) {

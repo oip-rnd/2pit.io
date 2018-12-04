@@ -3,8 +3,7 @@ function getParams() {
 	// Create a new FormData object.
 	var params = '?', todo = true;
 
-<?php foreach ($context->getConfig('commitment/search'.(($type) ? '/'.$type : ''))['main'] as $propertyId => $unused) : ?>
-	<?php $property = $configProperties[$propertyId] ?>
+<?php foreach ($searchPage['properties'] as $propertyId => $property) : ?>
 
 	<?php if (in_array($property['type'], array('date', 'time', 'datetime', 'number'))) : ?>
 	
@@ -56,9 +55,10 @@ function exportCommitmentList() {
 
 function eraseCommitmentSearch() {
 
-<?php foreach ($context->getConfig('commitment/search'.(($type) ? '/'.$type : ''))['main'] as $propertyId => $rendering) : ?>
+<?php foreach ($searchPage['properties'] as $propertyId => $property) : ?>
 
-	<?php if ($rendering == 'range') : ?>
+	<?php if (in_array($property['type'], array('date', 'time', 'datetime', 'number'))) : ?>
+
 	$('#search_min_<?php echo $propertyId ?>').val('');
 	$('#search_max_<?php echo $propertyId ?>').val('');
 
@@ -114,15 +114,9 @@ function connectCommitmentSearchInputs() {
 		getCommitmentList(getParams(), 'update_time', 'DESC');
 	});
 
-<?php foreach ($searchPage['main'] as $propertyId => $rendering) : ?>
-	<?php $property = $configProperties[$propertyId] ?>
+<?php foreach ($searchPage['properties'] as $propertyId => $property) : ?>
 
-	<?php if ($propertyId == 'type') : ?>
-	$('#search_<?php echo $propertyId ?>').change(function () { 
-		document.location.href = '<?php echo $this->url('commitment/index') ?>/' + $('#search_type').val(); 
-	});
-
-	<?php elseif (in_array($property['type'], array('date', 'time', 'datetime', 'number'))) : ?>
+	<?php if (in_array($property['type'], array('date', 'time', 'datetime', 'number'))) : ?>
 
 	$('#search_check_min_<?php echo $propertyId ?>').change(function () {
 		$('#search-button').removeClass('btn-default').addClass('btn-success');
@@ -368,10 +362,10 @@ function getCommitmentSettleForm(id) {
 <?php 
 $properties = array();
 
-foreach ($updatePage as $propertyId => $updateOptions) {
-	$property = $configProperties[$propertyId];
+foreach ($updatePage as $propertyId => $property) {
+	$updateOptions = $property['options'];
 	if ($updateOptions && (!array_key_exists('readonly', $updateOptions) || !$updateOptions['readonly']) && $property['type'] != 'title') {
-		if ($property['type'] == 'number') $properties['commitment-'.$propertyId] = array('type' => $property['type'], 'mandatory' => $updateOptions['mandatory'], 'minValue' => $property['minValue'], 'maxValue' => $property['maxValue']);
+		if ($property['type'] == 'number') $properties['commitment-'.$propertyId] = array('type' => $property['type'], 'mandatory' => (array_key_exists('mandatory', $updateOptions)) ? $updateOptions['mandatory'] : false, 'minValue' => $property['minValue'], 'maxValue' => $property['maxValue']);
 		else $properties['commitment-'.$propertyId] = array('type' => $property['type'], 'mandatory' => $updateOptions['mandatory'], 'maxSize' => ($property['type'] == 'textarea') ? 2047 : 255);
 	}
 }
@@ -1129,31 +1123,6 @@ function connectCommitmentUpdateTermForm(id)
 	}
 }
 
-function connectCommitmentCreditStatusForm(id)
-{
-	// Create a new FormData object.
-	var formData = new FormData();
-
-	var xhttp = new XMLHttpRequest();
-	var route, target;
-	route = '<?php echo $this->url('commitment/suspend') ?>/' + id;
-	xhttp.open('POST', route, true);
-	// Set up a handler for when the request finishes.
-	xhttp.onreadystatechange = function() {
-		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
-		if (xhttp.readyState == 4) {
-	<?php if (!$config['isTraceActive']) : ?>
-			if (xhttp.status == 200) {
-	<?php endif;?>
-			getCommitmentDetail(id);
-	<?php if (!$config['isTraceActive']) : ?>
-			}
-	<?php endif;?>
-		}
-	}
-	xhttp.send(formData);
-}
-
 // Load the detail panel
 function getCommitmentDetail(id) {
 
@@ -1187,10 +1156,6 @@ function getCommitmentDetail(id) {
 			getCommitmentUpdate(id, '');
 			
 			$('.detail-remove-anchor').click(function () { getCommitmentDetail(id); });
-
-			$('#credit_status-action').click(function () {
-				connectCommitmentCreditStatusForm(id);
-			});
 
 			$('#row-anchor').click(function () {
 				$('.row-anchor').removeClass('btn-warning').addClass('btn-default');
@@ -1343,8 +1308,8 @@ function getSearch()
 <?php 
 $properties = array();
 
-foreach ($groupPage as $propertyId => $options) {
-	$property = $configProperties[$propertyId];
+foreach ($groupPage as $propertyId => $property) {
+	$options = $property['options'];
 	if ((!$options || !array_key_exists('readonly', $options) || !$options['readonly']) && $property['type'] != 'title') {
 		if ($property['type'] == 'number') $properties[$propertyId] = array('type' => $property['type'], 'mandatory' => $updateOptions['mandatory'], 'minValue' => $property['minValue'], 'maxValue' => $property['maxValue']);
 		else $properties[$propertyId] = array('type' => $property['type'], 'mandatory' => false, 'maxSize' => ($property['type'] == 'textarea' || $property['type'] == 'log') ? 2047 : 255);

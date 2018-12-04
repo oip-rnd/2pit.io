@@ -164,13 +164,13 @@ XML;
 		$accountingCustomerParty = $global->addChild('xmlns:cac:AccountingCustomerParty');
 		$party = $accountingCustomerParty->addChild('xmlns:cac:Party');
 		$partyIdentification = $party->addChild('xmlns:cac:PartyIdentification');
-		$id = $partyIdentification->addChild('xmlns:cbc:ID', $commitment->customer_identifier);
+//		$id = $partyIdentification->addChild('xmlns:cbc:ID', $commitment->customer_identifier);
 		$id->addAttribute('schemeName', 'SIREN');
 	
 		$partyName = $party->addChild('xmlns:cac:PartyName');
-		$partyName->addChild('xmlns:cbc:Name', $commitment->customer_invoice_name);
+//		$partyName->addChild('xmlns:cbc:Name', $commitment->customer_invoice_name);
 	
-		$postalAddress = $party->addChild('xmlns:cac:PostalAddress');
+/*		$postalAddress = $party->addChild('xmlns:cac:PostalAddress');
 		$postalAddress->addChild('xmlns:cbc:CityName', $commitment->customer_adr_city);
 		$postalAddress->addChild('xmlns:cbc:PostalZone', $commitment->customer_adr_zip);
 		$addressLine = $postalAddress->addChild('xmlns:cac:AddressLine');
@@ -184,7 +184,7 @@ XML;
 			$addressLine->addChild('xmlns:cbc:Line', $commitment->customer_adr_post_office_box);
 		}
 		$country = $postalAddress->addChild('xmlns:cac:Country');
-		$country->addChild('xmlns:cbc:IdentificationCode', $commitment->customer_adr_country);
+		$country->addChild('xmlns:cbc:IdentificationCode', $commitment->customer_adr_country);*/
 /*	
 		$partyTaxScheme = $party->addChild('xmlns:cac:PartyTaxScheme');
 		$companyId = $partyTaxScheme->addChild('xmlns:cbc:CompanyID', $customer['TaxSchemeCompanyID']);
