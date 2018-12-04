@@ -77,16 +77,6 @@ class Module
                 	$resultSetPrototype->setArrayObjectPrototype(new Model\Notification());
                 	return new TableGateway('commitment_notification', $dbAdapter, null, $resultSetPrototype);
                 },
-                Model\SubscriptionTable::class =>  function($sm) {
-                    $tableGateway = $sm->get(Model\SubscriptionTableGateway::class);
-                    return new GenericTable($tableGateway);
-                },
-                Model\SubscriptionTableGateway::class => function ($sm) {
-                    $dbAdapter = $sm->get(AdapterInterface::class);
-                	$resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new Model\Subscription());
-                    return new TableGateway('commitment_subscription', $dbAdapter, null, $resultSetPrototype);
-                },
                 Model\TermTable::class =>  function($sm) {
                     $tableGateway = $sm->get(Model\TermTableGateway::class);
                     return new GenericTable($tableGateway);
