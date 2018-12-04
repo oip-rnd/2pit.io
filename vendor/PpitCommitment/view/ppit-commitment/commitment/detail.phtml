@@ -9,50 +9,6 @@
 	</div>
 	<div class="panel-body">
 
-<?php if ($context->isAllowed('commitment/suspend')) : ?>
-<!-- 
-	<?php if ($commitment->credit_status == 'blocked') : ?>
-		<div class="form-group">
-			<div class="alert alert-danger" style="text-align: center">
-				<?php echo $this->translate('This record is only consultable due to a lack of credit.', 'ppit-core', $context->getLocale()) ?>
-			</div>
-		</div>
-
-	<?php elseif ($commitment->credit_status == 'suspended') : ?>
-		<div class="form-group">
-			<div class="alert alert-warning" style="text-align: center">
-				<?php echo $this->translate('This record is suspended', 'ppit-core', $context->getLocale()) ?>
-			</div>
-		</div>
-		<div style="text-align: center">
-			<button type="button" class="btn btn-warning action-btn btn-xs" id="credit_status-action">
-				<?php echo $this->translate('Activate', 'ppit-core', $context->getLocale())?>
-			</button>
-		</div>
-		<div>&nbsp;</div>
-
-	<?php elseif ($commitment->credit_status == 'closed') : ?>
-		<div class="form-group">
-			<div class="alert alert-danger" style="text-align: center">
-				<?php echo $this->translate('This record is closed', 'ppit-core', $context->getLocale()) ?>
-			</div>
-		</div>
-
-	<?php else : ?>
-		<div class="form-group">
-			<div class="alert alert-success" style="text-align: center">
-				<?php echo $this->translate('This record is active', 'ppit-core', $context->getLocale()) ?>
-			</div>
-		</div>
-		<div style="text-align: center">
-			<button type="button" class="btn btn-warning action-btn btn-xs" id="credit_status-action">
-				<?php echo $this->translate('Suspend', 'ppit-core', $context->getLocale())?>
-			</button>
-		</div>
-		<div>&nbsp;</div>
-	<?php endif;?>
-<?php endif;?>
-
 <!-- Invoiced commitment -->
 <?php if (in_array($commitment->status, ['invoiced', 'registered'])) : ?>
 		<div class="form-group">
@@ -88,15 +44,6 @@
 			</div>
 		</div>
 
-<?php if ($commitment->cgv) : ?>
-<!-- Display the CGV -->
-		&nbsp;&nbsp;<?php echo $this->translate('Terms and Conditions', 'ppit-commitment', $context->getLocale()) ?> (<a id="cgv-label" href="#cgv-panel"><?php echo $this->translate('Show', 'ppit-core', $context->getLocale()) ?></a>)
-		<div id="cgv-panel" class="panel panel-default">
-			<div class="panel-body">
-				<?php echo $commitment->cgv ?>
-			</div>
-		</div>
-<?php endif;?>
 		<div>&nbsp;</div>
 
 		<div id="commitment-update-panel"></div>
@@ -140,7 +87,7 @@
 
 			<tr class="row">
 				<td>
-					<button type="button" class="btn btn-default action-btn btn-xs row-anchor" title="<?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?>" id="row-anchor" <?php if (in_array($commitment->credit_status, array('blocked', 'suspended', 'closed')) || in_array($commitment->status, array('invoiced', 'settled')) && !$context->hasRole('admin')) echo 'disabled="disabled"' ?>>
+					<button type="button" class="btn btn-default action-btn btn-xs row-anchor" title="<?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?>" id="row-anchor" <?php if (in_array($commitment->status, array('invoiced', 'settled')) && !$context->hasRole('admin')) echo 'disabled="disabled"' ?>>
 						<span class="glyphicon glyphicon-edit" id="<?php echo $commitment->id ?>-glyphicon"></span>
 					</button>
 				</td>
@@ -191,12 +138,12 @@
 	<?php $i=0; foreach ($commitment->options as $option) : ?>
 			<tr class="row">
 				<td>
-					<button type="button" class="btn btn-default action-btn btn-xs row-update-anchor" title="<?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?>" id="row-update-anchor_<?php echo $i ?>" <?php if (in_array($commitment->credit_status, array('blocked', 'suspended', 'closed')) || in_array($commitment->status, array('invoiced', 'settled')) && !$context->hasRole('admin')) echo 'disabled="disabled"' ?>>
+					<button type="button" class="btn btn-default action-btn btn-xs row-update-anchor" title="<?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?>" id="row-update-anchor_<?php echo $i ?>" <?php if (in_array($commitment->status, array('invoiced', 'settled')) && !$context->hasRole('admin')) echo 'disabled="disabled"' ?>>
 						<span class="glyphicon glyphicon-edit"></span>
 					</button>
 				</td>
 				<td>
-					<button type="button" class="btn btn-default action-btn btn-xs row-delete-anchor" title="<?php echo $this->translate('Delete', 'ppit-core', $context->getLocale()) ?>" id="row-delete-anchor_<?php echo $i ?>" <?php if (in_array($commitment->credit_status, array('blocked', 'suspended', 'closed')) || in_array($commitment->status, array('invoiced', 'settled')) && !$context->hasRole('admin')) echo 'disabled="disabled"' ?>>
+					<button type="button" class="btn btn-default action-btn btn-xs row-delete-anchor" title="<?php echo $this->translate('Delete', 'ppit-core', $context->getLocale()) ?>" id="row-delete-anchor_<?php echo $i ?>" <?php if (in_array($commitment->status, array('invoiced', 'settled')) && !$context->hasRole('admin')) echo 'disabled="disabled"' ?>>
 						<span class="glyphicon glyphicon-trash"></span>
 					</button>
 				</td>
@@ -237,7 +184,7 @@
 
 			<tr class="row">
 				<td colspan="7">
-					<button type="button" class="btn btn-default action-btn btn-xs row-anchor" title="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale())?>" id="row-add-anchor" <?php if (in_array($commitment->credit_status, array('blocked', 'suspended', 'closed')) || in_array($commitment->status, array('invoiced', 'settled')) && !$context->hasRole('admin')) echo 'disabled="disabled"' ?>>
+					<button type="button" class="btn btn-default action-btn btn-xs row-anchor" title="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale())?>" id="row-add-anchor" <?php if (in_array($commitment->status, array('invoiced', 'settled')) && !$context->hasRole('admin')) echo 'disabled="disabled"' ?>>
 						<span class="glyphicon glyphicon-plus"></span>
 					</button>
 				</td>
@@ -315,7 +262,7 @@
 	<?php if ($term->status == 'settled' || $term->status == 'collected') $totalSettled += $term->amount ?>
 			<tr class="term" style="font-size: 85%">
 				<td>
-					<button type="button" class="btn btn-default action-btn btn-xs term-update-anchor" title="<?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?>" id="term-update-anchor_<?php echo $i ?>" <?php if (in_array($commitment->credit_status, array('blocked', 'suspended', 'closed')) || in_array($commitment->status, array('invoiced', 'settled')) && !$context->hasRole('admin')) echo 'disabled="disabled"' ?>>
+					<button type="button" class="btn btn-default action-btn btn-xs term-update-anchor" title="<?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?>" id="term-update-anchor_<?php echo $i ?>" <?php if (in_array($commitment->status, array('invoiced', 'settled')) && !$context->hasRole('admin')) echo 'disabled="disabled"' ?>>
 						<span class="glyphicon glyphicon-zoom-in"></span>
 					</button>
 				</td>
@@ -351,14 +298,14 @@
 
 			<tr class="term">
 				<td colspan="8">
-					<button type="button" class="btn btn-default action-btn btn-xs term-update-anchor" title="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale())?>" id="term-update-anchor_<?php echo $i ?>" <?php if (in_array($commitment->credit_status, array('blocked', 'suspended', 'closed')) || in_array($commitment->status, array('invoiced', 'settled')) && !$context->hasRole('admin')) echo 'disabled="disabled"' ?>>
+					<button type="button" class="btn btn-default action-btn btn-xs term-update-anchor" title="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale())?>" id="term-update-anchor_<?php echo $i ?>" <?php if (in_array($commitment->status, array('invoiced', 'settled')) && !$context->hasRole('admin')) echo 'disabled="disabled"' ?>>
 						<span class="glyphicon glyphicon-plus" id="add-glyphicon"></span>
 					</button>
-					<button type="button" class="btn btn-default action-btn btn-xs term-generate-anchor" title="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale())?>" id="term-generate-anchor" <?php if (in_array($commitment->credit_status, array('blocked', 'suspended', 'closed')) || in_array($commitment->status, array('invoiced', 'settled')) && !$context->hasRole('admin')) echo 'disabled="disabled"' ?>>
+					<button type="button" class="btn btn-default action-btn btn-xs term-generate-anchor" title="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale())?>" id="term-generate-anchor" <?php if (in_array($commitment->status, array('invoiced', 'settled')) && !$context->hasRole('admin')) echo 'disabled="disabled"' ?>>
 						<?php echo $this->translate('Generate schedule', 'ppit-commitment', $context->getLocale())?>
 					</button>
 <?php if  (false) : // ($type == 'p-pit-studies') : ?>
-                    <button type="button" class="btn btn-default action-btn btn-xs subrogate-anchor" title="<?php echo $this->translate('Generate subrogation', 'ppit-commitment', $context->getLocale())?>" id="subrogate-anchor" <?php if (in_array($commitment->credit_status, array('blocked', 'suspended', 'closed')) || in_array($commitment->status, array('invoiced', 'settled')) && !$context->hasRole('admin')) echo 'disabled="disabled"' ?>>
+                    <button type="button" class="btn btn-default action-btn btn-xs subrogate-anchor" title="<?php echo $this->translate('Generate subrogation', 'ppit-commitment', $context->getLocale())?>" id="subrogate-anchor" <?php if (in_array($commitment->status, array('invoiced', 'settled')) && !$context->hasRole('admin')) echo 'disabled="disabled"' ?>>
                       <?php echo $this->translate('Generate subrogation', 'ppit-commitment', $context->getLocale())?>
                     </button>
 <?php endif;?>

@@ -33,40 +33,6 @@ return array(
         	Controller\VcardController::class => InvokableFactory::class,
         ),
     ),
-
-	'console' => array(
-			'router' => array(
-					'routes' => array(
-/*							'updateInstance' => array(
-									'options' => array(
-											'route'    => 'instance serialize <id>',
-											'defaults' => array(
-													'controller' => Controller\InstanceController::class,
-													'action'     => 'serialize'
-											)
-									)
-							),
-							'creditUse' => array(
-									'options' => array(
-											'route'    => 'credit use [--live|-l] [--mailTo=]',
-											'defaults' => array(
-													'controller' => Controller\CreditController::class,
-													'action'     => 'use'
-											)
-									)
-							),
-							'repair' => array(
-									'options' => array(
-											'route'    => 'credit repair',
-											'defaults' => array(
-													'controller' => Controller\CreditController::class,
-													'action'     => 'repair'
-											)
-									)
-							),*/
-					)
-			)
-	),
 		
     'router' => array(
         'routes' => array(
@@ -1802,9 +1768,8 @@ return array(
 				array('route' => 'account/passwordRequest', 'roles' => array('admin')),
 				array('route' => 'account/updateContact', 'roles' => array('operational_management', 'sales_manager', 'manager')),
 				array('route' => 'account/updateContactAlt', 'roles' => array('operational_management', 'sales_manager', 'manager')),
-				array('route' => 'account/subscription', 'roles' => array('guest')),
 				array('route' => 'account/indexCard', 'roles' => array('operational_management', 'sales_manager', 'manager')),
-				array('route' => 'account/fbgetleads', 'roles' => array('operational_management', 'sales_manager', 'manager')),
+				array('route' => 'account/fbgetleads', 'roles' => array('guest')),
 				array('route' => 'account/v1', 'roles' => array('guest')),
 
 				array('route' => 'community', 'roles' => array('admin')),

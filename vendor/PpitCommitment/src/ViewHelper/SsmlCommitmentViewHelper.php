@@ -5,7 +5,7 @@ use PpitCore\Model\Context;
 
 class SsmlCommitmentViewHelper
 {
-	public static function formatXls($workbook, $view)
+	public static function formatXls($description, $workbook, $view)
 	{
 		$context = Context::getCurrent();
 		$translator = $context->getServiceManager()->get(\Zend\I18n\Translator\TranslatorInterface::class);
@@ -23,9 +23,8 @@ class SsmlCommitmentViewHelper
 
 		$sheet = $workbook->getActiveSheet();
 		
-		foreach($context->getConfig('commitment/export'.(($view->type) ? '/'.$view->type: '')) as $propertyId => $colName) {
-			$property = $context->getConfig('commitment'.(($view->type) ? '/'.$view->type: ''))['properties'][$propertyId];
-			if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
+		foreach($description['export'] as $propertyId => $property) {
+			$colName = $property['options'];
 			$sheet->setCellValue($colName.'1', $property['labels'][$context->getLocale()]);
 		}
 		
@@ -45,16 +44,16 @@ class SsmlCommitmentViewHelper
 	    	}
 	    	
 	    	$j++;
-			foreach($context->getConfig('commitment/export'.(($view->type) ? '/'.$view->type: '')) as $propertyId => $colName) {
-				$property = $context->getConfig('commitment'.(($view->type) ? '/'.$view->type: ''))['properties'][$propertyId];
-				if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
+			foreach($description['export'] as $propertyId => $property) {
+				$colName = $property['options'];
 				if ($property['type'] == 'date') $sheet->setCellValue($colName.$j, $context->decodeDate($commitment->properties[$propertyId]));
 				elseif ($property['type'] == 'number') $sheet->setCellValue($colName.$j, $commitment->properties[$propertyId]);
 				elseif ($property['type'] == 'select')  $sheet->setCellValue($colName.$j, (array_key_exists($commitment->properties[$propertyId], $property['modalities'])) ? $property['modalities'][$commitment->properties[$propertyId]][$context->getLocale()] : $commitment->properties[$propertyId]);
 				else $sheet->setCellValue($colName.$j, $commitment->properties[$propertyId]);
 			}
 		}
-		foreach($context->getConfig('commitment/export'.(($view->type) ? '/'.$view->type: '')) as $propertyId => $colName) {
+		foreach($description['export'] as $propertyId => $property) {
+			$colName = $property['options'];
 			$sheet->getStyle($colName.'1')->getFont()->getColor()->setRGB(substr($context->getConfig('styleSheet')['panelHeadingColor'], 1, 6));
 			$sheet->getStyle($colName.'1')->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setRGB(substr($context->getConfig('styleSheet')['panelHeadingBackground'], 1, 6));
 			$sheet->getStyle($colName.'1')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
