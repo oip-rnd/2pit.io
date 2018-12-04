@@ -83,7 +83,7 @@ class TermController extends AbstractActionController
     	$context = Context::getCurrent();
     	$type = $this->params()->fromRoute('type', 'generic');
     	$description = Term::getDescription($type);
-    	$accounts = Account::getList(null, ['status' => 'active,converted,committed,undefined'], '+name', null);
+    	$accounts = Account::getList('business', [], '+name', null);
 
     	// Return the link list
     	$view = new ViewModel(array(
@@ -231,7 +231,8 @@ class TermController extends AbstractActionController
     			$connection->beginTransaction();
 		    	$data = array();
 		    	$data['status'] = $status;
-    			$data['means_of_payment'] = $paymentMean;
+		    	$data['invoice_account_id'] = $invoice_account_id;
+		    	$data['means_of_payment'] = $paymentMean;
 		    	try {
     				for ($i = 0; $i < $numberOfTerms; $i++) {
 				    	$data['caption'] = 'Echéance '.($i + 1);
@@ -252,7 +253,6 @@ class TermController extends AbstractActionController
 						}
     					$cumulativeAmount += $termShare;
     					if ($term->loadData($data, $request->getFiles()->toArray()) != 'OK') throw new \Exception('View error');
-    					
     					$term->id = null;
 		    			$rc = $term->add();
 	    				if ($rc != 'OK') {
@@ -325,7 +325,7 @@ class TermController extends AbstractActionController
     	}
     	else $dropbox = null;
  
-    	$accounts = Account::getList(null, ['status' => 'active,converted,committed,undefined'], '+name', null);
+    	$accounts = Account::getList('business', [], '+name', null);
 
     	// Instanciate the csrf form
     	$csrfForm = new CsrfForm();

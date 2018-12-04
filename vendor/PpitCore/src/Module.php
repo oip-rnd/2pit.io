@@ -60,9 +60,7 @@ class Module implements ConfigProviderInterface
     	// Delegate to p-pit core ACL checking function
     	$app = $e->getApplication();
     	$serviceManager = $app->getServiceManager();
-    	$config = $serviceManager->get('config');
 		$securityAgent = $serviceManager->get(\PpitUser\Model\SecurityAgent::class);
-//    	$securityAgent = $config['ppitUserSettings']['securityAgent'];
     	return $securityAgent->checkAcl($e);
     }
 

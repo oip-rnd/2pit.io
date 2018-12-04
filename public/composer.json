@@ -1,2 +1,5 @@
 {
+    "require": {
+        "zendframework/zend-mvc-console": "^1.2"
+    }
 }
