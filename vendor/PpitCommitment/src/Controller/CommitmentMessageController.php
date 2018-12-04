@@ -384,8 +384,6 @@ class CommitmentMessageController extends AbstractActionController
 	    	// New order
 	    	if ($purpose == 'Original' || $purpose == '900') {
 	    		$commitment = Commitment::instanciate($xcblOrder->getType());
-	    		$commitment->credit_status = 'active';
-	    		$commitment->next_credit_consumption_date = date('Y-m-d', strtotime(date('Y-m-d').' + 31 days'));
 	    		$account = Account::get($xcblOrder->getBuyerIdentifier(), 'identifier');
 				$commitment->account_id = $account->id;
 				
@@ -663,8 +661,8 @@ class CommitmentMessageController extends AbstractActionController
 		    	$commitment->status = 'commissioned';
 		    	$commitment->commissioning_date = date('Y-m-d');
 	    		$commitment->invoice_date = date('Y-m-d');
-	    		$commitment->settlement_date = date('Y-m-d');
-		    	$commitment->settlement_message_id = $message->id;
+//	    		$commitment->settlement_date = date('Y-m-d');
+//		    	$commitment->settlement_message_id = $message->id;
 		    	$commitment->notification_time = null;
 	    		$commitment->update($commitment->update_time);
 	    	}

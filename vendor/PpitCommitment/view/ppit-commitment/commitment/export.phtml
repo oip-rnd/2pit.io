@@ -35,7 +35,6 @@ foreach ($commitments as $commitment) {
 	echo $commitment->caption.';';
 	echo $context->formatFloat($commitment->amount, 2).';';
 	echo (($commitment->identifier) ? "'".$commitment->identifier : '').";";
-	echo (($commitment->quotation_identifier) ? "'".$commitment->quotation_identifier : '').";";
 	echo (($commitment->invoice_identifier) ? "'".$commitment->invoice_identifier : '').";";
 	echo $context->decodeDate($commitment->commitment_date).';';
 	echo $context->decodeDate($commitment->retraction_limit).';';

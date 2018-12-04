@@ -254,7 +254,6 @@ class Term
 	public $update_time;
 	
 	//Deprecated
-	public $subscription_id;
 	public $invoice_n_last;
 	
 	// Joined properties
@@ -362,7 +361,6 @@ class Term
 		$this->update_time = (isset($data['update_time'])) ? $data['update_time'] : null;
 
 		// Deprecated
-		$this->subscription_id = (isset($data['subscription_id'])) ? $data['subscription_id'] : null;
 		$this->invoice_n_last = (isset($data['invoice_n_last'])) ? $data['invoice_n_last'] : null;
 		
 		// Joined properties
@@ -459,7 +457,6 @@ class Term
 		$data['update_time'] = $this->update_time;
 		
 		// Deprecated
-		$data['subscription_id'] = (int) $this->subscription_id;
 		$data['invoice_n_last'] = $this->invoice_n_last;
 		
 		$data['name'] = $this->name;
@@ -780,7 +777,6 @@ class Term
 		$term->type = $type;
 		$term->status = 'expected';
 		$term->commitment_id = $commitment_id;
-		$term->quantity = 1;
 		$term->audit = array();
 		$term->properties = $term->getProperties();
 		return $term;
@@ -848,7 +844,6 @@ class Term
 				elseif ($propertyId == 'update_time') $this->update_time = $value;
 
 	    		// Deprecated
-				elseif ($propertyId == 'subscription_id') $this->subscription_id = $value;
 				elseif ($propertyId == 'invoice_n_last') $this->invoice_n_last = $value;
 
 				if ($propertyId && $this->properties[$propertyId] != $value) {
