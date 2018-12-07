@@ -56,6 +56,7 @@
 			'Expected settlement' => 'Règlement prévu',
 			'Expected shipment' => 'Expédition prévue',
 			'First term date' => 'Date de première échéance',
+			'Forecast export' => 'Export des prévisions',
 			'Generate invoice' => 'Générer la facture',
 			'Generate schedule' => 'Générer l\'échéancier',
 			'Generate subrogation' => 'Générer la subrogation',

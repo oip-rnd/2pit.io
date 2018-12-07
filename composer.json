@@ -22,7 +22,7 @@
         "zendframework/zend-cache": "^2.8",
         "zendframework/zend-mvc-i18n": "^1.1",
         "zendframework/zend-mvc-form": "^1.0",
-        "zendframework/zend-math": "^3.1",
+        "zendframework/zend-math": "^3.2",
         "zendframework/zend-authentication": "^2.6",
         "zendframework/zend-crypt": "^3.3",
         "zendframework/zend-mime": "^2.7",
@@ -33,7 +33,9 @@
     },
     "autoload": {
         "psr-4": {
-            "Application\\": "module/Application/src/"
+            "Application\\": "module/Application/src/",
+            "P_Pit\\": "module/P_Pit/src/",
+            "Probonocorpo\\": "module/Probonocorpo/src/"
         }
     },
     "autoload-dev": {

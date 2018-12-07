@@ -677,14 +677,32 @@ function connectCommitmentUpdateOptionForm(id)
 	}
 }
 
+<?php 
+$properties = array();
+
+foreach ($termGenerateConfig as $propertyId => $property) {
+  if ($property['type'] == 'number') $properties['term-'.$propertyId] = array('type' => $property['type'], 'mandatory' => false, 'minValue' => $property['minValue'], 'maxValue' => $property['maxValue']);
+  else $properties['term-'.$propertyId] = array('type' => $property['type'], 'mandatory' => false, 'maxSize' => ($property['type'] == 'textarea') ? 2047 : 255);
+}
+
+echo $this->partial('/partials/check-update-properties', array('entity' => 'TermGen', 'context' => $context, 'properties' => $properties)) 
+?>
+
 function connectCommitmentGenerateTermForm(id)
 {
+
+<?php foreach ($properties as $propertyId => $property) : ?>
+  <?php if ($property['type'] == 'date') : ?>
+    $('#input_<?php echo $propertyId ?>').datepicker();
+  <?php endif;?>
+<?php endforeach ?>
+
 	var form = document.getElementById('generate-term-form');
 	form.onsubmit = function(event) {
 		
 		event.preventDefault();
 
-		var validity = true;
+        var validity = checkTermGenUpdateProperties(id);
 			
 	// Number of terms
 		var numberOfTerms = $('#number_of_terms').val();
@@ -792,6 +810,17 @@ function connectCommitmentGenerateTermForm(id)
 			formData.append('means_of_payment', $('#means_of_payment').val());
 			formData.append('periodicity', $('#periodicity').val());
             formData.append('same_day_of_month', (document.getElementById('same_day_of_month').checked) ? 1 : 0);
+
+<?php foreach ($properties as $propertyId => $property) : ?>
+  <?php if ($property['type'] == 'input' || $property['type'] == 'date' || $property['type'] == 'textarea' || $property['type'] == 'select' || $property['type'] == 'repository' || $property['type'] == 'number' || $property['type'] == 'email' || $property['type'] == 'phone' || $property['type'] == 'dropbox' || $property['type'] == 'hidden') : ?>
+            formData.append('<?php echo $propertyId ?>', document.getElementById('<?php echo $propertyId ?>').value);
+
+  <?php elseif ($property['type'] == 'checkbox') : ?>
+            formData.append('<?php echo $propertyId ?>', ((document.getElementById('<?php echo $propertyId ?>').checked) ? 1 : 0));
+
+  <?php endif ?>
+
+<?php endforeach ?>
 		
 			var xhttp = new XMLHttpRequest();
 			var route, target;

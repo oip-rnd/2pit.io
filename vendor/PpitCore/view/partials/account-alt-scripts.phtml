@@ -563,7 +563,6 @@ $properties['mask_recipients'] = array('type' => 'checkbox');
 $properties['template_id'] = array('type' => 'select', 'mandatory' => true);
 if ($templates) foreach ($templates as $templateId => $template) {
 	$properties[$templateId.'_subject'] = array('type' => 'input', 'mandatory' => 'true', 'maxSize' => 255);
-	$properties[$templateId.'_text'] = array('type' => 'ckeditor', 'mandatory' => 'true', 'maxSize' => 65535);
 }
 $properties['attachment'] = array('type' => 'select', 'mandatory' => false);
 $properties['update_time'] = array('type' => 'hidden');
@@ -604,9 +603,6 @@ function connectSendMessageForm(id)
 	<?php elseif ($property['type'] == 'checkbox') : ?>
 		formData.append('<?php echo $propertyId ?>', ((document.getElementById('<?php echo $propertyId ?>').checked) ? 1 : 0));
 
-	<?php elseif ($property['type'] == 'ckeditor') : ?>
-		formData.append('<?php echo $propertyId ?>', CKEDITOR.instances.<?php echo $propertyId ?>.getData());
-
 	<?php endif ?>
 
 <?php endforeach ?>
@@ -635,7 +631,6 @@ function connectSendMessageForm(id)
 				    });
 				});
 				
-				connectRemoveIcon('remove-anchor', 'update_panel');
 		<?php if (!$context->getConfig()['isTraceActive']) : ?>
 				}
 		<?php endif;?>
@@ -674,11 +669,6 @@ function getSendMessage() {
 	<?php endif;?>
 
 			document.getElementById('send-message-panel').innerHTML = xhttp.responseText;
-<?php foreach ($properties as $propertyId => $property) : ?>
-	<?php if ($property['type'] == 'ckeditor') : ?>
-			CKEDITOR.replace('<?php echo $propertyId ?>');
-	<?php endif;?>
-<?php endforeach;?>
 			
 			$(function () {
 			    $('.tip').tooltip({
@@ -688,7 +678,6 @@ function getSendMessage() {
 			    });
 			});
 
-			connectRemoveIcon('remove-anchor', 'update_panel');
 			showTemplate();
 			$('#template_id').change(showTemplate);
 			$('#attachment').change(function () {
@@ -869,7 +858,6 @@ function getGroup() {
 
 			$('#modalForm').html(xhttp.responseText);
 			postGroup();
-			selectTest();
 			addToGroup();
 			getSendMessage();
 			

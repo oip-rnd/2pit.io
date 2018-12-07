@@ -121,6 +121,10 @@
 				    <img src="<?php echo $this->basePath('img/tip.png') ?>" width="20" />
 				</a>
 <?php endif;?>
+            <a type="button" class="btn btn-default" role="button" href="<?php echo $this->url('commitmentTerm/statusMonth', ['status' => $type])?>" id="forecast-button">
+              <span class="glyphicon glyphicon-cloud-download"></span>
+              <span><?php echo $this->translate('Forecast export', 'ppit-commitment', $context->getLocale())?></span>
+            </a>
 	    </div>
 		</div>
 	    
