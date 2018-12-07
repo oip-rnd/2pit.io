@@ -7,7 +7,6 @@ namespace Composer\Autoload;
 class ComposerStaticInit85293ecee4f033dd340b761c2c703716
 {
     public static $files = array (
-        '5255c38a0faeba867671b61dfda6d864' => __DIR__ . '/..' . '/paragonie/random_compat/lib/random.php',
         '10a6847eba8a430a134fad89f4a30a26' => __DIR__ . '/..' . '/zendframework/zend-cache/autoload/patternPluginManagerPolyfill.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '34901568a1e26d13dd475cb2c85e0284' => __DIR__ . '/..' . '/zendframework/zend-form/autoload/formElementManagerPolyfill.php',
@@ -65,11 +64,13 @@ class ComposerStaticInit85293ecee4f033dd340b761c2c703716
             'Psr\\Log\\' => 8,
             'Psr\\Container\\' => 14,
             'Psr\\Cache\\' => 10,
+            'Probonocorpo\\' => 13,
             'PpitUser\\' => 9,
             'PpitStudies\\' => 12,
             'PpitFlow\\' => 9,
             'PpitCore\\' => 9,
             'PpitCommitment\\' => 15,
+            'P_Pit\\' => 6,
         ),
         'I' => 
         array (
@@ -243,6 +244,10 @@ class ComposerStaticInit85293ecee4f033dd340b761c2c703716
         array (
             0 => __DIR__ . '/..' . '/psr/cache/src',
         ),
+        'Probonocorpo\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/module/Probonocorpo/src',
+        ),
         'PpitUser\\' => 
         array (
             0 => __DIR__ . '/..' . '/PpitUser/src',
@@ -262,6 +267,10 @@ class ComposerStaticInit85293ecee4f033dd340b761c2c703716
         'PpitCommitment\\' => 
         array (
             0 => __DIR__ . '/..' . '/PpitCommitment/src',
+        ),
+        'P_Pit\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/module/P_Pit/src',
         ),
         'Interop\\Container\\' => 
         array (

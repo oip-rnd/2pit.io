@@ -860,8 +860,17 @@ return array(
 				                    	'defaults' => array(
 				                            'action' => 'delete',
 				                        ),
-			                    ),
-	                ),
+				                    ),
+				       			),
+	       						'statusMonth' => array(
+				                    'type' => 'segment',
+				                    'options' => array(
+				                        'route' => '/status-month[/:type]',
+				                    	'defaults' => array(
+				                            'action' => 'statusMonth',
+				                        ),
+			                   	 	),
+	       						),
 	       		),
 			),
         ),
@@ -969,6 +978,7 @@ return array(
             	array('route' => 'commitmentTerm/checkDepositSsml', 'roles' => array('sales_manager')),
             	array('route' => 'commitmentTerm/invoice', 'roles' => array('sales_manager', 'accountant')),
             	array('route' => 'commitmentTerm/downloadInvoice', 'roles' => array('sales_manager', 'accountant')),
+            	array('route' => 'commitmentTerm/statusMonth', 'roles' => array('sales_manager', 'accountant')),
             )
         )
     ),
@@ -2172,7 +2182,7 @@ table.note-report td {
 			'fr_FR' => 'Année comptable',
 		),
 	),
-/*	
+
 	'commitment/types' => array(
 		'definition' => 'inline',
 		'type' => 'select',
@@ -2184,7 +2194,7 @@ table.note-report td {
 			'p-pit-studies' => array('en_US' => 'Subscription', 'fr_FR' => 'Inscription'),
 		),
 		'labels' => array('en_US' => 'Type', 'fr_FR' => 'Type'),
-	),*/
+	),
 
 	'commitment/generic/property/place_id' => ['definition' => 'core_account/generic/property/place_id'],
 	'commitment/generic/property/place_caption' => ['definition' => 'core_account/generic/property/place_caption'],
@@ -2857,7 +2867,7 @@ table.note-report td {
 		'currencySymbol' => '€',
 		'tax' => 'none',
 		'properties' => array(
-			'status', 'account_name', 'year', 'place_id', 'account_id', 'account_name', 'invoice_n_fn', 'n_fn',
+			'status', 'account_name', 'year', 'place_id', 'account_id', 'account_name', 'account_identifier', 'invoice_n_fn', 'n_fn',
 			'caption', 'description', 'product_caption',
 			'quantity', 'unit_price',
 			'amount', 'including_options_amount', 'invoice_identifier', 'invoice_date', 'tax_amount', 'tax_inclusive',
@@ -3134,7 +3144,7 @@ table.note-report td {
 		'currencySymbol' => '€',
 		'properties' => array(
 			'status', 'year', 'place_id', 'account_id', 'account_name', 'invoice_n_fn',
-			'product_caption', 'quantity', 'unit_price', 'amount', 'name', 'caption', 'description',
+			'product_caption', 'quantity', 'unit_price', 'amount', 'caption', 'description',
 			'property_1', 'property_2', 'property_3', 'property_4', 'property_5',
 			'property_10', 'property_11', 'property_12', 'property_13', 'property_14',
 			'including_options_amount',
@@ -3451,6 +3461,51 @@ table.note-report td {
 			'fr_FR' => 'Justificatif',
 		),
 	),
+
+	'commitmentTerm/generic/property/tiny_1' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'default' => 'Invoice period',
+			'fr_FR' => 'Période de facturation',
+		),
+	),
+
+	'commitmentTerm/generic/property/tiny_2' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'default' => 'Free text 1',
+			'fr_FR' => 'Texte libre 1',
+		),
+	),
+
+	'commitmentTerm/generic/property/tiny_3' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'default' => 'Free text 2',
+			'fr_FR' => 'Texte libre 2',
+		),
+	),
+
+	'commitmentTerm/generic/property/tiny_4' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'default' => 'Free text 3',
+			'fr_FR' => 'Texte libre 3',
+		),
+	),
+
+	'commitmentTerm/generic/property/tiny_5' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'default' => 'Free text 4',
+			'fr_FR' => 'Texte libre 4',
+		),
+	),
 	
 	'commitmentTerm/generic/property/commitment_caption' => array('definition' => 'commitment/generic/property/caption'),
 	'commitmentTerm/generic/property/account_status' => array('definition' => 'commitment/generic/property/account_status'),
@@ -3481,6 +3536,7 @@ table.note-report td {
 		'properties' => array(
 				'commitment_id', 'name', 'status', 'place_id', 'caption', 'invoice_account_id', 'due_date', 'settlement_date', 'collection_date',
 				'quantity', 'unit_price', 'amount', 'means_of_payment', 'bank_name', 'invoice_n_last', 'reference', 'comment', 'document', 'commitment_caption', 
+				'tiny_1', 'tiny_2', 'tiny_3', 'tiny_4', 'tiny_5',
 				'account_status', 'account_date_1', 'account_date_2', 'account_date_3', 'account_date_4', 'account_date_5',
 				'account_property_1', 'account_property_2', 'account_property_3', 'account_property_4', 'account_property_5', 'account_property_6', 'account_property_7', 'account_property_8', 'account_property_9',
 				'account_property_10', 'account_property_11', 'account_property_12', 'account_property_13', 'account_property_14', 'account_property_15', 'account_property_16',
@@ -3541,6 +3597,10 @@ table.note-report td {
 		'document' => [],
 	),
 
+	'commitmentTerm/generate/generic' => array(
+		'tiny_1' => [],
+	),
+	
 	'commitmentTerm/groupUpdate/generic' => array(
 		'status' => [],
 		'caption' => [],

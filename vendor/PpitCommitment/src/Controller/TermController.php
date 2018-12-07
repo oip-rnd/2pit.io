@@ -16,6 +16,7 @@ use PpitCore\Model\Context;
 use PpitCore\Model\Interaction;
 use PpitCore\Model\Place;
 use PpitCore\ViewHelper\ArrayToSsmlViewHelper;
+use PpitCore\ViewHelper\SsmlCrossTableViewHelper;
 use PpitCommitment\ViewHelper\SsmlDebitViewHelper;
 use PpitCommitment\ViewHelper\XmlDebitViewHelper;
 use Zend\Http\Client;
@@ -40,23 +41,23 @@ class TermController extends AbstractActionController
 		$description = Term::getDescription($type);
 
     	return new ViewModel(array(
-    			'context' => $context,
-    			'type' => $type,
-				'termProperties' => $description['properties'],
-    			'config' => $context->getConfig(),
-    			'place' => $place,
-    			'app' => $app,
-    			'active' => 'application',
-    			'applicationId' => $applicationId,
-    			'applicationName' => $applicationName,
-    			'types' => $types,
-    			'currentEntry' => $currentEntry,
-    			'termSearchPage' => $description['search'],
-				'listPage' => $description['list'],
-				'termUpdatePage' => $description['update'],
-    			'termGroupPage' => $description['groupUpdate'],
-    	));
-    }
+			'context' => $context,
+			'type' => $type,
+			'termProperties' => $description['properties'],
+			'config' => $context->getConfig(),
+			'place' => $place,
+			'app' => $app,
+			'active' => 'application',
+			'applicationId' => $applicationId,
+			'applicationName' => $applicationName,
+			'types' => $types,
+			'currentEntry' => $currentEntry,
+			'termSearchPage' => $description['search'],
+			'listPage' => $description['list'],
+			'termUpdatePage' => $description['update'],
+			'termGroupPage' => $description['groupUpdate'],
+		));
+	}
 
     public function getFilters($description, $params)
     {
@@ -88,6 +89,7 @@ class TermController extends AbstractActionController
     	// Return the link list
     	$view = new ViewModel(array(
     			'context' => $context,
+    			'type' => $type,
 				'termProperties' => $description['properties'],
     			'config' => $context->getconfig(),
     			'places' => Place::getList(array()),
@@ -192,6 +194,7 @@ class TermController extends AbstractActionController
     	$term->commitment_caption = $commitment->caption;
     	$term->default_means_of_payment = $commitment->default_means_of_payment;
     	$termProperties = Term::getConfig($commitment->type);
+    	$termGenerateConfig = Term::getConfigGenerate($commitment->type, $termProperties);
     	$accounts = Account::getList('business', [], '+name', null);
     	$amountToDivide = $commitment->tax_inclusive;
     	$quantityToDivide = 0;
@@ -226,6 +229,11 @@ class TermController extends AbstractActionController
     			$termShare = round($toDivide / $numberOfTerms, 2);
     			$cumulativeAmount = 0;
 
+    			foreach($termGenerateConfig as $propertyId => $property) {
+					$property = $termProperties[$propertyId];
+					$data[$propertyId] = $request->getPost(('term-'.$propertyId));
+    			}
+var_dump($data); return $this->response;    			 
     			// Atomically save
     			$connection = Term::getTable()->getAdapter()->getDriver()->getConnection();
     			$connection->beginTransaction();
@@ -281,6 +289,7 @@ class TermController extends AbstractActionController
     		'amountToDivide' => $amountToDivide,
     		'term' => $term,
     		'termProperties' => $termProperties,
+    		'termGenerateConfig' => $termGenerateConfig,
     		'csrfForm' => $csrfForm,
     		'error' => $error,
     		'message' => $message,
@@ -749,9 +758,10 @@ class TermController extends AbstractActionController
     private function generateInvoice($type, $invoiceAccount, $term, $commitment, $invoice_identifier)
     {
     	$context = Context::getCurrent();
-
+		$description = Term::getDescription($type);
+    	
     	$invoice = array();
-    	$invoiceSpecs = $context->getConfig('commitment/invoice/'.$type);
+    	$invoiceSpecs = $context->getConfig('commitmentTerm/invoice/'.$type);
 		if (!$invoiceSpecs) $invoiceSpecs = $context->getConfig('commitmentTerm/invoice');
 		
 		if ($invoiceAccount->type == 'business') $invoice['customer_invoice_name'] = $invoiceAccount->name;
@@ -792,19 +802,13 @@ class TermController extends AbstractActionController
     		foreach($line['params'] as $propertyId) {
     			if ($propertyId == 'date') $arguments[] = $context->decodeDate(date('Y-m-d'));
     			else {
-    				if (array_key_exists($propertyId, $context->getConfig('commitment'.(($type) ? '/'.$type : ''))['properties'])) {
-    					$property = $context->getConfig('commitment'.(($type) ? '/'.$type : ''))['properties'][$propertyId];
-    				}
-    				else {
-    					$property = $context->getConfig('commitment')['properties'][$propertyId];
-    				}
-    				if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
+    				$property = $description['properties'][$propertyId];
     				if ($propertyId == 'name') $arguments[] = $term->name;
     				elseif ($propertyId == 'caption') $arguments[] = $term->caption;
-    				elseif ($property['type'] == 'date') $arguments[] = $context->decodeDate($commitment->properties[$propertyId]);
-    				elseif ($property['type'] == 'number') $arguments[] = $context->formatFloat($commitment->properties[$propertyId], 2);
-    				elseif ($property['type'] == 'select' && array_key_exists($commitment->properties[$propertyId], $property['modalities'])) $arguments[] = $context->localize($property['modalities'][$commitment->properties[$propertyId]]);
-    				else $arguments[] = $commitment->properties[$propertyId];
+    				elseif ($property['type'] == 'date') $arguments[] = $context->decodeDate($term->properties[$propertyId]);
+    				elseif ($property['type'] == 'number') $arguments[] = $context->formatFloat($term->properties[$propertyId], 2);
+    				elseif ($property['type'] == 'select' && array_key_exists($term->properties[$propertyId], $property['modalities'])) $arguments[] = $context->localize($property['modalities'][$commitment->properties[$propertyId]]);
+    				else $arguments[] = $term->properties[$propertyId];
     			}
     		}
     		$value = vsprintf($context->localize($line['right']), $arguments);
@@ -970,4 +974,55 @@ class TermController extends AbstractActionController
     	$content = $pdf->Output('invoice-'.$context->getInstance()->caption.'-'.$term->name.'.pdf', 'I');
     	return $this->response;
     }
+    
+	public function statusMonthAction()
+	{
+		// Retrieve context and parameters
+		$context = Context::getCurrent();
+		$type = $this->params()->fromRoute('type');
+		$min_due_date = $this->params()->fromQuery('min_due_date', date('2018-09-01'));
+		$max_due_date = $this->params()->fromQuery('max_due_date', date('2019-09-30'));
+		$description = Term::getDescription($type);
+
+		// Retrieve the terms
+		$terms = Term::getList($type, ['min_due_date' => $min_due_date, 'max_due_date' => $max_due_date], '+due_date,+name', null);
+		$months = array(
+			'2018-09' => ['columnId' => 'B', 'labels' => ['default' => 'September', 'fr_FR' => 'Septembre']],
+			'2018-10' => ['columnId' => 'C', 'labels' => ['default' => 'October', 'fr_FR' => 'Octobre']],
+			'2018-11' => ['columnId' => 'D', 'labels' => ['default' => 'November', 'fr_FR' => 'Novembre']],
+			'2018-12' => ['columnId' => 'E', 'labels' => ['default' => 'December', 'fr_FR' => 'Décembre']],
+			'2019-01' => ['columnId' => 'F', 'labels' => ['default' => 'January', 'fr_FR' => 'Janvier']],
+			'2019-02' => ['columnId' => 'G', 'labels' => ['default' => 'February', 'fr_FR' => 'Février']],
+			'2019-03' => ['columnId' => 'H', 'labels' => ['default' => 'March', 'fr_FR' => 'Mars']],
+			'2019-04' => ['columnId' => 'I', 'labels' => ['default' => 'April', 'fr_FR' => 'Avril']],
+			'2019-05' => ['columnId' => 'J', 'labels' => ['default' => 'May', 'fr_FR' => 'Mai']],
+			'2019-06' => ['columnId' => 'K', 'labels' => ['default' => 'June', 'fr_FR' => 'Juin']],
+			'2019-07' => ['columnId' => 'L', 'labels' => ['default' => 'July', 'fr_FR' => 'Juillet']],
+			'2019-08' => ['columnId' => 'M', 'labels' => ['default' => 'August', 'fr_FR' => 'Août']],
+			'2019-09' => ['columnId' => 'N', 'labels' => ['default' => 'September', 'fr_FR' => 'Septembre']],
+		);
+		$statuses = array();
+		$matrix = array();
+		foreach ($description['properties']['status']['modalities'] as $statusId => $labels) {
+			$statuses[$statusId] = ['labels' => $labels];
+			$matrix[$statusId] = array();
+			foreach ($months as $monthId => $unused) $matrix[$statusId][$monthId] = 0;
+		}
+		foreach ($terms as $term) {
+			if ($term->status && $term->collection_date) $matrix[$term->status][substr($term->collection_date, 0, 7)] += $term->amount;
+		}
+
+		include 'public/PHPExcel_1/Classes/PHPExcel.php';
+		include 'public/PHPExcel_1/Classes/PHPExcel/Writer/Excel2007.php';
+		
+		$workbook = new \PHPExcel;
+		(new SsmlCrossTableViewHelper)->formatXls($workbook, $matrix, $months, $statuses, ['default' => 'Terms in volume by status x month', 'fr_FR' => 'Échéances en volume par statut x mois']);
+		$writer = new \PHPExcel_Writer_Excel2007($workbook);
+		
+		header('Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Disposition:inline;filename=terms-status-month.xlsx ');
+		$writer->save('php://output');
+		
+		return $this->response;
+	}
 }

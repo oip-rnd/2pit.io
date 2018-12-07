@@ -2,7 +2,7 @@
 
 namespace PpitCore\Controller;
 
-use PpitCore\Model\ContactMessage;
+use PpitContact\Model\ContactMessage;
 use PpitCommitment\ViewHelper\PpitPDF;
 use PpitCore\ViewHelper\EventPlanningViewHelper;
 use PpitCore\ViewHelper\PdfIndexCardViewHelper;
@@ -41,7 +41,7 @@ class AccountController extends AbstractActionController
 		$context = Context::getCurrent();
 		$place = Place::get($context->getPlaceId());
 		$place_identifier = $place->identifier;
-		
+
 		// Retrieve the parameters and the page and panels configuration
 		$entry = $this->params()->fromRoute('entry', 'account');
 		$type = $this->params()->fromRoute('type', 'business');
@@ -527,6 +527,17 @@ class AccountController extends AbstractActionController
 			$config = Config::get($place_identifier.'_emailing', 'identifier');
 			if ($config) $templates = $config->content;
 		}
+
+		foreach ($templates as &$template) {
+			if (array_key_exists('route', $template)) {
+				$client = new Client(
+					$this->url()->fromRoute($template['route'], [], ['query' => ['locale' => $context->getLocale()], 'force_canonical' => true]),
+					array('adapter' => 'Zend\Http\Client\Adapter\Curl', 'maxredirects' => 0, 'timeout' => 30)
+				);
+				$client->setMethod('GET');
+				$template['text'] = ['default' => $client->send()->getBody()];
+			}
+		}
 		
     	$signature = $context->getConfig('core_account/sendMessage')['signature'];
     	if ($signature['definition'] != 'inline') $signature = $context->getConfig($signature['definition']);
@@ -615,25 +626,23 @@ class AccountController extends AbstractActionController
 				// Retrieve the selected email template and with the "from" value 
 				$selectedTemplateId = $request->getPost('template_id');
     			$selectedTemplate = $templates[$selectedTemplateId];
-				if (array_key_exists('customizable', $selectedTemplate)) $customizable = $selectedTemplate['customizable'];
-				else $customizable = true;
-				if (array_key_exists('cci', $selectedTemplate)) $data['cci'][$selectedTemplate['cci']] = $selectedTemplate['cci'];
+    			if (array_key_exists('route', $selectedTemplate)) {
+    				$client = new Client(
+    					$this->url()->fromRoute($template['route'], [], ['query' => ['mode' => 'personnalized', 'locale' => $account->locale], 'force_canonical' => true]),
+    					array('adapter' => 'Zend\Http\Client\Adapter\Curl', 'maxredirects' => 0, 'timeout' => 30)
+    				);
+    				$client->setMethod('GET');
+    				$text = $client->send()->getBody();
+    			}
+    			else $text = $context->localize($selectedTemplate['text'], $account->locale);
+    			 
+    			if (array_key_exists('cci', $selectedTemplate)) $data['cci'][$selectedTemplate['cci']] = $selectedTemplate['cci'];
 	    		$data['from_mail'] = $selectedTemplate['from_mail'];
 	    		$data['from_name'] = $selectedTemplate['from_name'];
 
-	    		if ($customizable) $data['subject'] = $request->getPost($selectedTemplateId.'_subject');
-	    		else $data['subject'] = $context->localize($selectedTemplate['subject'], $account->locale);
+	    		$data['subject'] = $request->getPost($selectedTemplateId.'_subject');
 	    		$attachment = $request->getPost('attachment');
     			
-	    		// Retrieve the text from the form if the email text is customizable in the view and add the signature at the location of the tag '%s'
-	    		if ($customizable) {
-	    			$text = $request->getPost($selectedTemplateId.'_text');
-	    			$signatureBody = $context->localize($signature['body']);
-	    		}
-    			else {
-    				$text = $context->localize($selectedTemplate['text'], $account->locale);
-	    			$signatureBody = $context->localize($signature['body'], $account->locale);
-    			}
 
     			$body = '';
     			if ($context->getConfig('core_account/mailTo')) {
@@ -645,18 +654,11 @@ class AccountController extends AbstractActionController
     				$body .= '<br>';
     			}
 
-				$theme = $context->getConfig('core_account/sendMessage')['themes']['theme_1'];
-				if ($theme['definition'] != 'inline') $theme = $context->getConfig($theme['definition']);
-    			$body .= sprintf($theme, $text, $signatureBody);
-
-				// Generates an URL to the selected Dropbox document if any
-				$url = $this->getServiceLocator()->get('viewhelpermanager')->get('url');
-   				$link = $url('account/dropboxLink', array('document' => $attachment), array('force_canonical' => true));
+    			$body .= $text;
 
     			// Generate an authentication token that can be passed as a value for the variable 'authentication_token' in the text.
     			// This token allows the email's addressee to access the target page as being authenticated
     			// Finally, replace all the variables in the text by their value in the account data structure
-    			// And replace the 'link' variable to the URL to Dropbox
     			$account->properties['authentication_token'] = md5(uniqid(rand(), true));
    				if (array_key_exists('params', $selectedTemplate)) {
    					$arguments = array();
@@ -665,7 +667,6 @@ class AccountController extends AbstractActionController
    					}
 					$body = vsprintf($body, $arguments);
    				}
-    			else $body = sprintf($body, $link);
 
     			// Load the data in the email data model
     			$data['body'] = $body;
@@ -717,7 +718,7 @@ class AccountController extends AbstractActionController
     			'templates' => $templates,
     			'selectedTemplateId' => $selectedTemplateId,
     			'body' => $body,
-    			'signature' => $signature,
+//    			'signature' => $signature,
     			'mail' => $mail,
 	    		'documentList' => $documentList,
     			'csrfForm' => $csrfForm,
@@ -1393,9 +1394,15 @@ class AccountController extends AbstractActionController
 			return $this->response;
 		}
 		$pages = json_decode(gzdecode($response->getContent()), true);
-		foreach ($pages['data'] as $page) {
+		$urls = array();
+		foreach ($pages['data'] as $page) $urls[] = 'https://graph.facebook.com/v3.2/'.$page['id'].'/leads';
+		$url = current($urls);
+		
+		$i = 0;
+		while (true) {
+			echo 'Request: '.$url."<br>\n";
 			$client = new Client(
-				'https://graph.facebook.com/v3.2/'.$page['id'].'/leads',
+				$url,
 				['adapter' => 'Zend\Http\Client\Adapter\Curl', 'maxredirects' => 0, 'timeout' => 30]
 			);
 			$client->setEncType('application/json');
@@ -1403,9 +1410,10 @@ class AccountController extends AbstractActionController
 			$client->setMethod('GET');
 			$response = $client->send();
 			if ($response->getStatusCode() == 200) {
-				$leads = gzdecode($response->getContent());
-				if ($leads) {
-					$leads = json_decode($leads, true)['data'];
+				$content = gzdecode($response->getContent());
+				if ($content) {
+					$content = json_decode($content, true);
+					$leads = $content['data'];
 					foreach ($leads as $lead) {
 						$existing = Account::get('FB-'.$lead['id'], 'identifier');
 						if (!$existing) {
@@ -1430,12 +1438,18 @@ class AccountController extends AbstractActionController
 								else $rest .= (' '.$property['name'].': '.$property['values'][0]);
 							}
 							$data['contact_history'] = $rest;
-							$rc = $account->loadAndAdd($data, Account::getConfig($type));
-							echo $lead['id'].' '.$rc[0]."<br>\n";
+							$account->loadAndAdd($data, Account::getConfig($type));
+							echo ++$i.': '.$lead['id'].' '.$rc[0]."<br>\n";
 						}
 					}
+					if (array_key_exists('next', $content['paging'])) $url = $content['paging']['next'];
+					else $url = next($urls);
 				}
+				else $url = next($urls);
 			}
+			else $url = next($urls);
+			
+			if (!$url) break;
 		}
 		return $this->response;
 	}

@@ -48,6 +48,11 @@ class Term
 			'comment' => 					['entity' => 'commitment_term', 'column' => 'comment'],
 			'document' => 					['entity' => 'commitment_term', 'column' => 'document'],
 			'invoice_id' => 				['entity' => 'commitment_term', 'column' => 'invoice_id'],
+			'tiny_1' => 					['entity' => 'commitment_term', 'column' => 'tiny_1'],
+			'tiny_2' => 					['entity' => 'commitment_term', 'column' => 'tiny_2'],
+			'tiny_3' => 					['entity' => 'commitment_term', 'column' => 'tiny_3'],
+			'tiny_4' => 					['entity' => 'commitment_term', 'column' => 'tiny_4'],
+			'tiny_5' => 					['entity' => 'commitment_term', 'column' => 'tiny_5'],
 			'update_time' => 				['entity' => 'commitment_term', 'column' => 'update_time'],
 			'commitment_property_1' => 		['entity' => 'commitment', 'column' => 'property_1'],
 			'commitment_property_2' => 		['entity' => 'commitment', 'column' => 'property_2'],
@@ -180,6 +185,22 @@ class Term
 		}
 		return $properties;
 	}
+
+	public static function getConfigGenerate($type, $configProperties)
+	{
+		$context = Context::getCurrent();
+		$configGenerate = $context->getConfig('commitmentTerm/generate/'.$type);
+		if (!$configGenerate) $configGenerate = $context->getConfig('commitmentTerm/generate/generic');
+		$properties = array();
+		foreach ($configGenerate as $propertyId => $options) {
+			if (array_key_exists($propertyId, $configProperties)) {
+				$property = $configProperties[$propertyId];
+				$property['options'] = $options;
+				$properties[$propertyId] = $property;
+			}
+		}
+		return $properties;
+	}
 	
 	public static function getConfigGroupUpdate($type, $configProperties)
 	{
@@ -226,6 +247,7 @@ class Term
 		$description['search'] = Term::getConfigSearch($type, $description['properties']);
 		$description['list'] = Term::getConfigList($type, $description['properties']);
 		$description['update'] = Term::getConfigUpdate($type, $description['properties']);
+		$description['generate'] = Term::getConfigGenerate($type, $description['properties']);
 		$description['groupUpdate'] = Term::getConfigGroupUpdate($type, $description['properties']);
 		$description['export'] = Term::getConfigEXport($type, $description['properties']);
 		return $description;
@@ -250,6 +272,11 @@ class Term
 	public $comment;
 	public $document;
 	public $invoice_id;
+	public $tiny_1;
+	public $tiny_2;
+	public $tiny_3;
+	public $tiny_4;
+	public $tiny_5;
 	public $audit;
 	public $update_time;
 	
@@ -357,6 +384,11 @@ class Term
 		$this->comment = (isset($data['comment'])) ? $data['comment'] : null;
 		$this->document = (isset($data['document'])) ? $data['document'] : null;
 		$this->invoice_id = (isset($data['invoice_id'])) ? $data['invoice_id'] : null;
+		$this->tiny_1 = (isset($data['tiny_1'])) ? $data['tiny_1'] : null;
+		$this->tiny_2 = (isset($data['tiny_2'])) ? $data['tiny_2'] : null;
+		$this->tiny_3 = (isset($data['tiny_3'])) ? $data['tiny_3'] : null;
+		$this->tiny_4 = (isset($data['tiny_4'])) ? $data['tiny_4'] : null;
+		$this->tiny_5 = (isset($data['tiny_5'])) ? $data['tiny_5'] : null;
 		$this->audit = (isset($data['audit'])) ? json_decode($data['audit'], true) : null;
 		$this->update_time = (isset($data['update_time'])) ? $data['update_time'] : null;
 
@@ -453,6 +485,11 @@ class Term
 		$data['comment'] = $this->comment;
 		$data['document'] = $this->document;
 		$data['invoice_id'] = (int) $this->invoice_id;
+		$data['tiny_1'] = $this->tiny_1;
+		$data['tiny_2'] = $this->tiny_2;
+		$data['tiny_3'] = $this->tiny_3;
+		$data['tiny_4'] = $this->tiny_4;
+		$data['tiny_5'] = $this->tiny_5;
 		$data['audit'] = $this->audit;
 		$data['update_time'] = $this->update_time;
 		
@@ -841,6 +878,11 @@ class Term
 				elseif ($propertyId == 'comment') $this->comment = $value;
 				elseif ($propertyId == 'document') $this->document = $value;
 				elseif ($propertyId == 'invoice_id') $this->invoice_id = $value;
+				elseif ($propertyId == 'tiny_1') $this->tiny_1 = $value;
+				elseif ($propertyId == 'tiny_2') $this->tiny_2 = $value;
+				elseif ($propertyId == 'tiny_3') $this->tiny_3 = $value;
+				elseif ($propertyId == 'tiny_4') $this->tiny_4 = $value;
+				elseif ($propertyId == 'tiny_5') $this->tiny_5 = $value;
 				elseif ($propertyId == 'update_time') $this->update_time = $value;
 
 	    		// Deprecated
