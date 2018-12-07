@@ -10,6 +10,7 @@
 return array (
 	'controllers' => array(
 		'invokables' => array(
+			'PpitFlow\Controller\Emailing' => 'PpitFlow\Controller\EmailingController',
 			'PpitFlow\Controller\Event' => 'PpitFlow\Controller\EventController',
 			'PpitFlow\Controller\Landing' => 'PpitFlow\Controller\LandingController',
 			'PpitFlow\Controller\Profile' => 'PpitFlow\Controller\ProfileController',
@@ -19,6 +20,36 @@ return array (
 	
 	'router' => array(
 		'routes' => array(
+			'emailing' => array(
+				'type'    => 'literal',
+				'options' => array(
+					'route'    => '/emailing',
+					'constraints' => ['id' => '[0-9]*'],
+					'defaults' => array(
+						'controller' => 'PpitFlow\Controller\Emailing',
+						'action'     => 'generate',
+					),
+				),
+				'may_terminate' => true,
+				'child_routes' => array(
+					'generate' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/generate',
+							'defaults' => array(
+								'action' => 'generate',
+							),
+						),
+					),
+					'serialize' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/serialize[/:place_identifier]',
+							'defaults' => array('action' => 'serialize'),
+						),
+					),
+				),
+			),
 			'flowEvent' => array(
 				'type'    => 'literal',
 				'options' => array(
@@ -404,7 +435,10 @@ return array (
 	'bjyauthorize' => array(
 		// Guard listeners to be attached to the application event manager
 		'guards' => array(
-			'BjyAuthorize\Guard\Route' => array(				
+			'BjyAuthorize\Guard\Route' => array(
+				array('route' => 'emailing/generate', 'roles' => array('operational_management')),
+				array('route' => 'emailing/serialize', 'roles' => array('admin')),
+				
 				array('route' => 'landing/template1', 'roles' => array('guest')),
 				array('route' => 'landing/template2', 'roles' => array('guest')),
 				array('route' => 'landing/checkout', 'roles' => array('guest')),
