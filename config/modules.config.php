@@ -28,13 +28,15 @@ return [
 	'PpitCore',
 	'PpitCommitment',
 	'PpitContact',
-//	'PpitLearning',
+	'PpitLearning',
 	'PpitStudies',
 	'PpitUser',
-	'PpitFlow',
-    'Application',
+    'Probonocorpo',
+	'Cclam',
 	'Esi',
 	'P_Pit',
 	'Sea',
+	'PpitFlow',
+	'Application',
 ];
 

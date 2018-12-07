@@ -57,28 +57,28 @@ class CommitmentController extends AbstractActionController
 		$params = $this->getFilters($this->params(), $type);
 
     	return new ViewModel(array(
-    			'context' => $context,
-				'configProperties' => $description['properties'],
-				'termProperties' => $termDescription['properties'],
-	    		'config' => $context->getConfig(),
-    			'place' => $place,
-    			'app' => $app,
-    			'active' => 'application',
-    			'applicationId' => $applicationId,
-    			'applicationName' => $applicationName,
-//    			'applications' => $applications,
-    			'type' => $type,
-    			'types' => $types,
-    			'params' => $params,
-	    		'products' => Product::getList(null, array()),
-	    		'options' => ProductOption::getList(null, array()),
-    			'searchPage' => $description['search'],
-				'listPage' => $description['list'],
-				'updatePage' => $description['update'],
-    			'groupPage' => $description['group'],
-    			'termSearchPage' => $termDescription['search'],
-				'termUpdatePage' => $termDescription['update'],
-				'termGroupPage' => $termDescription['groupUpdate'],
+			'context' => $context,
+			'configProperties' => $description['properties'],
+			'termProperties' => $termDescription['properties'],
+    		'config' => $context->getConfig(),
+			'place' => $place,
+			'app' => $app,
+			'active' => 'application',
+			'applicationId' => $applicationId,
+			'applicationName' => $applicationName,
+			'type' => $type,
+			'types' => $types,
+			'params' => $params,
+    		'products' => Product::getList(null, array()),
+    		'options' => ProductOption::getList(null, array()),
+			'searchPage' => $description['search'],
+			'listPage' => $description['list'],
+			'updatePage' => $description['update'],
+			'groupPage' => $description['group'],
+			'termSearchPage' => $termDescription['search'],
+			'termUpdatePage' => $termDescription['update'],
+			'termGenerateConfig' => $termDescription['generate'],
+			'termGroupPage' => $termDescription['groupUpdate'],
     	));
     }
 
@@ -658,7 +658,9 @@ class CommitmentController extends AbstractActionController
 	    else {
     		$invoiceSpecs = $context->getConfig('commitment/invoice');
 	    }
-    	if ($account->type == 'business') $invoice['customer_invoice_name'] = $account->name;
+	    $description = Commitment::getDescription($type);
+
+	    if ($account->type == 'business') $invoice['customer_invoice_name'] = $account->name;
     	$invoicingContact = null;
     	if ($account->contact_1_status == 'invoice') $invoicingContact = $account->contact_1;
     	elseif ($account->contact_2_status == 'invoice') $invoicingContact = $account->contact_2;
@@ -688,7 +690,7 @@ class CommitmentController extends AbstractActionController
     	if ($invoicingContact->adr_city) $invoice['customer_adr_city'] = $invoicingContact->adr_city;
     	if ($invoicingContact->adr_state) $invoice['customer_adr_state'] = $invoicingContact->adr_state;
     	if ($invoicingContact->adr_street) $invoice['customer_adr_country'] = $invoicingContact->adr_country;
-    	
+
     	$invoice['identifier'] = ($proforma) ? null : $commitment->invoice_identifier;
     	$invoice['date'] = ($commitment->invoice_date) ? $commitment->invoice_date : date('Y-m-d');
     	$invoice['description'] = array();
@@ -697,14 +699,9 @@ class CommitmentController extends AbstractActionController
     		foreach($line['params'] as $propertyId) {
     			if ($propertyId == 'date') $arguments[] = $context->decodeDate(date('Y-m-d'));
     			else {
-    				if (array_key_exists($propertyId, $context->getConfig('commitment'.(($type) ? '/'.$type : ''))['properties'])) {
-    					$property = $context->getConfig('commitment'.(($type) ? '/'.$type : ''))['properties'][$propertyId];
-    				}
-    				else {
-    					$property = $context->getConfig('commitment')['properties'][$propertyId];
-    				}
-    				if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
+    				$property = $description['properties'][$propertyId];
     				if ($propertyId == 'account_name') $arguments[] = $commitment->account_name;
+    				elseif ($propertyId == 'place_id' && $commitment->place_id) $arguments[] = $property['modalities'][$commitment->place_id];
     				elseif ($propertyId == 'caption') $arguments[] = $commitment->caption;
     				elseif ($property['type'] == 'date') $arguments[] = $context->decodeDate($commitment->properties[$propertyId]);
     				elseif ($property['type'] == 'number') $arguments[] = $context->formatFloat($commitment->properties[$propertyId], 2);
