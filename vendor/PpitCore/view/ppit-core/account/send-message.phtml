@@ -61,6 +61,9 @@ if ($message == 'OK') $isDisabled = true; else $isDisabled = false;
 		<strong><?php echo $this->translate('Subject', 'ppit-contact', $context->getLocale()).': '.$context->localize($template['subject']) ?></strong>
 		<p>&nbsp;</p>
 		<?php echo $body ?>
+    <?php elseif (false) : //(array_key_exists('route', $template)) : ?>
+	    <strong><?php echo $this->translate('Subject', 'ppit-contact', $context->getLocale()).': '.$context->localize($template['subject']) ?></strong>
+	    <p><a href="<?php echo $this->url($template['route'])?>" target="_blank"><?php echo $this->translate('Preview', 'ppit-core', $context->getLocale()) ?></a></p>
 	<?php else : ?>
 			<div class="form-group" id="<?php echo $templateId ?>_subject_group">
 				<label class="col-sm-5 control-label">
@@ -74,7 +77,7 @@ if ($message == 'OK') $isDisabled = true; else $isDisabled = false;
 		
 			<div class="form-group" id="<?php echo $templateId ?>_text_group">
 				<div class="col-sm-12">
-					<textarea class="form-control" id="<?php echo $templateId ?>_text" rows="10" <?php if ($isDisabled || array_key_exists('customizable', $template) && !$template['customizable']) echo 'disabled="disabled"'?>><?php echo $context->localize($template['text']) ?></textarea>
+					<?php echo $context->localize($template['text']) ?>
 				</div>
 				<div class="col-sm-12"><p class="help-block" id="<?php echo $templateId ?>_text_error"></p></div>
 			</div>
@@ -114,4 +117,3 @@ if ($message == 'OK') $isDisabled = true; else $isDisabled = false;
 		</div>
 	<?php endif;?>
 	</div>
-</form

@@ -16,3 +16,10 @@ ADD `type` VARCHAR(255) NULL DEFAULT NULL AFTER `status`,
 ADD `invoice_account_id` INT NULL DEFAULT NULL AFTER `commitment_id`,
 ADD `quantity` DECIMAL(14,4) NULL DEFAULT NULL AFTER `collection_date`, 
 ADD `unit_price` DECIMAL(14,4) NULL DEFAULT NULL AFTER `quantity`;
+
+ALTER TABLE `commitment_term` 
+ADD `tiny_1` VARCHAR(255) NULL DEFAULT NULL AFTER `invoice_id`, 
+ADD `tiny_2` VARCHAR(255) NULL DEFAULT NULL AFTER `tiny_1`, 
+ADD `tiny_3` VARCHAR(255) NULL DEFAULT NULL AFTER `tiny_2`, 
+ADD `tiny_4` VARCHAR(255) NULL DEFAULT NULL AFTER `tiny_3`, 
+ADD `tiny_5` VARCHAR(255) NULL DEFAULT NULL AFTER `tiny_4`;

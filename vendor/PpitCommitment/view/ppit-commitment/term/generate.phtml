@@ -116,6 +116,43 @@
 			</div>
 		</div>
 
+<?php foreach ($termGenerateConfig as $propertyId => $property) : ?>
+
+    <div class="form-group" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_term-' : 'term-').$propertyId ?>_group">
+      <label class="col-sm-5 control-label">
+        <?php echo $property['labels'][$context->getLocale()] ?>
+      </label>
+      <div class="col-sm-7">
+
+  <?php if ($property['type'] == 'date') : ?>
+        <input type="hidden" id="term-<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
+        <input class="form-control" id="input_term-<?php echo $propertyId ?>" value="<?php echo $context->decodeDate($term->properties[$propertyId]) ?>" />
+
+  <?php elseif ($property['type'] == 'number') : ?>
+        <input type="hidden" id="term-<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
+        <input class="form-control" id="input_term-<?php echo $propertyId ?>" value="<?php echo ($term->properties[$propertyId]) ? $context->formatFloat($term->properties[$propertyId], 2) : '' ?>" />
+
+  <?php elseif ($property['type'] == 'textarea') : ?>
+        <textarea class="form-control" id="term-<?php echo $propertyId ?>"><?php echo $term->properties[$propertyId] ?></textarea>
+
+  <?php elseif ($property['type'] == 'select') : ?>
+        <select class="form-control" id="term-<?php echo $propertyId ?>">
+            <option />
+    <?php foreach ($property['modalities'] as $key => $labels) : ?>
+            <option value="<?php echo $key ?>" <?php if ($term->properties[$propertyId] == $key) echo 'selected="selected"' ?>><?php echo $labels[$context->getLocale()] ?></option>
+    <?php endforeach;?>
+        </select>
+   
+  <?php else : ?>
+        <input class="form-control" id="term-<?php echo $propertyId ?>" value="<?php echo $term->properties[$propertyId] ?>" />
+
+  <?php endif;?>
+      </div>
+      <div class="col-sm-12"><p class="help-block" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_term-' : 'term-').$propertyId ?>_error"></p></div>
+    </div>
+
+<?php endforeach;?>
+
 		<div class="form-group">
 			<div class="col-sm-5">&nbsp;</div>
 			<div class="col-sm-7">

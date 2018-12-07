@@ -196,6 +196,7 @@ class Commitment
 		$description = $context->getConfig('commitment/'.$type);
 		if (!$description) $description = $context->getConfig('commitment/generic');
 		foreach($description['properties'] as $propertyId) {
+			
 			$property = $context->getConfig('commitment/'.$type.'/property/'.$propertyId);
 			if (!$property) $property = $context->getConfig('commitment/generic/property/'.$propertyId);
 			if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
@@ -413,9 +414,9 @@ class Commitment
     public $properties;
 
     public $default_means_of_payment;
-/*    public $transfer_order_id;
+    public $transfer_order_id;
     public $transfer_order_date;
-    public $bank_identifier;*/
+    public $bank_identifier;
     
     public $account_status;
     public $account_name;
@@ -801,7 +802,7 @@ class Commitment
     	$data['default_means_of_payment'] = $this->default_means_of_payment;
     	$data['transfer_order_id'] = $this->transfer_order_id;
     	$data['transfer_order_date'] = $this->transfer_order_date;
-    	$data['transfer_order_id'] = $this->transfer_order_id;
+    	$data['bank_identifier'] = $this->bank_identifier;
     	
     	$data['n_title'] = $this->n_title;
     	$data['n_first'] = $this->n_first;
@@ -1110,6 +1111,7 @@ class Commitment
     	if (!$commitment) return null;
         if ($commitment->account_id) {
 	    	$commitment->account = Account::get($commitment->account_id);
+	    	$commitment->place_id = $commitment->account->place_id;
 	    	$commitment->account_status = $commitment->account->status;
 	    	$commitment->account_name = $commitment->account->name;
 	    	$commitment->account_identifier = $commitment->account->identifier;
