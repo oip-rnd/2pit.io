@@ -233,7 +233,7 @@ class TermController extends AbstractActionController
 					$property = $termProperties[$propertyId];
 					$data[$propertyId] = $request->getPost(('term-'.$propertyId));
     			}
-var_dump($data); return $this->response;    			 
+
     			// Atomically save
     			$connection = Term::getTable()->getAdapter()->getDriver()->getConnection();
     			$connection->beginTransaction();

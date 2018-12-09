@@ -30,10 +30,11 @@ In your database you have a table named 'core_instance' with only one row. Chang
 
 Install MDB Pro that you should get separately in public/MDB-Pro.
 
-The config/application.config.php file is ignored by git since it refers to your local modules and files. Create it by copying from the template
+The config/application.config.php and config/modules.config.php files are ignored by git since they refer to your local modules and files. Create them by copying from the templates
 
 	cd ../config/
 	cp application.config.template.php application.config.php
+	cp modules.config.template.php modules.config.php
 
 Ensure that all files are accessible to your web server (Apache on Linux in this example):
     
