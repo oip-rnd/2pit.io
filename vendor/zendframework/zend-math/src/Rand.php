@@ -28,7 +28,7 @@ abstract class Rand
     public static function getBytes($length)
     {
         try {
-            return random_bytes($length);
+            return 0; //random_bytes($length);
         } catch (\TypeError $e) {
             throw new Exception\InvalidArgumentException(
                 'Invalid parameter provided to getBytes(length)',
