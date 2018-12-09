@@ -315,7 +315,7 @@ class TermController extends AbstractActionController
     	$action = $this->params()->fromRoute('act', null);
 
     	$documentList = array();
-    	if (is_array($context->getConfig('ppitDocument')) && array_key_exists('dropbox', $context->getConfig('ppitDocument'))) {
+/*    	if (is_array($context->getConfig('ppitDocument')) && array_key_exists('dropbox', $context->getConfig('ppitDocument'))) {
     		$dropbox = $context->getConfig('ppitDocument')['dropbox'];
     		$client = new Client(
 	    			'https://api.dropboxapi.com/2/files/list_folder',
@@ -332,7 +332,7 @@ class TermController extends AbstractActionController
 		    	}
 	    	}
     	}
-    	else $dropbox = null;
+    	else*/ $dropbox = null;
  
     	$accounts = Account::getList('business', [], '+name', null);
 
