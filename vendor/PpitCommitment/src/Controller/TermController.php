@@ -229,6 +229,10 @@ class TermController extends AbstractActionController
     			$termShare = round($toDivide / $numberOfTerms, 2);
     			$cumulativeAmount = 0;
 
+		    	$data = array();
+		    	$data['status'] = $status;
+		    	$data['invoice_account_id'] = $invoice_account_id;
+		    	$data['means_of_payment'] = $paymentMean;
     			foreach($termGenerateConfig as $propertyId => $property) {
 					$property = $termProperties[$propertyId];
 					$data[$propertyId] = $request->getPost(('term-'.$propertyId));
@@ -237,10 +241,6 @@ class TermController extends AbstractActionController
     			// Atomically save
     			$connection = Term::getTable()->getAdapter()->getDriver()->getConnection();
     			$connection->beginTransaction();
-		    	$data = array();
-		    	$data['status'] = $status;
-		    	$data['invoice_account_id'] = $invoice_account_id;
-		    	$data['means_of_payment'] = $paymentMean;
 		    	try {
     				for ($i = 0; $i < $numberOfTerms; $i++) {
 				    	$data['caption'] = 'Echéance '.($i + 1);
@@ -315,7 +315,7 @@ class TermController extends AbstractActionController
     	$action = $this->params()->fromRoute('act', null);
 
     	$documentList = array();
-/*    	if (is_array($context->getConfig('ppitDocument')) && array_key_exists('dropbox', $context->getConfig('ppitDocument'))) {
+    	if (is_array($context->getConfig('ppitDocument')) && array_key_exists('dropbox', $context->getConfig('ppitDocument'))) {
     		$dropbox = $context->getConfig('ppitDocument')['dropbox'];
     		$client = new Client(
 	    			'https://api.dropboxapi.com/2/files/list_folder',
@@ -332,7 +332,7 @@ class TermController extends AbstractActionController
 		    	}
 	    	}
     	}
-    	else*/ $dropbox = null;
+    	else $dropbox = null;
  
     	$accounts = Account::getList('business', [], '+name', null);
 
