@@ -10,7 +10,7 @@ class SsmlCommitmentViewHelper
 		$context = Context::getCurrent();
 		$translator = $context->getServiceManager()->get(\Zend\I18n\Translator\TranslatorInterface::class);
 
-		$title = (isset ($context->getConfig('commitment/search')['title']) ? $context->getConfig('commitment/search')['title'][$context->getLocale()] : $translator->translate('Accounts', 'ppit-commitment', $context->getLocale()));
+		$title = (isset ($context->getConfig('commitment/search')['title']) ? $context->localize($context->getConfig('commitment/search')['title']) : $translator->translate('Accounts', 'ppit-commitment', $context->getLocale()));
 		
 		// Set document properties
 		$workbook->getProperties()->setCreator('P-PIT')
@@ -25,7 +25,7 @@ class SsmlCommitmentViewHelper
 		
 		foreach($description['export'] as $propertyId => $property) {
 			$colName = $property['options'];
-			$sheet->setCellValue($colName.'1', $property['labels'][$context->getLocale()]);
+			$sheet->setCellValue($colName.'1', $context->localize($property['labels']));
 		}
 		
 		$j = 1;
@@ -48,7 +48,7 @@ class SsmlCommitmentViewHelper
 				$colName = $property['options'];
 				if ($property['type'] == 'date') $sheet->setCellValue($colName.$j, $context->decodeDate($commitment->properties[$propertyId]));
 				elseif ($property['type'] == 'number') $sheet->setCellValue($colName.$j, $commitment->properties[$propertyId]);
-				elseif ($property['type'] == 'select')  $sheet->setCellValue($colName.$j, (array_key_exists($commitment->properties[$propertyId], $property['modalities'])) ? $property['modalities'][$commitment->properties[$propertyId]][$context->getLocale()] : $commitment->properties[$propertyId]);
+				elseif ($property['type'] == 'select')  $sheet->setCellValue($colName.$j, (array_key_exists($commitment->properties[$propertyId], $property['modalities'])) ? $context->localize($property['modalities'][$commitment->properties[$propertyId]]) : $commitment->properties[$propertyId]);
 				else $sheet->setCellValue($colName.$j, $commitment->properties[$propertyId]);
 			}
 		}
