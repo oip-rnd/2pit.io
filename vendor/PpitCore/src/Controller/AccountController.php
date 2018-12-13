@@ -1529,6 +1529,11 @@ class AccountController extends AbstractActionController
 			}
 			$account = Account::instanciate($type);
 			$data = json_decode($this->request->getContent(), true);
+			if (array_key_exists('request', $data) || array_key_exists('comment', $data)) {
+				$data['contact_history'] = '';
+				if (array_key_exists('request', $data)) $data['contact_history'] .= $data['request'].': ';
+				if (array_key_exists('comment', $data)) $data['contact_history'] .= $data['comment'];
+			}
 
 	    	// Database update
 	    	$connection = Account::getTable()->getAdapter()->getDriver()->getConnection();
