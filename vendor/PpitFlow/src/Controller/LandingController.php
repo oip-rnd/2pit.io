@@ -28,7 +28,7 @@ class LandingController extends AbstractActionController
 			$place = Place::get($context->getPlaceId());
 			$place_identifier = $place->identifier;
 		}
-		
+
 		if ($context->getConfig('specificationMode') == 'config') {
 			$content = $context->getConfig('landing/'.$place_identifier);
 			if (!$content) $content = $context->getConfig('landing/generic');
@@ -36,6 +36,13 @@ class LandingController extends AbstractActionController
 		else $content = Config::get($place->identifier.'_landing', 'identifier', $place->id)->content;
 		$locale = $this->params()->fromQuery('locale');
 
+		// Profile form
+		if ($context->getConfig('specificationMode') == 'config') {
+			$profileForm = $context->getConfig('profile/'.$place_identifier)['form'];
+			if (!$profileForm) $profileForm = $context->getConfig('profile/generic')['form'];
+		}
+		else $profileForm = Config::get($place_identifier.'_profile', 'identifier')->content['form'];
+		
 //		$id = $this->params()->fromRoute('id');
 		$account_type = $context->getConfig('landing_account_type');
 /*		$account = null;
@@ -136,6 +143,7 @@ class LandingController extends AbstractActionController
 		$this->layout('/layout/flow-layout');
 		$this->layout()->setVariables(array(
 			'context' => $context,
+			'type' => $this->params()->fromRoute('type', $context->getConfig('event_default_type')),
 			'panel' => $panel,
 			'identity' => $email,
 			'redirectRoute' => $this->params()->fromQuery('route'),
@@ -146,10 +154,11 @@ class LandingController extends AbstractActionController
 			'accountType' => $context->getConfig('landing_account_type'),
 			'header' => $content['header'],
 			'intro' => $content['intro'],
-			'form' => array_key_exists('form', $content) && $content['form'],
+			'form' => (array_key_exists('form', $content) && $content['form']) ? $content['form'] : false,
 			'footer' => $content['footer'],
 			'locale' => $locale,
 			'photo_link_id' => null,
+			'profileForm' => $profileForm,
 			'pageScripts' => 'ppit-flow/landing/scripts',
 			'message' => ($message) ? $message : $this->params()->fromQuery('message'),
 			'error' => ($error) ? $error : $this->params()->fromQuery('error'),
@@ -173,7 +182,106 @@ class LandingController extends AbstractActionController
 	{
 		return $this->template1Action();
 	}
+/*
+	public function formAction()
+	{
+		// Context and parameters
+		$context = Context::getCurrent();
+		$instance_caption = $context->getInstance()->caption;
+		$place_identifier = $this->params()->fromRoute('place_identifier');
+		if ($place_identifier) $place = Place::get($place_identifier, 'identifier');
+		else {
+			$place = Place::get($context->getPlaceId());
+			$place_identifier = $place->identifier;
+		}
+		
+		// Description
+		if ($context->getConfig('specificationMode') == 'config') {
+			$content = $context->getConfig('landing/'.$place_identifier);
+			if (!$content) $content = $context->getConfig('landing/generic');
+		}
+		else $content = Config::get($place->identifier.'_landing', 'identifier', $place->id)->content;
 
+		// Locale
+		$locale = $this->params()->fromQuery('locale');
+		if (!$locale) $locale = $context->getLocale();
+
+		// id and account
+		$id = $this->params()->fromRoute('id');
+		$account_type = $context->getConfig('landing_account_type');
+		if ($id) $account = Account::get($id);
+		else $account = Account::instanciate($account_type);
+
+		// Data view
+		$viewData = array();
+		foreach ($content['form']['inputs'] as $inputId => $options) {
+			if (array_key_exists('definition', $options) && $options['definition'] == 'inline') $property = $options;
+			else {
+				$property = $context->getConfig('core_account/'.$account_type.'/property/'.$inputId);
+				if (!$property) $property = $context->getConfig('core_account/generic/property/'.$inputId);
+				if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
+				if (array_key_exists('class', $options)) $property['class'] = $options['class'];
+				if (array_key_exists('mandatory', $options)) $property['mandatory'] = $options['mandatory'];
+				if (array_key_exists('updatable', $options)) $property['updatable'] = $options['updatable'];
+			}
+			if (!array_key_exists('class', $property)) $property['class'] = 'col-md-6';
+			if (!array_key_exists('mandatory', $property)) $property['mandatory'] = false;
+			if (!array_key_exists('updatable', $property)) $property['updatable'] = true;
+			if (!array_key_exists('placeholder', $property)) $property['placeholder'] = null;
+			$content['form']['inputs'][$inputId] = $property;
+			if (array_key_exists('property_id', $property)) $propertyId = $property['property_id'];
+			else $propertyId = $inputId;
+			if ($id) {
+				if ($inputId != $propertyId) $viewData[$inputId] = (in_array($property['value'], explode(',', $account->properties[$propertyId])) ? $property['value'] : null);
+				else $viewData[$inputId] = $account->properties[$propertyId];
+				$queryValue = $this->params()->fromQuery($inputId);
+				if ($queryValue !== null) $viewData[$inputId] = $queryValue;
+			}
+			else $viewData[$inputId] = (array_key_exists('default', $property)) ? $property['default'] : null;
+		}
+
+		// Process the post data after input
+		$message = null;
+		$error = null;
+		if ($this->request->isPost()) {
+			$data = array();
+			$data['status'] = 'interested';
+			$data['place_id'] = $place->id;
+			$data['callback_date'] = date('Y-m-d');
+			foreach ($content['form']['inputs'] as $inputId => $property) {
+				if (!$id || $property['updatable']) {
+					$viewData[$inputId] = $this->request->getPost($inputId);
+					if (array_key_exists('property_id', $property)) $propertyId = $property['property_id'];
+					else $propertyId = $inputId;
+					
+					if (array_key_exists($propertyId, $data) && $data[$propertyId]) {
+						if ($viewData[$inputId]) $data[$propertyId] .= ','.$viewData[$inputId];
+					}
+					else $data[$propertyId] = $viewData[$inputId];
+				}
+			}
+			$data['contact_history'] = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2).', from '.$_SERVER['HTTP_REFERER'].', with '.$_SERVER['HTTP_USER_AGENT'].' filled landing page\'s form';
+			$data['origine'] = 'subscription';
+			$rc = $account->loadAndAdd($data, Account::getConfig($account_type));
+			if (in_array($rc[0], ['200', '206'])) $message = 'OK';
+			else $error = $rc;
+		}
+		
+		// Feed and return the view
+		$view = new ViewModel(array(
+			'context' => $context,
+			'locale' => $locale,
+			'place_identifier' => $place_identifier,
+			'id' => null,
+			'content' => $content,
+			'viewData' => $viewData,
+			'message' => $message,
+			'error' => $error,
+		));
+		$view->setTerminal(true);
+		return $view;
+	}*/
+	
 	public function checkoutAction()
 	{
 		return $this->template1Action();

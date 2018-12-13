@@ -184,6 +184,7 @@ class Instance
     
     	$instance = new Instance;
     	$instance->specifications = array();
+    	$instance->is_active = 1;
     	return $instance;
     }
     
@@ -220,6 +221,8 @@ class Instance
     	if (array_key_exists('caption', $data)) {
 	    	$caption = $data['caption'];
     		if (!$caption || strlen($caption) > 255) return 'Identity';
+			$caption = explode('/', $caption);
+			$caption = implode('_', $caption);
     		if ($this->caption != $caption) $auditRow['caption'] = $this->caption = $caption;
     	}
     	if (array_key_exists('default_place_id',$data)) {
@@ -271,6 +274,22 @@ class Instance
     	return 'OK';
     }
 
+    /**
+     * Restfull implementation
+     */
+    public function loadAndAdd($data)
+    {
+	   	$context = Context::getCurrent();
+    	$rc = $this->loadData($data);
+    	if ($rc != 'OK') return ['500', 'instance->loadData: '.$rc];
+	
+    	$rc = $this->add();
+		if ($rc != 'OK') return ['500', 'instance->add: '.$rc];
+
+		$this->properties = $this->getProperties();
+		return ['200', $this->id];
+    }
+    
     /**
      * Update an existing row in the database.
      * If $update_time is provided, an isolation check is performed, such that the current update time in the database is not greater than the one given as an argument.

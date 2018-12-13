@@ -48,6 +48,7 @@ class SsmlCommitmentViewHelper
 				$colName = $property['options'];
 				if ($property['type'] == 'date') $sheet->setCellValue($colName.$j, $context->decodeDate($commitment->properties[$propertyId]));
 				elseif ($property['type'] == 'number') $sheet->setCellValue($colName.$j, $commitment->properties[$propertyId]);
+				elseif ($propertyId == 'place_id')  $sheet->setCellValue($colName.$j, $property['modalities'][$commitment->properties[$propertyId]]);
 				elseif ($property['type'] == 'select')  $sheet->setCellValue($colName.$j, (array_key_exists($commitment->properties[$propertyId], $property['modalities'])) ? $context->localize($property['modalities'][$commitment->properties[$propertyId]]) : $commitment->properties[$propertyId]);
 				else $sheet->setCellValue($colName.$j, $commitment->properties[$propertyId]);
 			}

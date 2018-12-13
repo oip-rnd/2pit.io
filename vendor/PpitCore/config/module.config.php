@@ -888,15 +888,6 @@ return array(
             								),
             						),
             				),
-            				'pullImg' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/pull-img',
-            								'defaults' => array(
-            										'action' => 'pullImg',
-            								),
-            						),
-            				),
             				'admin' => array(
             						'type' => 'segment',
             						'options' => array(
@@ -915,7 +906,16 @@ return array(
             								),
             						),
             				),
-            		),
+			       			'v1' => array(
+	        						'type' => 'segment',
+	        						'options' => array(
+	        								'route' => '/v1[/:id]',
+	        								'defaults' => array(
+	        										'action' => 'v1',
+	        								),
+	        						),
+	        				),
+	            	),
             ),
         	'place' => array(
                 'type'    => Literal::class,
@@ -1833,9 +1833,9 @@ return array(
 				array('route' => 'instance/legalNotices', 'roles' => array('guest')),
 				array('route' => 'instance/addImage', 'roles' => array('admin')),
 				array('route' => 'instance/addLogo', 'roles' => array('admin')),
-				array('route' => 'instance/pullImg', 'roles' => array('admin')),
 				array('route' => 'instance/admin', 'roles' => array('admin')),
 				array('route' => 'instance/serialize', 'roles' => array('admin')),
+				array('route' => 'instance/v1', 'roles' => array('guest')),
 				
 				array('route' => 'place', 'roles' => array('admin')),
 				array('route' => 'place/index', 'roles' => array('admin')),

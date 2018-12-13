@@ -22,6 +22,7 @@ return array(
 	'My requests' => 'Mes demandes',
 	'New request' => 'Nouvelle demande',
 	'Other example' => 'Autre exemple',
+	'Payment' => 'Paiement',
 	'Please confirm the cancellation' => 'Veuillez confirmer l’annulation',
 	'Please confirm the completion' => 'Veuillez confirmer la finalisation',
 	'Please confirm the proposal' => 'Veuillez confirmer la proposition',

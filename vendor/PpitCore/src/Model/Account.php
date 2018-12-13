@@ -999,6 +999,7 @@ class Account
 	    		if ($property['private'] && $data[$propertyId]) {
 	    			$value = $context->getSecurityAgent()->unprotectPrivateData($data[$propertyId]);
 	    			if ($value) $data[$propertyId] = $value;
+	    			else unset($data[$propertyId]);
 	    		}
 	    	}
     	}
@@ -1820,9 +1821,9 @@ class Account
 		    	if ($rc != 'OK') return ['500', $rc];
 	    		$account->update(null);
 				if ($rc != 'OK') return ['500', 'account->update: '.$rc];
-	    		return ['206', $account];
+	    		return ['206', $account->id];
 			}
-	    	return ['206', $account];
+	    	return ['206', $account->id];
     	}
 		$account = $this;
 
@@ -1897,7 +1898,7 @@ class Account
 		
 		$account->denormalize();
 		$account->properties = $account->getProperties($account->type, Account::getDescription($type));
-		return ['200', $account->identifier];
+		return ['200', $account->id];
     }
 
     public function loadAndUpdate($data, $config, $update_time = null)
@@ -2017,7 +2018,7 @@ class Account
 		if ($rc != 'OK') return ['500', 'account->update: '.$rc];
 
 		$this->denormalize();
-		return ['200', $this->identifier];
+		return ['200', $this->id];
     }
     
     public function getCharterStatus() {

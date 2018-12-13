@@ -374,27 +374,27 @@ if ($account->id && $action != 'update' || $message == 'OK') $isDisabled = true;
 				?>
 
 				<?php if ($field['type'] == 'input') : ?>
-				<input class="form-control" id="<?php echo $id ?>" value="<?php echo $value ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?> />
+				<input class="form-control" id="<?php echo $id ?>" value="<?php echo $value ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
 						
 				<?php elseif ($field['type'] == 'date') : ?>
 				<input type="hidden" id="<?php echo $id ?>" />
-				<input class="form-control" id="input_<?php echo $id ?>" value="<?php echo $context->decodeDate($value) ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?> />
+				<input class="form-control" id="input_<?php echo $id ?>" value="<?php echo $context->decodeDate($value) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
 		
 				<?php elseif ($field['type'] == 'time') : ?>
-				<input class="form-control time" id="<?php echo $id ?>" value="<?php echo $value ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?> />
+				<input class="form-control time" id="<?php echo $id ?>" value="<?php echo $value ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
 		
 				<?php elseif ($field['type'] == 'number') : ?>
 				<input type="hidden" id="<?php echo $id ?>" />
-				<input class="form-control" id="input_<?php echo $id ?>" value="<?php echo $context->formatFloat($value, 2) ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?> />
+				<input class="form-control" id="input_<?php echo $id ?>" value="<?php echo $context->formatFloat($value, 2) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
 		
 				<?php elseif ($field['type'] == 'textarea') : ?>
-				<textarea class="form-control" id="<?php echo $id ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?>><?php echo $value ?></textarea>
+				<textarea class="form-control" id="<?php echo $id ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>><?php echo $value ?></textarea>
 		
 				<?php elseif ($field['type'] == 'log') : ?>
-				<textarea class="form-control" id="<?php echo $id ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?>></textarea>
+				<textarea class="form-control" id="<?php echo $id ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>></textarea>
 		
 				<?php elseif ($field['type'] == 'select') : ?>
-				<select class="form-control" id="<?php echo $id ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?>>
+				<select class="form-control" id="<?php echo $id ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
 	    			<option />
 					<?php foreach ($field['modalities'] as $key => $labels) : ?>
 	    			<option value="<?php echo $key ?>" <?php if ($value == $key) echo 'selected="selected"' ?>><?php echo $labels[$context->getLocale()] ?></option>

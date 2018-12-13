@@ -2890,6 +2890,7 @@ table.note-report td {
 			'place_id' => 'select',
 			'status' => 'select',
 			'year' => 'contains',
+			'invoice_identifier' => 'contains',
 			'account_name' => 'contains',
 			'caption' => 'contains',
 			'including_options_amount' => 'range',
@@ -2901,6 +2902,7 @@ table.note-report td {
 			'place_id' => [],
 			'status' => [],
 			'year' => [],
+			'invoice_identifier' => [],
 			'account_name' => [],
 			'caption' => [],
 			'quantity' => [],
@@ -2913,6 +2915,7 @@ table.note-report td {
 	
 	'commitment/update/human_service' => array(
 		'year' => array('mandatory' => true),
+		'invoice_identifier' => array('readonly' => true),
 		'invoice_date' => array('mandatory' => true),
 		'account_id' => array('mandatory' => true),
 		'caption' => array('mandatory' => true),

@@ -1438,7 +1438,7 @@ class AccountController extends AbstractActionController
 								else $rest .= (' '.$property['name'].': '.$property['values'][0]);
 							}
 							$data['contact_history'] = $rest;
-							$account->loadAndAdd($data, Account::getConfig($type));
+							$rc = $account->loadAndAdd($data, Account::getConfig($type));
 							echo ++$i.': '.$lead['id'].' '.$rc[0]."<br>\n";
 						}
 					}
@@ -1475,13 +1475,8 @@ class AccountController extends AbstractActionController
 		$identifier = $this->params()->fromQuery('identifier');
 		$passphrase = $this->params()->fromQuery('passphrase'); // Deprecated
 
-		// Description
-		$content['description'] = array();
-		$content['description']['type'] = $type;
-		$content['description']['properties'] = Account::getConfig($type);
-		$content['description']['list'] = $context->getConfig('core_account/list/'.$type);
-
 		$content = array();
+		$description = Account::getDescription('p-pit-studies');
 
 		// Get
 		if ($this->request->isGet()) {
@@ -1493,7 +1488,7 @@ class AccountController extends AbstractActionController
 					$this->getResponse()->setStatusCode('400');
 					return $this->getResponse();
 				}
-		    	$content = $account->getProperties($type, $content['description'], $passphrase);
+		    	$content['data'] = $account->getProperties($type, $description);
 			}
 			else {
 
@@ -1514,6 +1509,12 @@ class AccountController extends AbstractActionController
 		    	$content['data'] = array();
 		    	foreach ($accounts as $account) $content['data'][$account->id] = $account->getProperties();
 			}
+		
+			// Description
+			$content['description'] = array();
+			$content['description']['type'] = $type;
+			$content['description']['properties'] = $description['properties'];
+			$content['description']['list'] = $description['list'];
 		}
 
 		// Put
@@ -1533,18 +1534,22 @@ class AccountController extends AbstractActionController
 	    	$connection = Account::getTable()->getAdapter()->getDriver()->getConnection();
 	    	$connection->beginTransaction();
 	    	try {
-				$rc = $account->loadAndAdd($data, $content['description']['properties']);
+				$rc = $account->loadAndAdd($data, $description['properties']);
 	    		if ($rc[0] == '206') { // Partially accepted on an already existing account which is returned as rc[1]
 					$this->getResponse()->setStatusCode($rc[0]);
-					echo $rc[1]->id;
-					return $this->getResponse();
-				}
+					$content['data'] = ['id' => $rc[1]];
+					$connection->commit();
+	    		}
 				elseif ($rc[0] != '200') {
 					$this->getResponse()->setStatusCode($rc[0]);
-					echo $rc[1];
-					return $this->getResponse();
+				    $this->getResponse()->setReasonPhrase($rc[1]);
+					$connection->rollback();
+				    return $this->getResponse();
 				}
-				$connection->commit();
+				else {
+					$content['data'] = ['id' => $rc[1]];
+					$connection->commit();
+				}
 	    	}
 			catch (\Exception $e) {
 				$connection->rollback();
@@ -1565,7 +1570,7 @@ class AccountController extends AbstractActionController
 			$connection = Account::getTable()->getAdapter()->getDriver()->getConnection();
 			$connection->beginTransaction();
 			try {
-				$rc = $account->loadAndUpdate($data, $content['description']['properties']);
+				$rc = $account->loadAndUpdate($data, $description['properties']);
 				if ($rc[0] != '200') {
 					$connection->rollback();
 					$this->getResponse()->setStatusCode($rc[0]);
@@ -1583,32 +1588,23 @@ class AccountController extends AbstractActionController
 
 		// Delete
 		elseif ($this->request->isDelete()) {
-		
-			if (!$identifier) {
-				$this->getResponse()->setStatusCode('400');
-				return $this->getResponse();
-			}
-			$account = Account::get($identifier, 'identifier');
+			if ($identifier) $account = Account::get($identifier, 'identifier');
+			else $account = Account::get($id);
 			if (!$account) {
 				$this->getResponse()->setStatusCode('400');
 				return $this->getResponse();
 			}
-
+			
 			// Database update
 			$connection = Account::getTable()->getAdapter()->getDriver()->getConnection();
 			$connection->beginTransaction();
 			try {
-				$account->delete((array_key_exists('update_time', $data)) ? $data['update_time'] : null);
-				if ($rc == 'Isolation') {
-					$this->getResponse()->setStatusCode('409');
-					return $this->getResponse();
-				}
-				elseif ($rc != 'OK') {
+				$rc = $account->delete(null);
+				if ($rc != 'OK') {
 					$this->getResponse()->setStatusCode('500');
 					return $this->getResponse();
 				}
 				$connection->commit();
-				$content = $account->getProperties();
 			}
 			catch (\Exception $e) {
 				$connection->rollback();
@@ -1630,9 +1626,9 @@ class AccountController extends AbstractActionController
 			return $view;
 		}
 		elseif ($contentType == 'application/json') {*/
-//	       	ob_start("ob_gzhandler");
+	       	ob_start("ob_gzhandler");
 			echo json_encode($content, JSON_PRETTY_PRINT);
-//			ob_end_flush();
+			ob_end_flush();
 			return $this->response;
 		}
 //	}

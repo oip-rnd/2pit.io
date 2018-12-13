@@ -13,6 +13,7 @@ return array (
 			'PpitFlow\Controller\Emailing' => 'PpitFlow\Controller\EmailingController',
 			'PpitFlow\Controller\Event' => 'PpitFlow\Controller\EventController',
 			'PpitFlow\Controller\Landing' => 'PpitFlow\Controller\LandingController',
+			'PpitFlow\Controller\Payment' => 'PpitFlow\Controller\PaymentController',
 			'PpitFlow\Controller\Profile' => 'PpitFlow\Controller\ProfileController',
 			'PpitFlow\Controller\Survey' => 'PpitFlow\Controller\SurveyController',
 		),
@@ -235,6 +236,13 @@ return array (
 							'defaults' => array('action' => 'template2'),
 						),
 					),
+/*					'form' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/form[/:place_identifier][/:id]',
+							'defaults' => array('action' => 'form'),
+						),
+					),*/
 					'checkout' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -247,6 +255,26 @@ return array (
 						'options' => array(
 							'route' => '/test',
 							'defaults' => array('action' => 'test'),
+						),
+					),
+				),
+			),
+			'payment' => array(
+				'type'    => 'literal',
+				'options' => array(
+					'route'    => '/payment',
+					'defaults' => array(
+						'controller' => 'PpitFlow\Controller\Payment',
+						'action'     => 'index',
+					),
+				),
+				'may_terminate' => true,
+				'child_routes' => array(
+					'add' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/add',
+							'defaults' => array('action' => 'add'),
 						),
 					),
 				),
@@ -441,6 +469,7 @@ return array (
 				
 				array('route' => 'landing/template1', 'roles' => array('guest')),
 				array('route' => 'landing/template2', 'roles' => array('guest')),
+//				array('route' => 'landing/form', 'roles' => array('guest')),
 				array('route' => 'landing/checkout', 'roles' => array('guest')),
 				array('route' => 'landing/test', 'roles' => array('guest')),
 
@@ -465,6 +494,9 @@ return array (
 				array('route' => 'flowEvent/cancel', 'roles' => array('user')),
 				array('route' => 'flowEvent/signOut', 'roles' => array('user')),
 				array('route' => 'flowEvent/repair', 'roles' => array('admin')),
+
+				array('route' => 'payment', 'roles' => array('user')),
+				array('route' => 'payment/add', 'roles' => array('user')),
 				
 				array('route' => 'profile', 'roles' => array('user')),
 				array('route' => 'profile/index', 'roles' => array('user')),

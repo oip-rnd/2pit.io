@@ -527,15 +527,6 @@ class InstanceController extends AbstractActionController
     	return $view;
     }
     
-    public function pullImgAction()
-    {
-    	$context = Context::getCurrent();
-    	$instance_caption = $context->getInstance()->caption;
-    	echo shell_exec('cd public/img/'.$instance_caption.'/ && /usr/bin/git pull origin master && echo Done');
-    	$this->getResponse()->setStatusCode('200');
-    	return $this->response;
-    }
-    
     public function adminAction()
     {
     	$context = Context::getCurrent();
@@ -582,4 +573,146 @@ class InstanceController extends AbstractActionController
     			'error' => $error,
     	));
     }
+	
+	/**
+	 * Restfull implementation
+	 * TODO : authorization + error description
+	 */
+	public function v1Action()
+	{
+		$context = Context::getCurrent();
+	
+		// Authentication
+		if (!$context->isAuthenticated() && !$context->wsAuthenticate($this->getEvent())) {
+			$this->getResponse()->setStatusCode('401');
+			return $this->getResponse();
+		}
+
+		$content = array();
+
+		// Get
+		if ($this->request->isGet()) {
+			if ($id) {
+				
+				// Direct access mode
+		    	$instance = Instance::get($id);
+				if (!$instance) {
+					$this->getResponse()->setStatusCode('400');
+					return $this->getResponse();
+				}
+		    	$content['data'] = $instance->getProperties();
+			}
+			else {
+
+				// List mode
+				$filters = array();
+		    	$limit = $this->params()->fromQuery('limit');
+				$order = $this->params()->fromQuery('order', '+name');
+		    	$page = $this->params()->fromQuery('page');
+		    	$per_page = $this->params()->fromQuery('per_page');
+		    	$statusDef = $context->getConfig('core_account/'.$type.'/property/status');
+				if ($statusDef['definition'] != 'inline') $statusDef = $context->getConfig($statusDef['definition']);
+		    	if (!array_key_exists('status', $filters)) $filters['status'] = implode(',', $statusDef['perspectives'][$perspective]);
+		    	$instances = Instance::getList($type, $filters, $order, $limit, null, $page, $per_page);
+		    	$content['data'] = array();
+		    	foreach ($instances as $instance) $content['data'][$instance->id] = $instance->getProperties();
+			}
+		}
+
+		// Put
+		elseif ($this->request->isPut()) {
+			$instance = Instance::instanciate();
+			$data = json_decode($this->request->getContent(), true);
+				
+	    	// Database update
+	    	$connection = Instance::getTable()->getAdapter()->getDriver()->getConnection();
+	    	$connection->beginTransaction();
+	    	try {
+				$rc = $instance->loadAndAdd($data);
+	    		if ($rc[0] == '206') { // Partially accepted on an already existing account which is returned as rc[1]
+					$this->getResponse()->setStatusCode($rc[0]);
+					$content['data'] = ['id' => $rc[1]];
+					$connection->commit();
+	    		}
+				elseif ($rc[0] != '200') {
+					$this->getResponse()->setStatusCode($rc[0]);
+				    $this->getResponse()->setReasonPhrase($rc[1]);
+					$connection->rollback();
+				    return $this->getResponse();
+				}
+				else {
+					$content['data'] = ['id' => $rc[1]];
+    				mkdir('public/logos/'.$instance->caption);
+    				mkdir('public/img/'.$instance->caption);
+					$connection->commit();
+				}
+	    	}
+			catch (\Exception $e) {
+				$connection->rollback();
+				return ['500', $rc];
+			}
+		}
+		
+		// Post
+		elseif ($this->request->isPost()) {
+			if ($identifier) $instance = Instance::get($identifier, 'identifier');
+			else $instance = Instance::get($id);
+			if (!$instance) {
+				$this->getResponse()->setStatusCode('400');
+				return $this->getResponse();
+			}
+
+			$data = json_decode($this->request->getContent(), true);
+			$connection = Instance::getTable()->getAdapter()->getDriver()->getConnection();
+			$connection->beginTransaction();
+			try {
+				$rc = $instance->loadAndUpdate($data, $description['properties']);
+				if ($rc[0] != '200') {
+					$connection->rollback();
+					$this->getResponse()->setStatusCode($rc[0]);
+					echo $rc[1];
+					return $this->getResponse();
+				}
+				else $connection->commit();
+			}
+			catch (\Exception $e) {
+				$connection->rollback();
+				$this->getResponse()->setStatusCode('500');
+				return $this->getResponse();
+			}
+		}
+
+		// Delete
+		elseif ($this->request->isDelete()) {
+			if ($identifier) $instance = Instance::get($identifier, 'identifier');
+			else $instance = Instance::get($id);
+			if (!$instance) {
+				$this->getResponse()->setStatusCode('400');
+				return $this->getResponse();
+			}
+			
+			// Database update
+			$connection = Instance::getTable()->getAdapter()->getDriver()->getConnection();
+			$connection->beginTransaction();
+			try {
+				$rc = $instance->delete(null);
+				if ($rc != 'OK') {
+					$this->getResponse()->setStatusCode('500');
+					return $this->getResponse();
+				}
+				$connection->commit();
+			}
+			catch (\Exception $e) {
+				$connection->rollback();
+				$this->getResponse()->setStatusCode('500');
+				return $this->getResponse();
+			}
+		}
+
+		// Output
+       	ob_start("ob_gzhandler");
+		echo json_encode($content, JSON_PRETTY_PRINT);
+		ob_end_flush();
+		return $this->response;
+	}
 }
