@@ -1529,11 +1529,15 @@ class AccountController extends AbstractActionController
 			}
 			$account = Account::instanciate($type);
 			$data = json_decode($this->request->getContent(), true);
-			if (array_key_exists('request', $data) || array_key_exists('comment', $data)) {
-				$data['contact_history'] = '';
-				if (array_key_exists('request', $data)) $data['contact_history'] .= $data['request'].': ';
-				if (array_key_exists('comment', $data)) $data['contact_history'] .= $data['comment'];
-			}
+	    	if (array_key_exists('request', $data) && array_key_exists($data['request'], $context->getConfig('core_account/requestTypes'.(($type) ? '/'.$type : '')))) {
+	    		$requestType = $context->getConfig('core_account/requestTypes'.(($type) ? '/'.$type : ''))[$data['request']][$context->getLocale()];
+	    	}
+	    	else {
+	    		$requestType = $context->getConfig('core_account/requestTypes'.(($type) ? '/'.$type : ''))['general_information'][$context->getLocale()];
+	    	}
+	    	if (array_key_exists('comment', $data)) $requestComment = $data['comment'];
+	    	else $requestComment = '';
+    		$data['contact_history'] = 'Request: '.$requestType.' - Comment: '.$requestComment;
 
 	    	// Database update
 	    	$connection = Account::getTable()->getAdapter()->getDriver()->getConnection();
