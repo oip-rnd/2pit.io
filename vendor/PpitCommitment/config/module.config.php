@@ -805,7 +805,16 @@ return array(
 												),
 										),
 		        				),
-		        				'debit' => array(
+		        				'payzenReturn' => array(
+		        						'type' => 'segment',
+		        						'options' => array(
+		        								'route' => '/payzen-return',
+		        								'defaults' => array(
+		        										'action' => 'payzenReturn',
+		        								),
+		        						),
+		        				),
+	       						'debit' => array(
 		        						'type' => 'segment',
 		        						'options' => array(
 		        								'route' => '/debit[/:type]',
@@ -971,6 +980,7 @@ return array(
 				array('route' => 'commitmentTerm/generate', 'roles' => array('sales_manager')),
             	array('route' => 'commitmentTerm/update', 'roles' => array('sales_manager')),
             	array('route' => 'commitmentTerm/group', 'roles' => array('sales_manager')),
+            	array('route' => 'commitmentTerm/payzenReturn', 'roles' => array('guest')),
             	array('route' => 'commitmentTerm/debit', 'roles' => array('sales_manager')),
             	array('route' => 'commitmentTerm/debitSsml', 'roles' => array('dpo')),
             	array('route' => 'commitmentTerm/debitXml', 'roles' => array('dpo')),
