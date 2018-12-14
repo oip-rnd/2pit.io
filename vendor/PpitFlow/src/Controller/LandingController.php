@@ -50,7 +50,7 @@ class LandingController extends AbstractActionController
 		if(!$account) $account = Account::instanciate($accountType);*/
 
 		// Profile form
-		if ($context->getConfig('specificationMode') == 'config') $profileForm = $context->getConfig('profile/'.$place_identifier)['form'];
+/*		if ($context->getConfig('specificationMode') == 'config') $profileForm = $context->getConfig('profile/'.$place_identifier)['form'];
 		else $profileForm = Config::get($place_identifier.'_profile', 'identifier')->content['form'];
 		if (!$profileForm) $profileForm = $context->getConfig('profile/generic')['form'];
 		$accountDescription = Account::getDescription($accountType);
@@ -68,7 +68,7 @@ class LandingController extends AbstractActionController
 			if (!array_key_exists('placeholder', $property)) $property['placeholder'] = null;
 			if (!array_key_exists('focused', $property)) $property['focused'] = false;
 			$profileForm['inputs'][$inputId] = $property;
-		}
+		}*/
 		
 		// If an email is given as a parameter: Show the Login or Sign Up form depending of the account existing or not
 		$panel = $this->params()->fromQuery('panel');
@@ -174,7 +174,7 @@ class LandingController extends AbstractActionController
 			'footer' => $content['footer'],
 			'locale' => $locale,
 			'photo_link_id' => null,
-			'profileForm' => $profileForm,
+//			'profileForm' => $profileForm,
 			'pageScripts' => 'ppit-flow/landing/scripts',
 			'message' => ($message) ? $message : $this->params()->fromQuery('message'),
 			'error' => ($error) ? $error : $this->params()->fromQuery('error'),
