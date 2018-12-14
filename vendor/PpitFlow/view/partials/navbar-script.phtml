@@ -248,7 +248,7 @@ $('#modalProfileForm').on('show.bs.modal', function () {
 });
 
 // Payment
-<?php if (false) : ?>
+<?php if ($payment && array_key_exists('paypal', $payment)) : ?>
 
   <!-- PayPal -->
 
@@ -317,6 +317,7 @@ function showPaypal() {
 }
 
 function showPayment() {
+console.log('coucou');
   var xhttp = new XMLHttpRequest();
   xhttp.open('GET', '<?php echo $this->url('payment/add') ?>', true);
   xhttp.onload = function () {

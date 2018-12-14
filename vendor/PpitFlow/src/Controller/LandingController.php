@@ -21,6 +21,7 @@ class LandingController extends AbstractActionController
 	{
 		// Retrieve the context and the parameters
 		$context = Context::getCurrent();
+		$type = $this->params()->fromRoute('type', $context->getConfig('event_default_type'));
 		$instance_caption = $context->getInstance()->caption;
 		$place_identifier = $this->params()->fromRoute('place_identifier');
 		if ($place_identifier) $place = Place::get($place_identifier, 'identifier');
@@ -35,16 +36,9 @@ class LandingController extends AbstractActionController
 		}
 		else $content = Config::get($place->identifier.'_landing', 'identifier', $place->id)->content;
 		$locale = $this->params()->fromQuery('locale');
-
-		// Profile form
-		if ($context->getConfig('specificationMode') == 'config') {
-			$profileForm = $context->getConfig('profile/'.$place_identifier)['form'];
-			if (!$profileForm) $profileForm = $context->getConfig('profile/generic')['form'];
-		}
-		else $profileForm = Config::get($place_identifier.'_profile', 'identifier')->content['form'];
 		
 //		$id = $this->params()->fromRoute('id');
-		$account_type = $context->getConfig('landing_account_type');
+		$accountType = $context->getConfig('landing_account_type');
 /*		$account = null;
 		if ($id) {
 			$account = Account::get($id);
@@ -53,8 +47,29 @@ class LandingController extends AbstractActionController
 		elseif ($context->isAuthenticated()) {
 			$account = Account::get($context->getContactId(), 'contact_1_id');
 		}
-		if(!$account) $account = Account::instanciate($account_type);*/
+		if(!$account) $account = Account::instanciate($accountType);*/
 
+		// Profile form
+		if ($context->getConfig('specificationMode') == 'config') $profileForm = $context->getConfig('profile/'.$place_identifier)['form'];
+		else $profileForm = Config::get($place_identifier.'_profile', 'identifier')->content['form'];
+		if (!$profileForm) $profileForm = $context->getConfig('profile/generic')['form'];
+		$accountDescription = Account::getDescription($accountType);
+		foreach ($profileForm['inputs'] as $inputId => $options) {
+			if (array_key_exists('definition', $options) && $options['definition'] == 'inline') $property = $options;
+			else {
+				$property = $accountDescription['properties'][$inputId];
+				if (array_key_exists('mandatory', $options)) $property['mandatory'] = $options['mandatory'];
+				if (array_key_exists('updatable', $options)) $property['updatable'] = $options['updatable'];
+				if (array_key_exists('focused', $options)) $property['focused'] = $options['focused'];
+			}
+			if (array_key_exists('repository', $property)) $property['repository'] = $context->getConfig($property['repository']);
+			if (!array_key_exists('mandatory', $property)) $property['mandatory'] = false;
+			if (!array_key_exists('updatable', $property)) $property['updatable'] = true;
+			if (!array_key_exists('placeholder', $property)) $property['placeholder'] = null;
+			if (!array_key_exists('focused', $property)) $property['focused'] = false;
+			$profileForm['inputs'][$inputId] = $property;
+		}
+		
 		// If an email is given as a parameter: Show the Login or Sign Up form depending of the account existing or not
 		$panel = $this->params()->fromQuery('panel');
 		$email = $this->params()->fromQuery('email');
@@ -86,7 +101,7 @@ class LandingController extends AbstractActionController
 			foreach ($content['form']['inputs'] as $inputId => $options) {
 				if (array_key_exists('definition', $options) && $options['definition'] == 'inline') $property = $options;
 				else {
-					$property = $context->getConfig('core_account/'.$account_type.'/property/'.$inputId);
+					$property = $context->getConfig('core_account/'.$accountType.'/property/'.$inputId);
 					if (!$property) $property = $context->getConfig('core_account/generic/property/'.$inputId);
 					if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
 					if (array_key_exists('class', $options)) $property['class'] = $options['class'];
@@ -132,9 +147,9 @@ class LandingController extends AbstractActionController
 			}
 			$data['contact_history'] = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2).', from '.$_SERVER['HTTP_REFERER'].', with '.$_SERVER['HTTP_USER_AGENT'].' filled landing page\'s form';
 
-			$account = Account::instanciate($account_type);
+			$account = Account::instanciate($accountType);
 			$data['origine'] = 'subscription';
-			$rc = $account->loadAndAdd($data, Account::getConfig($account_type));
+			$rc = $account->loadAndAdd($data, Account::getConfig($accountType));
 			if (in_array($rc[0], ['200', '206'])) $message = 'OK';
 			else $error = $rc;
 		}
@@ -143,7 +158,7 @@ class LandingController extends AbstractActionController
 		$this->layout('/layout/flow-layout');
 		$this->layout()->setVariables(array(
 			'context' => $context,
-			'type' => $this->params()->fromRoute('type', $context->getConfig('event_default_type')),
+			'type' => $type,
 			'panel' => $panel,
 			'identity' => $email,
 			'redirectRoute' => $this->params()->fromQuery('route'),
@@ -155,6 +170,7 @@ class LandingController extends AbstractActionController
 			'header' => $content['header'],
 			'intro' => $content['intro'],
 			'form' => (array_key_exists('form', $content) && $content['form']) ? $content['form'] : false,
+			'payment' => $context->getConfig('payment/'.$instance_caption),
 			'footer' => $content['footer'],
 			'locale' => $locale,
 			'photo_link_id' => null,
@@ -167,6 +183,7 @@ class LandingController extends AbstractActionController
 		// Feed and return the view
 		$view = new ViewModel(array(
 			'context' => $context,
+			'type' => $type,
 			'locale' => $locale,
 			'place_identifier' => $place_identifier,
 			'id' => null,
