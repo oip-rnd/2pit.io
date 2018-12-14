@@ -13,20 +13,6 @@ $('.resizable').hide();
 <?php if ($context->hasRole('admin')) : ?>
 <!-- Updatable landing page for authorized users -->
 
-<!-- Image upload -->
-<script>
- $('#intro_change_image').change(function () {
-  var formData = new FormData();
-  var fileSelect = document.getElementById('intro_change_image_path');
-  if (fileSelect) {
-    var files = fileSelect.files;
-    for (var i = 0; i < files.length; i++) {
-      var file = files[i];
-      formData.append('intro_change_image_path', file, file.name);
-    }
-  }
-});
-
   var xhttp = new XMLHttpRequest();
   xhttp = new XMLHttpRequest();
   xhttp.open("POST", '<?php //echo $this->url('config/upload', ['identifier' => $place_identifier.'_landing']) ?>', true);
