@@ -1693,6 +1693,15 @@ return array(
 	                        ),
 	                    ),
 	                ),
+			       	'v1' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/v1[/:id]',
+							'defaults' => array(
+								'action' => 'v1',
+							),
+						),
+					),
 	       			'dataRecovery' => array(
 	                    'type' => 'segment',
 	                    'options' => array(
@@ -1923,6 +1932,7 @@ return array(
 				array('route' => 'vcard/photo', 'roles' => array('user')),
 				array('route' => 'vcard/demoMode', 'roles' => array('user')),
 				array('route' => 'vcard/dataRecovery', 'roles' => array('admin')),
+				array('route' => 'vcard/v1', 'roles' => array('guest')),
 			)
 		)
 	),
@@ -1983,6 +1993,14 @@ return array(
 	'ppit_roles' => array(
 		'guest' => [],
 		'user' => [],
+		'super_admin' => array(
+			'route' => 'place',
+			'show' => true,
+			'labels' => array(
+				'en_US' => 'Super administrator',
+				'fr_FR' => 'Super administrateur',
+			)
+		),
 		'admin' => array(
 			'route' => 'place',
 			'show' => true,

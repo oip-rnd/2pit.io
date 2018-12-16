@@ -588,6 +588,7 @@ class InstanceController extends AbstractActionController
 			return $this->getResponse();
 		}
 
+		$id = $this->params()->fromRoute('id');
 		$content = array();
 
 		// Get
@@ -655,18 +656,22 @@ class InstanceController extends AbstractActionController
 		
 		// Post
 		elseif ($this->request->isPost()) {
-			if ($identifier) $instance = Instance::get($identifier, 'identifier');
-			else $instance = Instance::get($id);
+			if (!$id) {
+				$this->getResponse()->setStatusCode('400');
+				return $this->getResponse();
+			}
+			$instance = Instance::get($id);
 			if (!$instance) {
 				$this->getResponse()->setStatusCode('400');
 				return $this->getResponse();
 			}
 
 			$data = json_decode($this->request->getContent(), true);
+			
 			$connection = Instance::getTable()->getAdapter()->getDriver()->getConnection();
 			$connection->beginTransaction();
 			try {
-				$rc = $instance->loadAndUpdate($data, $description['properties']);
+				$rc = $instance->loadAndUpdate($data, null);
 				if ($rc[0] != '200') {
 					$connection->rollback();
 					$this->getResponse()->setStatusCode($rc[0]);
@@ -684,8 +689,11 @@ class InstanceController extends AbstractActionController
 
 		// Delete
 		elseif ($this->request->isDelete()) {
-			if ($identifier) $instance = Instance::get($identifier, 'identifier');
-			else $instance = Instance::get($id);
+			if (!$id) {
+				$this->getResponse()->setStatusCode('400');
+				return $this->getResponse();
+			}
+			$instance = Instance::get($id);
 			if (!$instance) {
 				$this->getResponse()->setStatusCode('400');
 				return $this->getResponse();

@@ -270,6 +270,24 @@ return array (
 				),
 				'may_terminate' => true,
 				'child_routes' => array(
+					'payzen' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/payzen',
+							'defaults' => array(
+								'action' => 'payzen',
+							),
+						),
+					),
+					'payzenReturn' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/payzen-return',
+							'defaults' => array(
+								'action' => 'payzenReturn',
+							),
+						),
+					),
 					'add' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -496,6 +514,8 @@ return array (
 				array('route' => 'flowEvent/repair', 'roles' => array('admin')),
 
 				array('route' => 'payment', 'roles' => array('user')),
+            	array('route' => 'payment/payzen', 'roles' => array('guest')),
+            	array('route' => 'payment/payzenReturn', 'roles' => array('guest')),
 				array('route' => 'payment/add', 'roles' => array('user')),
 				
 				array('route' => 'profile', 'roles' => array('user')),
@@ -2053,8 +2073,8 @@ table.note-report td {
 			),
 		),
 	),
-
-	// FLow Request
+	
+	// FLow Request (deprecated)
 	
 	'request/generic' => array(
 		'header' => array(

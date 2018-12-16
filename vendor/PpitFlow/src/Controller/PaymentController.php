@@ -18,6 +18,65 @@ use Zend\View\Model\ViewModel;
 
 class PaymentController extends AbstractActionController
 {
+    public function payzenAction()
+    {
+    	// Context and config
+    	$context = Context::getCurrent();
+    	$payZenConfig = $context->getConfig('ppitUserSettings')['safe'][$context->getInstance()->caption]['PayZen'];
+    	
+    	// Term id
+    	$id = $this->params()->fromRoute('id');
+    	    	
+    	// PayZen form date
+    	$formData = array(
+    		'vads_action_mode' => 'INTERACTIVE',
+    		'vads_amount' => '100',
+    		'vads_capture_delay' => '0',
+    		'vads_ctx_mode' => 'TEST',
+    		'vads_currency' => '978',
+    		'vads_page_action' => 'PAYMENT',
+    		'vads_payment_config' => 'SINGLE',
+    		'vads_return_mode' => 'POST',
+    		'vads_site_id' => '88978876',
+    		'vads_trans_date' => date('YmdHis'),
+    		'vads_trans_id' => $id,
+    		'vads_url_return' => 'https://www.p-pit.fr/commitment-term/payzen-return',
+    		'vads_validation_mode' => '0',
+    		'vads_version' => 'V2',
+    	);
+
+    	$signature = '';
+    	foreach ($formData as $name => $value) $signature .= $value . '+';
+    	$formData['signature'] = base64_encode(hash_hmac('sha256', $signature . $payZenConfig['key'], $payZenConfig['key'], true));    	
+
+    	$view = new ViewModel(array(
+    		'context' => $context,
+    		'formData' => $formData,
+    	));
+    	$view->setTerminal(true);
+    	return $view;
+    }
+    
+    public function payzenReturnAction()
+    {
+		// Context
+    	$context = Context::getCurrent();
+
+    	// Form data
+    	$form = explode('&', $this->request->getPost()->toString());
+    	$formData = array();
+    	foreach ($form as $var) {
+    		$tuplet = explode('=', $var);
+    		$formData[$tuplet[0]] = $tuplet[1];
+    	}
+
+    	// Term
+    	$term = Term::get($formData['vads_trans_id']);
+    	
+    	$this->getResponse()->setStatusCode('200');
+    	return $this->response;
+    }
+	
 	public function addAction()
 	{
 		// Retrieve the context and the parameters

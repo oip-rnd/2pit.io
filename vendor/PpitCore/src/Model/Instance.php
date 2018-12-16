@@ -213,6 +213,11 @@ class Instance
     		if (!$status || strlen($status) > 255) return 'Integrity';
     		if ($this->status != $status) $auditRow['status'] = $this->status = $status;
     	}
+        if (array_key_exists('fqdn', $data)) {
+	    	$fqdn = $data['fqdn'];
+    		if (strlen($fqdn) > 255) return 'Integrity';
+    		if ($this->fqdn != $fqdn) $auditRow['fqdn'] = $this->fqdn = $fqdn;
+    	}
     	if (array_key_exists('default_locale', $data)) {
 	    	$default_locale = $data['default_locale'];
     		if (!$default_locale || strlen($default_locale) > 255) return 'Identity';
@@ -220,13 +225,13 @@ class Instance
     	}
     	if (array_key_exists('caption', $data)) {
 	    	$caption = $data['caption'];
-    		if (!$caption || strlen($caption) > 255) return 'Identity';
+    		if (!$caption || strlen($caption) > 255) return 'Integrity';
 			$caption = explode('/', $caption);
 			$caption = implode('_', $caption);
     		if ($this->caption != $caption) $auditRow['caption'] = $this->caption = $caption;
     	}
     	if (array_key_exists('default_place_id',$data)) {
-	    	$default_place_id_id = (int) $data['default_place_id'];
+	    	$default_place_id = (int) $data['default_place_id'];
     		if ($this->default_place_id != $default_place_id) $auditRow['default_place_id'] = $this->default_place_id = $default_place_id;
 		}
     	if (array_key_exists('sponsor_instance_caption', $data)) {
@@ -238,7 +243,11 @@ class Instance
 	    	$is_active = $data['is_active'];
     		if ($this->is_active != $is_active) $auditRow['is_active'] = $this->is_active = $is_active;
     	}
-    	if (array_key_exists('comment', $data)) {
+		if (array_key_exists('default_place_id', $data)) {
+	    	$default_place_id = $data['default_place_id'];
+    		if ($this->default_place_id != $default_place_id) $auditRow['default_place_id'] = $this->default_place_id = $default_place_id;
+    	}
+    	if (array_key_exists('comment', $data)) { // Deprecated
     		$comment = trim(strip_tags($data['comment']));
     		if (strlen($comment) > 2047) return 'Integrity';
     		if ($this->comment != $comment) $auditRow['comment'] = $this->comment = $comment;
@@ -303,13 +312,28 @@ class Instance
     
     	// Check isolation
     	$instance = Instance::getTable()->get($this->id);
-    	if ($instance && $instance->update_time != $update_time) return 'Isolation';
+    	if ($update_time && $instance->update_time != $update_time) return 'Isolation';
 
     	// Save and return
     	Instance::getTable()->save($this);
     	return 'OK';
     }
 
+	public function loadAndUpdate($data, $update_time = null)
+	{
+		$context = Context::getCurrent();
+    
+    	$rc = $this->loadData($data);
+    	if ($rc != 'OK') return ['500', 'instance->loadData: '.$rc];
+    
+    	// Save the data
+    	$this->update($update_time);
+    	if ($rc != 'OK') return ['500', 'instance->update: '.$rc];
+    
+		$this->properties = $this->getProperties();
+    	return ['200', $this->id];
+    }
+    
     /**
      * Adds an image file in the server's file system.
      * If the file has a 'gif' of 'png' type, it is prealably compressed as a 'jpeg' file.

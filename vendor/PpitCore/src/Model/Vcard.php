@@ -352,6 +352,10 @@ class Vcard
     	$this->previous_email = $this->email;
     	$this->previous_tel_cell = $this->tel_cell;
 
+        if (array_key_exists('instance_id',$data)) {
+	    	$instance_id = (int) $data['instance_id'];
+    		if ($this->instance_id != $instance_id) $auditRow['instance_id'] = $this->instance_id = $instance_id;
+		}
     	if (array_key_exists('applications', $data)) {
     		$applications = $data['applications'];
     		if ($this->applications != $applications) $auditRow['applications'] = $this->applications = $applications;
@@ -548,41 +552,52 @@ class Vcard
        	Vcard::getTable()->save($this);
     	return 'OK';
     }
+
+    /**
+     * Restfull implementation
+     */
+    public function loadAndAdd($data)
+    {
+    	$context = Context::getCurrent();
+    	$rc = $this->loadData($data);
+    	if ($rc != 'OK') return ['500', 'vcard->loadData: '.$rc];
     
-    public function update($update_time)
+    	$rc = $this->add();
+    	if ($rc != 'OK') return ['500', 'vcard->add: '.$rc];
+    
+    	$this->properties = $this->getProperties();
+    	return ['200', $this->id];
+    }
+    
+    public function update($update_time, $crossInstance = false)
     {
     	$context = Context::getCurrent();
 
     	// Check isolation
 		$vcard = Vcard::getTable()->get($this->id);
 		if ($update_time && $vcard->update_time > $update_time) return 'Isolation';
-       	Vcard::getTable()->save($this);
+		if ($crossInstance) {
+			if (!$context->hasRole('super_admin')) return 'Cross instance not authorized';
+			Vcard::getTable()->transSave($this);
+		}
+		else Vcard::getTable()->save($this);
 	    return 'OK';
     }
 
-    public function loadAndUpdate($data, $configProperties, $update_time = null)
+    public function loadAndUpdate($data, $update_time = null)
     {
     	$context = Context::getCurrent();
     
-    	foreach ($configProperties as $propertyId => $property) {
-    		if (array_key_exists($propertyId, $data)) {
-    			if ($property['type'] == 'select' && !array_key_exists($data[$propertyId], $property['modalities'])) {
-    				return ['400', 'The modality '.$data[$propertyId].' does not exist in '.$propertyId];
-    			}
-    			elseif ($property['type'] == 'date' && $data[$propertyId] && (strlen($data[$propertyId] < 10) || !checkdate(substr($data[$propertyId], 5, 2), substr($data[$propertyId], 8, 2), substr($data[$propertyId], 0, 4)))) {
-    				return ['400', $data[$propertyId].' is not a valid date for '.$propertyId];
-    			}
-    		}
-    	}
-    
-    	// Load the data
     	$rc = $this->loadData($data);
-    	if ($rc != 'OK') return ['500', $rc];
+    	if ($rc != 'OK') return ['500', 'vcard->loadData: '.$rc];
     
     	// Save the data
-    	$this->update($update_time);
+    	$this->update($update_time, (array_key_exists('instance_id', $data)) ? true : false);
+    	if ($rc == 'Authorization') return ['401', 'vcard->update: '.$rc];
     	if ($rc != 'OK') return ['500', 'vcard->update: '.$rc];
-    	return ['200'];
+    
+    	$this->properties = $this->getProperties();
+    	return ['200', $this->id];
     }
     
     public function savePhoto($file) {

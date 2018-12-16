@@ -481,17 +481,6 @@ class TermController extends AbstractActionController
     	$view->setTerminal(true);
     	return $view;
     }
-
-    public function payzenReturnAction()
-    {
-    	$context = Context::getCurrent();
-    	if (!$request->isPost()) {
-    		$this->getResponse()->setStatusCode('400');
-    		return $this->response;
-    	}
-    	$this->getResponse()->setStatusCode('200');
-    	return $this->response;
-    }
     
     public function debitAction()
     {
