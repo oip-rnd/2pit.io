@@ -320,7 +320,7 @@ class InstanceController extends AbstractActionController
     	$view->setTerminal(true);
     	return $view;
     }
-    
+/*    
     public function acceptAction()
     {
     	// Retrieve the context
@@ -376,7 +376,7 @@ class InstanceController extends AbstractActionController
     			'error' => $error,
     	));
     	return $view;
-    }
+    }*/
 
     public function charterAction()
     {
