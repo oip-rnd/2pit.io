@@ -147,10 +147,11 @@ class Place
 	 * Used for object (php) to relational (database) mapping.
 	 * @return array
 	 */
-    public function toArray()
+    public function getProperties()
     {
     	$data = array();
     	$data['id'] = (int) $this->id;
+    	$data['instance_id'] = (int) $this->instance_id;
     	$data['status'] = $this->status;
     	$data['identifier'] = $this->identifier;
     	$data['caption'] = $this->caption;
@@ -186,6 +187,16 @@ class Place
     	return $data;
     }
 
+    /**
+     * Used for object (php) to relational (database) mapping.
+     * @return array
+     */
+    public function toArray()
+    {
+    	$data = $this->getProperties();
+    	return $data;
+    }
+    
     /**
      * Returns an array of Place instances:
      * The transient property 'is_open' is computed, based on the opening and the closing date: A place is open if the opening and closing dates are framing the current date.
@@ -341,7 +352,12 @@ class Place
 				'time' => Date('Y-m-d G:i:s'),
 				'n_fn' => $context->getFormatedName(),
 		);
-    	if (array_key_exists('status', $data)) {
+	
+        if (array_key_exists('instance_id',$data)) {
+	    	$instance_id = (int) $data['instance_id'];
+    		if ($this->instance_id != $instance_id) $auditRow['instance_id'] = $this->instance_id = $instance_id;
+		}
+		if (array_key_exists('status', $data)) {
 	    	$status = trim(strip_tags($data['status']));
 			if ($status == '' || strlen($status) > 255) return 'Integrity';
     		if ($this->status != $status) $auditRow['status'] = $this->status = $status;
@@ -501,18 +517,40 @@ class Place
      * The reception and delivery contacts if provided are retrieved from the database or created (optimize method of Vcard) and linked to the new place.
      * @return string
      */
-	public function add()
+	public function add($crossInstance = false)
     {
-		if (Generic::getTable()->cardinality('core_place', array('status' => 'new', 'identifier' => $this->identifier)) > 0) return 'Duplicate';
+    	$context = Context::getCurrent();
+    	if (Generic::getTable()->cardinality('core_place', array('status' => 'new', 'identifier' => $this->identifier)) > 0) return 'Duplicate';
     	
     	$this->id = null;
     	if ($this->reception_contact->n_last) $this->reception_vcard_id = $this->reception_contact->add()->id;
     	if ($this->delivery_contact->n_last) $this->delivery_vcard_id = $this->delivery_contact->add()->id;
-    	Place::getTable()->save($this);
+    	if ($crossInstance) {
+			if (!$context->hasRole('super_admin')) return 'Cross instance not authorized';
+			Place::getTable()->transSave($this);
+		}
+		else Place::getTable()->save($this);
 
 		return ('OK');
     }
 
+    /**
+     * Restfull implementation
+     */
+    public function loadAndAdd($data)
+    {
+    	$context = Context::getCurrent();
+    	$rc = $this->loadData($data);
+    	if ($rc != 'OK') return ['500', 'place->loadData: '.$rc];
+    
+    	$rc = $this->add((array_key_exists('instance_id', $data)) ? true : false);
+    	if ($rc == 'Authorization') return ['401', 'place->add: '.$rc];
+    	if ($rc != 'OK') return ['500', 'place->add: '.$rc];
+    
+    	$this->properties = $this->getProperties();
+    	return ['200', $this->id];
+    }
+    
     /**
      * Update an existing row in the database.
      * If $update_time is provided, an isolation check is performed, such that the current update time in the database is not greater than the one given as an argument.
@@ -521,15 +559,36 @@ class Place
      * @param string $update_time
      * @return string
      */
-    public function update($update_time)
+    public function update($update_time, $crossInstance = false)
     {
+    	$context = Context::getCurrent();
     	$place = Place::get($this->id);
     	if ($update_time && $place->update_time > $update_time) return 'Isolation';
 //    	if ($this->reception_contact->n_last) $this->reception_vcard_id = $this->reception_contact->add()->id;
 //    	if ($this->delivery_contact->n_last) $this->delivery_vcard_id = $this->delivery_contact->add()->id;
-    	Place::getTable()->save($this);
+    	if ($crossInstance) {
+			if (!$context->hasRole('super_admin')) return 'Cross instance not authorized';
+			Place::getTable()->transSave($this);
+		}
+		else Place::getTable()->save($this);
 
 		return ('OK');
+    }
+
+    public function loadAndUpdate($data, $update_time = null)
+    {
+    	$context = Context::getCurrent();
+    
+    	$rc = $this->loadData($data);
+    	if ($rc != 'OK') return ['500', 'place->loadData: '.$rc];
+    
+    	// Save the data
+    	$this->update($update_time, (array_key_exists('instance_id', $data)) ? true : false);
+    	if ($rc == 'Authorization') return ['401', 'place->update: '.$rc];
+    	if ($rc != 'OK') return ['500', 'place->update: '.$rc];
+    
+    	$this->properties = $this->getProperties();
+    	return ['200', $this->id];
     }
     
     /**

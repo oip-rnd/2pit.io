@@ -9,9 +9,8 @@ ALTER TABLE `core_event`
 CHANGE `matched_accounts` `matched_accounts` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL;
 
 ALTER TABLE `commitment_term` 
-ADD `invoice_n_last` VARCHAR(255) NULL DEFAULT NULL AFTER `bank_name`;
-
-ALTER TABLE `commitment_term` 
+ADD `bank_name` VARCHAR(255) NULL DEFAULT NULL AFTER `means_of_payment`,
+ADD `invoice_n_last` VARCHAR(255) NULL DEFAULT NULL AFTER `bank_name`,
 ADD `type` VARCHAR(255) NULL DEFAULT NULL AFTER `status`,
 ADD `invoice_account_id` INT NULL DEFAULT NULL AFTER `commitment_id`,
 ADD `quantity` DECIMAL(14,4) NULL DEFAULT NULL AFTER `collection_date`, 

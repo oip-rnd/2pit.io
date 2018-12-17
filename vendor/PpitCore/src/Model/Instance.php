@@ -260,7 +260,12 @@ class Instance
 	    	$applications = $data['applications'];
     		if ($this->applications != $applications) $auditRow['applications'] = $this->applications = $applications;
     	}
-		if (array_key_exists('legal_notices',$data)) {
+        if (array_key_exists('home_page', $data)) {
+	    	$home_page = $data['home_page'];
+    		if (!$home_page || strlen($home_page) > 255) return 'Integrity';
+    		if ($this->home_page != $home_page) $auditRow['home_page'] = $this->home_page = $home_page;
+    	}
+    	if (array_key_exists('legal_notices',$data)) {
 			$legal_notices = $data['legal_notices'];
 			if (strlen($legal_notices) > 16777215) return 'Integrity';
     		if ($this->legal_notices != $legal_notices) $auditRow['legal_notices'] = $this->legal_notices = $legal_notices;

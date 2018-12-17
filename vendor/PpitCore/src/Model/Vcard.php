@@ -234,7 +234,7 @@ class Vcard
     	$data['perimeters'] = json_encode($this->perimeters);
     	$data['specifications'] = json_encode($this->specifications);
     	return $data;
-    	}
+    }
 
     /**
      * Returns an array of Vcard instances filtered on the optional given community (no filtering on community if not provided):
@@ -545,11 +545,15 @@ class Vcard
 		return 'OK';
     }
     
-    public function add()
+    public function add($crossInstance = false)
     {
     	$context = Context::getCurrent();
     	$this->status = 'new';
-       	Vcard::getTable()->save($this);
+       	if ($crossInstance) {
+			if (!$context->hasRole('super_admin')) return 'Cross instance not authorized';
+			Vcard::getTable()->transSave($this);
+		}
+		else Vcard::getTable()->save($this);
     	return 'OK';
     }
 
@@ -562,7 +566,8 @@ class Vcard
     	$rc = $this->loadData($data);
     	if ($rc != 'OK') return ['500', 'vcard->loadData: '.$rc];
     
-    	$rc = $this->add();
+    	$rc = $this->add((array_key_exists('instance_id', $data)) ? true : false);
+    	if ($rc == 'Authorization') return ['401', 'vcard->add: '.$rc];
     	if ($rc != 'OK') return ['500', 'vcard->add: '.$rc];
     
     	$this->properties = $this->getProperties();

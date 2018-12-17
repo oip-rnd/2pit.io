@@ -239,6 +239,154 @@ class PlaceController extends AbstractActionController
     	return $view;
     }
 
+    /**
+     * Restfull implementation
+     * TODO : authorization + error description
+     */
+    public function v1Action()
+    {
+    	$context = Context::getCurrent();
+    
+    	// Authentication
+    	if (!$context->isAuthenticated() && !$context->wsAuthenticate($this->getEvent())) {
+    		$this->getResponse()->setStatusCode('401');
+    		return $this->getResponse();
+    	}
+    
+    	$id = $this->params()->fromRoute('id');
+    	$content = array();
+    
+    	// Get
+    	if ($this->request->isGet()) {
+    		if ($id) {
+    
+    			// Direct access mode
+    			$place = Place::get($id);
+    			if (!$place) {
+    				$this->getResponse()->setStatusCode('400');
+    				return $this->getResponse();
+    			}
+    			$content['data'] = $place->getProperties();
+    		}
+    		else {
+    
+    			// List mode
+    			$filters = array();
+    			$limit = $this->params()->fromQuery('limit');
+    			$order = $this->params()->fromQuery('order', '+name');
+    			$page = $this->params()->fromQuery('page');
+    			$per_page = $this->params()->fromQuery('per_page');
+    			$statusDef = $context->getConfig('core_account/'.$type.'/property/status');
+    			if ($statusDef['definition'] != 'inline') $statusDef = $context->getConfig($statusDef['definition']);
+    			if (!array_key_exists('status', $filters)) $filters['status'] = implode(',', $statusDef['perspectives'][$perspective]);
+    			$places = Place::getList($type, $filters, $order, $limit, null, $page, $per_page);
+    			$content['data'] = array();
+    			foreach ($places as $place) $content['data'][$place->id] = $place->getProperties();
+    		}
+    	}
+    
+    	// Put
+    	elseif ($this->request->isPut()) {
+    		$place = Place::instanciate();
+    		$data = json_decode($this->request->getContent(), true);
+    
+    		// Database update
+    		$connection = Place::getTable()->getAdapter()->getDriver()->getConnection();
+    		$connection->beginTransaction();
+    		try {
+    			$rc = $place->loadAndAdd($data);
+    			if ($rc[0] == '206') { // Partially accepted on an already existing account which is returned as rc[1]
+    				$this->getResponse()->setStatusCode($rc[0]);
+    				$content['data'] = ['id' => $rc[1]];
+    				$connection->commit();
+    			}
+    			elseif ($rc[0] != '200') {
+    				$this->getResponse()->setStatusCode($rc[0]);
+    				$this->getResponse()->setReasonPhrase($rc[1]);
+    				$connection->rollback();
+    				return $this->getResponse();
+    			}
+    			else {
+    				$content['data'] = ['id' => $rc[1]];
+    				$connection->commit();
+    			}
+    		}
+    		catch (\Exception $e) {
+    			$connection->rollback();
+    			return ['500', $rc];
+    		}
+    	}
+    
+    	// Post
+    	elseif ($this->request->isPost()) {
+    		if (!$id) {
+    			$this->getResponse()->setStatusCode('400');
+    			return $this->getResponse();
+    		}
+    		$place = Place::get($id);
+    		if (!$place) {
+    			$this->getResponse()->setStatusCode('400');
+    			return $this->getResponse();
+    		}
+    
+    		$data = json_decode($this->request->getContent(), true);
+    			
+    		$connection = Place::getTable()->getAdapter()->getDriver()->getConnection();
+    		$connection->beginTransaction();
+    		try {
+    			$rc = $place->loadAndUpdate($data, null);
+    			if ($rc[0] != '200') {
+    				$connection->rollback();
+    				$this->getResponse()->setStatusCode($rc[0]);
+    				echo $rc[1];
+    				return $this->getResponse();
+    			}
+    			else $connection->commit();
+    		}
+    		catch (\Exception $e) {
+    			$connection->rollback();
+    			$this->getResponse()->setStatusCode('500');
+    			return $this->getResponse();
+    		}
+    	}
+    
+    	// Delete
+    	elseif ($this->request->isDelete()) {
+    		if (!$id) {
+    			$this->getResponse()->setStatusCode('400');
+    			return $this->getResponse();
+    		}
+    		$place = Place::get($id);
+    		if (!$place) {
+    			$this->getResponse()->setStatusCode('400');
+    			return $this->getResponse();
+    		}
+    			
+    		// Database update
+    		$connection = Place::getTable()->getAdapter()->getDriver()->getConnection();
+    		$connection->beginTransaction();
+    		try {
+    			$rc = $place->delete(null);
+    			if ($rc != 'OK') {
+    				$this->getResponse()->setStatusCode('500');
+    				return $this->getResponse();
+    			}
+    			$connection->commit();
+    		}
+    		catch (\Exception $e) {
+    			$connection->rollback();
+    			$this->getResponse()->setStatusCode('500');
+    			return $this->getResponse();
+    		}
+    	}
+    
+    	// Output
+    	ob_start("ob_gzhandler");
+    	echo json_encode($content, JSON_PRETTY_PRINT);
+    	ob_end_flush();
+    	return $this->response;
+    }
+    
     public function serializeAction() {
     	$context = Context::getCurrent();
     

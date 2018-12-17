@@ -988,7 +988,16 @@ return array(
 		        								),
 		        						),
 		        				),
-		        				'serialize' => array(
+				       			'v1' => array(
+		        						'type' => 'segment',
+		        						'options' => array(
+		        								'route' => '/v1[/:id]',
+		        								'defaults' => array(
+		        										'action' => 'v1',
+		        								),
+		        						),
+		        				),
+	       						'serialize' => array(
 		        						'type' => 'segment',
 		        						'options' => array(
 		        								'route' => '/serialize[/:place_identifier]',
@@ -1854,6 +1863,7 @@ return array(
 				array('route' => 'place/export', 'roles' => array('admin')),
             	array('route' => 'place/list', 'roles' => array('admin')),
 				array('route' => 'place/update', 'roles' => array('admin')),
+				array('route' => 'place/v1', 'roles' => array('guest')),
 				array('route' => 'place/serialize', 'roles' => array('admin')),
 				
 				// Product
