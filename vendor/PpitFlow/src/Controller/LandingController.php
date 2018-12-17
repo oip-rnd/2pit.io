@@ -30,11 +30,15 @@ class LandingController extends AbstractActionController
 			$place_identifier = $place->identifier;
 		}
 
-		if ($context->getConfig('specificationMode') == 'config') {
-			$content = $context->getConfig('landing/'.$place_identifier);
-			if (!$content) $content = $context->getConfig('landing/generic');
+		// Content
+		$content = null;
+		if ($context->getConfig('specificationMode') == 'database') {
+			$config = Config::get($place->identifier.'_landing', 'identifier', $place->id);
+			if ($config) $content = $config->content;
 		}
-		else $content = Config::get($place->identifier.'_landing', 'identifier', $place->id)->content;
+		if (!$content) $content = $context->getConfig('landing/'.$place_identifier);
+		if (!$content) $content = $context->getConfig('landing/generic');
+		
 		$locale = $this->params()->fromQuery('locale');
 		
 //		$id = $this->params()->fromRoute('id');
