@@ -8,6 +8,8 @@ use PpitCore\Model\Context;
 use PpitCore\Model\Csrf;
 use PpitCore\Model\Event;
 use PpitCore\Model\Place;
+use PpitCore\Model\User;
+use PpitCore\Model\UserContact;
 use PpitCore\Model\Vcard;
 use Zend\Http\Headers;
 use Zend\Http\Request;
@@ -17,6 +19,123 @@ use Zend\View\Model\ViewModel;
 
 class ProfileController extends AbstractActionController
 {
+	public function registerAction()
+	{
+		// Retrieve the context and the parameters
+		$context = Context::getCurrent();
+		$account_id = $this->params()->fromRoute('account_id');
+		$locale = $this->params()->fromQuery('locale');
+	
+		// Place
+		$place = Place::get($context->getPlaceId());
+		$place_identifier = $place->identifier;
+	
+		// Account
+		$accountType = $context->getConfig('landing_account_type');
+		$account = null;
+		if ($account_id) $account = Account::get('account_id');
+		else $account = Account::instanciate($accountType);
+	
+		// Data description
+		$description = Account::getConfig($accountType);
+	
+		// Configuration
+		$content = null;
+		if ($context->getConfig('specificationMode') == 'database') {
+			$config = Config::get($place_identifier.'_contact', 'identifier');
+			if ($config) $content = $config->content;
+		}
+		if (!$content) $content = $context->getConfig('contact/'.$place_identifier);
+		if (!$content) $content = $context->getConfig('contact/generic');
+	
+		// CSRF protection
+		$csrfForm = new CsrfForm();
+		$csrfForm->addCsrfElement('csrf');
+	
+		// Process the post data after input
+		$actionStatus = null;
+		if ($this->request->isPost()) {
+	
+			$csrfForm->setInputFilter((new Csrf('csrf'))->getInputFilter());
+			$csrfForm->setData($this->request->getPost());
+			 
+			if ($csrfForm->isValid()) { // CSRF check
+	
+				// Atomicity
+				$connection = Account::getTable()->getAdapter()->getDriver()->getConnection();
+				$connection->beginTransaction();
+				try {
+					$data = array();
+					$data['status'] = 'registered';
+					$data['email'] = $this->request->getPost('email');
+					$data['n_first'] = $this->request->getPost('n_first');
+					$data['n_last'] = $this->request->getPost('n_last');
+					$data['password'] = $this->request->getPost('password');
+					$data['locale'] = $this->request->getPost('locale');
+					$data['origine'] = $this->request->getPost('origine');
+						
+					$actionStatus = $account->loadAndAdd($data, $description);
+					if (!in_array($actionStatus[0], ['200', '206'])) $connection->rollback();
+					else {
+	
+						// Check that the user does not already exist
+						$user = User::getTable()->transGet($account->email, 'username');
+						if ($user) {
+							$actionStatus = ['206', 'Already exist with email address'];
+							$connection->rollback();
+						}
+	
+						else {
+	
+							// Check that the email address belongs to the accepted domains
+							$domain = explode('@', $data['email'])[1];
+							if ($context->getConfig('user/acceptedRegistrationDomain') && !in_array($domain, $context->getConfig('user/acceptedRegistrationDomain'))) {
+								$actionStatus = ['401', 'Unauthorized domain'];
+								$connection->rollback();
+							}
+								
+							else {
+	
+								// Create a user account
+								$user_id = $context->getSecurityAgent()->register($account->email, $account->contact_1_id, $data['password']);
+								$user = User::getTable()->transGet($user_id);
+								$token = $context->getSecurityAgent()->requestAuthenticationToken($user->username, false);
+									
+								// Send the OTP by email
+								$email_body = $context->localize($context->getConfig('user/messages/activation/text'));
+								$link = $this->url()->fromRoute('user/v1', ['id' => $user->user_id], ['force_canonical' => true]).'?account_id='.$account->id.'&request=activate'.'&hash='.$token;
+								$email_body = sprintf($email_body, $link);
+								$email_title = $context->localize($context->getConfig('user/messages/activation/title'));
+								Context::sendMail($user->username, $email_body, $email_title, null);
+	
+								$actionStatus = ['200'];
+								$connection->commit();
+							}
+						}
+					}
+				}
+				catch (\Exception $e) {
+					$connection->rollback();
+					$actionStatus = ['500'];
+				}
+			}
+		}
+	
+		// Return the view
+		$view = new ViewModel(array(
+			'context' => $context,
+			'locale' => $locale,
+			'place_identifier' => $place_identifier,
+			'accountType' => $accountType,
+			'content' => $content,
+			'account' => $account,
+			'csrfForm' => $csrfForm,
+			'actionStatus' => $actionStatus,
+		));
+		$view->setTerminal(true);
+		return $view;
+	}
+	
 	public function indexAction()
 	{
 		return $this->template1Action();

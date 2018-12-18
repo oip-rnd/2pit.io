@@ -1,0 +1,101 @@
+<form id="registerForm">
+  <div class="modal-header text-center">
+    <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('Register', 'ppit-core', $locale) ?></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div id="modalRegisterInputs"></div>
+  <div class="modal-body mx-3">
+
+<!--  CSRF protection -->
+<?php $element = $csrfForm->get('csrf') ?>
+    <div class="form-group">
+      <?php echo $this->formElement($element) ?>
+<?php if ($this->formElementErrors($element)) : ?>
+      <div class="alert alert-danger" style="text-align: center">
+        <strong><?php echo $this->translate('The form has expired, please input again', 'ppit-core', $locale) ?></strong>
+      </div>
+<?php endif;?>
+    </div>
+            
+<?php if ($actionStatus[0] == '200') : ?>
+    <div class="alert alert-success" style="text-align: center">
+	   <strong><?php echo $this->translate('Your request has been registered. To finalize the registration, please check you emails with an activation link to follow.', 'ppit-core', $context->getLocale()) ?></strong>
+    </div>
+            
+<?php elseif ($actionStatus[0] == '401') : ?>
+  <?php if ($actionStatus[1] == 'Unauthorized domain') : ?>
+
+    <div class="alert alert-danger" style="text-align: center">
+	 <strong><?php echo $this->translate('Sorry, this application is only accessible to a private network', 'ppit-core', $locale) ?></strong>
+    </div>
+
+  <?php else : ?>
+
+    <div class="alert alert-danger" style="text-align: center">
+	 <strong><?php echo $this->translate('Authentication failed. Please try again', 'ppit-core', $locale) ?></strong>
+    </div>
+
+  <?php endif;?>
+            
+<?php elseif ($actionStatus[0] == '206') : ?>
+    <div class="alert alert-danger" style="text-align: center">
+      <strong><?php echo $this->translate('An account already exists for this email address', 'ppit-core', $locale) ?></strong>
+    </div>
+
+<?php elseif ($actionStatus[0] == '500') : ?>
+    <div class="alert alert-danger" style="text-align: center">
+      <strong><?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $locale) ?></strong>
+    </div>
+
+<?php endif;?>
+
+<?php if ($actionStatus) $isDisabled = true; else $isDisabled = false ?>
+
+    <div class="md-form mb-3">
+      <input type="email" id="register-email" class="form-control validate modal_input" required="required" value="<?php echo $account->email ?>" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
+      <label <?php if ($isDisabled) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="register-email">* <?php echo $this->translate('Email', 'ppit-core', $locale) ?></label>
+    </div>
+  
+    <div class="md-form mb-3">
+      <input type="text" id="register-n_first" class="form-control validate modal_input" required="required" value="<?php echo $account->n_first ?>" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
+      <label <?php if ($isDisabled) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="register-n_first">* <?php echo $this->translate('First name', 'ppit-core', $locale) ?></label>
+    </div>
+  
+    <div class="md-form mb-3">
+      <input type="text" id="register-n_last" class="form-control validate modal_input" required="required" value="<?php echo $account->n_last ?>" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
+      <label <?php if ($isDisabled) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="register-n_last">* <?php echo $this->translate('Last name', 'ppit-core', $locale) ?></label>
+    </div>
+  
+<?php if (!$isDisabled) : ?>
+    <div class="md-form mb-3">
+      <input type="password" id="register-password" class="form-control validate modal_input" required="required">
+      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="register-password">* <?php echo $this->translate('Choose a password', 'ppit-core', $locale) ?></label>
+    </div>
+  
+    <div class="md-form mb-3">
+	   <input type="password" id="register-password2" class="form-control validate modal_input" required="required">
+       <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="register-password2">* <?php echo $this->translate('Confirm the password', 'ppit-core', $locale) ?></label>
+    </div>
+
+  <?php $origin = $context->getConfig('core_account/'.$accountType.'/property/origine') ?>  
+   <div class="md-form mb-3">
+      <select id="register-origine" class="mdb-select validate modal_input" required="required">
+        <option></option>
+  <?php foreach ($origin['modalities'] as $modalityId => $modality) : ?>
+        <option value="<?php echo $modalityId ?>"><?php echo $context->localize($modality, $locale) ?></option>
+  <?php endforeach;?>
+      </select>
+      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="origine">* <?php echo $this->translate('How did you know us?', $locale) ?></label>
+    </div>
+<?php endif;?>
+
+  </div>
+  <div class="modal-footer d-flex justify-content-center">
+<?php if (!$isDisabled) : ?>
+    <button type="submit" class="btn btn-success btn-rounded"><?php echo $this->translate('Submit', 'ppit-core', $locale) ?></button>
+<?php endif;?>
+  </div>
+</form>
+    

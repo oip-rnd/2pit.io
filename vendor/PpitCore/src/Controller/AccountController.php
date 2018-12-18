@@ -981,7 +981,7 @@ class AccountController extends AbstractActionController
 	    			try {
 	    				if (!$account->id) {
 	    					$rc = $account->loadAndAdd($data, $configProperties);
-	    					if ($rc[0] == '206') $account = $rc[1]; // Partially accepted on an already existing account which is returned as rc[1]
+	    					if ($rc[0] == '206') $account = Account::get($rc[1]); // Partially accepted on an already existing account which is returned as rc[1]
 	    					elseif ($rc[0] != '200') $error = $rc;
 	    				}
 	    				else {
@@ -1461,7 +1461,7 @@ class AccountController extends AbstractActionController
 	public function v1Action()
 	{
 		$context = Context::getCurrent();
-	
+
 		// Authentication
 		if (!$context->isAuthenticated() && !$context->wsAuthenticate($this->getEvent())) {
 			$this->getResponse()->setStatusCode('401');
@@ -1475,6 +1475,21 @@ class AccountController extends AbstractActionController
 		$identifier = $this->params()->fromQuery('identifier');
 		$passphrase = $this->params()->fromQuery('passphrase'); // Deprecated
 
+		$data = json_decode($this->request->getContent(), true);
+		
+		// Log the web-service as an incoming interaction
+		$interaction = Interaction::instanciate();
+		$reference = $context->getFormatedName().'_'.date('Y-m-d_H:i:s');
+		$intData = array();
+		$intData['type'] = 'web_service';
+		$intData['category'] = ($type) ? $type : 'unknown';
+		$intData['format'] = $this->getRequest()->getHeaders()->get('content-type')->getFieldValue();
+		$intData['direction'] = 'input';
+		$intData['route'] = 'account/v1';
+		$intData['reference'] = $reference;
+		$intData['content'] = $this->request->getContent();
+		$rc = $interaction->loadData($intData);
+		
 		$content = array();
 		$description = Account::getDescription('p-pit-studies');
 
@@ -1528,7 +1543,6 @@ class AccountController extends AbstractActionController
 				}
 			}
 			$account = Account::instanciate($type);
-			$data = json_decode($this->request->getContent(), true);
 	    	if (array_key_exists('request', $data) && array_key_exists($data['request'], $context->getConfig('core_account/requestTypes'.(($type) ? '/'.$type : '')))) {
 	    		$requestType = $context->getConfig('core_account/requestTypes'.(($type) ? '/'.$type : ''))[$data['request']][$context->getLocale()];
 	    	}

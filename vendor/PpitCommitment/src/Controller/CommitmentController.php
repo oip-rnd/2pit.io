@@ -400,7 +400,7 @@ class CommitmentController extends AbstractActionController
     	$accountStatuses = array();
     	foreach ($context->getConfig('commitment/generic/property/account_status')['modalities'] as $modalityId => $unused) $accountStatuses[] = $modalityId;
 //    	$accounts = Account::getList(null, ['status' => implode(',', $accountStatuses)], '+name', null);
-    	$accounts = Account::getList(null, ['status' => 'active,converted,committed,undefined'], '+name', null);
+    	$accounts = Account::getList(null, ['status' => 'active,converted,committed,undefined,retention,gone,canceled'], '+name', null);
     	 
     	// Instanciate the csrf form
     	$csrfForm = new CsrfForm();

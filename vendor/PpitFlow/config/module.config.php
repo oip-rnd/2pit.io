@@ -10,6 +10,7 @@
 return array (
 	'controllers' => array(
 		'invokables' => array(
+			'PpitFlow\Controller\Contact' => 'PpitFlow\Controller\ContactController',
 			'PpitFlow\Controller\Emailing' => 'PpitFlow\Controller\EmailingController',
 			'PpitFlow\Controller\Event' => 'PpitFlow\Controller\EventController',
 			'PpitFlow\Controller\Landing' => 'PpitFlow\Controller\LandingController',
@@ -21,6 +22,20 @@ return array (
 	
 	'router' => array(
 		'routes' => array(
+			'flowContact' => array(
+				'type'    => 'literal',
+				'options' => array(
+					'route'    => '/flow-contact',
+					'constraints' => ['id' => '[0-9]*'],
+					'defaults' => array(
+						'controller' => 'PpitFlow\Controller\Contact',
+						'action'     => 'add',
+					),
+				),
+				'may_terminate' => true,
+				'child_routes' => array(
+				),
+			),
 			'emailing' => array(
 				'type'    => 'literal',
 				'options' => array(
@@ -308,6 +323,13 @@ return array (
 				),
 				'may_terminate' => true,
 				'child_routes' => array(
+					'register' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/register[/:account_id]',
+							'defaults' => array('action' => 'register'),
+						),
+					),
 					'index' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -482,6 +504,7 @@ return array (
 		// Guard listeners to be attached to the application event manager
 		'guards' => array(
 			'BjyAuthorize\Guard\Route' => array(
+				
 				array('route' => 'emailing/generate', 'roles' => array('operational_management')),
 				array('route' => 'emailing/serialize', 'roles' => array('admin')),
 				
@@ -519,6 +542,7 @@ return array (
 				array('route' => 'payment/add', 'roles' => array('user')),
 				
 				array('route' => 'profile', 'roles' => array('user')),
+				array('route' => 'profile/register', 'roles' => array('guest')),
 				array('route' => 'profile/index', 'roles' => array('user')),
 				array('route' => 'profile/home', 'roles' => array('user')),
 				array('route' => 'profile/list', 'roles' => array('user')),

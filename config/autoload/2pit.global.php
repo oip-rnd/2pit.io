@@ -12,7 +12,7 @@
  */
 
 return array(
-	'defaultRoute' => 'flowEvent',
+	'defaultRoute' => 'landing/template2',
 	'isTraceActive' => true,
 	'isDemoModeActive' => true,
 	'isDemoAccountUpdatable' => false,

@@ -53,6 +53,7 @@ class ComposerStaticInit85293ecee4f033dd340b761c2c703716
         'T' => 
         array (
             'TrueBV\\' => 7,
+            'TennisEtudes\\' => 13,
         ),
         'S' => 
         array (
@@ -223,6 +224,10 @@ class ComposerStaticInit85293ecee4f033dd340b761c2c703716
         'TrueBV\\' => 
         array (
             0 => __DIR__ . '/..' . '/true/punycode/src',
+        ),
+        'TennisEtudes\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/module/TennisEtudes/src',
         ),
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (

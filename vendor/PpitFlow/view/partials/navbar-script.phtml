@@ -23,41 +23,50 @@ toastr.error('<?php echo $this->translate('Invalid authentication', 'ppit-core',
 
 //Register
 
+function register() {
+var xhttp = new XMLHttpRequest(), formData = new FormData();
+formData.append('csrf', $('#csrf').val());
+formData.append('email', $('#register-email').val());
+formData.append('n_first', $('#register-n_first').val());
+formData.append('n_last', $('#register-n_last').val());
+formData.append('password', $('#register-password').val());
+formData.append('origine', $('#register-origine').val());
+formData.append('locale', '<?php echo $locale ?>');
+xhttp.open('POST', '<?php echo $this->url('profile/register') ?>', true);
+xhttp.onload = function () {
+ if (xhttp.readyState == 4) {
+   $('#modalRegisterContent').html(xhttp.responseText);
+ }
+};
+xhttp.send(formData);
+}
+
+function showRegister() {
+var xhttp = new XMLHttpRequest();
+xhttp.open('GET', '<?php echo $this->url('profile/register') ?>', true);
+xhttp.onload = function () {
+ if (xhttp.readyState == 4) {
+   if (xhttp.status == 200) {
+     $('#modalRegisterContent').html(xhttp.responseText);
+     $('.mdb-select').material_select();
+
+     var form = document.getElementById('registerForm');
+     form.onsubmit = function(event) {
+       event.preventDefault();
+       register();
+     }
+   }
+   else toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+ }
+};
+xhttp.send();
+}
+
 $('#modalRegisterForm').on('hide.bs.modal', function () { 
- $('.modal_input').val('');
+$('#modalRegisterInputs').html('');
 });
 
-function register() {
-  var route = '<?php echo $this->url('user/v1').'?type='.$accountType.'&request=register' ?>';
-<?php if ($redirectRoute) : ?>
-  route += '&route=<?php echo $redirectRoute ?><?php echo $redirectParams ?>';
-<?php endif; ?>
-  var xhttp = new XMLHttpRequest(), formData = new FormData();
-  formData.append('email', $('#register-email').val());
-  formData.append('n_first', $('#register-n_first').val());
-  formData.append('n_last', $('#register-n_last').val());
-  formData.append('password', $('#register-password').val());
-  formData.append('origine', $('#origine').val());
-  formData.append('locale', '<?php echo $locale ?>');
-  xhttp.open('POST', route, true);
-  xhttp.setRequestHeader("Authorization", "Basic " + btoa($('#identity').val() + ':' + $('#credential').val()));
-  xhttp.onload = function () {
-    if (xhttp.readyState == 4 && (xhttp.status == 200 || xhttp.status == 302)) {
-      toastr.success("<?php echo $this->translate('Your request has been registered. To finalize the registration, please check you emails with an activation link to follow.', 'ppit-core', $context->getLocale()) ?>");
-      $('#modalRegisterForm').modal('hide');
-    }
-    else if (xhttp.statusText == 'accepted domain') toastr.error("<?php echo $this->translate('Sorry, this application is only accessible to a private network', 'ppit-core', $context->getLocale()) ?>");
-    else if (xhttp.status == 206) toastr.error("<?php echo $this->translate('An account already exists for this email address', 'ppit-core', $context->getLocale()) ?>");
-    else toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
-  };
-  xhttp.send(formData);
-}
-
-var form = document.getElementById('register-form');
-form.onsubmit = function(event) {
-  event.preventDefault();
-  register();
-}
+$('#modalRegisterForm').on('show.bs.modal', showRegister);
 
 // Login
 
