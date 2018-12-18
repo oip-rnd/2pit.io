@@ -1477,20 +1477,6 @@ class AccountController extends AbstractActionController
 
 		$data = json_decode($this->request->getContent(), true);
 		
-		// Log the web-service as an incoming interaction
-		$interaction = Interaction::instanciate();
-		$reference = $context->getFormatedName().'_'.date('Y-m-d_H:i:s');
-		$intData = array();
-		$intData['type'] = 'web_service';
-		$intData['category'] = ($type) ? $type : 'unknown';
-		$intData['format'] = $this->getRequest()->getHeaders()->get('content-type')->getFieldValue();
-		$intData['direction'] = 'input';
-		$intData['route'] = 'account/v1';
-		$intData['reference'] = $reference;
-		$intData['content'] = $this->request->getContent();
-		$rc = $interaction->loadData($intData);
-		$rc = $interaction->add();
-		
 		$content = array();
 		$description = Account::getDescription('p-pit-studies');
 
@@ -1535,10 +1521,27 @@ class AccountController extends AbstractActionController
 
 		// Put
 		elseif ($this->request->isPut()) {
+
+			// Log the attempts to add an account
+			$interaction = Interaction::instanciate();
+			$reference = $context->getFormatedName().'_'.date('Y-m-d_H:i:s');
+			$intData = array();
+			$intData['type'] = 'web_service';
+			$intData['category'] = ($type) ? $type : 'unknown';
+			$intData['format'] = $this->getRequest()->getHeaders()->get('content-type')->getFieldValue();
+			$intData['direction'] = 'input';
+			$intData['route'] = 'account/v1';
+			$intData['reference'] = $reference;
+			$intData['content'] = $this->request->getContent();
+			$interaction->loadData($intData);
+			$interaction->add();
+
 			if ($identifier) {
 				$account = Account::get($identifier, 'identifier');
 				if ($account) {
 					$this->getResponse()->setStatusCode('400');
+					$interaction->http_status = '400 - Existing account based on identifier';
+					$interaction->update(null);
 					echo json_encode(['Trial to create an account with an already existing identifier']);
 					return $this->getResponse();
 				}
@@ -1560,11 +1563,15 @@ class AccountController extends AbstractActionController
 	    	try {
 				$rc = $account->loadAndAdd($data, $description['properties']);
 	    		if ($rc[0] == '206') { // Partially accepted on an already existing account which is returned as rc[1]
-					$this->getResponse()->setStatusCode($rc[0]);
+					$interaction->http_status = '206 - ' . $rc[1];
+					$interaction->update(null);
+	    			$this->getResponse()->setStatusCode($rc[0]);
 					$content['data'] = ['id' => $rc[1]];
 					$connection->commit();
 	    		}
 				elseif ($rc[0] != '200') {
+					$interaction->http_status = '200';
+					$interaction->update(null);
 					$this->getResponse()->setStatusCode($rc[0]);
 				    $this->getResponse()->setReasonPhrase($rc[1]);
 					$connection->rollback();
