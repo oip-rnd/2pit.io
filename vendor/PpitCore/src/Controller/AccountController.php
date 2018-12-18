@@ -1489,6 +1489,7 @@ class AccountController extends AbstractActionController
 		$intData['reference'] = $reference;
 		$intData['content'] = $this->request->getContent();
 		$rc = $interaction->loadData($intData);
+		$rc = $interaction->add();
 		
 		$content = array();
 		$description = Account::getDescription('p-pit-studies');
