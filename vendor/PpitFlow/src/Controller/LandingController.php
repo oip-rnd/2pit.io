@@ -50,7 +50,10 @@ class LandingController extends AbstractActionController
 
 		// Profile form
 		$profileForm = null;
-		if ($context->getConfig('specificationMode') == 'database') $profileForm = Config::get($place_identifier.'_profile', 'identifier')->content['form'];
+		if ($context->getConfig('specificationMode') == 'database') {
+			$config = Config::get($place_identifier.'_profile', 'identifier');
+			if ($config) $profileForm = $config->content['form'];
+		}
 		if (!$profileForm) $profileForm = $context->getConfig('profile/'.$place_identifier)['form'];
 		if (!$profileForm) $profileForm = $context->getConfig('profile/generic')['form'];
 		$accountDescription = Account::getDescription($accountType);
