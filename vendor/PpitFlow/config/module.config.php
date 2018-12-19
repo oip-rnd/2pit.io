@@ -609,6 +609,9 @@ return array (
 	),
 	
 	'landing_account_type' => 'generic',
+	'flow_steps' => array(
+		'candidate' => 'payment',
+	),
 	'event_default_type' => 'request',
 	
 	'matching/skills' => array(

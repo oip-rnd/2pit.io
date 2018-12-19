@@ -1547,12 +1547,16 @@ class AccountController extends AbstractActionController
 				}
 			}
 			$account = Account::instanciate($type);
-	    	if (array_key_exists('request', $data) && array_key_exists($data['request'], $context->getConfig('core_account/requestTypes'.(($type) ? '/'.$type : '')))) {
-	    		$requestType = $context->getConfig('core_account/requestTypes'.(($type) ? '/'.$type : ''))[$data['request']][$context->getLocale()];
-	    	}
-	    	else {
-	    		$requestType = $context->getConfig('core_account/requestTypes'.(($type) ? '/'.$type : ''))['general_information'][$context->getLocale()];
-	    	}
+			$requestTypes = $context->getConfig('core_account/requestTypes'.(($type) ? '/'.$type : ''));
+			if ($requestTypes) {
+		    	if (array_key_exists('request', $data) && array_key_exists($data['request'], $requestTypes)) {
+		    		$requestType = $context->getConfig('core_account/requestTypes'.(($type) ? '/'.$type : ''))[$data['request']][$context->getLocale()];
+		    	}
+		    	else {
+		    		$requestType = $context->getConfig('core_account/requestTypes'.(($type) ? '/'.$type : ''))['general_information'][$context->getLocale()];
+		    	}
+			}
+			else $requestType = '';
 	    	if (array_key_exists('comment', $data)) $requestComment = $data['comment'];
 	    	else $requestComment = '';
     		$data['contact_history'] = 'Request: '.$requestType.' - Comment: '.$requestComment;

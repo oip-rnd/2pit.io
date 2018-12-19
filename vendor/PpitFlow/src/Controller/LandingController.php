@@ -41,21 +41,17 @@ class LandingController extends AbstractActionController
 		
 		$locale = $this->params()->fromQuery('locale');
 		
-//		$id = $this->params()->fromRoute('id');
 		$accountType = $context->getConfig('landing_account_type');
-/*		$account = null;
-		if ($id) {
-			$account = Account::get($id);
-//	    	if ($token != $account->authentication_token) return $this->redirect()->toRoute('landing/template2', ['place_identifier' => $place_identifier]);
-		}
-		elseif ($context->isAuthenticated()) {
+		$account = null;
+		if ($context->isAuthenticated()) {
 			$account = Account::get($context->getContactId(), 'contact_1_id');
 		}
-		if(!$account) $account = Account::instanciate($accountType);*/
+		if(!$account) $account = Account::instanciate($accountType);
 
 		// Profile form
-/*		if ($context->getConfig('specificationMode') == 'config') $profileForm = $context->getConfig('profile/'.$place_identifier)['form'];
-		else $profileForm = Config::get($place_identifier.'_profile', 'identifier')->content['form'];
+		$profileForm = null;
+		if ($context->getConfig('specificationMode') == 'database') $profileForm = Config::get($place_identifier.'_profile', 'identifier')->content['form'];
+		if (!$profileForm) $profileForm = $context->getConfig('profile/'.$place_identifier)['form'];
 		if (!$profileForm) $profileForm = $context->getConfig('profile/generic')['form'];
 		$accountDescription = Account::getDescription($accountType);
 		foreach ($profileForm['inputs'] as $inputId => $options) {
@@ -72,13 +68,12 @@ class LandingController extends AbstractActionController
 			if (!array_key_exists('placeholder', $property)) $property['placeholder'] = null;
 			if (!array_key_exists('focused', $property)) $property['focused'] = false;
 			$profileForm['inputs'][$inputId] = $property;
-		}*/
+		}
 		
 		// If an email is given as a parameter: Show the Login or Sign Up form depending of the account existing or not
 		$panel = $this->params()->fromQuery('panel');
 		$email = $this->params()->fromQuery('email');
 		if ($email) {
-			$account = null;
 			$vcard = Vcard::get($email, 'email');
 			if ($vcard) {
 				$userContact = UserContact::get($vcard->id, 'vcard_id');
@@ -87,8 +82,12 @@ class LandingController extends AbstractActionController
 			}
 			else $panel = 'modalRegisterForm';
 		}
+		if (!$panel) {
+			$steps = $context->getConfig('flow_steps');
+			if (array_key_exists($account->status, $steps)) $panel = $steps[$account->status];
+		}
 
-		if (!$locale) /*if ($account) $locale = $account->locale; else*/ $locale = $context->getLocale();
+		if (!$locale) if ($account) $locale = $account->locale; else $locale = $context->getLocale();
 		$links = $context->getConfig('public/'.$instance_caption.'/links');
 
 		// Retrieve the content
@@ -100,7 +99,7 @@ class LandingController extends AbstractActionController
 		}
 
 		$viewData = array();
-//		$viewData['photo_link_id'] = ($account->photo_link_id) ? $account->photo_link_id : 'no-photo.png';
+		$viewData['photo_link_id'] = ($account->photo_link_id) ? $account->photo_link_id : 'no-photo.png';
 		if (array_key_exists('form', $content)) {
 			foreach ($content['form']['inputs'] as $inputId => $options) {
 				if (array_key_exists('definition', $options) && $options['definition'] == 'inline') $property = $options;
@@ -151,7 +150,6 @@ class LandingController extends AbstractActionController
 			}
 			$data['contact_history'] = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2).', from '.$_SERVER['HTTP_REFERER'].', with '.$_SERVER['HTTP_USER_AGENT'].' filled landing page\'s form';
 
-			$account = Account::instanciate($accountType);
 			$data['origine'] = 'subscription';
 			$rc = $account->loadAndAdd($data, Account::getConfig($accountType));
 			if (in_array($rc[0], ['200', '206'])) $message = 'OK';
@@ -178,7 +176,7 @@ class LandingController extends AbstractActionController
 			'footer' => $content['footer'],
 			'locale' => $locale,
 			'photo_link_id' => null,
-//			'profileForm' => $profileForm,
+			'profileForm' => $profileForm,
 			'pageScripts' => 'ppit-flow/landing/scripts',
 			'message' => ($message) ? $message : $this->params()->fromQuery('message'),
 			'error' => ($error) ? $error : $this->params()->fromQuery('error'),

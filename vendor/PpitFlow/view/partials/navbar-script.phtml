@@ -257,9 +257,8 @@ $('#modalProfileForm').on('show.bs.modal', function () {
 });
 
 // Payment
-<?php if ($payment && array_key_exists('paypal', $payment)) : ?>
 
-  <!-- PayPal -->
+<!-- PayPal -->
 
 function showPaypal() {  
   // Render the PayPal button
@@ -318,11 +317,11 @@ function showPaypal() {
   }
   }, '#paypal-button-container');
 
-  $('#paypalDiv').hide();
-  $('#submitButton').click(function () {
-    $('#paypalDiv').show(); 
-    $('#submitButton').hide(); 
-  });
+//  $('#paypalDiv').hide();
+//  $('#submitButton').click(function () {
+//    $('#paypalDiv').show(); 
+//    $('#submitButton').hide(); 
+//  });
 }
 
 function showPayment() {
@@ -346,6 +345,8 @@ $('#modalPaymentForm').on('hide.bs.modal', function () {
 
 $('#modalPaymentForm').on('show.bs.modal', showPayment);
 
+<?php if ($panel == 'payment') : ?>
+$('#modalPaymentForm').modal('show');
 <?php endif;?>
 
 // Validate charter

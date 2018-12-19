@@ -1791,7 +1791,7 @@ class Account
 
     	// Determine the place to link the account with
     	$place = null;
-    	if (array_key_exists('place_identifier', $accountData)) $place = Place::get($accountData['place_identifier'], 'identifier');
+    	if (array_key_exists('place_identifier', $data)) $place = Place::get($data['place_identifier'], 'identifier');
     	elseif (array_key_exists('place_id', $accountData)) $place = Place::get($accountData['place_id']);
     	if (!$place) $place = Place::get($context->getPlaceId());
     	$accountData['place_id'] = $place->id;
