@@ -1534,7 +1534,7 @@ return array(
 		'statuses' => array(),
 		'properties' => array(
 			'title_1', 'title_2', 'title_3', 'status', 'identifier', 'name', 'basket', 'contact_1_id', 'n_title',
-			'n_first', 'n_last', 'email', 'tel_work', 'tel_cell', 
+			'n_first', 'n_last', 'email', 'tel_work', 'tel_cell', 'locale', 
 			'adr_street', 'adr_extended', 'adr_post_office_box', 'adr_zip', 'adr_city', 'adr_state', 'adr_country', 
 			'n_title_2', 'n_first_2', 'n_last_2', 'email_2', 'tel_work_2', 'tel_cell_2', 'address_2', 
 			'place_id'/*, 'place_caption'*/, 'opening_date', 'closing_date', 'callback_date', 'origine', 'contact_history',
@@ -1886,7 +1886,7 @@ table.note-report td {
 		'statuses' => array(),
 		'properties' => array(
 			'title_1', 'title_2', 'status', 'identifier', 'name', 'n_fn', 'photo_link_id', 'place_id',
-			'contact_1_id', 'n_title', 'n_first', 'n_last', 'email', 'tel_work', 'tel_cell',
+			'contact_1_id', 'n_title', 'n_first', 'n_last', 'email', 'tel_work', 'tel_cell', 'locale',
 			'adr_street', 'adr_zip', 'adr_city', 'adr_state', 'adr_country', 'birth_date', 'callback_date',
 			'invoice_n_title', 'invoice_n_first', 'invoice_n_last', 'invoice_email', 'invoice_tel_work', 'invoice_tel_cell',
 			'invoice_adr_street', 'invoice_adr_zip', 'invoice_adr_city', 'invoice_adr_state', 'invoice_adr_country',

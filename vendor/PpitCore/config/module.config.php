@@ -3489,7 +3489,7 @@ return array(
 	'core_account/generic' => array(
 		'properties' => array(
 			'title_1', 'title_2', 'status', 'place_id', 'identifier', 'name', 'photo_link_id', 'basket', 'contact_1_id', 'contact_1_status', 'org',
-			'n_title', 'n_first', 'n_last', 'email', 'tel_work', 'tel_cell', 
+			'n_title', 'n_first', 'n_last', 'email', 'tel_work', 'tel_cell', 'locale', 
 			'adr_street', 'adr_extended', 'adr_post_office_box', 'adr_zip', 'adr_city', 'adr_state', 'adr_country', 'birth_date', 'locale',
 			'contact_2_id', 'contact_2_status', 'n_title_2', 'n_first_2', 'n_last_2', 'email_2', 'tel_work_2', 'tel_cell_2',
 			'adr_street_2', 'adr_extended_2', 'adr_post_office_box_2', 'adr_zip_2', 'adr_city_2', 'adr_state_2', 'adr_country_2',
