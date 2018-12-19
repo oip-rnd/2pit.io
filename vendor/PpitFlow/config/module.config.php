@@ -613,6 +613,11 @@ return array (
 		'candidate' => 'payment',
 	),
 	'event_default_type' => 'request',
+	'PayPalSandbox' => array(
+		'env' => 'sandbox',
+		'id' => 'AZDxjDScFpQtjWTOUtWKbyN_bDt4OgqaF4eYXlewfBP4-8aqX3PiV8e1GWU6liB2CUXlkA59kJXE7M6R',
+	),
+	
 	
 	'matching/skills' => array(
 		'blockchain' => ['labels' => ['default' => 'Blockchain'], 'color' => 'aqua-gradient'],

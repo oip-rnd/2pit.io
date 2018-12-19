@@ -264,7 +264,7 @@ function showPaypal() {
   // Render the PayPal button
   paypal.Button.render({
   // Set your environment
-  env: '<?php echo $context->getConfig()['ppitUserSettings']['safe'][$context->getInstance()->caption]['PayPalEnv'] ?>', // sandbox | production
+  env: '<?php echo $payPal['env'] ?>', // sandbox | production
 
   // Specify the style of the button
   style: {
@@ -291,7 +291,7 @@ function showPaypal() {
   // PayPal Client IDs - replace with your own
   // Create a PayPal app: https://developer.paypal.com/developer/applications/create
   client: {
-    sandbox: '<?php echo $context->getConfig()['ppitUserSettings']['safe'][$context->getInstance()->caption]['PayPalId'] ?>',
+    sandbox: '<?php echo $payPal['id'] ?>',
   },
 
   payment: function (data, actions) {

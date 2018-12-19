@@ -93,6 +93,10 @@ class LandingController extends AbstractActionController
 		if (!$locale) if ($account) $locale = $account->locale; else $locale = $context->getLocale();
 		$links = $context->getConfig('public/'.$instance_caption.'/links');
 
+		$safeEnv = $context->getConfig()['ppitUserSettings']['safe'][$context->getInstance()->caption];
+		if (array_key_exists('PayPal', $safeEnv)) $payPal = $safeEnv['PayPal'];
+		else $payPal = $context->getConfig('PayPalSandbox');
+		
 		// Retrieve the content
 		$survey = $this->params()->fromQuery('survey');
 		$step = $this->params()->fromQuery('step');
@@ -176,6 +180,7 @@ class LandingController extends AbstractActionController
 			'intro' => $content['intro'],
 			'form' => (array_key_exists('form', $content) && $content['form']) ? $content['form'] : false,
 			'payment' => $context->getConfig('payment/'.$instance_caption),
+			'payPal' => $payPal,
 			'footer' => $content['footer'],
 			'locale' => $locale,
 			'photo_link_id' => null,

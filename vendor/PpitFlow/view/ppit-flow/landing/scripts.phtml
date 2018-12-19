@@ -8,10 +8,13 @@ toastr.error('<?php echo $this->translate('An error has occurred, please try aga
 
 $('.portlet-header').hide();
 $('.resizable').hide();
+</script>
 
 <?php if ($context->hasRole('admin')) : ?>
+
 <!-- Updatable landing page for authorized users -->
 
+<script>
   var xhttp = new XMLHttpRequest();
   xhttp = new XMLHttpRequest();
   xhttp.open("POST", '<?php //echo $this->url('config/upload', ['identifier' => $place_identifier.'_landing']) ?>', true);
