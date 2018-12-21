@@ -302,7 +302,6 @@ class FunnelController extends AbstractActionController
 			'place_identifier' => $place_identifier,
 			'funnel' => $funnel,
 			'step' => $step,
-			'content' => $content,
 			'commitments' => $commitments,
 			'actionStatus' => $actionStatus,
 		));
