@@ -215,11 +215,11 @@ class FunnelController extends AbstractActionController
 		$locale = $this->params()->fromQuery('locale');
 	
 		// Configuration
-		if ($context->getConfig('specificationMode') == 'config') {
+/*		if ($context->getConfig('specificationMode') == 'config') {
 			$content = $context->getConfig('payment/'.$place_identifier);
 			if (!$content) $content = $context->getConfig('payment/generic');
 		}
-		else $content = Config::get($place_identifier.'_payment', 'identifier')->content;
+		else $content = Config::get($place_identifier.'_payment', 'identifier')->content;*/
 	
 		$commitment = Commitment::instanciate('generic');
 		$commitmentIds = $account->shopping_cart;

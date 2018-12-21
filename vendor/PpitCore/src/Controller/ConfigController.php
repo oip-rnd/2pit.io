@@ -195,6 +195,7 @@ class ConfigController extends AbstractActionController
 		
 		// Parameters
 		$place_identifier = $this->params()->fromRoute('place_identifier');
+
 		$place = Place::get($place_identifier, 'identifier');
 		$category = $this->params()->fromQuery('category');
 		$config = Config::get($place_identifier.'_'.$category, 'identifier', $place->id);
