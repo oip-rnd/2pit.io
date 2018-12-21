@@ -200,6 +200,7 @@ class FunnelController extends AbstractActionController
 		// Retrieve the context and the parameters
 		$context = Context::getCurrent();
 		$step = $this->params()->fromQuery('step');
+		$funnel = null;
 		
 		// Data description
 		$description = Account::getDescription($context->getConfig('landing_account_type'));
@@ -265,7 +266,6 @@ class FunnelController extends AbstractActionController
 				}*/
 				
 				// Deliver the order
-				$funnel = null;
 				if ($context->getConfig('specificationMode') == 'database') {
 					$config = Config::get($place->identifier.'_funnel', 'identifier', $place->id);
 					if ($config) $funnel = $config->content;
