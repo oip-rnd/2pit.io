@@ -1,0 +1,66 @@
+<form id="paymentForm">
+  <div class="modal-header text-center">
+    <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('Payment', 'ppit-flow', $locale) ?></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body mx-3">
+            
+<?php if ($step) : ?>
+    <div class="alert alert-success" style="text-align: center">
+     <strong><?php echo $context->localize($funnel['message']['payment_confirmed']) ?></strong>
+    </div>
+
+<?php elseif ($actionStatus[0] == '500') : ?>
+    <div class="alert alert-danger" style="text-align: center">
+      <strong><?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $locale) ?></strong>
+    </div>
+
+<?php endif;?>
+
+<?php if ($step) $isDisabled = true; else $isDisabled = false ?>
+
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Produit</th>
+              <th>Quantité</th>
+              <th>Prix unitaire</th>
+              <th>Montant</th>
+	       </tr>
+        </thead>
+        <tbody>
+        
+<?php $sum = 0; foreach ($commitments as $commitment_id => $commitment) : ?>
+  <?php $sum += $commitment->amount ?>
+          <tr>
+            <td><?php echo $commitment->caption ?></td>
+            <td><?php echo $commitment->quantity ?></td>
+            <td><?php echo $context->formatFloat($commitment->unit_price, 2) ?>&nbsp;€</td>
+            <td><?php echo $context->formatFloat($commitment->amount, 2) ?>&nbsp;€</td>
+	      </tr>
+<?php endforeach;?>
+          
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="font-weight-bold"><?php echo $context->formatFloat($sum, 2) ?>&nbsp;€</td>
+          </tr>
+        </tbody>
+      </table>
+
+<?php if (!$isDisabled) : ?>
+    <input type="hidden" id="paymentAmount" value="<?php echo $sum ?>" />
+    <div class="col-md-12" id="paypalDiv">
+      <div class="md-form">
+        <div class="text-center" id="paypal-button-container"></div>
+      </div>
+    </div>
+<?php endif;?>
+
+  </div>
+  <div class="modal-footer d-flex justify-content-center">
+  </div>
+</form>

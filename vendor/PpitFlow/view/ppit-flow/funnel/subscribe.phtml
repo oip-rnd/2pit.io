@@ -1,0 +1,95 @@
+<form id="subscribeForm">
+  <div class="modal-header text-center">
+    <h4 class="modal-title w-100 font-weight-bold"><img src="<?php echo $this->basePath('/img/tennis-etudes.com/stages-tennis-progress.png') ?>" height="80" alt="Image Progress" class="z-depth-0"></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div id="modalRegisterInputs"></div>
+  <div class="modal-body mx-3">
+
+<!--  CSRF protection -->
+<?php $element = $csrfForm->get('csrf') ?>
+    <div class="form-group">
+      <?php echo $this->formElement($element) ?>
+<?php if ($this->formElementErrors($element)) : ?>
+      <div class="alert alert-danger" style="text-align: center">
+        <strong><?php echo $this->translate('The form has expired, please input again', 'ppit-core', $locale) ?></strong>
+      </div>
+<?php endif;?>
+    </div>
+            
+<?php if ($actionStatus[0] == '200') : ?>
+    <div class="alert alert-success" style="text-align: center">
+	   <strong><?php echo $this->translate('Your request has been registered.', 'ppit-core', $context->getLocale()) ?></strong>
+    </div>
+
+<?php elseif ($actionStatus[0] == '500') : ?>
+    <div class="alert alert-danger" style="text-align: center">
+      <strong><?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $locale) ?></strong>
+    </div>
+
+<?php endif;?>
+
+<?php if ($actionStatus) $isDisabled = true; else $isDisabled = false ?>
+
+  <p class="text-center">Des réductions d’appliquent automatiquement en fonction du nombre de stagiaires.</p>
+
+  <!-- Hébergement -->
+  <div class="md-form mb-3">
+      <select id="subscribe-hebergement" class="mdb-select validate modal_input priceParameter" required="required">
+        <option value="sans">Sans</option>
+        <option value="avec">Avec</option>
+      </select>
+      <label>* Hébergement</label>
+  </div>
+
+  <!-- Session -->
+   <div class="md-form mb-3">
+      <select id="subscribe-session" class="mdb-select validate modal_input priceParameter" required="required">
+        <option value="2019-08-07_1">1 semaine : Du 07 au 14 août 2019</option>
+        <option value="2019-08-07_2">2 semaines : Du 07 au 21 août 2019</option>
+        <option value="2019-08-14_1">1 semaine : Du 14 au 21 août 2019</option>
+      </select>
+      <label>* Session</label>
+    </div>
+
+  <!-- Stagiaires -15 ans -->
+   <div class="md-form mb-3">
+      <select id="subscribe-stagiaire_moins" class="mdb-select validate modal_input priceParameter" required="required">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+      <label>* Nombre de stagiaires -de 15 ans</label>
+    </div>
+
+  <!-- Stagiaires +15 ans -->
+   <div class="md-form mb-3">
+      <select id="subscribe-stagiaire_plus" class="mdb-select validate modal_input priceParameter" required="required">
+        <option value="0"></option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+      <label>* Nombre de stagiaires +de 15 ans</label>
+    </div>
+
+   <div class="md-form mb-3">
+    <h4 class="mt-2 text-right">
+      <strong id="subscribe-amount"></strong>
+    </h4>
+  </div>
+
+  </div>
+  <div class="modal-footer d-flex justify-content-center">
+<?php if (!$isDisabled) : ?>
+    <button type="submit" class="btn btn-primary btn-rounded">Ajouter au panier</button>
+<?php endif;?>
+  </div>
+</form>
+    

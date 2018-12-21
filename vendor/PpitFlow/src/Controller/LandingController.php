@@ -29,7 +29,8 @@ class LandingController extends AbstractActionController
 			$place = Place::get($context->getPlaceId());
 			$place_identifier = $place->identifier;
 		}
-
+		$shopping_cart = $this->params()->fromQuery('shopping_cart');
+		
 		// Content
 		$content = null;
 		if ($context->getConfig('specificationMode') == 'database') {
@@ -43,10 +44,22 @@ class LandingController extends AbstractActionController
 		
 		$accountType = $context->getConfig('landing_account_type');
 		$account = null;
-		if ($context->isAuthenticated()) {
-			$account = Account::get($context->getContactId(), 'contact_1_id');
+		if (!$shopping_cart) {
+			if ($context->isAuthenticated()) {
+				$account = Account::get($context->getContactId(), 'contact_1_id');
+				$shopping_cart = $account->shopping_cart;
+			}
+			else {
+				$funnel = null;
+				if ($context->getConfig('specificationMode') == 'database') {
+					$config = Config::get($place->identifier.'_funnel', 'identifier', $place->id);
+					if ($config) $funnel = $config->content;
+				}
+				if (!$funnel) $funnel = $context->getConfig('funnel/'.$place_identifier);
+				if ($funnel && array_key_exists('default_shopping_cart', $funnel)) $shopping_cart = $funnel['default_shopping_cart'];
+			}
 		}
-		if(!$account) $account = Account::instanciate($accountType);
+		if (!$account) $account = Account::instanciate($accountType);
 
 		// Profile form
 		$profileForm = null;
@@ -85,17 +98,17 @@ class LandingController extends AbstractActionController
 			}
 			else $panel = 'modalRegisterForm';
 		}
-		if (!$panel) {
-			$steps = $context->getConfig('flow_steps');
-			if (array_key_exists($account->status, $steps)) $panel = $steps[$account->status];
+		if ($context->isAuthenticated() && !$panel) {
+			if ($shopping_cart) $panel = 'payment';
 		}
 
 		if (!$locale) if ($account) $locale = $account->locale; else $locale = $context->getLocale();
 		$links = $context->getConfig('public/'.$instance_caption.'/links');
 
+		// To factorize to each main page
 		$safeEnv = $context->getConfig()['ppitUserSettings']['safe'][$context->getInstance()->caption];
 		if (array_key_exists('PayPal', $safeEnv)) $payPal = $safeEnv['PayPal'];
-		else $payPal = $context->getConfig('PayPalSandbox');
+		else $payPal = null;
 		
 		// Retrieve the content
 		$survey = $this->params()->fromQuery('survey');
@@ -181,6 +194,7 @@ class LandingController extends AbstractActionController
 			'form' => (array_key_exists('form', $content) && $content['form']) ? $content['form'] : false,
 			'payment' => $context->getConfig('payment/'.$instance_caption),
 			'payPal' => $payPal,
+			'shopping_cart' => $shopping_cart,
 			'footer' => $content['footer'],
 			'locale' => $locale,
 			'photo_link_id' => null,

@@ -1697,6 +1697,22 @@ class Commitment
     	return 'OK';
     }
 
+    /**
+     * Restfull implementation
+     */
+    public function loadAndAdd($data)
+    {
+    	$context = Context::getCurrent();
+    	$rc = $this->loadData($data);
+    	if ($rc != 'OK') return ['500', 'commitment->loadData: '.$rc];
+    
+    	$rc = $this->add();
+    	if ($rc != 'OK') return ['500', 'commitment->add: '.$rc];
+    
+    	$this->properties = $this->getProperties();
+    	return ['200', $this->id];
+    }
+    
     public function update($update_time, $xcblOrderResponse = null)
     {
     	$context = Context::getCurrent();

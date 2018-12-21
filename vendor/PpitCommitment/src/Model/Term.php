@@ -910,6 +910,19 @@ class Term
     	Term::getTable()->save($this);    
     	return ('OK');
     }
+
+    public function loadAndAdd($data)
+    {
+    	$context = Context::getCurrent();
+    	$rc = $this->loadData($data);
+    	if ($rc != 'OK') return ['500', 'term->loadData: '.$rc];
+    
+    	$rc = $this->add();
+    	if ($rc != 'OK') return ['500', 'term->add: '.$rc];
+    
+    	$this->properties = $this->getProperties();
+    	return ['200', $this->id];
+    }
     
     public function update($update_time)
     {

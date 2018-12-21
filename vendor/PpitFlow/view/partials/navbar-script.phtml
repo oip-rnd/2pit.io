@@ -1,5 +1,5 @@
 
-<script src="https://www.paypalobjects.com/api/checkout.js"></script>
+<script src="https://www.paypalobjects.com/api/checkout.js" async></script>
 
 <script>
 <?php
@@ -24,21 +24,24 @@ toastr.error('<?php echo $this->translate('Invalid authentication', 'ppit-core',
 //Register
 
 function register() {
-var xhttp = new XMLHttpRequest(), formData = new FormData();
-formData.append('csrf', $('#csrf').val());
-formData.append('email', $('#register-email').val());
-formData.append('n_first', $('#register-n_first').val());
-formData.append('n_last', $('#register-n_last').val());
-formData.append('password', $('#register-password').val());
-formData.append('origine', $('#register-origine').val());
-formData.append('locale', '<?php echo $locale ?>');
-xhttp.open('POST', '<?php echo $this->url('profile/register') ?>', true);
-xhttp.onload = function () {
- if (xhttp.readyState == 4) {
-   $('#modalRegisterContent').html(xhttp.responseText);
- }
-};
-xhttp.send(formData);
+  var xhttp = new XMLHttpRequest(), formData = new FormData(), route = '<?php echo $this->url('profile/register') ?>';
+<?php if ($shopping_cart) : ?>
+  route += '?shopping_cart=<?php echo $shopping_cart ?>';
+<?php endif;?>
+  formData.append('csrf', $('#csrf').val());
+  formData.append('email', $('#register-email').val());
+  formData.append('n_first', $('#register-n_first').val());
+  formData.append('n_last', $('#register-n_last').val());
+  formData.append('password', $('#register-password').val());
+  formData.append('origine', $('#register-origine').val());
+  formData.append('locale', '<?php echo $locale ?>');
+  xhttp.open('POST', route, true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4) {
+      $('#modalRegisterContent').html(xhttp.responseText);
+    }
+  };
+  xhttp.send(formData);
 }
 
 function showRegister() {
@@ -258,6 +261,8 @@ $('#modalProfileForm').on('show.bs.modal', function () {
 
 // Payment
 
+<?php if ($payPal) : ?>
+
 <!-- PayPal -->
 
 function showPaypal() {  
@@ -300,53 +305,53 @@ function showPaypal() {
         transactions: [
           {
             amount: {
-              total: '0.01',
-              currency: 'USD'
+              total: $('#paymentAmount').val(),
+              currency: 'EUR'
             }
           }
         ]
+      },
+      experience: {
+        input_fields: {
+          no_shipping: 1
+        }
       }
     });
   },
 
   onAuthorize: function (data, actions) {
-     return actions.payment.execute()
+    return actions.payment.execute()
     .then(function () {
-      window.alert('Payment Complete!');
+      var xhttp = new XMLHttpRequest(), formData = new FormData();
+      xhttp.open('GET', '<?php echo $this->url('funnel/paypal') ?>?step=confirmed', true);
+      xhttp.onload = function () {
+        if (xhttp.readyState == 4) {
+          $('#modalPaymentContent').html(xhttp.responseText);
+        }
+   	  };
+      xhttp.send(formData);
     });
   }
   }, '#paypal-button-container');
-
-//  $('#paypalDiv').hide();
-//  $('#submitButton').click(function () {
-//    $('#paypalDiv').show(); 
-//    $('#submitButton').hide(); 
-//  });
 }
 
 function showPayment() {
   var xhttp = new XMLHttpRequest();
-  xhttp.open('GET', '<?php echo $this->url('payment/add') ?>', true);
+  xhttp.open('GET', '<?php echo $this->url('funnel/paypal') ?>', true);
   xhttp.onload = function () {
     if (xhttp.readyState == 4) {
-      if (xhttp.status == 200) {
-        $('#modalPaymentInputs').html(xhttp.responseText);
-        showPaypal();
-      }
-      else toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+      $('#modalPaymentContent').html(xhttp.responseText);
+      showPaypal();
     }
   };
   xhttp.send();
 }
 
-$('#modalPaymentForm').on('hide.bs.modal', function () { 
-  $('#modalPaymentInputs').html('');
-});
-
 $('#modalPaymentForm').on('show.bs.modal', showPayment);
 
-<?php if ($panel == 'payment') : ?>
+  <?php if ($panel == 'payment') : ?>
 $('#modalPaymentForm').modal('show');
+  <?php endif;?>
 <?php endif;?>
 
 // Validate charter

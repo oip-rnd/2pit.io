@@ -2395,9 +2395,7 @@ table.note-report td {
 		'currencySymbol' => '€',
 		'tax' => 'excluding',
 		'properties' => array(
-			'year', 'status', 'place_id', 'place_caption', 
-			'account_id', 'account_status', 'account_name', 'account_identifier',
-			'invoice_n_fn',
+			'year', 'status', 'place_id', 'account_id', 'account_status', 'account_name', 'account_identifier', 'invoice_n_fn',
 			'caption', 'description', 'product_caption',
 			'quantity', 'unit_price', 'amount', 'including_options_amount', 'invoice_identifier', 'invoice_date', 'tax_amount', 'tax_inclusive',
 			'default_means_of_payment', 'update_time',

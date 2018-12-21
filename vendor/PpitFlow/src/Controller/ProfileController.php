@@ -1,6 +1,8 @@
 <?php
 namespace PpitFlow\Controller;
 
+use PpitCommitment\Model\Commitment;
+use PpitCommitment\Model\Term;
 use PpitCore\Form\CsrfForm;
 use PpitCore\Model\Account;
 use PpitCore\Model\Config;
@@ -60,13 +62,13 @@ class ProfileController extends AbstractActionController
 			$csrfForm->setData($this->request->getPost());
 			 
 			if ($csrfForm->isValid()) { // CSRF check
-	
+				
 				// Atomicity
 				$connection = Account::getTable()->getAdapter()->getDriver()->getConnection();
 				$connection->beginTransaction();
 				try {
 					$data = array();
-					$data['status'] = 'registered';
+					$data['status'] = 'candidate';
 					$data['email'] = $this->request->getPost('email');
 					$data['n_first'] = $this->request->getPost('n_first');
 					$data['n_last'] = $this->request->getPost('n_last');
@@ -80,37 +82,73 @@ class ProfileController extends AbstractActionController
 	
 						// Check that the user does not already exist
 						$user = User::getTable()->transGet($account->email, 'username');
-						if ($user) {
-							$actionStatus = ['206', 'Already exist with email address'];
+						if ($user) $actionStatus = ['206', 'Already exist with email address'];
+						else $actionStatus = ['200', 'OK'];
+					}
+					if ($actionStatus[0] == '200') {
+
+						// Check that the email address belongs to the accepted domains
+						$domain = explode('@', $data['email'])[1];
+						if ($context->getConfig('user/acceptedRegistrationDomain') && !in_array($domain, $context->getConfig('user/acceptedRegistrationDomain'))) {
+							$actionStatus = ['401', 'Unauthorized domain'];
 							$connection->rollback();
 						}
-	
+							
 						else {
-	
-							// Check that the email address belongs to the accepted domains
-							$domain = explode('@', $data['email'])[1];
-							if ($context->getConfig('user/acceptedRegistrationDomain') && !in_array($domain, $context->getConfig('user/acceptedRegistrationDomain'))) {
-								$actionStatus = ['401', 'Unauthorized domain'];
-								$connection->rollback();
+
+							// Create a user account
+							$user_id = $context->getSecurityAgent()->register($account->email, $account->contact_1_id, $data['password']);
+							$user = User::getTable()->transGet($user_id);
+							$token = $context->getSecurityAgent()->requestAuthenticationToken($user->username, false);
+
+							// Generate a commitment if a funnel is defined and a shopping cart exists
+							$funnel = null;
+							if ($context->getConfig('specificationMode') == 'database') {
+								$config = Config::get($place->identifier.'_funnel', 'identifier', $place->id);
+								if ($config) $funnel = $config->content;
 							}
-								
-							else {
-	
-								// Create a user account
-								$user_id = $context->getSecurityAgent()->register($account->email, $account->contact_1_id, $data['password']);
-								$user = User::getTable()->transGet($user_id);
-								$token = $context->getSecurityAgent()->requestAuthenticationToken($user->username, false);
+							if (!$funnel) $funnel = $context->getConfig('funnel/'.$place_identifier);
+							$shopping_cart = ($funnel) ? $this->params()->fromQuery('shopping_cart') : null;
+
+							if ($shopping_cart) {
+								$orderedItems = explode(',', $shopping_cart);
+								foreach ($orderedItems as $item) {
+									$item = explode(':', $item);
+								}
+								// Todo: generate an option row by item in commitment
+								$product = $funnel['catalogue'][$item[0]];
+								$commitment = Commitment::instanciate($funnel['type']);
+								$amount = round($item[1] * $product['unit_price'], 2);
+								$data = array(
+									'account_id' => $account->id,
+									'caption' => $product['caption'],
+									'product_caption' => $product['caption'],
+									'quantity' => $item[1],
+									'unit_price' => $product['unit_price'],
+									'amount' => $amount,
+								);
+								$actionStatus = $commitment->loadAndAdd($data, Commitment::getConfig('generic'));
+								if ($actionStatus[0] == '200') {
 									
-								// Send the OTP by email
-								$email_body = $context->localize($context->getConfig('user/messages/activation/text'));
-								$link = $this->url()->fromRoute('user/v1', ['id' => $user->user_id], ['force_canonical' => true]).'?account_id='.$account->id.'&request=activate'.'&hash='.$token;
-								$email_body = sprintf($email_body, $link);
-								$email_title = $context->localize($context->getConfig('user/messages/activation/title'));
-								Context::sendMail($user->username, $email_body, $email_title, null);
-	
-								$actionStatus = ['200'];
-								$connection->commit();
+									// Generate the term
+									$term = Term::instanciate($funnel['type']);
+									$data = array(
+										'commitment_id' => $commitment->id,
+										'caption' => $context->localize($funnel['term_caption']),
+										'due_date' => date('Y-m-d'),
+										'amount' => $amount,
+										'means_of_payment' => 'credit_card',
+									);
+									$actionStatus = $term->loadAndAdd($data);
+									if ($actionStatus[0] == '200') {
+										$account->shopping_cart = $commitment->id;
+										$account->update(null);
+									}
+								}
 							}
+
+							if ($actionStatus[0] == '200') $connection->commit();
+							else $connection->rollback();
 						}
 					}
 				}
@@ -118,9 +156,19 @@ class ProfileController extends AbstractActionController
 					$connection->rollback();
 					$actionStatus = ['500'];
 				}
+			
+				if ($actionStatus[0] == '200') {
+
+						// Send the OTP by email
+					$email_body = $context->localize($context->getConfig('user/messages/activation/text'));
+					$link = $this->url()->fromRoute('user/v1', ['id' => $user->user_id], ['force_canonical' => true]).'?account_id='.$account->id.'&request=activate'.'&hash='.$token;
+					$email_body = sprintf($email_body, $link);
+					$email_title = $context->localize($context->getConfig('user/messages/activation/title'));
+					Context::sendMail($user->username, $email_body, $email_title, null);
+				}
 			}
 		}
-	
+
 		// Return the view
 		$view = new ViewModel(array(
 			'context' => $context,

@@ -14,7 +14,7 @@ return array (
 			'PpitFlow\Controller\Emailing' => 'PpitFlow\Controller\EmailingController',
 			'PpitFlow\Controller\Event' => 'PpitFlow\Controller\EventController',
 			'PpitFlow\Controller\Landing' => 'PpitFlow\Controller\LandingController',
-			'PpitFlow\Controller\Payment' => 'PpitFlow\Controller\PaymentController',
+			'PpitFlow\Controller\Funnel' => 'PpitFlow\Controller\FunnelController',
 			'PpitFlow\Controller\Profile' => 'PpitFlow\Controller\ProfileController',
 			'PpitFlow\Controller\Survey' => 'PpitFlow\Controller\SurveyController',
 		),
@@ -274,12 +274,12 @@ return array (
 					),
 				),
 			),
-			'payment' => array(
+			'funnel' => array(
 				'type'    => 'literal',
 				'options' => array(
 					'route'    => '/payment',
 					'defaults' => array(
-						'controller' => 'PpitFlow\Controller\Payment',
+						'controller' => 'PpitFlow\Controller\Funnel',
 						'action'     => 'index',
 					),
 				),
@@ -303,11 +303,11 @@ return array (
 							),
 						),
 					),
-					'add' => array(
+					'paypal' => array(
 						'type' => 'segment',
 						'options' => array(
-							'route' => '/add',
-							'defaults' => array('action' => 'add'),
+							'route' => '/paypal',
+							'defaults' => array('action' => 'paypal'),
 						),
 					),
 				),
@@ -536,10 +536,10 @@ return array (
 				array('route' => 'flowEvent/signOut', 'roles' => array('user')),
 				array('route' => 'flowEvent/repair', 'roles' => array('admin')),
 
-				array('route' => 'payment', 'roles' => array('user')),
-            	array('route' => 'payment/payzen', 'roles' => array('guest')),
-            	array('route' => 'payment/payzenReturn', 'roles' => array('guest')),
-				array('route' => 'payment/add', 'roles' => array('user')),
+				array('route' => 'funnel', 'roles' => array('user')),
+            	array('route' => 'funnel/payzen', 'roles' => array('user')),
+            	array('route' => 'funnel/payzenReturn', 'roles' => array('user')),
+				array('route' => 'funnel/paypal', 'roles' => array('user')),
 				
 				array('route' => 'profile', 'roles' => array('user')),
 				array('route' => 'profile/register', 'roles' => array('guest')),
@@ -613,11 +613,6 @@ return array (
 		'candidate' => 'payment',
 	),
 	'event_default_type' => 'request',
-	'PayPalSandbox' => array(
-		'env' => 'sandbox',
-		'id' => 'AZDxjDScFpQtjWTOUtWKbyN_bDt4OgqaF4eYXlewfBP4-8aqX3PiV8e1GWU6liB2CUXlkA59kJXE7M6R',
-	),
-	
 	
 	'matching/skills' => array(
 		'blockchain' => ['labels' => ['default' => 'Blockchain'], 'color' => 'aqua-gradient'],
@@ -1639,6 +1634,13 @@ table.note-report td {
 				'column_1' => array(
 					'title' => ['default' => 'Resources', 'fr_FR' => 'Ressources'],
 					'list' => array(
+						'generalTermsOfUse' => array(
+							'href' => ['route' => 'instance/generalTermsOfUse'],
+							'target' => 'modal',
+							'data-target' => 'modalShowGtouForm',
+							'content_id' => 'show_gtou_content',
+							'html' => ['default' => 'General Terms Of Use', 'fr_FR' => 'Conditions Générales d’Utilisation'],
+						),
 					),
 				)
 			),

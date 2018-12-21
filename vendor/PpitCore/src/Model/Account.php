@@ -154,6 +154,7 @@ class Account
 			'availability_exceptions' =>	['entity' => 'core_account', 'column' => 'availability_exceptions'],
 			'availability_constraints' =>	['entity' => 'core_account', 'column' => 'availability_constraints'],
 			'credits' =>					['entity' => 'core_account', 'column' => 'credits'],
+			'shopping_cart' =>				['entity' => 'core_account', 'column' => 'shopping_cart'],
 			'default_means_of_payment' =>	['entity' => 'core_account', 'column' => 'default_means_of_payment'],
 			'transfer_order_id' =>			['entity' => 'core_account', 'column' => 'transfer_order_id'],
 			'transfer_order_date' =>		['entity' => 'core_account', 'column' => 'transfer_order_date'],
@@ -352,6 +353,7 @@ class Account
     public $availability_exceptions;
     public $availability_constraints;
     public $credits;
+    public $shopping_cart;
     public $default_means_of_payment;
     public $transfer_order_id;
     public $transfer_order_date;
@@ -568,6 +570,7 @@ class Account
         $this->availability_exceptions = (isset($data['availability_exceptions'])) ? json_decode($data['availability_exceptions'], true) : null;
         $this->availability_constraints = (isset($data['availability_constraints'])) ? json_decode($data['availability_constraints'], true) : null;
         $this->credits = (isset($data['credits'])) ? json_decode($data['credits'], true) : null;
+        $this->shopping_cart = (isset($data['shopping_cart'])) ? json_decode($data['shopping_cart'], true) : null;
         $this->default_means_of_payment = (isset($data['default_means_of_payment'])) ? $data['default_means_of_payment'] : null;
         $this->transfer_order_id = (isset($data['transfer_order_id'])) ? $data['transfer_order_id'] : null;
         $this->transfer_order_date = (isset($data['transfer_order_date'])) ? $data['transfer_order_date'] : null;
@@ -734,6 +737,7 @@ class Account
     	$data['availability_exceptions'] = $this->availability_exceptions;
     	$data['availability_constraints'] = $this->availability_constraints;
     	$data['credits'] = $this->credits;
+    	$data['shopping_cart'] = $this->shopping_cart;
     	$data['default_means_of_payment'] = $this->default_means_of_payment;
     	$data['transfer_order_id'] = $this->transfer_order_id;
     	$data['transfer_order_date'] = ($this->transfer_order_date) ? $this->transfer_order_date : null;
@@ -1540,6 +1544,7 @@ class Account
 				elseif ($propertyId == 'availability_exceptions') $this->availability_exceptions = $value;
 				elseif ($propertyId == 'availability_constraints') $this->availability_constraints = $value;
 				elseif ($propertyId == 'credits') $this->credits = $value;
+				elseif ($propertyId == 'shopping_cart') $this->shopping_cart = $value;
 				elseif ($propertyId == 'default_means_of_payment') $this->default_means_of_payment = $value;
 				elseif ($propertyId == 'transfer_order_id') $this->transfer_order_id = $value;
 				elseif ($propertyId == 'transfer_order_date') $this->transfer_order_date = $value;
