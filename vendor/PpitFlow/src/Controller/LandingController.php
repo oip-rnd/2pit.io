@@ -106,9 +106,11 @@ class LandingController extends AbstractActionController
 		$links = $context->getConfig('public/'.$instance_caption.'/links');
 
 		// To factorize to each main page
-		$safeEnv = $context->getConfig()['ppitUserSettings']['safe'][$context->getInstance()->caption];
-		if (array_key_exists('PayPal', $safeEnv)) $payPal = $safeEnv['PayPal'];
-		else $payPal = null;
+		$payPal = null;
+		if (array_key_exists($context->getInstance()->caption, $context->getConfig()['ppitUserSettings']['safe'])) {
+			$safeEnv = $context->getConfig()['ppitUserSettings']['safe'][$context->getInstance()->caption];
+			if (array_key_exists('PayPal', $safeEnv)) $payPal = $safeEnv['PayPal'];
+		}
 		
 		// Retrieve the content
 		$survey = $this->params()->fromQuery('survey');
