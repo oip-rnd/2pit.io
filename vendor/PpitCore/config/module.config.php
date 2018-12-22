@@ -1981,6 +1981,8 @@ return array(
  		),
 	),
 
+	'defaultRoute' => 'landing/template2',
+	
 	// Network of 2pit instances reachable from the local instance (the default simulates a group skill marketplace)
 	'instance/network' => array(
 		'group.2pit.io' => array('caption' => ['default' => 'Group skill Marketplace', 'fr_FR' => 'Plateforme de compétences groupe']),

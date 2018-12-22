@@ -12,7 +12,6 @@
  */
 
 return array(
-	'defaultRoute' => 'landing/template2',
 	'isTraceActive' => true,
 	'isDemoModeActive' => true,
 	'isDemoAccountUpdatable' => false,

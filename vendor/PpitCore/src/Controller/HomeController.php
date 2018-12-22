@@ -25,6 +25,7 @@ class HomeController extends AbstractActionController
 				return $this->redirect()->toRoute($entry['route'], $entry['params']);
 			}
 		}
-		return $this->redirect()->toRoute($context->getConfig()['defaultRoute']);
+
+		return $this->redirect()->toRoute($context->getConfig('defaultRoute'));
     }
 }
