@@ -50,6 +50,10 @@ class ComposerStaticInit85293ecee4f033dd340b761c2c703716
             'Zend\\Authentication\\' => 20,
             'ZF\\DevelopmentMode\\' => 19,
         ),
+        'Y' => 
+        array (
+            'Yugioh\\' => 7,
+        ),
         'T' => 
         array (
             'TrueBV\\' => 7,
@@ -220,6 +224,10 @@ class ComposerStaticInit85293ecee4f033dd340b761c2c703716
         'ZF\\DevelopmentMode\\' => 
         array (
             0 => __DIR__ . '/..' . '/zfcampus/zf-development-mode/src',
+        ),
+        'Yugioh\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/module/Yugioh/src',
         ),
         'TrueBV\\' => 
         array (

@@ -628,14 +628,14 @@ class AccountController extends AbstractActionController
     			$selectedTemplate = $templates[$selectedTemplateId];
     			if (array_key_exists('route', $selectedTemplate)) {
     				$client = new Client(
-    					$this->url()->fromRoute($template['route'], [], ['query' => ['mode' => 'personnalized', 'locale' => $account->locale], 'force_canonical' => true]),
+    					$this->url()->fromRoute($selectedTemplate['route'], [], ['query' => ['mode' => 'personnalized', 'locale' => $account->locale], 'force_canonical' => true]),
     					array('adapter' => 'Zend\Http\Client\Adapter\Curl', 'maxredirects' => 0, 'timeout' => 30)
     				);
     				$client->setMethod('GET');
     				$text = $client->send()->getBody();
     			}
     			else $text = $context->localize($selectedTemplate['text'], $account->locale);
-    			 
+
     			if (array_key_exists('cci', $selectedTemplate)) $data['cci'][$selectedTemplate['cci']] = $selectedTemplate['cci'];
 	    		$data['from_mail'] = $selectedTemplate['from_mail'];
 	    		$data['from_name'] = $selectedTemplate['from_name'];

@@ -40,6 +40,7 @@ return array(
     'Zend\\Cache\\' => array($vendorDir . '/zendframework/zend-cache/src'),
     'Zend\\Authentication\\' => array($vendorDir . '/zendframework/zend-authentication/src'),
     'ZF\\DevelopmentMode\\' => array($vendorDir . '/zfcampus/zf-development-mode/src'),
+    'Yugioh\\' => array($baseDir . '/module/Yugioh/src'),
     'TrueBV\\' => array($vendorDir . '/true/punycode/src'),
     'TennisEtudes\\' => array($baseDir . '/module/TennisEtudes/src'),
     'Symfony\\Polyfill\\Mbstring\\' => array($vendorDir . '/symfony/polyfill-mbstring'),

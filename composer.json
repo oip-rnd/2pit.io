@@ -36,7 +36,8 @@
             "Application\\": "module/Application/src/",
             "P_Pit\\": "module/P_Pit/src/",
             "Probonocorpo\\": "module/Probonocorpo/src/",
-            "TennisEtudes\\": "module/TennisEtudes/src/"
+            "TennisEtudes\\": "module/TennisEtudes/src/",
+           	"Yugioh\\": "module/Yugioh/src/"
         }
     },
     "autoload-dev": {
