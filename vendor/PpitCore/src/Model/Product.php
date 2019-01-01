@@ -67,7 +67,7 @@ class Product
     {
         $this->id = (isset($data['id'])) ? $data['id'] : null;
         $this->status = (isset($data['status'])) ? $data['status'] : null;
-        $this->community_id = (isset($data['community_id'])) ? $data['community_id'] : null;
+//        $this->community_id = (isset($data['community_id'])) ? $data['community_id'] : null;
         $this->type = (isset($data['type'])) ? $data['type'] : null;
         $this->brand = (isset($data['brand'])) ? $data['brand'] : null;
         $this->identifier = (isset($data['identifier'])) ? $data['identifier'] : null;
@@ -105,7 +105,7 @@ class Product
     	$data = array();
     	$data['id'] = (int) $this->id;
     	$data['status'] = $this->status;
-    	$data['community_id'] = (int) $this->community_id;
+//    	$data['community_id'] = (int) $this->community_id;
     	$data['type'] = $this->type;
     	$data['brand'] = $this->brand;
     	$data['identifier'] = $this->identifier;

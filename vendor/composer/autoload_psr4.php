@@ -48,6 +48,7 @@ return array(
     'Psr\\Log\\' => array($vendorDir . '/psr/log/Psr/Log'),
     'Psr\\Container\\' => array($vendorDir . '/psr/container/src'),
     'Psr\\Cache\\' => array($vendorDir . '/psr/cache/src'),
+    'Probonopro\\' => array($baseDir . '/module/Probonopro/src'),
     'Probonocorpo\\' => array($baseDir . '/module/Probonocorpo/src'),
     'PpitUser\\' => array($vendorDir . '/PpitUser/src'),
     'PpitStudies\\' => array($vendorDir . '/PpitStudies/src'),

@@ -65,10 +65,6 @@ xhttp.onload = function () {
 xhttp.send();
 }
 
-$('#modalRegisterForm').on('hide.bs.modal', function () { 
-$('#modalRegisterInputs').html('');
-});
-
 $('#modalRegisterForm').on('show.bs.modal', showRegister);
 
 // Login
@@ -208,7 +204,7 @@ $('#modalLoginForm').modal('show');
 <?php endif; ?>  
 
 // Request activation
-
+/*
 $('#modalRequestActivationForm').on('hide.bs.modal', function () { 
     $('.modal_input').val('');
 });
@@ -236,7 +232,42 @@ var form = document.getElementById('request-activation-form');
 form.onsubmit = function(event) {
   event.preventDefault();
   requestActivation();
+}*/
+
+function requestActivation() {
+  var xhttp = new XMLHttpRequest(), formData = new FormData(), route = '<?php echo $this->url('profile/requestActivation') ?>';
+  formData.append('csrf', $('#csrf').val());
+  formData.append('email', $('#request_activation-email').val());
+  xhttp.open('POST', route, true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4) {
+      $('#modalRequestActivationContent').html(xhttp.responseText);
+    }
+  };
+  xhttp.send(formData);
 }
+
+function showRequestActivation() {
+var xhttp = new XMLHttpRequest();
+xhttp.open('GET', '<?php echo $this->url('profile/requestActivation') ?>', true);
+xhttp.onload = function () {
+ if (xhttp.readyState == 4) {
+   if (xhttp.status == 200) {
+     $('#modalRequestActivationContent').html(xhttp.responseText);
+
+     var form = document.getElementById('requestActivationForm');
+     form.onsubmit = function(event) {
+       event.preventDefault();
+       requestActivation();
+     }
+   }
+   else toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+ }
+};
+xhttp.send();
+}
+
+$('#modalRequestActivationForm').on('show.bs.modal', showRequestActivation);
 
 // Profile
 

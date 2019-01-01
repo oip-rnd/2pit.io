@@ -69,6 +69,7 @@ class ComposerStaticInit85293ecee4f033dd340b761c2c703716
             'Psr\\Log\\' => 8,
             'Psr\\Container\\' => 14,
             'Psr\\Cache\\' => 10,
+            'Probonopro\\' => 11,
             'Probonocorpo\\' => 13,
             'PpitUser\\' => 9,
             'PpitStudies\\' => 12,
@@ -256,6 +257,10 @@ class ComposerStaticInit85293ecee4f033dd340b761c2c703716
         'Psr\\Cache\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/cache/src',
+        ),
+        'Probonopro\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/module/Probonopro/src',
         ),
         'Probonocorpo\\' => 
         array (

@@ -1,0 +1,62 @@
+<form id="requestActivationForm">
+  <div class="modal-header text-center">
+    <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('Request a new activation link', 'ppit-flow', $locale) ?></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body mx-3">
+
+<!--  CSRF protection -->
+<?php $element = $csrfForm->get('csrf') ?>
+    <div class="form-group">
+      <?php echo $this->formElement($element) ?>
+<?php if ($this->formElementErrors($element)) : ?>
+      <div class="alert alert-danger" style="text-align: center">
+        <strong><?php echo $this->translate('The form has expired, please input again', 'ppit-core', $locale) ?></strong>
+      </div>
+<?php endif;?>
+    </div>
+            
+<?php if ($actionStatus[0] == '200') : ?>
+    <div class="alert alert-success" style="text-align: center">
+	   <strong><?php echo $this->translate('Your request has been registered. To finalize the registration, please check you emails with an activation link to follow.', 'ppit-core', $context->getLocale()) ?></strong>
+    </div>
+            
+<?php elseif ($actionStatus[0] == '400') : ?>
+  <?php if ($actionStatus[1] == 'Contact not found') : ?>
+
+    <div class="alert alert-danger" style="text-align: center">
+	 <strong><?php echo $this->translate('Unknown email address', 'ppit-flow', $locale) ?></strong>
+    </div>
+
+  <?php elseif ($actionStatus[1] == 'Unregistered user') : ?>
+
+    <div class="alert alert-danger" style="text-align: center">
+	 <strong><?php echo $this->translate('No registered user with this email address', 'ppit-flow', $locale) ?></strong>
+    </div>
+
+  <?php endif;?>
+
+<?php elseif ($actionStatus[0] == '500') : ?>
+    <div class="alert alert-danger" style="text-align: center">
+      <strong><?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $locale) ?></strong>
+    </div>
+
+<?php endif;?>
+
+<?php if ($actionStatus) $isDisabled = true; else $isDisabled = false ?>
+
+    <div class="md-form mb-3">
+      <input type="email" id="request_activation-email" class="form-control validate modal_input" required="required" value="<?php echo $email ?>" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
+      <label <?php if ($isDisabled) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="request_activation-email">* <?php echo $this->translate('Email', 'ppit-core', $locale) ?></label>
+    </div>
+
+  </div>
+  <div class="modal-footer d-flex justify-content-center">
+<?php if (!$isDisabled) : ?>
+    <button type="submit" class="btn btn-success btn-rounded"><?php echo $this->translate('Submit', 'ppit-core', $locale) ?></button>
+<?php endif;?>
+  </div>
+</form>
+    

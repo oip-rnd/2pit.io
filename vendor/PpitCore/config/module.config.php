@@ -15,343 +15,343 @@ return array(
 
 	'controllers' => array(
 		'factories' => array(
-            Controller\AccountController::class => InvokableFactory::class,
-        	Controller\CommunityController::class => InvokableFactory::class,
-        	Controller\ConfigController::class => InvokableFactory::class,
-        	Controller\CreditController::class => InvokableFactory::class,
-            Controller\HomeController::class => InvokableFactory::class,
-        	Controller\Controller::class => InvokableFactory::class,
-        	Controller\EventController::class => InvokableFactory::class,
-        	Controller\InteractionController::class => InvokableFactory::class,
-        	Controller\InstanceController::class => InvokableFactory::class,
-        	Controller\PlaceController::class => InvokableFactory::class,
-        	Controller\ProductController::class => InvokableFactory::class,
-        	Controller\ProductOptionController::class => InvokableFactory::class,
-        	Controller\PublicController::class => InvokableFactory::class,
-        	Controller\RequestController::class => InvokableFactory::class,
-        	Controller\UserController::class => InvokableFactory::class,
-        	Controller\VcardController::class => InvokableFactory::class,
-        ),
-    ),
+			Controller\AccountController::class => InvokableFactory::class,
+//			Controller\CommunityController::class => InvokableFactory::class,
+			Controller\ConfigController::class => InvokableFactory::class,
+			Controller\CreditController::class => InvokableFactory::class,
+			Controller\HomeController::class => InvokableFactory::class,
+			Controller\Controller::class => InvokableFactory::class,
+			Controller\EventController::class => InvokableFactory::class,
+			Controller\InteractionController::class => InvokableFactory::class,
+			Controller\InstanceController::class => InvokableFactory::class,
+			Controller\PlaceController::class => InvokableFactory::class,
+			Controller\ProductController::class => InvokableFactory::class,
+			Controller\ProductOptionController::class => InvokableFactory::class,
+			Controller\PublicController::class => InvokableFactory::class,
+			Controller\RequestController::class => InvokableFactory::class,
+			Controller\UserController::class => InvokableFactory::class,
+			Controller\VcardController::class => InvokableFactory::class,
+		),
+	),
 		
-    'router' => array(
-        'routes' => array(
-            'index' => array(
-                'type' => Literal::class,
-                'options' => array(
-                    'route'    => '/',
-                	'defaults' => array(
-                        'controller' => Controller\HomeController::class,
-                        'action'     => 'index',
-                    ),
-                ),
-            ),
-        	'account' => array(
-                'type'    => Literal::class,
-                'options' => array(
-                    'route'    => '/account',
-                    'defaults' => array(
-                        'controller' => Controller\AccountController::class,
-                        'action'     => 'list',
-                    ),
-                ),
-           		'may_terminate' => true,
-	       		'child_routes' => array(
-        						'index' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/index[/:entry][/:type][/:app]',
-        										'defaults' => array(
-        												'action' => 'index',
-        										),
-        								),
-        						),
-        						'indexAlt' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/index-alt[/:entry][/:type][/:app]',
-        										'defaults' => array(
-        												'action' => 'indexAlt',
-        										),
-        								),
-        						),
-	       						'contactIndex' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/contact-index[/:entry][/:type][/:app]',
-        										'defaults' => array(
-        												'action' => 'contactIndex',
-        										),
-        								),
-        						),
-	       						'search' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/search[/:entry][/:type]',
-        										'defaults' => array(
-        												'action' => 'search',
-        										),
-        								),
-        						),
-	       						'searchAlt' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/search-alt[/:entry][/:type]',
-        										'defaults' => array(
-        												'action' => 'searchAlt',
-        										),
-        								),
-        						),
-	       						'list' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/list[/:entry][/:type]',
-        										'defaults' => array(
-        												'action' => 'list',
-        										),
-        								),
-        						),
-	       						'listAlt' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/list-alt[/:entry][/:type]',
-        										'defaults' => array(
-        												'action' => 'listAlt',
-        										),
-        								),
-        						),
-	       						'export' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/export[/:entry][/:type]',
-        										'defaults' => array(
-        												'action' => 'export',
-        										),
-        								),
-        						),
-        						'eventAccountList' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/event-account-list[/:entry][/:type]',
-        										'defaults' => array(
-        												'action' => 'eventAccountList',
-        										),
-        								),
-        						),
-	       						'exportCsv' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/export-csv[/:entry][/:type]',
-        										'defaults' => array(
-        												'action' => 'exportCsv',
-        										),
-        								),
-        						),
-			       				'group' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/group[/:type]',
-        										'defaults' => array(
-        												'action' => 'group',
-        										),
-        								),
-        						),
-			       				'groupAlt' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/group-alt[/:type]',
-        										'defaults' => array(
-        												'action' => 'groupAlt',
-        										),
-        								),
-        						),
-	       						'addToGroup' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/addToGroup[/:type]',
-        										'defaults' => array(
-        												'action' => 'addToGroup',
-        										),
-        								),
-        						),
-	       						'sendMessage' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/send-message[/:type]',
-        										'defaults' => array(
-        												'action' => 'sendMessage',
-        										),
-        								),
-        						),
-        						'dropboxLink' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/dropbox-link[/:document]',
-        										'defaults' => array(
-        												'action' => 'dropboxLink',
-        										),
-        								),
-        						),
-	       						'detail' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/detail[/:type][/:id]',
-        										'constraints' => array(
-        												'id' => '[0-9]*',
-        										),
-        										'defaults' => array(
-        												'action' => 'detail',
-        										),
-        								),
-        						),
-	       						'detailAlt' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/detail-alt[/:type][/:id]',
-        										'constraints' => array(
-        												'id' => '[0-9]*',
-        										),
-        										'defaults' => array(
-        												'action' => 'detailAlt',
-        										),
-        								),
-        						),
-	       						'getAvailability' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/get-availability[/:id]',
-        										'constraints' => array(
-        												'id' => '[0-9]*',
-        										),
-        										'defaults' => array(
-        												'action' => 'getAvailability',
-        										),
-        								),
-        						),
-	       						'update' => array(
-		        						'type' => 'segment',
-		        						'options' => array(
-		        								'route' => '/update[/:id][/:type]',
-		        								'constraints' => array(
-		        										'id'     => '[0-9]*',
-		        								),
-		        								'defaults' => array(
-		        										'action' => 'update',
-		        								),
-		        						),
-		        				),
-	       						'updateAlt' => array(
-		        						'type' => 'segment',
-		        						'options' => array(
-		        								'route' => '/update-alt[/:id][/:type]',
-		        								'constraints' => array(
-		        										'id'     => '[0-9]*',
-		        								),
-		        								'defaults' => array(
-		        										'action' => 'updateAlt',
-		        								),
-		        						),
-		        				),
-	       						'updateUser' => array(
-		        						'type' => 'segment',
-		        						'options' => array(
-		        								'route' => '/update-user[/:type][/:id][/:act]',
-		        								'constraints' => array(
-		        										'id'     => '[0-9]*',
-		        								),
-		        								'defaults' => array(
-		        										'action' => 'update-user',
-		        								),
-		        						),
-		        				),
-	       						'passwordRequest' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/password-request',
-        										'defaults' => array(
-        												'action' => 'passwordRequest',
-        										),
-        								),
-        						),
-	       						'updateContact' => array(
-		        						'type' => 'segment',
-		        						'options' => array(
-		        								'route' => '/update-contact[/:type][/:contactNumber][/:id][/:act]',
-		        								'constraints' => array(
-		        										'id'     => '[0-9]*',
-		        								),
-		        								'defaults' => array(
-		        										'action' => 'updateContact',
-		        								),
-		        						),
-		        				),
-	       						'updateContactAlt' => array(
-		        						'type' => 'segment',
-		        						'options' => array(
-		        								'route' => '/update-contact-alt[/:type][/:contactNumber][/:id][/:act]',
-		        								'constraints' => array(
-		        										'id'     => '[0-9]*',
-		        								),
-		        								'defaults' => array(
-		        										'action' => 'updateContactAlt',
-		        								),
-		        						),
-		        				),
-	       						'indexCard' => array(
-		        						'type' => 'segment',
-		        						'options' => array(
-		        								'route' => '/index-card[/:id][/:type]',
-		        								'constraints' => array(
-		        										'id'     => '[0-9]*',
-		        								),
-		        								'defaults' => array(
-		        										'action' => 'indexCard',
-		        								),
-		        						),
-		        				),
-	       						'fbgetleads' => array(
-		        						'type' => 'segment',
-		        						'options' => array(
-		        								'route' => '/fbgetleads[/:type]',
-		        								'defaults' => array(
-		        										'action' => 'fbgetleads',
-		        								),
-		        						),
-		        				),
-	       			'v1' => array(
-        						'type' => 'segment',
-        						'options' => array(
-        								'route' => '/v1[/:type][/:perspective][/:id]',
-        								'defaults' => array(
-        										'action' => 'v1',
-        								),
-        						),
-        				),
-	       		),
-	       	),
-        	'home' => array(
-                'type'    => 'segment',
-                'options' => array(
-                    'route'    => '/home',
-                	'defaults' => array(
-                        'controller' => Controller\HomeController::class,
-                        'action'        => 'index',
-                    ),
-                ),
-                'may_terminate' => true,
-                'child_routes' => array(
-	                'index' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/index[/:instance_caption]',
-	                    	'defaults' => array(
-	                    		'action' => 'index',
-	                        ),
-	                    ),
-	                ),
-                ),
-            ),
-        	'community' => array(
+	'router' => array(
+		'routes' => array(
+			'index' => array(
+				'type' => Literal::class,
+				'options' => array(
+					'route'    => '/',
+					'defaults' => array(
+						'controller' => Controller\HomeController::class,
+						'action' => 'index',
+					),
+				),
+			),
+			'account' => array(
+				'type'    => Literal::class,
+				'options' => array(
+					'route'    => '/account',
+					'defaults' => array(
+						'controller' => Controller\AccountController::class,
+						'action'     => 'list',
+					),
+				),
+				'may_terminate' => true,
+				'child_routes' => array(
+					'index' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/index[/:entry][/:type][/:app]',
+							'defaults' => array(
+								'action' => 'index',
+							),
+						),
+					),
+					'indexAlt' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/index-alt[/:entry][/:type][/:app]',
+							'defaults' => array(
+								'action' => 'indexAlt',
+							),
+						),
+					),
+/*					'contactIndex' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/contact-index[/:entry][/:type][/:app]',
+							'defaults' => array(
+								'action' => 'contactIndex',
+							),
+						),
+					),*/
+					'search' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/search[/:entry][/:type]',
+							'defaults' => array(
+								'action' => 'search',
+							),
+						),
+					),
+					'searchAlt' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/search-alt[/:entry][/:type]',
+							'defaults' => array(
+								'action' => 'searchAlt',
+							),
+						),
+					),
+					'list' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/list[/:entry][/:type]',
+							'defaults' => array(
+								'action' => 'list',
+							),
+						),
+					),
+					'listAlt' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/list-alt[/:entry][/:type]',
+							'defaults' => array(
+								'action' => 'listAlt',
+							),
+						),
+					),
+					'export' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/export[/:entry][/:type]',
+							'defaults' => array(
+								'action' => 'export',
+							),
+						),
+					),
+					'eventAccountList' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/event-account-list[/:entry][/:type]',
+							'defaults' => array(
+								'action' => 'eventAccountList',
+							),
+						),
+					),
+					'exportCsv' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/export-csv[/:entry][/:type]',
+							'defaults' => array(
+								'action' => 'exportCsv',
+							),
+						),
+					),
+					'group' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/group[/:type]',
+							'defaults' => array(
+								'action' => 'group',
+							),
+						),
+					),
+					'groupAlt' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/group-alt[/:type]',
+							'defaults' => array(
+								'action' => 'groupAlt',
+							),
+						),
+					),
+					'addToGroup' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/addToGroup[/:type]',
+							'defaults' => array(
+								'action' => 'addToGroup',
+							),
+						),
+					),
+					'sendMessage' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/send-message[/:type]',
+							'defaults' => array(
+								'action' => 'sendMessage',
+							),
+						),
+					),
+					'dropboxLink' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/dropbox-link[/:document]',
+							'defaults' => array(
+								'action' => 'dropboxLink',
+							),
+						),
+					),
+					'detail' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/detail[/:type][/:id]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'detail',
+							),
+						),
+					),
+					'detailAlt' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/detail-alt[/:type][/:id]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'detailAlt',
+							),
+						),
+					),
+					'getAvailability' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/get-availability[/:id]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'getAvailability',
+							),
+						),
+					),
+					'update' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/update[/:id][/:type]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'update',
+							),
+						),
+					),
+					'updateAlt' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/update-alt[/:id][/:type]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'updateAlt',
+		        			),
+						),
+					),
+					'updateUser' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/update-user[/:type][/:id][/:act]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'update-user',
+							),
+						),
+					),
+					'passwordRequest' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/password-request',
+							'defaults' => array(
+								'action' => 'passwordRequest',
+							),
+						),
+					),
+					'updateContact' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/update-contact[/:type][/:contactNumber][/:id][/:act]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'updateContact',
+							),
+						),
+					),
+					'updateContactAlt' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/update-contact-alt[/:type][/:contactNumber][/:id][/:act]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'updateContactAlt',
+							),
+						),
+					),
+					'indexCard' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/index-card[/:id][/:type]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'indexCard',
+							),
+						),
+					),
+					'fbgetleads' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/fbgetleads[/:type]',
+							'defaults' => array(
+								'action' => 'fbgetleads',
+							),
+						),
+					),
+					'v1' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/v1[/:type][/:perspective][/:id]',
+							'defaults' => array(
+								'action' => 'v1',
+							),
+						),
+					),
+				),
+			),
+			'home' => array(
+				'type' => 'segment',
+				'options' => array(
+					'route'    => '/home',
+					'defaults' => array(
+						'controller' => Controller\HomeController::class,
+						'action' => 'index',
+					),
+				),
+				'may_terminate' => true,
+				'child_routes' => array(
+					'index' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/index[/:instance_caption]',
+							'defaults' => array(
+								'action' => 'index',
+							),
+						),
+					),
+				),
+			),
+/*        	'community' => array(
                 'type'    => Literal::class,
                 'options' => array(
                     'route'    => '/community',
@@ -426,1283 +426,487 @@ return array(
 	                    ),
 	                ),
 	       		),
-        	),
-        	'document' => array(
-                'type'    => Literal::class,
-                'options' => array(
-                    'route'    => '/document',
-                    'defaults' => array(
-                        'controller' => Controller\DocumentController::class,
-                        'action'     => 'index',
-                    ),
-                ),
-            	'may_terminate' => true,
-            		'child_routes' => array(
-            				'download' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/download[/:id]',
-            								'constraints' => array(
-            										'id'     => '[0-9]*',
-            								),
-            								'defaults' => array(
-            										'action' => 'download',
-            								),
-            						),
-            				),
-            		),
-            ),
-        	'event' => array(
-                'type'    => Literal::class,
-                'options' => array(
-                    'route'    => '/event',
-                    'defaults' => array(
-                        'controller' => Controller\EventController::class,
-                        'action'     => 'index',
-                    ),
-                ),
-            	'may_terminate' => true,
-            		'child_routes' => array(
-            				'v1' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/v1[/:type][/:id]',
-            								'defaults' => array(
-            										'action' => 'v1',
-            								),
-            						),
-            				),
-            				'index' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/index[/:type][/:app][/:category]',
-            								'defaults' => array(
-            										'action' => 'index',
-            								),
-            						),
-            				),
-            				'indexAlt' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/index-alt[/:type][/:app][/:category]',
-            								'defaults' => array(
-            										'action' => 'indexAlt',
-            								),
-            						),
-            				),
-            				'search' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/search[/:type]',
-            								'defaults' => array(
-            										'action' => 'search',
-            								),
-            						),
-            				),
-            				'searchAlt' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/search-alt[/:type]',
-            								'defaults' => array(
-            										'action' => 'searchAlt',
-            								),
-            						),
-            				),
-            				'list' => array(
-	        						'type' => 'segment',
-	        						'options' => array(
-	        								'route' => '/list[/:type]',
-	        								'defaults' => array(
-	        										'action' => 'list',
-	        								),
-	        						),
-	        				),
-            				'listAlt' => array(
-	        						'type' => 'segment',
-	        						'options' => array(
-	        								'route' => '/list-alt[/:type]',
-	        								'defaults' => array(
-	        										'action' => 'listAlt',
-	        								),
-	        						),
-	        				),
-            				'listV2' => array(
-	        						'type' => 'segment',
-	        						'options' => array(
-	        								'route' => '/list-v2[/:type]',
-	        								'defaults' => array(
-	        										'action' => 'listV2',
-	        								),
-	        						),
-	        				),
-            				'distribute' => array(
-	        						'type' => 'segment',
-	        						'options' => array(
-	        								'route' => '/distribute[/:type]',
-	        								'defaults' => array(
-	        										'action' => 'distribute',
-	        								),
-	        						),
-	        				),
-            				'planning' => array(
-	        						'type' => 'segment',
-	        						'options' => array(
-		        							'route' => '/planning[/:type]',
-		  									'defaults' => array(
-			       									'action' => 'planning',
-		        							),
-	        						),
-        					),
-            				'export' => array(
-	        						'type' => 'segment',
-	        						'options' => array(
-	        								'route' => '/export[/:type]',
-	        								'defaults' => array(
-	        										'action' => 'export',
-	        								),
-	        						),
-	        				),
-            				'synchronize' => array(
-	        						'type' => 'segment',
-	        						'options' => array(
-	        								'route' => '/synchronize[/:type]',
-	        								'defaults' => array(
-	        										'action' => 'synchronize',
-	        								),
-	        						),
-	        				),
-            				'detail' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/detail[/:id]',
-            								'constraints' => array(
-            										'id'     => '[0-9]*',
-            								),
-            								'defaults' => array(
-            										'action' => 'detail',
-            								),
-            						),
-            				),
-            				'detailAlt' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/detail-alt[/:type][/:id]',
-            								'constraints' => array(
-            										'id'     => '[0-9]*',
-            								),
-            								'defaults' => array(
-            										'action' => 'detailAlt',
-            								),
-            						),
-            				),
-            				'update' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/update[/:id][/:type]',
-            								'constraints' => array(
-            										'id'     => '[0-9]*',
-            								),
-            								'defaults' => array(
-            										'action' => 'update',
-            								),
-            						),
-            				),
-            				'updateAlt' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/update-alt[/:id][/:type]',
-            								'constraints' => array(
-            										'id'     => '[0-9]*',
-            								),
-            								'defaults' => array(
-            										'action' => 'updateAlt',
-            								),
-            						),
-            				),
-            		),
-            ),
-        	'interaction' => array(
-                'type'    => Literal::class,
-                'options' => array(
-                    'route'    => '/interaction',
-                    'defaults' => array(
-                        'controller' => Controller\InteractionController::class,
-                        'action'     => 'index',
-                    ),
-                ),
-            	'may_terminate' => true,
-            		'child_routes' => array(
-            				'index' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/index',
-            								'defaults' => array(
-            										'action' => 'index',
-            								),
-            						),
-            				),
-            				'search' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/search',
-            								'defaults' => array(
-            										'action' => 'search',
-            								),
-            						),
-            				),
-            				'list' => array(
-	        						'type' => 'segment',
-	        						'options' => array(
-	        								'route' => '/list',
-	        								'defaults' => array(
-	        										'action' => 'list',
-	        								),
-	        						),
-	        				),
-            				'export' => array(
-	        						'type' => 'segment',
-	        						'options' => array(
-	        								'route' => '/export',
-	        								'defaults' => array(
-	        										'action' => 'export',
-	        								),
-	        						),
-	        				),
-            				'detail' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/detail[/:id]',
-            								'constraints' => array(
-            										'id'     => '[0-9]*',
-            								),
-            								'defaults' => array(
-            										'action' => 'detail',
-            								),
-            						),
-            				),
-            				'update' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/update[/:id][/:act]',
-            								'constraints' => array(
-            										'id'     => '[0-9]*',
-            								),
-            								'defaults' => array(
-            										'action' => 'update',
-            								),
-            						),
-            				),
-            				'send' => array(
-	        						'type' => 'segment',
-	        						'options' => array(
-	        								'route' => '/send[/:id]',
-            								'constraints' => array(
-            										'id'     => '[0-9]*',
-            								),
-	        								'defaults' => array(
-	        										'action' => 'send',
-	        								),
-	        						),
-	        				),
-            				'receive' => array(
-	        						'type' => 'segment',
-	        						'options' => array(
-	        								'route' => '/receive[/:type]',
-	        								'defaults' => array(
-	        										'action' => 'receive',
-	        								),
-	        						),
-	        				),
-            				'process' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/process[/:id]',
-            								'constraints' => array(
-            										'id'     => '[0-9]*',
-            								),
-            								'defaults' => array(
-            										'action' => 'process',
-            								),
-            						),
-            				),
-            		),
-            ),
-        	'instance' => array(
-                'type'    => Literal::class,
-                'options' => array(
-                    'route'    => '/instance',
-                    'defaults' => array(
-                        'controller' => Controller\InstanceController::class,
-                        'action'     => 'index',
-                    ),
-                ),
-            	'may_terminate' => true,
-            		'child_routes' => array(
-            				'index' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/index',
-            								'defaults' => array(
-            										'action' => 'index',
-            								),
-            						),
-            				),
-            				'search' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/search',
-            								'defaults' => array(
-            										'action' => 'search',
-            								),
-            						),
-            				),
-            				'list' => array(
-	        						'type' => 'segment',
-	        						'options' => array(
-	        								'route' => '/list',
-	        								'defaults' => array(
-	        										'action' => 'list',
-	        								),
-	        						),
-	        				),
-            				'export' => array(
-	        						'type' => 'segment',
-	        						'options' => array(
-	        								'route' => '/export',
-	        								'defaults' => array(
-	        										'action' => 'export',
-	        								),
-	        						),
-	        				),
-            				'detail' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/detail[/:id]',
-            								'constraints' => array(
-            										'id'     => '[0-9]*',
-            								),
-            								'defaults' => array(
-            										'action' => 'detail',
-            								),
-            						),
-            				),
-            				'update' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/update[/:id][/:act]',
-            								'constraints' => array(
-            										'id'     => '[0-9]*',
-            								),
-            								'defaults' => array(
-            										'action' => 'update',
-            								),
-            						),
-            				),
-	        				'try' => array(
-	        						'type' => 'segment',
-	        						'options' => array(
-	        								'route' => '/try',
-	        								'defaults' => array(
-	        										'action' => 'try',
-	        								),
-	        						),
-	        				),
-	        				'tryAdd' => array(
-	        						'type' => 'segment',
-	        						'options' => array(
-	        								'route' => '/try-add',
-	        								'defaults' => array(
-	        										'action' => 'tryAdd',
-	        								),
-	        						),
-	        				),
-            				'accept' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/accept',
-            								'defaults' => array(
-            										'action' => 'accept',
-            								),
-            						),
-            				),
-            				'charter' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/charter',
-            								'defaults' => array(
-            										'action' => 'charter',
-            								),
-            						),
-            				),
-            				'validateCharter' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/validate-charter',
-            								'defaults' => array(
-            										'action' => 'validateCharter',
-            								),
-            						),
-            				),
-            				'generalTermsOfUse' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/general-terms-of-use',
-            								'defaults' => array(
-            										'action' => 'generalTermsOfUse',
-            								),
-            						),
-            				),
-            				'validateGeneralTermsOfUse' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/validate-general-terms-of-use',
-            								'defaults' => array(
-            										'action' => 'validateGeneralTermsOfUse',
-            								),
-            						),
-            				),
-            				'legalNotices' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/legal-notices',
-            								'defaults' => array(
-            										'action' => 'legalNotices',
-            								),
-            						),
-            				),
-            				'addImage' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/add-image',
-            								'defaults' => array(
-            										'action' => 'addImage',
-            								),
-            						),
-            				),
-            				'addLogo' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/add-logo',
-            								'defaults' => array(
-            										'action' => 'addLogo',
-            								),
-            						),
-            				),
-            				'admin' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/admin[/:app]',
-            								'defaults' => array(
-            										'action' => 'admin',
-            								),
-            						),
-            				),
-            				'serialize' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/serialize',
-            								'defaults' => array(
-            										'action' => 'serialize',
-            								),
-            						),
-            				),
-			       			'v1' => array(
-	        						'type' => 'segment',
-	        						'options' => array(
-	        								'route' => '/v1[/:id]',
-	        								'defaults' => array(
-	        										'action' => 'v1',
-	        								),
-	        						),
-	        				),
-	            	),
-            ),
-        	'place' => array(
-                'type'    => Literal::class,
-                'options' => array(
-                    'route'    => '/place',
-                    'defaults' => array(
-                        'controller' => Controller\PlaceController::class,
-                        'action'     => 'index',
-                    ),
-                ),
-           		'may_terminate' => true,
-	       		'child_routes' => array(
-        						'index' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/index',
-        										'defaults' => array(
-        												'action' => 'index',
-        										),
-        								),
-        						),
-        						'search' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/search',
-        										'defaults' => array(
-        												'action' => 'search',
-        										),
-        								),
-        						),
-        						'list' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/list',
-        										'defaults' => array(
-        												'action' => 'list',
-        										),
-        								),
-        						),
-        						'export' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/export',
-        										'defaults' => array(
-        												'action' => 'export',
-        										),
-        								),
-        						),
-	       						'detail' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/detail[/:id]',
-        										'constraints' => array(
-        												'id' => '[0-9]*',
-        										),
-        										'defaults' => array(
-        												'action' => 'detail',
-        										),
-        								),
-        						),
-		        				'update' => array(
-		        						'type' => 'segment',
-		        						'options' => array(
-		        								'route' => '/update[/:id][/:act]',
-		        								'constraints' => array(
-		        										'id'     => '[0-9]*',
-		        								),
-		        								'defaults' => array(
-		        										'action' => 'update',
-		        								),
-		        						),
-		        				),
-				       			'v1' => array(
-		        						'type' => 'segment',
-		        						'options' => array(
-		        								'route' => '/v1[/:id]',
-		        								'defaults' => array(
-		        										'action' => 'v1',
-		        								),
-		        						),
-		        				),
-	       						'serialize' => array(
-		        						'type' => 'segment',
-		        						'options' => array(
-		        								'route' => '/serialize[/:place_identifier]',
-		        								'defaults' => array(
-		        										'action' => 'serialize',
-		        								),
-		        						),
-		        				),
-	       			),
+        	),*/
+			'document' => array(
+				'type'    => Literal::class,
+				'options' => array(
+					'route' => '/document',
+					'defaults' => array(
+						'controller' => Controller\DocumentController::class,
+						'action'     => 'index',
+					),
+				),
+				'may_terminate' => true,
+				'child_routes' => array(
+					'download' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/download[/:id]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'download',
+							),
+						),
+					),
+				),
 			),
-        	'product' => array(
-        				'type'    => Literal::class,
-        				'options' => array(
-        						'route'    => '/product',
-        						'defaults' => array(
-        								'controller' => Controller\ProductController::class,
-        								'action'     => 'index',
-        						),
-        				),
-        				'may_terminate' => true,
-        				'child_routes' => array(
-        						'index' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/index[/:type]',
-        										'defaults' => array(
-        												'action' => 'index',
-        										),
-        								),
-        						),
-        						'criteria' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/criteria[/:instance_caption][/:type]',
-        										'defaults' => array(
-        												'action' => 'criteria',
-        										),
-        								),
-        						),
-        						'search' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/search[/:type]',
-        										'defaults' => array(
-        												'action' => 'search',
-        										),
-        								),
-        						),
-        						'list' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/list[/:type]',
-        										'defaults' => array(
-        												'action' => 'list',
-        										),
-        								),
-        						),
-        						'serviceList' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/service-list',
-        										'defaults' => array(
-        												'action' => 'serviceList',
-        										),
-        								),
-        						),
-        						'detail' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/detail[/:type][/:id]',
-        										'constraints' => array(
-        												'id' => '[0-9]*',
-        										),
-        										'defaults' => array(
-        												'action' => 'detail',
-        										),
-        								),
-        						),
-        						'dataList' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/data-list[/:product_category_id]',
-        										'constraints' => array(
-        												'product_category_id' => '[0-9]*',
-        										),
-        										'defaults' => array(
-        												'action' => 'dataList',
-        										),
-        								),
-        						),
-        						'update' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/update[/:type][/:id][/:act]',
-        										'constraints' => array(
-        												'id'     => '[0-9]*',
-        										),
-        										'defaults' => array(
-        												'action' => 'update',
-        										),
-        								),
-        						),
-        						'matrix' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/matrix[/:product_category_id][/:id]',
-        										'constraints' => array(
-        												'product_category_id' => '[0-9]*',
-        												'id'     => '[0-9]*',
-        										),
-        										'defaults' => array(
-        												'action' => 'matrix',
-        										),
-        								),
-        						),
-        						'export' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/export[/:type]',
-        										'defaults' => array(
-        												'action' => 'export',
-        										),
-        								),
-        						),
-        						'delete' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/delete[/:id]',
-        										'constraints' => array(
-        												'id'     => '[0-9]*',
-        										),
-        										'defaults' => array(
-        												'action' => 'delete',
-        										),
-        								),
-        						),
-			       				'v1' => array(
-		        						'type' => 'segment',
-		        						'options' => array(
-		        								'route' => '/v1[/:type][/:id]',
-		        								'defaults' => array(
-		        										'action' => 'v1',
-		        								),
-		        						),
-		        				),
-        		),),
-      		'productOption' => array(
-        				'type'    => Literal::class,
-        				'options' => array(
-        						'route'    => '/product-option',
-        						'defaults' => array(
-        								'controller' => Controller\ProductOptionController::class,
-        								'action'     => 'index',
-        						),
-        				),
-        				'may_terminate' => true,
-        				'child_routes' => array(
-        						'index' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/index[/:product_id]',
-        										'constraints' => array(
-        												'product_id' => '[0-9]*',
-        										),
-        										'defaults' => array(
-        												'action' => 'index',
-        										),
-        								),
-        						),
-        						'list' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/list[/:type][/:product_id]',
-        										'constraints' => array(
-        												'product_id' => '[0-9]*',
-        										),
-        										'defaults' => array(
-        												'action' => 'list',
-        										),
-        								),
-        						),
-        						'export' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/export[/:type][/:product_id]',
-        										'constraints' => array(
-        												'product_id' => '[0-9]*',
-        										),
-        										'defaults' => array(
-        												'action' => 'export',
-        										),
-        								),
-        						),
-        						'update' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/update[/:type][/:product_id][/:id][/:act]',
-        										'constraints' => array(
-        												'product_id' => '[0-9]*',
-        												'id' => '[0-9]*',
-        										),
-        										'defaults' => array(
-        												'action' => 'update',
-        										),
-        								),
-        						),
-        				),
-        		),
-        	'public' => array(
-                'type'    => Literal::class,
-                'options' => array(
-                    'route'    => '/public',
-                    'defaults' => array(
-                        'controller' => Controller\PublicController::class,
-                        'action'     => 'displayPage',
-                    ),
-                ),
-            	'may_terminate' => true,
-            		'child_routes' => array(
-/*            				'displayBlog' => array(
-	        						'type' => 'segment',
-	        						'options' => array(
-	        								'route' => '/blog[/:directory][/:name]',
-            								'constraints' => array(
-											        'directory' => '[a-zA-Z0-9_-]+',
-											        'name' => '[a-zA-Z0-9_-]+',
-            								),
-	        								'defaults' => array(
-	        										'action' => 'displayBlog',
-	        								),
-	        						),
-	        				),*/
-            				'displayPage' => array(
-	        						'type' => 'segment',
-	        						'options' => array(
-	        								'route' => '[/:directory][/:name]',
-            								'constraints' => array(
-											        'directory' => '[a-zA-Z0-9_-]+',
-											        'name' => '[a-zA-Z0-9_-]+',
-            								),
-	        								'defaults' => array(
-	        										'action' => 'displayPage',
-	        								),
-	        						),
-	        				),
-            				'home' => array(
-	        						'type' => 'segment',
-	        						'options' => array(
-	        								'route' => '/home',
-	        								'defaults' => array(
-	        										'action' => 'home',
-	        								),
-	        						),
-	        				),
-            				'community' => array(
-	        						'type' => 'segment',
-	        						'options' => array(
-	        								'route' => '/community[/:identifier][/:place_identifier][/:subject_id]',
-						                    'constraints' => array(
-						                    	'id' => '[0-9]*',
-						                    	'subject_id' => '[0-9]*',
-						                    ),
-	        								'defaults' => array(
-	        										'action' => 'community',
-	        								),
-	        						),
-	        				),
-            				'communityPrint' => array(
-	        						'type' => 'segment',
-	        						'options' => array(
-	        								'route' => '/community-print[/:identifier][/:place_identifier][/:subject_id]',
-	        								'defaults' => array(
-	        										'action' => 'communityPrint',
-	        								),
-	        						),
-	        				),
-            				'dashboard' => array(
-        						'type' => 'segment',
-        						'options' => array(
-        								'route' => '/dashboard',
-        								'defaults' => array('action' => 'dashboard'),
-        						),
-	        				),
-            				'pricing' => array(
-        						'type' => 'segment',
-        						'options' => array(
-        								'route' => '/pricing[/:directory][/:name]',
-        								'defaults' => array('action' => 'pricing'),
-        						),
-	        				),
-            				'blogPost' => array(
-        						'type' => 'segment',
-        						'options' => array(
-        								'route' => '/blog-post',
-        								'defaults' => array('action' => 'blogPost'),
-        						),
-	        				),
-            		),
-        	),
-/*        	'request' => array(
-                'type'    => Literal::class,
-                'options' => array(
-                    'route'    => '/request',
-                    'defaults' => array(
-                        'controller' => 'Controller\Request',
-                        'action'     => 'index',
-                    ),
-                ),
-            	'may_terminate' => true,
-            		'child_routes' => array(
-            				'index' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/index[/:type][/:app]',
-            								'defaults' => array(
-            										'action' => 'index',
-            								),
-            						),
-            				),
-            				'search' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/search[/:type]',
-            								'defaults' => array(
-            										'action' => 'search',
-            								),
-            						),
-            				),
-            				'list' => array(
-	        						'type' => 'segment',
-	        						'options' => array(
-	        								'route' => '/list[/:type]',
-	        								'defaults' => array(
-	        										'action' => 'list',
-	        								),
-	        						),
-	        				),
-            				'distribute' => array(
-	        						'type' => 'segment',
-	        						'options' => array(
-	        								'route' => '/distribute[/:type]',
-	        								'defaults' => array(
-	        										'action' => 'distribute',
-	        								),
-	        						),
-	        				),
-            				'export' => array(
-	        						'type' => 'segment',
-	        						'options' => array(
-	        								'route' => '/export[/:type]',
-	        								'defaults' => array(
-	        										'action' => 'export',
-	        								),
-	        						),
-	        				),
-            				'detail' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/detail[/:type][/:id]',
-            								'constraints' => array(
-            										'id'     => '[0-9]*',
-            								),
-            								'defaults' => array(
-            										'action' => 'detail',
-            								),
-            						),
-            				),
-            				'update' => array(
-            						'type' => 'segment',
-            						'options' => array(
-            								'route' => '/update[/:type][/:id]',
-            								'constraints' => array(
-            										'id'     => '[0-9]*',
-            								),
-            								'defaults' => array(
-            										'action' => 'update',
-            								),
-            						),
-            				),
-            		),
-            ),*/
-        	'user' => array(
-                'type'    => Literal::class,
-                'options' => array(
-                    'route'    => '/user',
-                    'constraints' => array(
-                    	'id'     => '[0-9]*',
-                    ),
-                    'defaults' => array(
-                        'controller' => Controller\UserController::class,
-                        'action'     => 'index',
-                    ),
-                ),
-           		'may_terminate' => true,
-	       		'child_routes' => array(
-	                'index' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/index[/:app]',
-	                    	'defaults' => array(
-	                    		'action' => 'index',
-	                        ),
-	                    ),
-	                ),
-	       			'search' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/search[/:app]',
-		                    'constraints' => array(
-		                    	'community_id'     => '[0-9]*',
-		                    ),
-	                    	'defaults' => array(
-	                    		'action' => 'search',
-	                        ),
-	                    ),
-	                ),
-	                'list' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/list[/:app]',
-		                    'constraints' => array(
-		                    	'community_id'     => '[0-9]*',
-		                    ),
-	                    	'defaults' => array(
-	                    		'action' => 'list',
-	                        ),
-	                    ),
-	                ),
-	                'export' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/export[/:app]',
-		                    'constraints' => array(
-		                    	'community_id'     => '[0-9]*',
-		                    ),
-	                    	'defaults' => array(
-	                    		'action' => 'export',
-	                        ),
-	                    ),
-	                ),
-	       			'update' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/update[/:app][/:id]',
-		                    'constraints' => array(
-		                    	'community_id'  => '[0-9]*',
-		                    	'id' => '[0-9]*',
-		                    ),
-	                    	'defaults' => array(
-	                    		'action' => 'update',
-	                        ),
-	                    ),
-	                ),
-	       			'revoke' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/revoke[/:id]',
-		                    'constraints' => array(
-		                    	'id'     => '[0-9]*',
-		                    ),
-	                    	'defaults' => array(
-	                            'action' => 'revoke',
-	                        ),
-	                    ),
-	                ),
-	                'login' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/login[/:instance_caption]',
-	                    	'defaults' => array(
-	                    		'action' => 'login',
-	                        ),
-	                    ),
-	                ),
-	                'googleLogin' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/google-login',
-	                    	'defaults' => array(
-	                    		'action' => 'googleLogin',
-	                        ),
-	                    ),
-	                ),
-	       			'demo' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/demo[/:username]',
-	                    	'defaults' => array(
-	                    		'action' => 'demo',
-	                        ),
-	                    ),
-	                ),
-	                'maintainSession' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/maintain-session',
-	                    	'defaults' => array(
-	                    		'action' => 'maintainSession',
-	                        ),
-	                    ),
-	                ),
-	       			'expired' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/expired[/:instance_id]',
-		                    'constraints' => array(
-		                    	'instance_id' => '[0-9]*',
-		                    ),
-	                    	'defaults' => array(
-	                    		'action' => 'expired',
-	                        ),
-	                    ),
-	                ),
-	       			'logout' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/logout[/:instance_caption]',
-	                    	'defaults' => array(
-	                    		'action' => 'logout',
-	                        ),
-	                    ),
-	                ),
-	       			'passwordRequest' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/password-request[/:id]',
-		                    'constraints' => array(
-		                    	'id' => '[0-9]*',
-		                    ),
-	                    	'defaults' => array(
-	                            'action' => 'passwordRequest',
-	                        ),
-	                    ),
-	                ),
-	       			'generatePassword' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/generate-password[/:id]',
-		                    'constraints' => array(
-		                    	'id' => '[0-9]*',
-		                    ),
-	                    	'defaults' => array(
-	                            'action' => 'generatePassword',
-	                        ),
-	                    ),
-	                ),
-	       			'lostPassword' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/lost-password[/:instance_caption]',
-	                    	'defaults' => array(
-	                    		'action' => 'lostPassword',
-	                        ),
-	                    ),
-	                ),
-	       			'password' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/password[/:id]',
-		                    'constraints' => array(
-		                    	'id'     => '[0-9]*',
-		                    ),
-	                    	'defaults' => array(
-	                    		'action' => 'password',
-	                        ),
-	                    ),
-	                ),
-	       			'passwordChanged' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/password-changed[/:id]',
-		                    'constraints' => array(
-		                    	'id'     => '[0-9]*',
-		                    ),
-	                    	'defaults' => array(
-	                    		'action' => 'passwordChanged',
-	                        ),
-	                    ),
-	                ),
-	       			'initpassword' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/initpassword[/:id]',
-		                    'constraints' => array(
-		                    	'id'     => '[0-9]*',
-		                    ),
-	                    	'defaults' => array(
-	                            'action' => 'initpassword',
-	                        ),
-	                    ),
-	                ),
-	       			'delete' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/delete[/:id]',
-		                    'constraints' => array(
-		                    	'id'     => '[0-9]*',
-		                    ),
-	                    	'defaults' => array(
-	                            'action' => 'delete',
-	                        ),
-	                    ),
-	                ),
-	       			'changeContact' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/change-contact[/:vcard_id]',
-		                    'constraints' => array(
-		                    	'vcard_id'     => '[0-9]*',
-		                    ),
-	                    	'defaults' => array(
-	                            'action' => 'changeContact',
-	                        ),
-	                    ),
-	                ),
-	       			'authenticate' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/authenticate',
-	                    	'defaults' => array(
-	                            'action' => 'authenticate',
-	                        ),
-	                    ),
-	                ),
-/*	       			'getAuthenticate' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/get-authenticate',
-	                    	'defaults' => array(
-	                            'action' => 'getAuthenticate',
-	                        ),
-	                    ),
-	                ),
-	       			'getApplications' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/get-applications',
-	                    	'defaults' => array(
-	                            'action' => 'getApplications',
-	                        ),
-	                    ),
-	                ),*/
-	       			'v1' => array(
-	       				'type' => 'segment',
-	       				'options' => array(
-	       					'route' => '/v1[/:id]',
-	       					'defaults' => array(
-	       						'action' => 'v1',
-	       					)
-	       				)
-	       			),
-	       			'fbwebhook' => array(
-	       				'type' => 'segment',
-	       				'options' => array(
-	       					'route' => '/fbwebhook',
-	       					'defaults' => array(
-	       						'action' => 'fbwebhook',
-	       					)
-	       				)
-	       			),
-	       			'fbpageaccess' => array(
-	       				'type' => 'segment',
-	       				'options' => array(
-	       					'route' => '/fbpageaccess',
-	       					'defaults' => array(
-	       						'action' => 'fbpageaccess',
-	       					)
-	       				)
-	       			)
-	       		),
-	       	),
-        	'vcard' => array(
-                'type'    => Literal::class,
-                'options' => array(
-                    'route'    => '/vcard',
-                    'defaults' => array(
-                        'controller' => Controller\VcardController::class,
-                        'action'     => 'index',
-                    ),
-                ),
-           		'may_terminate' => true,
-	       		'child_routes' => array(
-	       			'photo' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/photo[/:id]',
-		                    'constraints' => array(
-		                    	'community_id' => '[0-9]*',
-		                    	'id'     => '[0-9]*',
-		                    ),
-	                    	'defaults' => array(
-	                            'action' => 'photo',
-	                        ),
-	                    ),
-	                ),
-	       			'demoMode' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/demo-mode',
-	                    	'defaults' => array(
-	                            'action' => 'demoMode',
-	                        ),
-	                    ),
-	                ),
-			       	'v1' => array(
+			'event' => array(
+				'type'    => Literal::class,
+				'options' => array(
+					'route' => '/event',
+					'defaults' => array(
+						'controller' => Controller\EventController::class,
+						'action'     => 'index',
+					),
+				),
+				'may_terminate' => true,
+				'child_routes' => array(
+					'v1' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/v1[/:type][/:id]',
+							'defaults' => array(
+								'action' => 'v1',
+							),
+						),
+					),
+					'index' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/index[/:type][/:app][/:category]',
+							'defaults' => array(
+								'action' => 'index',
+							),
+						),
+					),
+					'indexAlt' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/index-alt[/:type][/:app][/:category]',
+							'defaults' => array(
+								'action' => 'indexAlt',
+							),
+						),
+					),
+					'search' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/search[/:type]',
+							'defaults' => array(
+								'action' => 'search',
+							),
+						),
+					),
+					'searchAlt' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/search-alt[/:type]',
+							'defaults' => array(
+								'action' => 'searchAlt',
+							),
+						),
+					),
+					'list' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/list[/:type]',
+							'defaults' => array(
+								'action' => 'list',
+							),
+						),
+					),
+					'listAlt' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/list-alt[/:type]',
+							'defaults' => array(
+								'action' => 'listAlt',
+							),
+						),
+					),
+					'listV2' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/list-v2[/:type]',
+							'defaults' => array(
+								'action' => 'listV2',
+							),
+						),
+					),
+					'distribute' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/distribute[/:type]',
+							'defaults' => array(
+								'action' => 'distribute',
+							),
+						),
+					),
+					'planning' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/planning[/:type]',
+							'defaults' => array(
+								'action' => 'planning',
+							),
+						),
+					),
+					'export' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/export[/:type]',
+							'defaults' => array(
+								'action' => 'export',
+							),
+						),
+					),
+					'synchronize' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/synchronize[/:type]',
+							'defaults' => array(
+								'action' => 'synchronize',
+							),
+						),
+					),
+					'detail' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/detail[/:id]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'detail',
+							),
+						),
+					),
+					'detailAlt' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/detail-alt[/:type][/:id]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'detailAlt',
+							),
+						),
+					),
+					'update' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/update[/:id][/:type]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'update',
+							),
+						),
+					),
+					'updateAlt' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/update-alt[/:id][/:type]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'updateAlt',
+							),
+						),
+					),
+				),
+            ),
+			'interaction' => array(
+				'type'    => Literal::class,
+				'options' => array(
+					'route' => '/interaction',
+					'defaults' => array(
+						'controller' => Controller\InteractionController::class,
+						'action' => 'index',
+					),
+				),
+				'may_terminate' => true,
+				'child_routes' => array(
+					'index' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/index',
+							'defaults' => array(
+								'action' => 'index',
+							),
+						),
+					),
+					'search' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/search',
+							'defaults' => array(
+								'action' => 'search',
+							),
+						),
+					),
+					'list' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/list',
+							'defaults' => array(
+								'action' => 'list',
+							),
+						),
+					),
+					'export' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/export',
+							'defaults' => array(
+								'action' => 'export',
+							),
+						),
+					),
+					'detail' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/detail[/:id]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'detail',
+							),
+						),
+					),
+					'update' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/update[/:id][/:act]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'update',
+							),
+						),
+					),
+					'send' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/send[/:id]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'send',
+							),
+						),
+					),
+					'receive' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/receive[/:type]',
+							'defaults' => array(
+								'action' => 'receive',
+							),
+						),
+					),
+					'process' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/process[/:id]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'process',
+							),
+						),
+					),
+				),
+			),
+			'instance' => array(
+				'type'    => Literal::class,
+				'options' => array(
+					'route' => '/instance',
+					'defaults' => array(
+						'controller' => Controller\InstanceController::class,
+						'action'     => 'index',
+					),
+				),
+				'may_terminate' => true,
+				'child_routes' => array(
+					'index' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/index',
+							'defaults' => array(
+								'action' => 'index',
+							),
+						),
+					),
+					'search' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/search',
+								'defaults' => array(
+									'action' => 'search',
+							),
+						),
+					),
+					'list' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/list',
+							'defaults' => array(
+								'action' => 'list',
+							),
+						),
+					),
+					'export' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/export',
+							'defaults' => array(
+								'action' => 'export',
+							),
+						),
+					),
+					'detail' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/detail[/:id]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'detail',
+							),
+						),
+					),
+					'update' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/update[/:id][/:act]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'update',
+							),
+						),
+					),
+					'try' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/try',
+							'defaults' => array(
+								'action' => 'try',
+							),
+						),
+					),
+					'tryAdd' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/try-add',
+							'defaults' => array(
+								'action' => 'tryAdd',
+							),
+						),
+					),
+					'accept' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/accept',
+							'defaults' => array(
+								'action' => 'accept',
+							),
+						),
+					),
+					'charter' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/charter',
+							'defaults' => array(
+								'action' => 'charter',
+							),
+						),
+					),
+					'validateCharter' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/validate-charter',
+							'defaults' => array(
+								'action' => 'validateCharter',
+							),
+						),
+					),
+					'generalTermsOfUse' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/general-terms-of-use',
+							'defaults' => array(
+								'action' => 'generalTermsOfUse',
+							),
+						),
+					),
+					'validateGeneralTermsOfUse' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/validate-general-terms-of-use',
+							'defaults' => array(
+								'action' => 'validateGeneralTermsOfUse',
+							),
+						),
+					),
+					'legalNotices' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/legal-notices',
+							'defaults' => array(
+								'action' => 'legalNotices',
+							),
+						),
+					),
+					'addImage' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/add-image',
+							'defaults' => array(
+								'action' => 'addImage',
+							),
+						),
+					),
+					'addLogo' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/add-logo',
+							'defaults' => array(
+								'action' => 'addLogo',
+							),
+						),
+					),
+					'admin' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/admin[/:app]',
+							'defaults' => array(
+								'action' => 'admin',
+							),
+						),
+					),
+					'serialize' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/serialize',
+							'defaults' => array(
+								'action' => 'serialize',
+							),
+						),
+					),
+					'v1' => array(
 						'type' => 'segment',
 						'options' => array(
 							'route' => '/v1[/:id]',
@@ -1711,24 +915,708 @@ return array(
 							),
 						),
 					),
-	       			'dataRecovery' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/data-recovery',
-	                    	'defaults' => array(
-	                            'action' => 'dataRecovery',
-	                        ),
-	                    ),
-	                ),
-	       		),
-	       	),
-			'config' => array(
+            	),
+            ),
+			'place' => array(
+				'type' => Literal::class,
+				'options' => array(
+					'route'    => '/place',
+					'defaults' => array(
+						'controller' => Controller\PlaceController::class,
+						'action' => 'index',
+					),
+				),
+				'may_terminate' => true,
+				'child_routes' => array(
+					'index' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/index',
+							'defaults' => array(
+								'action' => 'index',
+							),
+						),
+					),
+					'search' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/search',
+							'defaults' => array(
+								'action' => 'search',
+							),
+						),
+					),
+					'list' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/list',
+							'defaults' => array(
+								'action' => 'list',
+							),
+						),
+					),
+					'export' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/export',
+							'defaults' => array(
+								'action' => 'export',
+							),
+						),
+					),
+					'detail' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/detail[/:id]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'detail',
+							),
+						),
+					),
+					'update' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/update[/:id][/:act]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'update',
+							),
+						),
+					),
+					'v1' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/v1[/:id]',
+							'defaults' => array(
+								'action' => 'v1',
+							),
+						),
+					),
+					'serialize' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/serialize[/:place_identifier]',
+							'defaults' => array(
+								'action' => 'serialize',
+							),
+						),
+					),
+				),
+			),
+			'product' => array(
 				'type'    => Literal::class,
 				'options' => array(
-					'route'    => '/config',
+					'route' => '/product',
+					'defaults' => array(
+						'controller' => Controller\ProductController::class,
+						'action' => 'index',
+					),
+				),
+				'may_terminate' => true,
+				'child_routes' => array(
+					'index' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/index[/:type]',
+							'defaults' => array(
+								'action' => 'index',
+							),
+						),
+					),
+					'criteria' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/criteria[/:instance_caption][/:type]',
+							'defaults' => array(
+								'action' => 'criteria',
+							),
+						),
+					),
+					'search' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/search[/:type]',
+							'defaults' => array(
+								'action' => 'search',
+							),
+						),
+					),
+					'list' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/list[/:type]',
+							'defaults' => array(
+								'action' => 'list',
+							),
+						),
+					),
+					'serviceList' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/service-list',
+							'defaults' => array(
+								'action' => 'serviceList',
+							),
+						),
+					),
+					'detail' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/detail[/:type][/:id]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'detail',
+							),
+						),
+					),
+					'dataList' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/data-list[/:product_category_id]',
+							'constraints' => array(
+								'product_category_id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'dataList',
+							),
+						),
+					),
+					'update' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/update[/:type][/:id][/:act]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'update',
+							),
+						),
+					),
+					'matrix' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/matrix[/:product_category_id][/:id]',
+							'constraints' => array(
+								'product_category_id' => '[0-9]*',
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'matrix',
+							),
+						),
+					),
+					'export' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/export[/:type]',
+							'defaults' => array(
+								'action' => 'export',
+							),
+						),
+					),
+					'delete' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/delete[/:id]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'delete',
+							),
+						),
+					),
+					'v1' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/v1[/:type][/:id]',
+							'defaults' => array(
+								'action' => 'v1',
+							),
+						),
+					),
+				),
+			),
+			'productOption' => array(
+				'type' => Literal::class,
+				'options' => array(
+					'route' => '/product-option',
+					'defaults' => array(
+						'controller' => Controller\ProductOptionController::class,
+						'action' => 'index',
+					),
+				),
+				'may_terminate' => true,
+				'child_routes' => array(
+					'index' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/index[/:product_id]',
+							'constraints' => array(
+								'product_id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'index',
+							),
+						),
+					),
+					'list' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/list[/:type][/:product_id]',
+							'constraints' => array(
+								'product_id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'list',
+							),
+						),
+					),
+					'export' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/export[/:type][/:product_id]',
+							'constraints' => array(
+								'product_id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'export',
+							),
+						),
+					),
+					'update' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/update[/:type][/:product_id][/:id][/:act]',
+							'constraints' => array(
+								'product_id' => '[0-9]*',
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'update',
+							),
+						),
+					),
+				),
+			),
+			'public' => array(
+				'type' => Literal::class,
+				'options' => array(
+					'route'    => '/public',
+					'defaults' => array(
+						'controller' => Controller\PublicController::class,
+						'action'     => 'displayPage',
+					),
+				),
+				'may_terminate' => true,
+				'child_routes' => array(
+					'displayPage' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '[/:directory][/:name]',
+							'constraints' => array(
+								'directory' => '[a-zA-Z0-9_-]+',
+								'name' => '[a-zA-Z0-9_-]+',
+							),
+							'defaults' => array(
+								'action' => 'displayPage',
+							),
+						),
+					),
+					'home' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/home',
+							'defaults' => array(
+								'action' => 'home',
+							),
+						),
+					),
+					'community' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/community[/:identifier][/:place_identifier][/:subject_id]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+								'subject_id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'community',
+							),
+						),
+					),
+					'communityPrint' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/community-print[/:identifier][/:place_identifier][/:subject_id]',
+							'defaults' => array(
+								'action' => 'communityPrint',
+							),
+						),
+					),
+					'dashboard' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/dashboard',
+							'defaults' => array('action' => 'dashboard'),
+						),
+					),
+					'pricing' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/pricing[/:directory][/:name]',
+							'defaults' => array('action' => 'pricing'),
+						),
+					),
+					'blogPost' => array(
+ 						'type' => 'segment',
+						'options' => array(
+							'route' => '/blog-post',
+							'defaults' => array('action' => 'blogPost'),
+						),
+					),
+				),
+        	),
+			'user' => array(
+				'type'    => Literal::class,
+				'options' => array(
+					'route' => '/user',
+					'constraints' => array(
+						'id' => '[0-9]*',
+					),
+					'defaults' => array(
+						'controller' => Controller\UserController::class,
+						'action'     => 'index',
+					),
+				),
+				'may_terminate' => true,
+				'child_routes' => array(
+					'index' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/index[/:app]',
+							'defaults' => array(
+								'action' => 'index',
+							),
+						),
+					),
+					'search' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/search[/:app]',
+							'constraints' => array(
+								'community_id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'search',
+							),
+						),
+					),
+					'list' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/list[/:app]',
+							'constraints' => array(
+								'community_id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'list',
+							),
+						),
+					),
+					'export' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/export[/:app]',
+							'constraints' => array(
+								'community_id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'export',
+							),
+						),
+					),
+					'update' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/update[/:app][/:id]',
+							'constraints' => array(
+								'community_id' => '[0-9]*',
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'update',
+							),
+						),
+					),
+					'revoke' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/revoke[/:id]',
+								'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'revoke',
+							),
+						),
+					),
+					'login' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/login[/:instance_caption]',
+							'defaults' => array(
+								'action' => 'login',
+							),
+						),
+					),
+					'googleLogin' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/google-login',
+							'defaults' => array(
+								'action' => 'googleLogin',
+							),
+						),
+					),
+					'demo' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/demo[/:username]',
+							'defaults' => array(
+								'action' => 'demo',
+							),
+						),
+					),
+					'maintainSession' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/maintain-session',
+							'defaults' => array(
+								'action' => 'maintainSession',
+							),
+						),
+					),
+					'expired' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/expired[/:instance_id]',
+							'constraints' => array(
+								'instance_id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'expired',
+							),
+						),
+					),
+					'logout' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/logout[/:instance_caption]',
+							'defaults' => array(
+								'action' => 'logout',
+							),
+						),
+					),
+					'passwordRequest' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/password-request[/:id]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'passwordRequest',
+							),
+						),
+					),
+					'generatePassword' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/generate-password[/:id]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'generatePassword',
+							),
+						),
+					),
+					'lostPassword' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/lost-password[/:instance_caption]',
+							'defaults' => array(
+								'action' => 'lostPassword',
+							),
+						),
+					),
+					'password' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/password[/:id]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'password',
+							),
+						),
+					),
+					'passwordChanged' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/password-changed[/:id]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'passwordChanged',
+							),
+						),
+					),
+					'initpassword' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/initpassword[/:id]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'initpassword',
+							),
+						),
+					),
+					'delete' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/delete[/:id]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'delete',
+							),
+						),
+					),
+					'changeContact' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/change-contact[/:vcard_id]',
+							'constraints' => array(
+								'vcard_id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'changeContact',
+							),
+						),
+					),
+					'authenticate' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/authenticate',
+							'defaults' => array(
+								'action' => 'authenticate',
+							),
+						),
+					),
+					'v1' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/v1[/:id]',
+							'defaults' => array(
+								'action' => 'v1',
+							)
+						)
+					),
+					'fbwebhook' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/fbwebhook',
+							'defaults' => array(
+								'action' => 'fbwebhook',
+							)
+						)
+					),
+					'fbpageaccess' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/fbpageaccess',
+							'defaults' => array(
+								'action' => 'fbpageaccess',
+							)
+						)
+					)
+				),
+			),
+			'vcard' => array(
+				'type'    => Literal::class,
+				'options' => array(
+					'route' => '/vcard',
+					'defaults' => array(
+						'controller' => Controller\VcardController::class,
+						'action' => 'index',
+					),
+				),
+				'may_terminate' => true,
+				'child_routes' => array(
+					'photo' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/photo[/:id]',
+							'constraints' => array(
+								'community_id' => '[0-9]*',
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'photo',
+							),
+						),
+					),
+					'demoMode' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/demo-mode',
+							'defaults' => array(
+								'action' => 'demoMode',
+							),
+						),
+					),
+					'v1' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/v1[/:id]',
+							'defaults' => array(
+								'action' => 'v1',
+							),
+						),
+					),
+					'dataRecovery' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/data-recovery',
+							'defaults' => array(
+								'action' => 'dataRecovery',
+							),
+						),
+					),
+				),
+			),
+			'config' => array(
+				'type' => Literal::class,
+				'options' => array(
+					'route' => '/config',
 					'defaults' => array(
 						'controller' => Controller\ConfigController::class,
-						'action'     => 'v1',
+						'action' => 'v1',
 					),
 				),
 				'may_terminate' => true,
@@ -1749,8 +1637,8 @@ return array(
 					),
 				),
 			),
-        ),
-    ),
+		),
+	),
 
 	'bjyauthorize' => array(
 		// Guard listeners to be attached to the application event manager
@@ -1764,7 +1652,7 @@ return array(
 				array('route' => 'account', 'roles' => array('operational_management', 'sales_manager')),
 				array('route' => 'account/index', 'roles' => array('operational_management', 'sales_manager', 'manager')),
 				array('route' => 'account/indexAlt', 'roles' => array('operational_management', 'sales_manager', 'manager')),
-				array('route' => 'account/contactIndex', 'roles' => array('operational_management', 'sales_manager')),
+//				array('route' => 'account/contactIndex', 'roles' => array('operational_management', 'sales_manager')),
 				array('route' => 'account/search', 'roles' => array('operational_management', 'sales_manager', 'manager')),
 				array('route' => 'account/searchAlt', 'roles' => array('operational_management', 'sales_manager', 'manager')),
 				array('route' => 'account/group', 'roles' => array('operational_management', 'sales_manager')),
@@ -1789,7 +1677,7 @@ return array(
 				array('route' => 'account/indexCard', 'roles' => array('operational_management', 'sales_manager', 'manager')),
 				array('route' => 'account/fbgetleads', 'roles' => array('guest')),
 				array('route' => 'account/v1', 'roles' => array('guest')),
-
+/*
 				array('route' => 'community', 'roles' => array('admin')),
 				array('route' => 'community/dataList', 'roles' => array('admin')),
 				array('route' => 'community/delete', 'roles' => array('admin')),
@@ -1797,7 +1685,7 @@ return array(
 				array('route' => 'community/list', 'roles' => array('admin')),
             	array('route' => 'community/get', 'roles' => array('user')),
 				array('route' => 'community/update', 'roles' => array('admin')),
-				array('route' => 'community/sendMessage', 'roles' => array('sales_manager', 'admin')),
+				array('route' => 'community/sendMessage', 'roles' => array('sales_manager', 'admin')),*/
 
 				array('route' => 'config/serialize', 'roles' => array('admin')),
 				array('route' => 'config/v1', 'roles' => array('guest')),
@@ -1889,26 +1777,12 @@ return array(
 				
 				array('route' => 'public/displayContent', 'roles' => array('guest')),
 				array('route' => 'public/displayPage', 'roles' => array('guest')),
-//				array('route' => 'public/displayBlog', 'roles' => array('guest')),
 				array('route' => 'public/home', 'roles' => array('guest')),
 				array('route' => 'public/community', 'roles' => array('guest')),
 				array('route' => 'public/communityPrint', 'roles' => array('guest')),
 				array('route' => 'public/dashboard', 'roles' => array('guest')),
 				array('route' => 'public/pricing', 'roles' => array('guest')),
 				array('route' => 'public/blogPost', 'roles' => array('guest')),
-/*				
-				array('route' => 'request', 'roles' => array('admin')),
-				array('route' => 'request/index', 'roles' => array('admin')),
-				array('route' => 'request/indexAlt', 'roles' => array('admin')),
-				array('route' => 'request/search', 'roles' => array('admin')),
-				array('route' => 'request/list', 'roles' => array('admin')),
-				array('route' => 'request/listV2', 'roles' => array('admin')),
-				array('route' => 'request/distribute', 'roles' => array('admin')),
-				array('route' => 'request/planning', 'roles' => array('admin')),
-				array('route' => 'request/export', 'roles' => array('admin')),
-				array('route' => 'request/synchronize', 'roles' => array('admin')),
-				array('route' => 'request/detail', 'roles' => array('admin')),
-				array('route' => 'request/update', 'roles' => array('admin')),*/
 
 				array('route' => 'user', 'roles' => array('admin', 'manager')),
 				array('route' => 'user/index', 'roles' => array('admin', 'manager')),
@@ -1933,8 +1807,6 @@ return array(
 				array('route' => 'user/changeContact', 'roles' => array('user')),
 				array('route' => 'user/delete', 'roles' => array('admin', 'manager')),
 				array('route' => 'user/authenticate', 'roles' => array('guest')),
-/*				array('route' => 'user/getAuthenticate', 'roles' => array('guest')),
-				array('route' => 'user/getApplications', 'roles' => array('guest')),*/
 				array('route' => 'user/v1', 'roles' => array('guest')),
 				array('route' => 'user/fbwebhook', 'roles' => array('guest')),
 				array('route' => 'user/fbpageaccess', 'roles' => array('guest')),
@@ -1947,22 +1819,22 @@ return array(
 		)
 	),
 		
-    'view_manager' => array(
-    	'strategies' => array(
-    			'ViewJsonStrategy',
-    	),
-        'display_not_found_reason' => true,
-        'display_exceptions'       => true,
-        'doctype'                  => 'HTML5',       // On défini notre doctype
-        'not_found_template'       => 'error/404',   // On indique la page 404
-        'exception_template'       => 'error/index', // On indique la page en cas d'exception
-        'template_map' => array(
-            'layout/layout'           => __DIR__ . '/../view/layout/layout.phtml',
-        ),
-        'template_path_stack' => array(
-           'ppit-core' => __DIR__ . '/../view',
-        ),
-    ),
+	'view_manager' => array(
+		'strategies' => array(
+			'ViewJsonStrategy',
+		),
+		'display_not_found_reason' => true,
+		'display_exceptions'       => true,
+		'doctype'                  => 'HTML5',       // On défini notre doctype
+		'not_found_template'       => 'error/404',   // On indique la page 404
+		'exception_template'       => 'error/index', // On indique la page en cas d'exception
+		'template_map' => array(
+			'layout/layout'           => __DIR__ . '/../view/layout/layout.phtml',
+		),
+		'template_path_stack' => array(
+			'ppit-core' => __DIR__ . '/../view',
+		),
+	),
 
 	'translator' => array(
 		'locale' => 'fr_FR',
@@ -1973,12 +1845,12 @@ return array(
 				'pattern'  => '%s.php',
 				'text_domain' => 'ppit-core'
 			),
-	       	array(
-	            'type' => 'phpArray',
-	            'base_dir' => './vendor/zendframework/zendframework/resources/languages/',
-	            'pattern'  => 'fr/Zend_Validate.php',
-	        ),
- 		),
+			array(
+				'type' => 'phpArray',
+				'base_dir' => './vendor/zendframework/zendframework/resources/languages/',
+				'pattern'  => 'fr/Zend_Validate.php',
+			),
+		),
 	),
 
 	'defaultRoute' => 'landing/template2',
@@ -2224,74 +2096,56 @@ Hébergeur : OVH 59820 Gravelines pour P-Pit SAS
 	),
 
 	'perimeters' => array(
-			'p-pit-admin' => array(),
-	),
-		
-	'ppitCoreDependencies' => array(
-			'core_account' => new \PpitCore\Model\Account,
-			'core_vcard' => new \PpitCore\Model\Vcard,
+		'p-pit-admin' => array(),
 	),
 
-	'ppitUser/index' => array(
-			'title' => array('en_US' => 'P-PIT Admin', 'fr_FR' => 'P-PIT Admin'),
+	'ppitCoreDependencies' => array(
+		'core_account' => new \PpitCore\Model\Account,
+		'core_vcard' => new \PpitCore\Model\Vcard,
 	),
+/*
+	'ppitUser/index' => array(
+		'title' => array('en_US' => 'P-PIT Admin', 'fr_FR' => 'P-PIT Admin'),
+	),*/
 
 	'menus/p-pit-admin' => array(
 		'entries' => array(
-					'place' => array(
-							'route' => 'place/index',
-							'params' => array(),
-							'label' => array(
-									'en_US' => 'Places',
-									'fr_FR' => 'Etablissements',
-							),
-					),
-					'user' => array(
-							'route' => 'user/index',
-							'params' => array(),
-							'glyphicon' => 'glyphicon-user',
-							'urlParams' => array(),
-							'label' => array(
-									'en_US' => 'Users',
-									'fr_FR' => 'Utilisateurs',
-							),
-					),
-/*					'document' => array(
-							'route' => 'document/index',
-							'params' => array(),
-							'glyphicon' => 'glyphicon-file',
-							'label' => array(
-									'en_US' => 'Documents',
-									'fr_FR' => 'Documents',
-							),
-					),
-					'request' => array(
-							'route' => 'request/index',
-							'params' => array('type' => 'generic'),
-							'glyphicon' => 'glyphicon-question-mark',
-							'label' => array(
-									'en_US' => 'Requests',
-									'fr_FR' => 'Demandes',
-							),
-					),*/
-					'interaction' => array(
-							'route' => 'interaction/index',
-							'params' => array(),
-							'glyphicon' => 'glyphicon-transfer',
-							'label' => array(
-									'en_US' => 'Interactions',
-									'fr_FR' => 'Interactions',
-							),
-					),
-					'admin' => array(
-							'route' => 'instance/admin',
-							'params' => array('app' => 'p-pit-admin'),
-							'glyphicon' => 'glyphicon-cog',
-							'label' => array(
-									'en_US' => 'Admin',
-									'fr_FR' => 'Admin',
-							),
-					),
+			'place' => array(
+				'route' => 'place/index',
+				'params' => array(),
+				'label' => array(
+					'en_US' => 'Places',
+					'fr_FR' => 'Etablissements',
+				),
+			),
+			'user' => array(
+				'route' => 'user/index',
+				'params' => array(),
+				'glyphicon' => 'glyphicon-user',
+				'urlParams' => array(),
+				'label' => array(
+					'en_US' => 'Users',
+					'fr_FR' => 'Utilisateurs',
+				),
+			),
+			'interaction' => array(
+				'route' => 'interaction/index',
+				'params' => array(),
+				'glyphicon' => 'glyphicon-transfer',
+				'label' => array(
+					'en_US' => 'Interactions',
+					'fr_FR' => 'Interactions',
+				),
+			),
+			'admin' => array(
+				'route' => 'instance/admin',
+				'params' => array('app' => 'p-pit-admin'),
+				'glyphicon' => 'glyphicon-cog',
+				'label' => array(
+					'en_US' => 'Admin',
+					'fr_FR' => 'Admin',
+				),
+			),
 		),
 		'labels' => array(
 			'default' => '2pit Admin',
@@ -2301,79 +2155,79 @@ Hébergeur : OVH 59820 Gravelines pour P-Pit SAS
 
 	'menus/synapps' => array(
 		'entries' => array(
-					'suspect' => array(
-							'route' => 'account/indexAlt',
-							'params' => array('entry' => 'contact', 'type' => 'pbc', 'app' => 'synapps'),
-							'glyphicon' => 'glyphicon-user',
-							'fa' => 'far fa-address-card fa-lg',
-							'label' => array(
-									'en_US' => 'All the contacts',
-									'fr_FR' => 'Tous contacts',
-							),
-					),
-					'contact' => array(
-							'route' => 'account/indexAlt',
-							'params' => array('entry' => 'account', 'type' => 'pbc', 'app' => 'synapps'),
-							'glyphicon' => 'glyphicon-user',
-							'fa' => 'far fa-address-card fa-lg',
-							'label' => array(
-									'en_US' => 'Active',
-									'fr_FR' => 'Actifs',
-							),
-					),
-					'account' => array(
-							'route' => 'account/indexAlt',
-							'params' => array('entry' => 'group', 'type' => 'group', 'app' => 'synapps'),
-							'glyphicon' => 'glyphicon-user',
-							'label' => array(
-									'en_US' => 'Groups',
-									'fr_FR' => 'Groupes',
-							),
-					),
-					'request' => array(
-						'route' => 'event/indexAlt',
-						'params' => array('type' => 'request', 'app' => 'synapps'),
-						'label' => array(
-							'en_US' => 'Requests',
-							'fr_FR' => 'Demandes',
-						),
-					),
-					'event' => array(
-						'route' => 'event/indexAlt',
-						'params' => array('type' => 'event', 'app' => 'synapps'),
-						'label' => array(
-							'en_US' => 'Events',
-							'fr_FR' => 'Événements',
-						),
-					),
-					'email' => array(
-							'route' => 'event/index',
-							'params' => array('entry' => 'email', 'type' => 'email', 'app' => 'synapps'),
-							'glyphicon' => 'glyphicon-send',
-							'fa' => 'far fa-paper-plane fa-lg',
-							'label' => array(
-									'en_US' => 'Emails',
-									'fr_FR' => 'Emails',
-							),
-					),
+			'suspect' => array(
+				'route' => 'account/indexAlt',
+				'params' => array('entry' => 'contact', 'type' => 'pbc', 'app' => 'synapps'),
+				'glyphicon' => 'glyphicon-user',
+				'fa' => 'far fa-address-card fa-lg',
+				'label' => array(
+					'en_US' => 'All the contacts',
+					'fr_FR' => 'Tous contacts',
+				),
+			),
+			'contact' => array(
+				'route' => 'account/indexAlt',
+				'params' => array('entry' => 'account', 'type' => 'pbc', 'app' => 'synapps'),
+				'glyphicon' => 'glyphicon-user',
+				'fa' => 'far fa-address-card fa-lg',
+				'label' => array(
+					'en_US' => 'Active',
+					'fr_FR' => 'Actifs',
+				),
+			),
+			'account' => array(
+				'route' => 'account/indexAlt',
+				'params' => array('entry' => 'group', 'type' => 'group', 'app' => 'synapps'),
+				'glyphicon' => 'glyphicon-user',
+				'label' => array(
+					'en_US' => 'Groups',
+					'fr_FR' => 'Groupes',
+				),
+			),
+			'request' => array(
+				'route' => 'event/indexAlt',
+				'params' => array('type' => 'request', 'app' => 'synapps'),
+				'label' => array(
+					'en_US' => 'Requests',
+					'fr_FR' => 'Demandes',
+				),
+			),
+			'event' => array(
+				'route' => 'event/indexAlt',
+				'params' => array('type' => 'event', 'app' => 'synapps'),
+				'label' => array(
+					'en_US' => 'Events',
+					'fr_FR' => 'Événements',
+				),
+			),
+			'email' => array(
+				'route' => 'event/index',
+				'params' => array('entry' => 'email', 'type' => 'email', 'app' => 'synapps'),
+				'glyphicon' => 'glyphicon-send',
+				'fa' => 'far fa-paper-plane fa-lg',
+				'label' => array(
+					'en_US' => 'Emails',
+					'fr_FR' => 'Emails',
+				),
+			),
 		),
 		'labels' => array(
 			'default' => 'Synapps',
 			'fr_FR' => 'Synapps',
 		),
 	),
-
-	'admin/p-pit-admin' => array(
-			'place',
-	),
 /*
+	'admin/p-pit-admin' => array(
+		'place',
+	),
+
 	'calendar/p-pit-admin' => array(
 	),*/
 
 	'styleSheet' => array(
-			'navbar' => 'navbar-default navbar-fixed-top',
-			'panelHeadingBackground' => '#006179',
-			'panelHeadingColor' => '#FFFFFF',
+		'navbar' => 'navbar-default navbar-fixed-top',
+		'panelHeadingBackground' => '#006179',
+		'panelHeadingColor' => '#FFFFFF',
 	),
 
 	'bootstrap4' => array(
@@ -2396,28 +2250,28 @@ Hébergeur : OVH 59820 Gravelines pour P-Pit SAS
 		'signature-href' => "https://www.p-pit.fr",
 		'signature-width' => '280px',
 		'footer' => array(
-				'type' => 'text',
-				'value' => 'P-Pit – SAS au capital de xxx € - R.C.S PARIS xxx xxx xxx - ...',
+			'type' => 'text',
+			'value' => 'P-Pit – SAS au capital de xxx € - R.C.S PARIS xxx xxx xxx - ...',
 		),
 	),
 
 	'legalHoliday' => array(
 		'fr_FR' => array(
-				'2016-01-01', '2016-05-05', '2016-05-08', '2016-07-14', '2016-08-15', '2016-11-01', '2016-11-11', '2016-12-25',
-				'2017-04-17', '2017-05-01', '2017-05-08', '2017-05-25', '2017-06-05', '2017-07-14', '2017-08-15', '2017-11-01', '2017-12-25',
+			'2016-01-01', '2016-05-05', '2016-05-08', '2016-07-14', '2016-08-15', '2016-11-01', '2016-11-11', '2016-12-25',
+			'2017-04-17', '2017-05-01', '2017-05-08', '2017-05-25', '2017-06-05', '2017-07-14', '2017-08-15', '2017-11-01', '2017-12-25',
 		),
 		'en_US' => array(),
 	),
 		
 	'creditConsumers' => array(
-			'\Model\Community::consumeCredits',
+//		'\Model\Community::consumeCredits',
 	),
 		
 	'credit' => array(
-			'unlimitedCredits' => false,
+		'unlimitedCredits' => false,
 	),
 	'instance/index' => array(
-			'title' => array('en_US' => 'P-PIT Admin', 'fr_FR' => 'P-PIT Admin'),
+		'title' => array('en_US' => 'P-PIT Admin', 'fr_FR' => 'P-PIT Admin'),
 	),
 
 	'accepted_tags_in_database' => '<h1><h2><h3><h4><h5><p><a><img><br><hr><span><div><em><strong>',
@@ -3663,7 +3517,7 @@ Hébergeur : OVH 59820 Gravelines pour P-Pit SAS
 			'comment_1', 'comment_2', 'comment_3', 'comment_4', 'update_time'
 		),
 		'acl' => array(
-				'place_id' => array('application' => 'p-pit-admin', 'category' => 'place_id'),
+			'place_id' => array('application' => 'p-pit-admin', 'category' => 'place_id'),
 		),
 		'order' => 'name',
 	),
@@ -5560,16 +5414,16 @@ table.note-report td {
 	'interaction/type/document' => array(
 			'controller' => '\Model\Document::controlInteraction',
 			'processor' => '\Model\Document::processInteraction',
-	),*/
+	),
 
 	'interaction/type/config' => array(
 			'controller' => '\Model\Config::controlInteraction',
 			'processor' => '\Model\Config::processInteraction',
-	),
+	),*/
 
 	'interaction/type/event' => array(
-		'controller' => '\Model\Event::controlInteraction',
-		'processor' => '\Model\Event::processInteraction',
+		'controller' => '\PpitCore\Model\Event::controlInteraction',
+		'processor' => '\PpitCore\Model\Event::processInteraction',
 	),
 	
 	'interaction/type' => array(

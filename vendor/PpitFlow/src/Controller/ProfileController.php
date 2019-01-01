@@ -159,7 +159,7 @@ class ProfileController extends AbstractActionController
 			
 				if ($actionStatus[0] == '200') {
 
-						// Send the OTP by email
+					// Send the OTP by email
 					$email_body = $context->localize($context->getConfig('user/messages/activation/text'));
 					$link = $this->url()->fromRoute('user/v1', ['id' => $user->user_id], ['force_canonical' => true]).'?account_id='.$account->id.'&request=activate'.'&hash='.$token;
 					$email_body = sprintf($email_body, $link);
@@ -177,6 +177,71 @@ class ProfileController extends AbstractActionController
 			'accountType' => $accountType,
 			'content' => $content,
 			'account' => $account,
+			'csrfForm' => $csrfForm,
+			'actionStatus' => $actionStatus,
+		));
+		$view->setTerminal(true);
+		return $view;
+	}
+	
+	public function requestActivationAction()
+	{
+		// Retrieve the context and the parameters
+		$context = Context::getCurrent();
+		$locale = $this->params()->fromQuery('locale');
+	
+		// Place
+		$place = Place::get($context->getPlaceId());
+		$place_identifier = $place->identifier;
+	
+		$email = null;
+		
+		// CSRF protection
+		$csrfForm = new CsrfForm();
+		$csrfForm->addCsrfElement('csrf');
+	
+		// Process the post data after input
+		$actionStatus = null;
+		if ($this->request->isPost()) {
+	
+			$csrfForm->setInputFilter((new Csrf('csrf'))->getInputFilter());
+			$csrfForm->setData($this->request->getPost());
+			 
+			if ($csrfForm->isValid()) { // CSRF check
+				
+				$email = $this->request->getPost('email');
+				$data = array();
+				$data['email'] = $email;
+
+				$vcard = Vcard::get($email, 'email');
+				if (!$vcard) $actionStatus = ['400', 'Contact not found'];
+				else {
+					$account = Account::get($vcard->id, 'contact_1_id');
+					if (!$account) $actionStatus = ['400', 'Unregistered user'];
+					else {
+						$userContact = UserContact::get($vcard->id, 'vcard_id');
+						$user = User::getTable()->transGet($userContact->user_id);
+						$token = $context->getSecurityAgent()->requestAuthenticationToken($user->username, false);
+						
+						// Send the OTP by email
+						$email_body = $context->localize($context->getConfig('user/messages/activation/text'));
+						$link = $this->url()->fromRoute('user/v1', ['id' => $user->user_id], ['force_canonical' => true]).'?account_id='.$account->id.'&request=activate'.'&hash='.$token;
+						$email_body = sprintf($email_body, $link);
+						$email_title = $context->localize($context->getConfig('user/messages/activation/title'));
+						Context::sendMail($user->username, $email_body, $email_title, null);
+						
+						$actionStatus = ['200', 'OK'];
+					}
+				}
+			}
+		}
+
+		// Return the view
+		$view = new ViewModel(array(
+			'context' => $context,
+			'locale' => $locale,
+			'place_identifier' => $place_identifier,
+			'email' => $email,
 			'csrfForm' => $csrfForm,
 			'actionStatus' => $actionStatus,
 		));

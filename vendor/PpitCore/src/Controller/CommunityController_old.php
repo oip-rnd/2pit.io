@@ -15,7 +15,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
-class CommunityController extends AbstractActionController
+class CommunityController_old extends AbstractActionController
 {
     public function indexAction()
     {    	

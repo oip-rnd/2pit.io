@@ -106,10 +106,10 @@ class AccountController extends AbstractActionController
      * contactIndex is a variant of index which has to be declared as a separate route with a distinct Access Control List (ACL).
      * The role are not the same for managing contacts and clients for example.
      */
-    public function contactIndexAction()
+/*    public function contactIndexAction()
     {
     	return $this->indexAction();
-    }
+    }*/
 
     /**
      * Retrieve and format search parameters from the query. The search configuration (core_account/search/<type>) describes the

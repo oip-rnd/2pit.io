@@ -27,6 +27,7 @@ return array(
 	'Please confirm the completion' => 'Veuillez confirmer la finalisation',
 	'Please confirm the proposal' => 'Veuillez confirmer la proposition',
 	'Sign Up' => 'S\'enregistrer',
+	'Request a new activation link' => 'Demander un nouveau lien d\'activation',
 	'Request detail' => 'Détail d’une demande',
 	'Requests' => 'Demandes',
 	'Select the test' => 'Sélectionner le test',

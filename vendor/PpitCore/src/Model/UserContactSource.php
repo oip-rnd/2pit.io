@@ -56,7 +56,7 @@ class UserContactSource
         $this->tel_work = (isset($data['tel_work'])) ? $data['tel_work'] : null;
         $this->tel_cell = (isset($data['tel_cell'])) ? $data['tel_cell'] : null;
         $this->instance_caption = (isset($data['instance_caption'])) ? $data['instance_caption'] : null;
-        $this->community_name = (isset($data['community_name'])) ? $data['community_name'] : null;
+//        $this->community_name = (isset($data['community_name'])) ? $data['community_name'] : null;
     }
     
     public function toArray()

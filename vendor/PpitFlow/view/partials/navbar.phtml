@@ -213,30 +213,9 @@ body.modal-open {
 </div>
   
 <div class="modal fade" id="modalRequestActivationForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header text-center">
-                <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('Request a new activation link', 'ppit-core', $locale) ?></h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form id="request-activation-form">
-              <span id="login-csrf"></span>
-              <div class="modal-body mx-3">
-                  <div class="md-form mb-5">
-                      <i class="fa fa-envelope prefix grey-text"></i>
-                      <input type="email" id="request_activation-identity" class="form-control validate modal_input" required="required">
-<!--                      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="request_activation-identity"><?php echo $this->translate('Email', 'ppit-core', $locale) ?></label> -->
-                  </div>
-  
-              </div>
-              <div class="modal-footer d-flex justify-content-center">
-                <button type="submit" class="btn btn-primary"><?php echo $this->translate('Send', 'ppit-core', $locale) ?></button>
-              </div>
-          </form>
-        </div>
-    </div>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" id="modalRequestActivationContent"></div>
+  </div>
 </div>
   
 <div class="modal fade" id="modalValidateCharterForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

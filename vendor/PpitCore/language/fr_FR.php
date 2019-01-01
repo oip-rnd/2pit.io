@@ -145,7 +145,6 @@
 			'Re-enter the new password' => 'Ressaisir le nouveau mot de passe',
 			'Reference' => 'Référence',
 			'Register' => 'S\'enregistrer',
-			'Request a new activation link' => 'Demander un nouveau lien d\'activation',
 			'Resources' => 'Ressources',
 			'Return' => 'Retour',
 			'Return to list' => 'Retour à la liste',

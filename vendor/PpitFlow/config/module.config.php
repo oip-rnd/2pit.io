@@ -330,6 +330,13 @@ return array (
 							'defaults' => array('action' => 'register'),
 						),
 					),
+					'requestActivation' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/request-activation',
+							'defaults' => array('action' => 'requestActivation'),
+						),
+					),
 					'index' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -543,6 +550,7 @@ return array (
 				
 				array('route' => 'profile', 'roles' => array('user')),
 				array('route' => 'profile/register', 'roles' => array('guest')),
+				array('route' => 'profile/requestActivation', 'roles' => array('guest')),
 				array('route' => 'profile/index', 'roles' => array('user')),
 				array('route' => 'profile/home', 'roles' => array('user')),
 				array('route' => 'profile/list', 'roles' => array('user')),

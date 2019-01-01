@@ -463,7 +463,7 @@ class Context
     		// Retrieve the instance data
     		Context::$instance = Instance::get($contact->instance_id);
     		 
-    		$user->community = Community::get($contact->community_id);
+//    		$user->community = Community::get($contact->community_id);
     		Context::$static_applications = array();
     		foreach ($contact->applications as $applicationId => $default) {
     			if (array_key_exists($applicationId, Context::$exemplary->getConfig('ppitApplications'))) Context::$static_applications[$applicationId] = $default;
