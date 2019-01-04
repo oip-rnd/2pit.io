@@ -77,6 +77,7 @@ class EventPlanningViewHelper
     				if (!in_array($date, $event->exception_dates) && $event->begin_date <= $date && $event->end_date >= $date) {
 	    				if ($event->begin_date == $date || $event->day_of_week == $dayOfWeek || $event->day_of_month == substr($date, 5, 2)) {
 	    					$content[] = array(
+	    						'id' => $event->id,
 	    						'begin_date' => $date,
 	    						'end_date' => $date,
 	    						'begin_time' => $event->begin_time,

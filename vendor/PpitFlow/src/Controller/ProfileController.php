@@ -194,7 +194,7 @@ class ProfileController extends AbstractActionController
 		$place = Place::get($context->getPlaceId());
 		$place_identifier = $place->identifier;
 	
-		$email = null;
+		$email = $this->params()->fromQuery('email');
 		
 		// CSRF protection
 		$csrfForm = new CsrfForm();
@@ -242,6 +242,54 @@ class ProfileController extends AbstractActionController
 			'locale' => $locale,
 			'place_identifier' => $place_identifier,
 			'email' => $email,
+			'csrfForm' => $csrfForm,
+			'actionStatus' => $actionStatus,
+		));
+		$view->setTerminal(true);
+		return $view;
+	}
+
+	public function loginAction()
+	{
+		$context = Context::getCurrent();
+		$locale = $this->params()->fromQuery('locale');
+		$identity = $this->params()->fromQuery('identity');
+		$redirect = $this->params()->fromQuery('redirect');
+		
+		// CSRF protection
+		$csrfForm = new CsrfForm();
+		$csrfForm->addCsrfElement('csrf');
+		
+		$actionStatus = null;
+		if ($this->request->isPost()) {
+	
+			$csrfForm->setInputFilter((new Csrf('csrf'))->getInputFilter());
+			$csrfForm->setData($this->request->getPost());
+			 
+			if ($csrfForm->isValid()) { // CSRF check
+	
+				// Check if user is not revoked
+				$identity = $this->request->getPost('identity');
+				$credential = $this->request->getPost('credential');
+				$rc = $context->getSecurityAgent()->authenticate($identity, $credential);
+				if ($rc == 'OK') {
+					if ($redirect) {
+						return $this->redirect()->toRoute($redirect, array(), array('query' => $this->params()->fromQuery()));
+					}
+					else return $this->redirect()->toRoute('home');
+				}
+				else if ($rc == 'Activation') {
+					$actionStatus = ['401', 'Activation'];
+					$this->getResponse()->setStatusCode('401');
+					$this->getResponse()->setReasonPhrase('Activation');
+				}
+				else $actionStatus = ['401', 'Unauthorized'];
+			}
+		}
+		$view = new ViewModel(array(
+			'context' => Context::getCurrent(),
+			'locale' => $locale,
+			'identity' => $identity,
 			'csrfForm' => $csrfForm,
 			'actionStatus' => $actionStatus,
 		));

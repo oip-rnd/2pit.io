@@ -1,0 +1,372 @@
+/**
+ * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
+ *
+ * @link      https://github.com/p-pit/PpitCore
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
+ */
+
+var viewBeginDate = '<?php echo date('Y-m-d') ?>';
+
+function getAvailability() {
+	var id, accounts = '', first = true;
+    var begin = new Date($('#calendar').fullCalendar('getView').intervalStart);
+    begin = begin.toISOString().substring(0, 10);
+    var end = new Date($('#calendar').fullCalendar('getView').intervalEnd);
+    end = end.toISOString().substring(0, 10);
+//	$('#calendar').fullCalendar('removeEvents');
+	$('.account-checkbox').each(function () {
+		if (document.getElementById($(this).attr('id')).checked) {
+			id = $(this).attr('id').split('_')[1];
+			if (!first) accounts += ',';
+			first = false;
+			accounts += $('#account_' + id).val();
+		}
+	});
+	var route = '<?php echo $this->url('account/getAvailability') ?>' + '?accounts=' + accounts;
+    route += '&begin=' + begin;
+    route += '&end=' + end;
+	xhttp = new XMLHttpRequest();
+	xhttp.open("GET", route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4 && xhttp.status == 200) {
+			obj = jQuery.parseJSON(xhttp.responseText);
+			jQuery.each(obj, function (name, value) {
+				if (value.color) {
+					if (value.color.morning) {
+						var event={
+							id: value.date,
+							title: '08:00 - Matinée',
+							color: value.color.morning,
+							start:  $.fullCalendar.moment(value.date)
+						};
+						$('#calendar').fullCalendar('renderEvent', event, true);
+					}
+					if (value.color.afternoon) {
+						var event={
+							id: value.date,
+							title: '14:00 - Après-midi',
+							color: value.color.afternoon,
+							start:  $.fullCalendar.moment(value.date)
+						};
+						$('#calendar').fullCalendar('renderEvent', event, true);
+					}
+					if (value.color.evening) {
+						var event={
+							id: value.date,
+							title: '19:00 - Soir',
+							color: value.color.evening,
+							start:  $.fullCalendar.moment(value.date)
+						};
+						$('#calendar').fullCalendar('renderEvent', event, true);
+					}
+				}
+			});
+		}
+	}
+	xhttp.send();
+}
+
+// Retrieve the planning
+function getPlanning() {
+	
+	// Execute the ajax request
+    begin = new Date($('#calendar').fullCalendar('getView').intervalStart);
+    begin = begin.toISOString().substring(0, 10);
+    end = new Date($('#calendar').fullCalendar('getView').intervalEnd);
+    end = end.toISOString().substring(0, 10);
+	route = '<?php echo $this->url('event/planning', ['type' => $type]) ?>?';
+    route += '&begin=' + begin;
+    route += '&end=' + end;
+	xhttp = new XMLHttpRequest();
+	xhttp.open("GET", route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4 && xhttp.status == 200) {
+		    $('#calendar').fullCalendar({
+		    	lang: '<?php echo substr($context->getLocale(), 0, 2) ?>',
+		        defaultView: 'agendaWeek',
+		        minTime: '08:00:00'
+		    });
+			$('#calendar').fullCalendar('removeEvents');
+			obj = jQuery.parseJSON(xhttp.responseText);
+
+			jQuery.each(obj, function (name, value) {
+				var color = 'lightBlue', textColor = 'black';			
+	            var event={
+	              id: value.id,
+	              title: value.caption,
+	              color: $('#color_' + value.account_id).val(),
+                  textColor: $('#textColor_' + value.account_id).val(),
+			      start:  $.fullCalendar.moment(value.begin_date + ' ' + value.begin_time), 
+				  end:  $.fullCalendar.moment(value.begin_date + ' ' + value.end_time)
+	            };
+				$('#calendar').fullCalendar('renderEvent', event, true);
+			});
+
+			getAvailability();
+		}
+	}
+	xhttp.send();
+}
+
+function connectAuditPanel()
+{
+  $('#audit-panel').hide();
+  $('#audit-label').click(function () {
+    if ($('#audit-label').text() == '<?php echo $this->translate('Show', 'ppit-core', $context->getLocale()) ?>') {
+      $('#audit-panel').show();
+      $('#audit-label').text('<?php echo $this->translate('Mask', 'ppit-core', $context->getLocale()) ?>');
+    }
+    else {
+      $('#audit-panel').hide();
+      $('#audit-label').text('<?php echo $this->translate('Show', 'ppit-core', $context->getLocale()) ?>');
+    }
+  });
+}
+
+<?php 
+$properties = array();
+foreach ($content_description['update'] as $propertyId => $property) {
+  if ($property['type'] != 'separator') {
+    if ($property['type'] == 'number') $properties[$propertyId] = array('type' => $property['type'], 'mandatory' => $property['mandatory'], 'minValue' => $property['minValue'], 'maxValue' => $property['maxValue']);
+    else $properties[$propertyId] = array('type' => $property['type'], 'mandatory' => $property['mandatory'], 'maxSize' => ($property['type'] == 'textarea') ? 2047 : 255);
+  }
+}
+$properties['event_update_time'] = array('type' => 'hidden');
+
+echo $this->partial('/partials/check-update-properties', array('entity' => 'Event', 'context' => $context, 'properties' => $properties)) 
+?>
+
+function connectDetail(id, action) {
+        if (id) {
+          $('#event-update-anchor').click(function () { 
+            $('[data-toggle="tooltip"]').tooltip('hide');
+            getUpdate(id, 'update'); 
+          });
+          $('#event-delete-anchor').click(function () { 
+            $('[data-toggle="tooltip"]').tooltip('hide');
+            getUpdate(id, 'delete'); 
+          });
+          $('#up-cancel-button').click(function () { getUpdate(id, ''); });
+          $('#cancel-button').click(function () { getUpdate(id, ''); });
+        }
+        else $('#event-add-anchor').click(function () { 
+          $('[data-toggle="tooltip"]').tooltip('hide');
+          getUpdate(id, 'add'); 
+        });
+
+        $('#up-submit-button').click(function () { 
+          postForm(id, action); 
+        });
+        $('#submit-button').click(function () {
+          postForm(id, action);
+        });
+
+        $('[data-toggle="tooltip"]').tooltip();
+}
+
+function postForm(id, action)
+{
+  // Check validity
+  var validity = checkEventUpdateProperties(id);
+  if (validity) {
+    
+    // Create a new FormData object.
+    var formData = new FormData();
+      
+    // Get the properties values
+<?php foreach ($properties as $propertyId => $property) : ?>
+
+  <?php if ($property['type'] == 'checkbox') : ?>
+    formData.append('<?php echo $propertyId ?>', ((document.getElementById('<?php echo $propertyId ?>').checked) ? 1 : 0));
+
+  <?php elseif ($property['type'] == 'attachment') : ?>
+    var fileSelect = document.getElementById('<?php echo $propertyId ?>');
+    if (fileSelect) {
+      var files = fileSelect.files;
+      for (var i = 0; i < files.length; i++) {
+        var file = files[i];
+        formData.append('<?php echo $propertyId ?>', file, file.name);
+      }
+    }
+
+  <?php else : ?>
+    formData.append('<?php echo $propertyId ?>', $('#<?php echo $propertyId ?>').val());
+
+  <?php endif ?>
+<?php endforeach ?>
+
+    formData.append('csrf', $('#csrf').val());
+
+    var xhttp = new XMLHttpRequest();
+    var route;
+    route = '<?php echo $this->url('event/updateAlt') ?>/' + id + '/<?php echo $type ?>' + '?act=' + action;
+    xhttp.open('POST', route, true);
+    // Set up a handler for when the request finishes.
+    xhttp.onload = function () {
+      if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+      if (xhttp.readyState == 4) { 
+        if (xhttp.status == 200) {
+          $('#event-update-panel').html(xhttp.responseText);
+          getPlanning();
+      
+          $('.update_date').datepicker();
+          $('.update_time').timepicker({ 'timeFormat':'H:i:s', 'step': 15, 'scrollDefault': 'now' });
+          $('.update_selectpicker').selectpicker();
+
+          if (action == 'update') connectDetail(id, '');
+        }
+        else {
+          console.log(xhttp.status + ' ' + xhttp.statusText);
+          toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+        }
+      }
+    };
+    xhttp.send(formData);
+  }
+  else return false;
+}
+
+function getUpdate(id, action) {
+
+  var xhttp = new XMLHttpRequest();
+  var route = '<?php echo $this->url('event/updateAlt') ?>/' + id + '/<?php echo $type ?>';
+  if (action) route += '?act=' + action;
+
+  xhttp.open('GET', route, true);
+  xhttp.onreadystatechange = function() {
+    if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+    if (xhttp.readyState == 4) {
+      if (xhttp.status == 200) {
+        $('#event-update-panel').html(xhttp.responseText);
+
+        $('.update_date').datepicker();
+        $('.update_time').timepicker({ 'timeFormat':'H:i:s', 'step': 15, 'scrollDefault': 'now' });
+        $('.update_selectpicker').selectpicker();
+
+        connectDetail(id, action);
+      }
+      else {
+        console.log(xhttp.status + ' ' + xhttp.statusText);
+        toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+      }
+    }
+  }
+  xhttp.send();
+}
+
+function getDetail(id) {
+
+  var xhttp = new XMLHttpRequest();
+  var route = '<?php echo $this->url('event/detailAlt', ['type' => $type]) ?>/' + id;
+
+  xhttp.open('GET', route, true);
+  xhttp.onreadystatechange = function() {
+    if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+    if (xhttp.readyState == 4) {
+      if (xhttp.status == 200) {
+        $('#modalFormBody').html(xhttp.responseText);
+        $('#modalFormLabel').html($('#caption_' + id).val());
+        connectAuditPanel();
+        getUpdate(id, '');
+
+        $('#modalForm').modal('toggle');
+      }
+      else {
+        console.log(xhttp.status + ' ' + xhttp.statusText);
+        toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+      }
+    }
+  }
+  xhttp.send();
+}
+
+function createCalendar(print) {
+	var minTime = (print) ? '08:00:00' : '00:00:00';
+    $('#calendar').fullCalendar({
+    	lang: '<?php echo substr($context->getLocale(), 0, 2) ?>',
+    	height: 650,
+        defaultView: 'agendaWeek',
+        scrollTime: '08:00:00',
+        minTime: minTime,
+        businessHours: {
+		   	dow: [ 1, 2, 3, 4, 5, 6], // Monday - Thursday
+		    start: '08:00',
+		    end: '18:00'
+	    },
+		customButtons: {
+	        addButton: {
+	            text: '<?php echo $context->localize(['default' => 'Add', 'fr_FR' => 'Ajouter']) ?>',
+	            click: function() {
+	                getDetail(0);
+			    }
+			},
+            testButton: {
+              text: '<?php echo $this->translate('Test', 'ppit-document', $context->getLocale()) ?>',
+              click: function() {
+              window.open('<?php echo $this->url('event/planning', array('type' => $type)) ?>');
+            }
+          }
+		},
+
+        eventClick: function(event) {
+          getDetail(event.id);
+        },
+
+    	header: {
+			left: 'prev,next today addButton testButton',
+			center: 'title',
+			right: 'month,agendaWeek,agendaDay'
+		}
+    });
+
+	$('.fc-prev-button').click(function(){
+		var moment = $('#calendar').fullCalendar('getDate');
+		viewBeginDate = moment.format().slice(0, 10);
+		getPlanning();
+	});
+	
+	$('.fc-next-button').click(function(){
+		var moment = $('#calendar').fullCalendar('getDate');
+		viewBeginDate = moment.format().slice(0, 10);
+		getPlanning();
+	});
+	  
+	getPlanning();
+}
+
+// Load the list
+function getAccountList(params, major, dir) {		
+
+	// Execute the ajax request
+	route = '<?php echo $this->url('account/eventAccountList', array('entry' => 'account', 'type' => $content_description['options']['account_type'])) ?>' + params + '&major=' + major + ((dir =='ASC') ? '&dir=ASC' : '&dir=DESC');
+	var xhttp = new XMLHttpRequest();
+	xhttp.open("GET", route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4 && xhttp.status == 200) {
+			document.getElementById('account_list_panel').innerHTML = xhttp.responseText;
+			
+			// Connect the sort anchors
+			$('.ppit-sort-account-anchor').each(function () {
+				$(this).click(function () {
+					sortAccountList($(this).attr('id').split('-')[0]);
+				});
+			});
+
+			$('.account-checkbox').each(function () {
+				$(this).click(function () {
+					getPlanning();
+				});
+			});
+		}
+	}
+	xhttp.send();
+}
+
+function activateCalendar() {
+  getAccountList('?', 'n_fn', 'ASC');
+  createCalendar(false);
+}

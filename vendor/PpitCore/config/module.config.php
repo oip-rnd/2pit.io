@@ -490,6 +490,15 @@ return array(
 							),
 						),
 					),
+					'calendar' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/calendar[/:type][/:app][/:category]',
+							'defaults' => array(
+								'action' => 'calendar',
+							),
+						),
+					),
 					'search' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -1697,6 +1706,7 @@ return array(
 				array('route' => 'event/v1', 'roles' => array('guest')),
 				array('route' => 'event/index', 'roles' => array('user')),
 				array('route' => 'event/indexAlt', 'roles' => array('user')),
+				array('route' => 'event/calendar', 'roles' => array('user')),
 				array('route' => 'event/search', 'roles' => array('user')),
 				array('route' => 'event/searchAlt', 'roles' => array('user')),
 				array('route' => 'event/list', 'roles' => array('user')),
@@ -2198,6 +2208,14 @@ Hébergeur : OVH 59820 Gravelines pour P-Pit SAS
 				'label' => array(
 					'en_US' => 'Events',
 					'fr_FR' => 'Événements',
+				),
+			),
+			'calendar' => array(
+				'route' => 'event/calendar',
+				'params' => array('type' => 'planning', 'app' => 'synapps'),
+				'label' => array(
+					'en_US' => 'Calendar',
+					'fr_FR' => 'Calendrier',
 				),
 			),
 			'email' => array(

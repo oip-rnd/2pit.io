@@ -337,6 +337,13 @@ return array (
 							'defaults' => array('action' => 'requestActivation'),
 						),
 					),
+					'login' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/login',
+							'defaults' => array('action' => 'login'),
+						),
+					),
 					'index' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -551,6 +558,7 @@ return array (
 				array('route' => 'profile', 'roles' => array('user')),
 				array('route' => 'profile/register', 'roles' => array('guest')),
 				array('route' => 'profile/requestActivation', 'roles' => array('guest')),
+				array('route' => 'profile/login', 'roles' => array('guest')),
 				array('route' => 'profile/index', 'roles' => array('user')),
 				array('route' => 'profile/home', 'roles' => array('user')),
 				array('route' => 'profile/list', 'roles' => array('user')),

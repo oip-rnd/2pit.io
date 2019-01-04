@@ -74,6 +74,35 @@ class EventController extends AbstractActionController
     	return $view;
     }
 
+    public function calendarAction()
+    {
+    	$context = Context::getCurrent();
+    	 
+    	// Retrieve parameters
+    	$type = $this->params()->fromRoute('type', $context->getConfig('event/type')['default']);
+    	$category = $this->params()->fromRoute('category', 'generic');
+    	$app = $this->params()->fromRoute('app');
+    
+    	$applicationId = ($app) ? $app : 'synapps';
+    	$applicationName = $context->localize($context->getConfig('menus/'.$applicationId)['labels']);
+
+    	$description = Event::getDescription($type);
+    	if (array_key_exists('options', $description) && array_key_exists('internal_identifier', $description['options'])) $internalIdentifier = $description['options']['internal_identifier'];
+    	 
+    	$view = new ViewModel(array(
+    		'context' => $context,
+    		'type' => $type,
+    		'config' => $context->getConfig(),
+    		'app' => $app,
+    		'applicationId' => $applicationId,
+    		'applicationName' => $applicationName,
+    		'category' => $category,
+			'content_description' => $description,
+    	));
+    	$view->setTerminal(true);
+    	return $view;
+    }
+    
     public function getFilters($params, $description)
     {
     	$context = Context::getCurrent(/*$app*/);
