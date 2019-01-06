@@ -29,6 +29,7 @@ return array(
     'Zend\\Http\\' => array($vendorDir . '/zendframework/zend-http/src'),
     'Zend\\Form\\' => array($vendorDir . '/zendframework/zend-form/src'),
     'Zend\\Filter\\' => array($vendorDir . '/zendframework/zend-filter/src'),
+    'Zend\\File\\' => array($vendorDir . '/zendframework/zend-file/src'),
     'Zend\\EventManager\\' => array($vendorDir . '/zendframework/zend-eventmanager/src'),
     'Zend\\Escaper\\' => array($vendorDir . '/zendframework/zend-escaper/src'),
     'Zend\\Db\\' => array($vendorDir . '/zendframework/zend-db/src'),

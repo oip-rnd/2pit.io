@@ -184,6 +184,7 @@
 			'The password should be at least 8 characters long and contain 1 uppercase letter and 1 digit' => 'Le mot de passe doit contenir au moins 8 caractères incluant au moins 1 lettre majuscule et 1 chiffre',
 			'The time is invalid' => 'L\'heure est invalide',
 			'The row does not contain the proper number of columns' => 'La ligne ne comporte pas le bon nombre de colonnes',
+			'This account has already been activated, you can log in now.' => 'Ce compte a déjà été activé, vous pouvez vous connecter à présent.',
 			'This account is currently updated by %s. Please check with him/her before submitting.' => 'Ce compte est actuellement modifié par %s. Veuillez vérifier avec lui/elle avant de soumettre.',
 			'This account is not activated. You can ask for a new email activation link.' => 'Ce compte n\'est pas activé. Vous pouvez demander un nouveau lien d\'activation par email.',
 			'This account is not registered. Please register before login.' => 'Ce compte n\'est pas enregistré. Veuillez vous enregistrer avant de vous connecter.',

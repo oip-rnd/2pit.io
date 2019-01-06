@@ -636,6 +636,11 @@ class AccountController extends AbstractActionController
     			}
     			else $text = $context->localize($selectedTemplate['text'], $account->locale);
 
+    			// Retrieve the text from the form if the email text is customizable in the view and add the signature at the location of the tag '%s'
+    			$characters = ['à', 'À', 'â', 'Â', 'ä', 'Ä', 'é', 'É', 'è', 'È', 'ê', 'Ê', 'ë', 'Ë', 'î', 'Î', 'ï', 'Ï', 'ô', 'Ô', 'ö', 'Ö', 'ù', 'Ù', 'û', 'Û', 'ü', 'Ü', 'ç', 'Ç'];
+    			$encoded = ['&agrave;', '&Agrave;', '&acirc;', '&Acirc;', '&auml;', '&Auml;', '&eacute;', '&Eacute;', '&egrave;', '&Egrave;', '&ecirc;', '&Ecirc;', '&euml;', '&Euml;', '&icirc;', '&Icirc;', '&iuml;', '&Iuml;', '&ocirc;', '&Ocirc;', '&ouml;', '&Ouml;', '&ugrave;', '&Ugrave;', '&ucirc;', '&Ucirc;', '&uuml;', '&Uuml;', '&ccedil;', '&Ccedil;'];
+    			$text = str_replace($characters, $encoded, $text);
+
     			if (array_key_exists('cci', $selectedTemplate)) $data['cci'][$selectedTemplate['cci']] = $selectedTemplate['cci'];
 	    		$data['from_mail'] = $selectedTemplate['from_mail'];
 	    		$data['from_name'] = $selectedTemplate['from_name'];

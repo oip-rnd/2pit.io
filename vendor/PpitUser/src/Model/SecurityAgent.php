@@ -369,6 +369,7 @@ class SecurityAgent
     public function activate($user_id, $authentication_token, $update_time)
     {
     	$user = User::getTable()->transget($user_id);
+    	if ($user->state == 1) return 'Already activated';
     	if ($user->authentication_token != $authentication_token || $user->authentication_validity < date('Y-m-d')) return 'Unauthorized';
     	$user->authentication_token = null;
     	$user->authentication_validity = null;

@@ -5204,7 +5204,7 @@ table.note-report td {
 	
 	// Planning
 
-	'event/generic/property/category' => array(
+	'event/planning/property/category' => array(
 		'definition' => 'inline',
 		'type' => 'select',
 		'modalities' => array(
@@ -5217,7 +5217,7 @@ table.note-report td {
 		),
 	),
 	
-	'event/generic/property/account_id' => array(
+	'event/planning/property/account_id' => array(
 		'definition' => 'inline',
 		'type' => 'select',
 		'account_type' => 'agent',

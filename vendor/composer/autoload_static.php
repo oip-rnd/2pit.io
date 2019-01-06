@@ -38,6 +38,7 @@ class ComposerStaticInit85293ecee4f033dd340b761c2c703716
             'Zend\\Http\\' => 10,
             'Zend\\Form\\' => 10,
             'Zend\\Filter\\' => 12,
+            'Zend\\File\\' => 10,
             'Zend\\EventManager\\' => 18,
             'Zend\\Escaper\\' => 13,
             'Zend\\Db\\' => 8,
@@ -181,6 +182,10 @@ class ComposerStaticInit85293ecee4f033dd340b761c2c703716
         'Zend\\Filter\\' => 
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-filter/src',
+        ),
+        'Zend\\File\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-file/src',
         ),
         'Zend\\EventManager\\' => 
         array (

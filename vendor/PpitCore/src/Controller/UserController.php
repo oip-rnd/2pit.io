@@ -928,14 +928,17 @@ class UserController extends AbstractActionController
 				if ($account_id) $account = Account::get($account_id);
 				$authentication_token = $this->params()->fromQuery('hash');
 				$rc = $context->getSecurityAgent()->activate($user_id, $authentication_token, null);
+				if ($rc == 'Already activated') {
+					return $this->redirect()->toRoute($context->getConfig('defaultRoute'), [], ['query' => ['message' => 'Already activated']]);
+				}
 				if ($rc == 'Unauthorized') {
-					return $this->redirect()->toRoute('landing/template2', [], ['query' => ['error' => 'Authentication']]);
+					return $this->redirect()->toRoute($context->getConfig('defaultRoute'), [], ['query' => ['error' => 'Authentication']]);
 				}
 				if ($account) {
 					$account->status = 'active';
 					$account->update(null);
 				}
-				return $this->redirect()->toRoute('landing/template2', [], ['query' => ['message' => 'activated']]);
+				return $this->redirect()->toRoute($context->getConfig('defaultRoute'), [], ['query' => ['message' => 'activated']]);
 			}
 			elseif ($request == 'request-activation') {
 				$identity = $this->params()->fromQuery('identity');

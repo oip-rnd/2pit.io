@@ -25,7 +25,7 @@ toastr.error('<?php echo $this->translate('Invalid authentication', 'ppit-core',
 
 function register() {
   var xhttp = new XMLHttpRequest(), formData = new FormData(), route = '<?php echo $this->url('profile/register') ?>';
-<?php if ($shopping_cart) : ?>
+<?php if (isset($shopping_cart) && $shopping_cart) : ?>
   route += '?shopping_cart=<?php echo $shopping_cart ?>';
 <?php endif;?>
   formData.append('csrf', $('#csrf').val());
@@ -292,7 +292,7 @@ $('#modalProfileForm').on('show.bs.modal', function () {
 
 // Payment
 
-<?php if ($payPal) : ?>
+<?php if (isset ($payPal) && $payPal) : ?>
 
 <!-- PayPal -->
 
@@ -503,8 +503,9 @@ function logout() {
 
 var form = document.getElementById('logout-form');
 form.onsubmit = function(event) {
-	event.preventDefault();
-	logout();
+  console.log('In logout form.onsubmit');
+  event.preventDefault();
+  logout();
 }
 
 <?php if ($panel) : ?>

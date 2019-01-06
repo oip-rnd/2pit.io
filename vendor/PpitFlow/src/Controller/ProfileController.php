@@ -283,7 +283,10 @@ class ProfileController extends AbstractActionController
 					$this->getResponse()->setStatusCode('401');
 					$this->getResponse()->setReasonPhrase('Activation');
 				}
-				else $actionStatus = ['401', 'Unauthorized'];
+				else {
+					$actionStatus = ['401', 'Unauthorized'];
+		    		$this->getResponse()->setStatusCode('401');
+				}
 			}
 		}
 		$view = new ViewModel(array(
