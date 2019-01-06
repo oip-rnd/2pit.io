@@ -435,7 +435,6 @@ class Context
     		}
     
     		if ($settings['mailProtocol']) $rc = $transport->send($mail);
-    		echo $rc; throw new \Exception('');
     
     		if ($settings['isTraceActive']) {
     
