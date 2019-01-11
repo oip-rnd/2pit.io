@@ -5209,7 +5209,7 @@ table.note-report td {
 		'type' => 'select',
 		'modalities' => array(
 			'business' => ['default' => 'Business', 'fr_FR' => 'Commercial'],
-			'team' => ['default' => 'Team meeting', 'fr_FR' => 'Point équipe'],
+			'team' => ['default' => 'Individual', 'fr_FR' => 'Individuel'],
 		),
 		'labels' => array(
 			'en_US' => 'Category',
@@ -5287,15 +5287,9 @@ table.note-report td {
 		'category' => [],
 		'caption' => [],
 		'description' => [],
-		'day_of_week' => array('mandatory' => false),
 		'begin_date' => array('mandatory' => false),
 		'begin_time' => array('mandatory' => false),
-//		'end_date' => array('mandatory' => false),
 		'end_time' => array('mandatory' => false),
-		'exception_1' => array('mandatory' => false),
-		'exception_2' => array('mandatory' => false),
-		'exception_3' => array('mandatory' => false),
-		'exception_4' => array('mandatory' => false),
 		'location' => array('mandatory' => false),
 	),
 	

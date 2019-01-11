@@ -3624,6 +3624,33 @@ table.note-report td {
 		'comment' => 'N',
 		'document' => 'O',
 	),
+
+	'commitmentTerm/invoice/generic' => array(
+		'header' => array(),
+		'description' => array(
+			array(
+				'left' => array('en_US' => 'Caption', 'fr_FR' => 'Libellé'),
+				'right' => array('en_US' => '%s', 'fr_FR' => '%s'),
+				'params' => array('caption'),
+			),
+			array(
+				'left' => array('en_US' => 'Invoice date', 'fr_FR' => 'Date de facture'),
+				'right' => array('en_US' => '%s', 'fr_FR' => '%s'),
+				'params' => array('date'),
+			),
+			array(
+				'left' => array('en_US' => 'Place', 'fr_FR' => 'Centre'),
+				'right' => array('en_US' => '%s', 'fr_FR' => '%s'),
+				'params' => array('place_id'),
+			),
+			array(
+				'left' => array('en_US' => 'Invoicing period', 'fr_FR' => 'Période de facturation'),
+				'right' => array('en_US' => '%s', 'fr_FR' => '%s'),
+				'params' => array('tiny_1'),
+			),
+		),
+		'terms' => true,
+	),
 	
 	'commitmentTerm/debit' => array(
 		'InitgPty/Nm' => '** 2.19 - Nom de l\'émetteur **',

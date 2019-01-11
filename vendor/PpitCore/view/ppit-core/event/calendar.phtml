@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="<?php echo $this->basePath('/bootstrap-select-1.13.1/dist/css/bootstrap-select.min.css') ?>">
 	<link rel="stylesheet" href="<?php echo $this->basePath('/css/ppit-style.css') ?>">
 	<link rel="stylesheet" href="<?php echo $this->basePath('/jquery-ui-1.11.4/jquery-ui.css') ?>">
-    <link rel='stylesheet' href="<?php echo $this->basePath('/fullcalendar/fullcalendar.css') ?>" />
+    <link rel='stylesheet' href="<?php echo $this->basePath('/fullcalendar-3.10.0/fullcalendar.css') ?>" />
     <link rel='stylesheet' href="<?php echo $this->basePath('/jquery.timepicker/jquery.timepicker.min.css') ?>" />
  
 <style>
@@ -177,14 +177,15 @@ $this->headTitle($title);
 <script //src="<?php echo $this->basePath('/jquery-ui-1.11.4/jquery-ui.js') ?>"></script>
 <script>
 //Resolve name collision between jQuery UI and Twitter Bootstrap
-$.widget.bridge('uitooltip', $.ui.tooltip);
+//$.widget.bridge('uitooltip', $.ui.tooltip);
 </script>
 <script src="<?php echo $this->basePath('/MDB-Pro/js/popper.min.js') ?>"></script>
 <script src="<?php echo $this->basePath('/bootstrap-4-2/js/bootstrap.min.js') ?>"></script>
 <script src="<?php echo $this->basePath('/bootstrap-select-1.13.1/dist/js/bootstrap-select.min.js') ?>"></script>
 <script src="<?php echo $this->basePath('/jquery.timepicker/jquery.timepicker.min.js') ?>"></script>
 <script src="<?php echo $this->basePath('/js/moment-with-locales.min.js') ?>"></script>
-<script src="<?php echo $this->basePath('/fullcalendar/fullcalendar.js') ?>"></script>
+<script src="<?php echo $this->basePath('/fullcalendar-3.10.0/fullcalendar.js') ?>"></script>
+<script src="<?php echo $this->basePath('/fullcalendar-3.10.0/locale-all.js') ?>"></script>
 
 <!-- Load the common form javascript functions -->
 <?php echo $this->partial('/partials/common-form-js.phtml'); ?>

@@ -762,7 +762,7 @@ class TermController extends AbstractActionController
     	
     	$invoice = array();
     	$invoiceSpecs = $context->getConfig('commitmentTerm/invoice/'.$type);
-		if (!$invoiceSpecs) $invoiceSpecs = $context->getConfig('commitmentTerm/invoice');
+		if (!$invoiceSpecs) $invoiceSpecs = $context->getConfig('commitmentTerm/invoice/generic');
 		
 		if ($invoiceAccount->type == 'business') $invoice['customer_invoice_name'] = $invoiceAccount->name;
 		$invoicingContact = null;
