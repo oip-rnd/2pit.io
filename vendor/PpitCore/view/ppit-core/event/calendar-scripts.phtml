@@ -96,7 +96,7 @@ function getPlanning() {
 				var color = 'lightBlue', textColor = 'black';			
 	            var event={
 	              id: value.id,
-	              title: value.caption,
+	              title: value.caption + ' (' + value.location + ')',
 	              color: $('#color_' + value.account_id).val(),
                   textColor: $('#textColor_' + value.account_id).val(),
 			      start:  $.fullCalendar.moment(value.begin_date + ' ' + value.begin_time), 
@@ -286,7 +286,7 @@ function getDetail(id) {
 function createCalendar(print) {
 	var minTime = (print) ? '08:00:00' : '00:00:00';
     $('#calendar').fullCalendar({
-    	lang: '<?php echo substr($context->getLocale(), 0, 2) ?>',
+    	locale: '<?php echo substr($context->getLocale(), 0, 2) ?>',
     	height: 650,
         defaultView: 'agendaWeek',
         scrollTime: '08:00:00',
@@ -321,7 +321,7 @@ function createCalendar(print) {
 			right: 'month,agendaWeek,agendaDay'
 		}
     });
-
+ 
 	$('.fc-prev-button').click(function(){
 		var moment = $('#calendar').fullCalendar('getDate');
 		viewBeginDate = moment.format().slice(0, 10);
