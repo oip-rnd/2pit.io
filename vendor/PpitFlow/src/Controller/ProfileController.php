@@ -288,6 +288,10 @@ class ProfileController extends AbstractActionController
 						$actionStatus = ['401', 'Unauthorized'];
 			    		$this->getResponse()->setStatusCode('401');
 					}
+					elseif ($user->vcard_id != $userContact->vcard_id) {
+						$user->vcard_id = $userContact->vcard_id;
+						$user->update(null);
+					}
 				}
 
 				if (!$actionStatus) {
