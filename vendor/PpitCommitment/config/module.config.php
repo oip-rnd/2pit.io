@@ -2381,6 +2381,78 @@ table.note-report td {
 			'fr_FR' => 'Mode de règlement par défaut',
 		),
 	),
+
+	'commitment/generic/property/property_1' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'en_US' => 'Available field 1',
+			'fr_FR' => 'Champs libre 1',
+		),
+	),
+
+	'commitment/generic/property/property_2' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'en_US' => 'Available field 2',
+			'fr_FR' => 'Champs libre 2',
+		),
+	),
+
+	'commitment/generic/property/property_3' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'en_US' => 'Available field 3',
+			'fr_FR' => 'Champs libre 3',
+		),
+	),
+
+	'commitment/generic/property/property_4' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'en_US' => 'Available field 4',
+			'fr_FR' => 'Champs libre 4',
+		),
+	),
+
+	'commitment/generic/property/property_5' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'en_US' => 'Available field 5',
+			'fr_FR' => 'Champs libre 5',
+		),
+	),
+
+	'commitment/generic/property/property_6' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'en_US' => 'Available field 6',
+			'fr_FR' => 'Champs libre 6',
+		),
+	),
+
+	'commitment/generic/property/property_7' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'en_US' => 'Available field 7',
+			'fr_FR' => 'Champs libre 7',
+		),
+	),
+
+	'commitment/generic/property/property_8' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'en_US' => 'Available field 8',
+			'fr_FR' => 'Champs libre 8',
+		),
+	),
 	
 	'commitment/generic/property/update_time' => array(
 		'definition' => 'inline',
@@ -3509,6 +3581,11 @@ table.note-report td {
 	),
 	
 	'commitmentTerm/generic/property/commitment_caption' => array('definition' => 'commitment/generic/property/caption'),
+	'commitmentTerm/generic/property/commitment_property_1' => array('definition' => 'commitment/generic/property/property_1'),
+	'commitmentTerm/generic/property/commitment_property_2' => array('definition' => 'commitment/generic/property/property_2'),
+	'commitmentTerm/generic/property/commitment_property_3' => array('definition' => 'commitment/generic/property/property_3'),
+	'commitmentTerm/generic/property/commitment_property_4' => array('definition' => 'commitment/generic/property/property_4'),
+	'commitmentTerm/generic/property/commitment_property_5' => array('definition' => 'commitment/generic/property/property_5'),
 	'commitmentTerm/generic/property/account_status' => array('definition' => 'commitment/generic/property/account_status'),
 	'commitmentTerm/generic/property/account_date_1' => array('definition' => 'core_account/generic/property/date_1'),
 	'commitmentTerm/generic/property/account_date_2' => array('definition' => 'core_account/generic/property/date_2'),
@@ -3537,6 +3614,7 @@ table.note-report td {
 		'properties' => array(
 				'commitment_id', 'name', 'status', 'place_id', 'caption', 'invoice_account_id', 'due_date', 'settlement_date', 'collection_date',
 				'quantity', 'unit_price', 'amount', 'means_of_payment', 'bank_name', 'invoice_n_last', 'reference', 'comment', 'document', 'commitment_caption', 
+				'commitment_property_1', 'commitment_property_2', 'commitment_property_3', 'commitment_property_4', 'commitment_property_5', 'commitment_property_6', 'commitment_property_7', 'commitment_property_8', 
 				'tiny_1', 'tiny_2', 'tiny_3', 'tiny_4', 'tiny_5',
 				'account_status', 'account_date_1', 'account_date_2', 'account_date_3', 'account_date_4', 'account_date_5',
 				'account_property_1', 'account_property_2', 'account_property_3', 'account_property_4', 'account_property_5', 'account_property_6', 'account_property_7', 'account_property_8', 'account_property_9',

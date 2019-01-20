@@ -814,7 +814,7 @@ class TermController extends AbstractActionController
     		$value = vsprintf($context->localize($line['right']), $arguments);
     		if ($value) $invoice['description'][]  = array('title' => $context->localize($line['left']), 'value' => $value);
     	}
-		$invoice['currency_symbol'] = $context->getConfig('commitment')['currencySymbol'];
+		$invoice['currency_symbol'] = '€'; // $context->getConfig('commitment')['currencySymbol'];
     	$invoice['tax'] = 'excluding';
     	$line = array();
     	$line['caption'] = $term->caption;
@@ -834,7 +834,7 @@ class TermController extends AbstractActionController
     	
     	// Or compute back the excluded tax amount based on the given tax inclusive amount
     	else {
-		    	$line['unit_price'] = round($term->amount / (1 + $line['tax_rate']), 2);
+		    $line['unit_price'] = round($term->amount / (1 + $line['tax_rate']), 2);
 	    	$line['quantity'] = 1;
 	    	$line['amount'] = $line['unit_price'] * $line['quantity'];
 	    	$invoice['lines'] = array($line);

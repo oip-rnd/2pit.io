@@ -127,6 +127,7 @@
 			'Password request' => 'Demande de mot de passe',
 			'Perimeters' => 'Périmètres',
 			'Personnalize' => 'Personnaliser',
+			'Phone' => 'Téléphone',
 			'PLaces' => 'Etablissements',
 			'Please choose' => 'Veuillez choisir',
 			'Please confirm' => 'Veuillez confirmer',

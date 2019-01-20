@@ -123,10 +123,13 @@ class GenericTable
     }
 
 	// To use with caution !
-    public function transGet($id, $column = 'id', $includeDeleted = false)
+    public function transGet($id, $column = 'id', $id2 = false, $column2 = false, $id3 = false, $column3 = false, $id4 = false, $column4 = false, $includeDeleted = false)
     {
     	$where = array($column => $id);
     	if (!$includeDeleted) $where['status != ?'] = 'deleted';
+    	if ($id2) $where[$column2] = $id2;
+    	if ($id3) $where[$column3] = $id3;
+    	if ($id4) $where[$column4] = $id4;
     	$rowset = $this->tableGateway->select($where);
     	$row = $rowset->current();
     	return $row;

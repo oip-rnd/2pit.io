@@ -5,14 +5,19 @@ use PpitCommitment\Model\Commitment;
 use PpitCommitment\Model\Term;
 use PpitCore\Form\CsrfForm;
 use PpitCore\Model\Account;
+use PpitCore\Model\AccountSource;
 use PpitCore\Model\Config;
 use PpitCore\Model\Context;
 use PpitCore\Model\Csrf;
 use PpitCore\Model\Event;
+use PpitCore\Model\EventSource;
 use PpitCore\Model\Place;
 use PpitCore\Model\User;
+use PpitCore\Model\UserSource;
 use PpitCore\Model\UserContact;
+use PpitCore\Model\UserContactSource;
 use PpitCore\Model\Vcard;
+use PpitCore\Model\VcardSource;
 use Zend\Http\Headers;
 use Zend\Http\Request;
 use Zend\Http\Response\Stream;
@@ -270,22 +275,39 @@ class ProfileController extends AbstractActionController
 	
 				// Check if user is not revoked
 				$identity = $this->request->getPost('identity');
-				$credential = $this->request->getPost('credential');
-				$rc = $context->getSecurityAgent()->authenticate($identity, $credential);
-				if ($rc == 'OK') {
-					if ($redirect) {
-						return $this->redirect()->toRoute($redirect, array(), array('query' => $this->params()->fromQuery()));
-					}
-					else return $this->redirect()->toRoute('home');
-				}
-				else if ($rc == 'Activation') {
-					$actionStatus = ['401', 'Activation'];
-					$this->getResponse()->setStatusCode('401');
-					$this->getResponse()->setReasonPhrase('Activation');
-				}
-				else {
+				
+				// Check that the user has an account on the current instance
+				$user = User::getTable()->transGet($identity);
+				if (!$user) {
 					$actionStatus = ['401', 'Unauthorized'];
 		    		$this->getResponse()->setStatusCode('401');
+				}
+				else {
+					$userContact = UserContact::get($context->getInstanceId(), 'instance_id', $user->user_id, 'user_id');
+					if (!$userContact) {
+						$actionStatus = ['401', 'Unauthorized'];
+			    		$this->getResponse()->setStatusCode('401');
+					}
+				}
+
+				if (!$actionStatus) {
+					$credential = $this->request->getPost('credential');
+					$rc = $context->getSecurityAgent()->authenticate($identity, $credential);
+					if ($rc == 'OK') {
+						if ($redirect) {
+							return $this->redirect()->toRoute($redirect, array(), array('query' => $this->params()->fromQuery()));
+						}
+						else return $this->redirect()->toRoute('home');
+					}
+					else if ($rc == 'Activation') {
+						$actionStatus = ['401', 'Activation'];
+						$this->getResponse()->setStatusCode('401');
+						$this->getResponse()->setReasonPhrase('Activation');
+					}
+					else {
+						$actionStatus = ['401', 'Unauthorized'];
+			    		$this->getResponse()->setStatusCode('401');
+					}
 				}
 			}
 		}
@@ -1041,5 +1063,13 @@ class ProfileController extends AbstractActionController
 			echo $account->contact_1->photo_link_id;
 		}
 		return $this->response;
+	}
+	
+	public function importAction() {
+		$context = Context::getCurrent();
+		$vcards = VcardSource::getList(null, []);
+		foreach ($vcards as $vcardSource) {
+			// A compléter
+		}
 	}
 }
