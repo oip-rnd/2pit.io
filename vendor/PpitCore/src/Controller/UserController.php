@@ -1002,14 +1002,16 @@ class UserController extends AbstractActionController
 				// Check that the user has an account on the current instance
 				$user = User::getTable()->transGet($identity);
 				if (!$user) {
-					$actionStatus = ['401', 'Unauthorized'];
 					$this->getResponse()->setStatusCode('401');
+					$this->getResponse()->setReasonPhrase('Not exists');
+					return $this->getResponse();
 				}
 				else {
 					$userContact = UserContact::transGet($context->getInstanceId(), 'instance_id', $user->user_id, 'user_id');
 					if (!$userContact) {
-						$actionStatus = ['401', 'Unauthorized'];
 						$this->getResponse()->setStatusCode('401');
+						$this->getResponse()->setReasonPhrase('Not exists');
+						return $this->getResponse();
 					}
 					elseif ($user->vcard_id != $userContact->vcard_id) {
 						$user->vcard_id = $userContact->vcard_id;
