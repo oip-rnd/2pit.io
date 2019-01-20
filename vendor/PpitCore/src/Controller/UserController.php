@@ -998,6 +998,25 @@ class UserController extends AbstractActionController
 			if (!$context->isAuthenticated()) {
 				$identity = $_SERVER['PHP_AUTH_USER'];
 				$credential = $_SERVER['PHP_AUTH_PW'];
+
+				// Check that the user has an account on the current instance
+				$user = User::getTable()->transGet($identity);
+				if (!$user) {
+					$actionStatus = ['401', 'Unauthorized'];
+					$this->getResponse()->setStatusCode('401');
+				}
+				else {
+					$userContact = UserContact::get($context->getInstanceId(), 'instance_id', $user->user_id, 'user_id');
+					if (!$userContact) {
+						$actionStatus = ['401', 'Unauthorized'];
+						$this->getResponse()->setStatusCode('401');
+					}
+					elseif ($user->vcard_id != $userContact->vcard_id) {
+						$user->vcard_id = $userContact->vcard_id;
+						$user->update(null);
+					}
+				}
+				
 				$rc = $context->getSecurityAgent()->authenticate($identity, $credential);
 				if ($rc != 'OK') {
 					$this->getResponse()->setStatusCode('401');
