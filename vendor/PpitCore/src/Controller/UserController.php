@@ -1000,7 +1000,7 @@ class UserController extends AbstractActionController
 				$credential = $_SERVER['PHP_AUTH_PW'];
 
 				// Check that the user has an account on the current instance
-				$user = User::getTable()->transGet($identity);
+				$user = User::getTable()->transGet($identity, 'username');
 				if (!$user) {
 					$this->getResponse()->setStatusCode('401');
 					$this->getResponse()->setReasonPhrase('Not exists');
