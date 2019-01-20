@@ -86,9 +86,9 @@ class UserContact
     	return $contacts;
     }
 
-    public static function get($id, $column = 'id')
+    public static function get($id, $column = 'id', $id2 = false, $column2 = false, $id3 = false, $column3 = false, $id4 = false, $column4 = false)
     {
-		$userContact = UserContact::getTable()->get($id, $column);
+		$userContact = UserContact::getTable()->get($id, $column, $id2, $column2, $id3, $column3, $id4, $column4);
 		if ($userContact) {
 			$contact = Vcard::getTable()->get($userContact->vcard_id);
 			$userContact->n_fn = $contact->n_fn;

@@ -224,15 +224,19 @@ class PdfInvoiceViewHelper
 	    	$pdf->SetFont('', 'B');
     	}
 
-		$pdf->Ln();
-		$pdf->SetDrawColor(255, 255, 255);
-		$pdf->Cell(155, 6, 'Total réglé :', 'LR', 0, 'R', false);
-		$pdf->Cell(25, 6, $context->formatFloat($invoice['settled_amount'], 2).' '.$invoice['currency_symbol'], 'LR', 0, 'R', false);
+    	if ($invoice['settled_amount']) {
+			$pdf->Ln();
+			$pdf->SetDrawColor(255, 255, 255);
+			$pdf->Cell(155, 6, 'Total réglé :', 'LR', 0, 'R', false);
+			$pdf->Cell(25, 6, $context->formatFloat($invoice['settled_amount'], 2).' '.$invoice['currency_symbol'], 'LR', 0, 'R', false);
+    	}
 
-		$pdf->Ln();
-		$pdf->SetDrawColor(255, 255, 255);
-		$pdf->Cell(155, 6, 'Restant dû :', 'LR', 0, 'R', false);
-		$pdf->Cell(25, 6, $context->formatFloat($invoice['still_due'], 2).' '.$invoice['currency_symbol'], 'LR', 0, 'R', false);
+    	if ($invoice['still_due']) {
+	    	$pdf->Ln();
+			$pdf->SetDrawColor(255, 255, 255);
+			$pdf->Cell(155, 6, 'Restant dû :', 'LR', 0, 'R', false);
+			$pdf->Cell(25, 6, $context->formatFloat($invoice['still_due'], 2).' '.$invoice['currency_symbol'], 'LR', 0, 'R', false);
+    	}
 
     	$pdf->Ln();
 
