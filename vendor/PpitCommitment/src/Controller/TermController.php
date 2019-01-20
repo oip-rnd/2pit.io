@@ -853,7 +853,7 @@ class TermController extends AbstractActionController
 	    	$invoice['still_due'] = 0;
 	    }
 	    $invoice['tax_mention'] = $context->getConfig('commitment/invoice_tax_mention');
-	    if ($term->status == 'expected' && $context->getConfig('commitment/invoice_bank_details')) {
+	    if ($context->getConfig('commitment/invoice_bank_details')) {
     		$invoice['bank_details'] = $context->getConfig('commitment/invoice_bank_details');
     		$invoice['footer_mention_1'] = $context->getConfig('commitment/invoice_footer_mention_1');
     		$invoice['footer_mention_2'] = $context->getConfig('commitment/invoice_footer_mention_2');
