@@ -1006,7 +1006,7 @@ class UserController extends AbstractActionController
 					$this->getResponse()->setStatusCode('401');
 				}
 				else {
-					$userContact = UserContact::get($context->getInstanceId(), 'instance_id', $user->user_id, 'user_id');
+					$userContact = UserContact::transGet($context->getInstanceId(), 'instance_id', $user->user_id, 'user_id');
 					if (!$userContact) {
 						$actionStatus = ['401', 'Unauthorized'];
 						$this->getResponse()->setStatusCode('401');
