@@ -1000,14 +1000,14 @@ class UserController extends AbstractActionController
 				$credential = $_SERVER['PHP_AUTH_PW'];
 
 				// Check that the user has an account on the current instance
-				$user = User::getTable()->transGet($identity, 'username');
+				$user = User::get($identity, 'username');
 				if (!$user) {
 					$this->getResponse()->setStatusCode('401');
 					$this->getResponse()->setReasonPhrase('Not exists');
 					return $this->getResponse();
 				}
 				else {
-					$userContact = UserContact::transGet($context->getInstanceId(), 'instance_id', $user->user_id, 'user_id');
+					$userContact = UserContact::getTable()->transGet($context->getInstanceId(), 'instance_id', $user->user_id, 'user_id');
 					if (!$userContact) {
 						$this->getResponse()->setStatusCode('401');
 						$this->getResponse()->setReasonPhrase('Not exists');

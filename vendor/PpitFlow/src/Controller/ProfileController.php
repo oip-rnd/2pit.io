@@ -277,13 +277,13 @@ class ProfileController extends AbstractActionController
 				$identity = $this->request->getPost('identity');
 				
 				// Check that the user has an account on the current instance
-				$user = User::getTable()->transGet($identity, 'username');
+				$user = User::get($identity, 'username');
 				if (!$user) {
 					$actionStatus = ['401', 'Unauthorized'];
 		    		$this->getResponse()->setStatusCode('401');
 				}
 				else {
-					$userContact = UserContact::get($context->getInstanceId(), 'instance_id', $user->user_id, 'user_id');
+					$userContact = UserContact::getTable()->transGet($context->getInstanceId(), 'instance_id', $user->user_id, 'user_id');
 					if (!$userContact) {
 						$actionStatus = ['401', 'Unauthorized'];
 			    		$this->getResponse()->setStatusCode('401');
