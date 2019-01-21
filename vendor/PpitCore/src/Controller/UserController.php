@@ -1008,12 +1008,7 @@ class UserController extends AbstractActionController
 				}
 				else {
 					$userContact = UserContact::getTable()->transGet($context->getInstanceId(), 'instance_id', $user->user_id, 'user_id');
-					if (!$userContact) {
-						$this->getResponse()->setStatusCode('401');
-						$this->getResponse()->setReasonPhrase('Not exists');
-						return $this->getResponse();
-					}
-					elseif ($user->vcard_id != $userContact->vcard_id) {
+					if ($userContact && $user->vcard_id != $userContact->vcard_id) {
 						$user->vcard_id = $userContact->vcard_id;
 						$user->update(null);
 					}
