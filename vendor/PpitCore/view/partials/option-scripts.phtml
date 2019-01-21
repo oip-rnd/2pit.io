@@ -11,6 +11,7 @@ function sortOptionList(type, product_id, params, criterion) {
 $properties = array();
 
 $properties['option-type'] = array('type' => 'select', 'mandatory' => true);
+$properties['option-category'] = array('type' => 'select', 'mandatory' => true);
 $properties['option-reference'] = array('type' => 'input', 'mandatory' => true, 'maxSize' => 255);
 $properties['option-caption'] = array('type' => 'input', 'mandatory' => true, 'maxSize' => 255);
 $properties['option-description'] = array('type' => 'input', 'mandatory' => false, 'maxSize' => 2047);

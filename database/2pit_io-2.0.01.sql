@@ -25,3 +25,5 @@ ADD `tiny_5` VARCHAR(255) NULL DEFAULT NULL AFTER `tiny_4`;
 
 ALTER TABLE `core_account` 
 ADD `shopping_cart` VARCHAR(255) NULL DEFAULT NULL AFTER `credits`;
+
+ALTER TABLE `core_product_option` ADD `category` VARCHAR(255) NULL DEFAULT NULL AFTER `type`;

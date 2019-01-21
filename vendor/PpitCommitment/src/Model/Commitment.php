@@ -195,6 +195,7 @@ class Commitment
 		$properties = array();
 		$description = $context->getConfig('commitment/'.$type);
 		if (!$description) $description = $context->getConfig('commitment/generic');
+		$description['type'] = $type;
 		foreach($description['properties'] as $propertyId) {
 			
 			$property = $context->getConfig('commitment/'.$type.'/property/'.$propertyId);

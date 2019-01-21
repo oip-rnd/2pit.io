@@ -6037,6 +6037,17 @@ table.note-report td {
 	
 	'ppitProduct/update' => array(),
 	
+	// Product option
+	
+	'productOption/generic/property/category' => array(
+		'definition' => 'inline',
+		'type' => 'select',
+		'modalities' => array(
+			'' => ['default' => 'Undefined option', 'fr_FR' => 'Option indéfinie'],
+			'other' => ['default' => 'Other option', 'fr_FR' => 'Option autre'],
+		),
+	),
+	
 	// User
 	'coreUser' => array(
 			'properties' => array(

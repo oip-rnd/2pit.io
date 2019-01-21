@@ -197,6 +197,7 @@ class ProductOptionController extends AbstractActionController
     		if ($csrfForm->isValid()) { // CSRF check
     			$data = array();
     			$data['type'] = $request->getPost(('option-type'));
+    			$data['category'] = $request->getPost(('option-category'));
     			$data['reference'] = $request->getPost(('option-reference'));
     			$data['caption'] = $request->getPost(('option-caption'));
     			$data['description'] = $request->getPost(('option-description'));

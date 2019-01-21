@@ -11,6 +11,7 @@ class ProductOption
     public $id;
     public $status;
     public $type;
+    public $category;
     public $product_id;
     public $reference;
     public $caption;
@@ -51,6 +52,7 @@ class ProductOption
         $this->id = (isset($data['id'])) ? $data['id'] : null;
         $this->status = (isset($data['status'])) ? $data['status'] : null;
         $this->type = (isset($data['type'])) ? $data['type'] : null;
+        $this->category = (isset($data['category'])) ? $data['category'] : null;
         $this->product_id = (isset($data['product_id'])) ? $data['product_id'] : null;
         $this->reference = (isset($data['reference'])) ? $data['reference'] : null;
         $this->caption = (isset($data['caption'])) ? $data['caption'] : null;
@@ -73,6 +75,7 @@ class ProductOption
     	$data['id'] = (int) $this->id;
     	$data['status'] = $this->status;
     	$data['type'] = $this->type;
+    	$data['category'] = $this->category;
     	$data['product_id'] = (int) $this->product_id;
     	$data['reference'] = $this->reference;
     	$data['caption'] = $this->caption;
@@ -130,7 +133,7 @@ class ProductOption
     	$options = array();
     	foreach ($cursor as $option) {
     		$option->properties = $option->toArray();
-    		$options[] = $option;
+    		$options[$option->id] = $option;
     	}
     
     	return $options;
@@ -155,7 +158,11 @@ class ProductOption
 	    	$this->type = trim(strip_tags($data['type']));
         	if (!$this->type || strlen($this->type) > 255) return 'Integrity';
     	}
-        if (array_key_exists('reference', $data)) {
+        if (array_key_exists('category', $data)) {
+	    	$this->category = trim(strip_tags($data['category']));
+        	if (!$this->category || strlen($this->category) > 255) return 'Integrity';
+    	}
+    	if (array_key_exists('reference', $data)) {
     		$this->reference = trim(strip_tags($data['reference']));
             if (!$this->reference || strlen($this->reference) > 255) return 'Integrity';
     	}

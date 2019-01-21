@@ -193,6 +193,7 @@ class Account
 		$properties = array();
 		$description = $context->getConfig('core_account/'.$type);
 		if (!$description) $description = $context->getConfig('core_account/generic');
+		$description['type'] = $type;
 		foreach($description['properties'] as $propertyId) {
 			$property = $context->getConfig('core_account/'.$type.'/property/'.$propertyId);
 			if (!$property) $property = $context->getConfig('core_account/generic/property/'.$propertyId);
