@@ -414,7 +414,7 @@ class EventController extends AbstractActionController
 				elseif (in_array($myAccount && $myAccount->id, explode(',', $request->matched_accounts))) $content['data'][$request->id]['role'] = 'contributor';
 				else $content['data'][$request->id]['role'] = null;
 				if (in_array($request->status, ['new', 'connected'])) {
-					if ($myAccount->id != $request->account_id && !in_array($myAccount->id, explode(',', $request->matched_accounts))) {
+					if ($myAccount && $myAccount->id != $request->account_id && !in_array($myAccount->id, explode(',', $request->matched_accounts))) {
 						$actions['propose'] = $content['actions']['Public']['propose'];
 					}
 					if (array_key_exists('transfer', $content['actions']['Public'])) $actions['transfer'] = $content['actions']['Public']['transfer'];
