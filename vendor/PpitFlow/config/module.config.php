@@ -277,7 +277,7 @@ return array (
 			'funnel' => array(
 				'type'    => 'literal',
 				'options' => array(
-					'route'    => '/payment',
+					'route'    => '/funnel',
 					'defaults' => array(
 						'controller' => 'PpitFlow\Controller\Funnel',
 						'action'     => 'index',
@@ -528,11 +528,11 @@ return array (
 				array('route' => 'landing/checkout', 'roles' => array('guest')),
 				array('route' => 'landing/test', 'roles' => array('guest')),
 
-				array('route' => 'flowEvent', 'roles' => array('user')),
-				array('route' => 'flowEvent/index', 'roles' => array('user')),
-				array('route' => 'flowEvent/dashboard', 'roles' => array('user')),
-				array('route' => 'flowEvent/list', 'roles' => array('user')),
-				array('route' => 'flowEvent/detail', 'roles' => array('user')),
+				array('route' => 'flowEvent', 'roles' => array('guest')),
+				array('route' => 'flowEvent/index', 'roles' => array('guest')),
+				array('route' => 'flowEvent/dashboard', 'roles' => array('guest')),
+				array('route' => 'flowEvent/list', 'roles' => array('guest')),
+				array('route' => 'flowEvent/detail', 'roles' => array('guest')),
 				array('route' => 'flowEvent/update', 'roles' => array('user')),
 				array('route' => 'flowEvent/fill', 'roles' => array('user')),
 				array('route' => 'flowEvent/contact', 'roles' => array('user')),

@@ -844,7 +844,7 @@ class TermController extends AbstractActionController
 	    	$invoice['tax_inclusive'] = $term->amount;
     	}
     	
-	    if ($term->status == 'expected' && $context->getConfig('commitment/invoice_bank_details')) {
+	    if (in_array($term->status, ['expected', 'to_invoice']) && $context->getConfig('commitment/invoice_bank_details')) {
 		    $invoice['settled_amount'] = 0;
 	    	$invoice['still_due'] = $term->amount;
 	    }

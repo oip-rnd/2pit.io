@@ -82,6 +82,11 @@ class ProfileController extends AbstractActionController
 					$data['origine'] = $this->request->getPost('origine');
 						
 					$actionStatus = $account->loadAndAdd($data, $description);
+					if ($actionStatus[0] == '206') $account = Account::get($actionStatus[1]);
+					$content['data'] = $account->getProperties();
+					$account->status = 'registered';
+					$account->update(null);
+
 					if (!in_array($actionStatus[0], ['200', '206'])) $connection->rollback();
 					else {
 	
@@ -142,7 +147,7 @@ class ProfileController extends AbstractActionController
 										'caption' => $context->localize($funnel['term_caption']),
 										'due_date' => date('Y-m-d'),
 										'amount' => $amount,
-										'means_of_payment' => 'credit_card',
+										'means_of_payment' => 'bank_card',
 									);
 									$actionStatus = $term->loadAndAdd($data);
 									if ($actionStatus[0] == '200') {
@@ -285,10 +290,23 @@ class ProfileController extends AbstractActionController
 				else {
 					$userContact = UserContact::getTable()->transGet($context->getInstanceId(), 'instance_id', $user->user_id, 'user_id');
 					if (!$userContact) {
-						$actionStatus = ['401', 'Unauthorized'];
-			    		$this->getResponse()->setStatusCode('401');
+						$accountType = $context->getConfig('landing_account_type');
+						$vcard = Vcard::getTable()->transGet($user->vcard_id);
+						$vcard->id = null;
+						$vcard->add();
+						$account = Account::instanciate($accountType);
+						$data = array();
+						$data['status'] = 'interested';
+						$data['email'] = $vcard->email;
+						$rc = $account->loadAndAdd($data);
+						if ($rc[0] == '206') $account = Account::get($rc[1]);
+						$userContact = UserContact::instanciate();
+				    	$userContact->user_id = $user->user_id;
+				    	$userContact->vcard_id = $vcard->id;
+				    	if ($userContact->add() != 'OK') throw new \Exception();
 					}
-					elseif ($user->vcard_id != $userContact->vcard_id) {
+					if ($user->vcard_id != $userContact->vcard_id) {
+						$user->instance_id = $context->getInstanceId();
 						$user->vcard_id = $userContact->vcard_id;
 						$user->update(null);
 					}

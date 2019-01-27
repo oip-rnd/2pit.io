@@ -10,6 +10,7 @@ use PpitCore\Model\Csrf;
 use PpitCore\Model\Event;
 use PpitCore\Model\GroupAccount;
 use PpitCore\Model\Place;
+use PpitCore\Model\UserContact;
 use PpitCore\Model\Vcard;
 use PpitCore\Model\AccountSource;
 use PpitCore\Model\EventSource;
@@ -113,7 +114,7 @@ class EventController extends AbstractActionController
 		else $content = Config::get($place_identifier.'_'.$type, 'identifier')->content;
 
 		// compute ranking in gaming mode
-		if (array_key_exists('rewards', $content)) {
+		if ($account && array_key_exists('rewards', $content)) {
 			if (array_key_exists('earned', $account->credits)) $account->credits['rank'] = $this->displayRank($account);
 			$account->properties['credits'] = $account->credits;
 		}
@@ -141,8 +142,19 @@ class EventController extends AbstractActionController
 			$profileForm['inputs'][$inputId] = $property;
 		}
 
-		$panel = $this->params()->fromQuery('panel', null);
-		if ($type == 'request' /*&& $charter_status == 'OK' && $gtou_status == 'OK'*/ && !$panel && (!$account->properties['completeness'] || $account->properties['completeness'] == '0_not_completed')) $panel = 'modalProfileForm';
+		// If an email is given as a parameter: Show the Login or Sign Up form depending of the account existing or not
+		$panel = $this->params()->fromQuery('panel');
+		$email = $this->params()->fromQuery('email');
+		if ($email) {
+			$vcard = Vcard::get($email, 'email');
+			if ($vcard) {
+				$userContact = UserContact::get($vcard->id, 'vcard_id');
+				if ($userContact) $panel = 'modalLoginForm';
+				else $panel = 'modalRegisterForm';
+			}
+			else $panel = 'modalRegisterForm';
+		}
+		if ($account && $type == 'request' /*&& $charter_status == 'OK' && $gtou_status == 'OK'*/ && !$panel && (!$account->properties['completeness'] || $account->properties['completeness'] == '0_not_completed')) $panel = 'modalProfileForm';
 
 		// Feed the layout
 		$this->layout('/layout/flow-layout');
@@ -150,12 +162,12 @@ class EventController extends AbstractActionController
 			'context' => $context,
 			'type' => $type,
 			'place_identifier' => $place_identifier,
-			'account_id' => $account->id,
+			'account_id' => ($account) ? $account->id : null,
 			'mode' => $mode,
 			'queryAction' => $action,
 			'queryId' => $id,
 			'panel' => $panel,
-			'identity' => null,
+			'identity' => $email,
 			'redirectRoute' => $this->params()->fromQuery('route'),
 			'redirectParams' => $this->params()->fromQuery('params'),
 			'token' => $this->params()->fromQuery('hash', null),
@@ -184,7 +196,7 @@ class EventController extends AbstractActionController
 			'type' => $type,
 			'locale' => $locale,
 			'place_identifier' => $place_identifier,
-			'account' => $account->properties,
+			'account' => ($account) ? $account->properties : [],
 			'content' => $content,
 		));
 		return $view;
@@ -382,7 +394,7 @@ class EventController extends AbstractActionController
 					$property = $key[1];
 					if ($entity == 'event') $value = $request->properties[$property];
 					elseif ($entity == 'query') $value = $this->params()->fromQuery($property);
-					elseif ($entity == 'profile') $value = $myAccount->properties[$property];
+					elseif ($myAccount && $entity == 'profile') $value = $myAccount->properties[$property];
 					foreach ($rules as list($operator, $format, $parameters, $ponderation)) {
 						$arguments = array();
 						foreach ($parameters as $parameter) $arguments[] = $request->properties[$parameter];
@@ -398,8 +410,8 @@ class EventController extends AbstractActionController
 				$actions = array();
 				$content['data'][$request->id] = $request->getProperties();
 				$content['data'][$request->id]['rank'] = $rank;
-				if ($myAccount->id == $request->account_id) $content['data'][$request->id]['role'] = 'requestor';
-				elseif (in_array($myAccount->id, explode(',', $request->matched_accounts))) $content['data'][$request->id]['role'] = 'contributor';
+				if ($myAccount && $myAccount->id == $request->account_id) $content['data'][$request->id]['role'] = 'requestor';
+				elseif (in_array($myAccount && $myAccount->id, explode(',', $request->matched_accounts))) $content['data'][$request->id]['role'] = 'contributor';
 				else $content['data'][$request->id]['role'] = null;
 				if (in_array($request->status, ['new', 'connected'])) {
 					if ($myAccount->id != $request->account_id && !in_array($myAccount->id, explode(',', $request->matched_accounts))) {
@@ -417,7 +429,7 @@ class EventController extends AbstractActionController
 		$view = new ViewModel(array(
 			'context' => $context,
 			'mode' => $mode,
-			'my_account_id' => $myAccount->id,
+//			'my_account_id' => $myAccount->id,
 			'content' => $content,
 			'locale' => $locale,
 		));
@@ -585,23 +597,27 @@ class EventController extends AbstractActionController
 		$context = Context::getCurrent();
 		$type = $this->params()->fromRoute('type', 'event');
 		$id = $this->params()->fromRoute('id');
+		$place = Place::get($context->getPlaceId());
+		$place_identifier = $place->identifier;
 		$availableSkills = $context->getConfig('matching/skills');
 		$locale = $this->params()->fromQuery('locale');
 		$message = $this->params()->fromQuery('message');
 		
 		// Retrieve the context account and place
 		$myAccount = Account::get($context->getContactId(), 'contact_1_id');
-		$charter_status = $myAccount->getCharterStatus();
-		$gtou_status = $myAccount->getGtouStatus();
-		$place = Place::get($myAccount->place_id);
-		$place_identifier = $place->identifier;
+		if ($myAccount) {
+			$charter_status = $myAccount->getCharterStatus();
+			$gtou_status = $myAccount->getGtouStatus();
+			$place = Place::get($myAccount->place_id);
+			$place_identifier = $place->identifier;
+		}
 
 		// Retrieve the request, the owner profile and the matched accounts
 		$request = Event::get($id);
 		$account = Account::get($request->account_id);
 		
 		// Discriminate between the mode 'requestor' (consultation of a request of mine) and the mode 'public' (requests from others)
-		if ($request->account_id == $myAccount->id) $mode = 'Owner';
+		if ($myAccount && $request->account_id == $myAccount->id) $mode = 'Owner';
 		else $mode = 'Public';
 		
 		// Retrieve the request description according to its type
@@ -673,7 +689,7 @@ class EventController extends AbstractActionController
 		}
 		else { // Public mode
 			$actions = array();
-			if (!in_array($myAccount->id, explode(',', $request->matched_accounts))) {
+			if (!$myAccount || !in_array($myAccount->id, explode(',', $request->matched_accounts))) {
 				$content['detail']['title'] = $content['detail']['title']['Public']['new'];
 				$actions['propose'] = $content['actions']['Public']['propose'];
 			}
@@ -955,6 +971,9 @@ class EventController extends AbstractActionController
 				$request->matching_log[$account_id]['action'] = 'accept';
 				$request->matching_log[$account_id]['date'] = Date('Y-m-d');
 			}
+					
+			// Update the event status
+			$request->status = 'connected';
 			$rc = $request->update(null);
 			if ($rc != 'OK') {
 				$connection->rollback();
@@ -1569,7 +1588,7 @@ class EventController extends AbstractActionController
 				}
 
 				// Credit the feedback giver with the credit value associated to this event
-				$account->credits += $request->value;
+//				$account->credits += $request->value;
 				$account->update(null);
 
 				$connection->commit();

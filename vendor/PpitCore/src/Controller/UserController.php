@@ -1053,7 +1053,7 @@ class UserController extends AbstractActionController
 					try {
 						$account = Account::instanciate($type);
 						$rc = $account->loadAndAdd($data, Account::getConfig($type));
-						if ($rc[0] == 206) $account = $rc[1];
+						if ($rc[0] == 206) $account = Account::get($rc[1]);
 						$content['data'] = $account->getProperties();
 						$account->status = 'registered';
 						$account->update(null);

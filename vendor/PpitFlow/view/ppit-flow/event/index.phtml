@@ -58,7 +58,7 @@
 <!-- Mode change -->
 
   <?php if ($navItem['type'] == 'mode') : ?>
-    <?php if ($type != 'event' || $navItem['value'] != 'Owner' || $context->hasRole('ambassador')) : ?>
+    <?php if ($account && ($type != 'event' || $navItem['value'] != 'Owner' || $context->hasRole('ambassador'))) : ?>
   <li class="nav-item">
     <a class="nav-link aMode" id="aMode<?php echo $navItem['value'] ?>"><?php echo $context->localize($navItem['labels'], $locale) ?></a>
   </li>
@@ -144,7 +144,7 @@
 
 <!-- New event -->
 
-  <?php elseif ($navItem['type'] == 'new') : ?>
+  <?php elseif ($account && $navItem['type'] == 'new') : ?>
     <?php if ($type != 'event' || $context->hasRole('ambassador')) : ?>
   <li class="nav-item">
     <a class="nav-link" href="<?php echo $this->url('flowEvent/fill', ['type' => $type]) ?>" class="text-secondary mr-3"><i class="fa fa-plus mr-1"></i><?php echo $context->localize($navItem['labels'], $locale) ?></a>

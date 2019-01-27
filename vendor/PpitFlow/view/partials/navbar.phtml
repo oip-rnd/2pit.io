@@ -116,38 +116,16 @@ body.modal-open {
 
         </nav>
         <!--/.Navbar-->    
+  
+<div class="modal fade" id="modalRegisterForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content" id="modalRegisterContent"></div>
+  </div>
+</div>
 
 <div class="modal fade" id="modalLoginForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header text-center">
-                <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('Log In', 'ppit-flow', $locale) ?></h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form id="login-form">
-              <span id="login-csrf"></span>
-              <div class="modal-body mx-3">
-                  <div class="md-form mb-5">
-                      <i class="fa fa-envelope prefix grey-text"></i>
-                      <input type="text" id="identity" class="form-control validate modal_input" required="required" value="<?php echo $identity ?>">
-                      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="identity"><?php echo $this->translate('Email', 'ppit-core', $locale) ?></label>
-                  </div>
-  
-                  <div class="md-form mb-4">
-                      <i class="fa fa-lock prefix grey-text"></i>
-                      <input type="password" id="credential" class="form-control validate modal_input" required="required">
-                      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="credential"><?php echo $this->translate('Password', 'ppit-core', $locale) ?></label>
-                  </div>
-  
-              </div>
-              <div class="modal-footer d-flex justify-content-center">
-                <button type="submit" class="btn btn-success" id="login-button"><?php echo $this->translate('Log In', 'ppit-flow', $locale) ?></button>
-                  <a id="lost_password_anchor"><?php echo $this->translate('Lost password?', 'ppit-core', $locale) ?></a>
-              </div>
-          </form>
-        </div>
+        <div class="modal-content" id="modalLoginContent"></div>
     </div>
 </div>
   
@@ -302,12 +280,6 @@ body.modal-open {
         </div>
       </form>
     </div>
-  </div>
-</div>
-  
-<div class="modal fade" id="modalRegisterForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content" id="modalRegisterContent"></div>
   </div>
 </div>
   

@@ -49,6 +49,7 @@
 // Dashboard
 
 function showDashboard() {
+<?php if ($account_id) : ?>
   var xhttp = new XMLHttpRequest();
   xhttp.open('GET', '<?php echo $this->url('flowEvent/dashboard', ['type' => $type]) ?>', true);
   xhttp.onload = function () {
@@ -68,6 +69,7 @@ function showDashboard() {
     }
   };
   xhttp.send();
+<?php endif;?>
 }
 
 showDashboard();
@@ -322,7 +324,7 @@ function showList() {
           var request_id = $(this).attr('id').split('-')[1];
           xhttp.open('GET', '<?php echo $this->url('flowEvent/detail', ['type' => $type]) ?>/' + request_id, true);
           xhttp.onload = function () {
-            if (xhttp.readyState == 4 && xhttp.status == 200) {
+            if (xhttp.readyState == 4 /*&& xhttp.status == 200*/) {
               $('#modalRequestDetailTitle').html('<?php echo $context->localize($detail['title']['detail'], $locale) ?>');
               $('#modalRequestDetailContent').html(xhttp.responseText);
               $('#modalRequestDetailForm').modal('show');

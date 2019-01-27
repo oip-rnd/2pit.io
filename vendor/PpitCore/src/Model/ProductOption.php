@@ -160,7 +160,7 @@ class ProductOption
     	}
         if (array_key_exists('category', $data)) {
 	    	$this->category = trim(strip_tags($data['category']));
-        	if (!$this->category || strlen($this->category) > 255) return 'Integrity';
+        	if (strlen($this->category) > 255) return 'Integrity';
     	}
     	if (array_key_exists('reference', $data)) {
     		$this->reference = trim(strip_tags($data['reference']));

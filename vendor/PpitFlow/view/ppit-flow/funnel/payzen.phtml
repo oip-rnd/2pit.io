@@ -1,7 +1,7 @@
-<!-- <form action="https://secure.payzen.eu/vads-payment/" method="post"> -->
-<form action="<?php echo $this->url('payment/payzenReturn') ?>" method="post">
+<form action="https://secure.payzen.eu/vads-payment/" method="post">
+<!-- <form action="<?php echo $this->url('funnel/payzenReturn') ?>" method="post"> -->
 <?php foreach ($formData as $name => $value) : ?>
   <input type="hidden" name="<?php echo $name ?>" value="<?php echo $value ?>" />
 <?php endforeach;?>
-  <button type="submit">Submit</button>
+  <button type="submit" name="payer" value="Payer">Submit</button>
 </form>

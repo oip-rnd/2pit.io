@@ -3051,6 +3051,7 @@ Hébergeur : OVH 59820 Gravelines pour P-Pit SAS
 			'file' => array('en_US' => 'File', 'fr_FR' => 'Fichier'),
 			'e_mailing' => array('en_US' => 'e-mailing', 'fr_FR' => 'e-mailing'),
 			'facebook' => array('default' => 'Facebook'),
+			'agency' => array('default' => 'Agence'),
 		),
 		'labels' => array(
 			'en_US' => 'Origine',

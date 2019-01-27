@@ -1748,11 +1748,11 @@ class Account
 	/**
 	* Restfull implementation
 	*/
-    public function loadAndAdd($data, $config)
+    public function loadAndAdd($data, $config = null /* Deprecated */)
     {
     	$context = Context::getCurrent();
     	$type = $this->type;
-    	$description = $context->getConfig('core_account/'.$type);
+    	$description = Account::getDescription('core_account/'.$type);
     	
     	if (!array_key_exists('status', $data)) $data['status'] = 'new';
 /*    	foreach ($description['properties'] as $propertyId) {
@@ -1776,13 +1776,13 @@ class Account
     	$contact5Data = array();
     	$entities = Account::$model['entities'];
     	$properties = Account::$model['properties'];
-		foreach($data as $key => $value) {
-    		if (in_array($key, $description['properties'])) {
+    	foreach($data as $key => $value) {
+			if (array_key_exists($key, $description['properties'])) {
     			$value = $data[$key];
     			$keep = true;
 	    		if ($key == 'result') $keep = false;
 	
-				$property = $config[$key];
+				$property = $description['properties'][$key];
 	
 				if ($keep = true) {
 					if ($properties[$key]['entity'] == 'core_account') $accountData[$properties[$key]['column']] = $value;
@@ -1907,7 +1907,7 @@ class Account
 		return ['200', $account->id];
     }
 
-    public function loadAndUpdate($data, $config, $update_time = null)
+    public function loadAndUpdate($data, $config /* deprecated */, $update_time = null)
     {
 		$context = Context::getCurrent();
 		$type = $this->type;
