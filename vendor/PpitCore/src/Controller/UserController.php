@@ -938,7 +938,7 @@ class UserController extends AbstractActionController
 					$account->status = 'active';
 					$account->update(null);
 				}
-				return $this->redirect()->toRoute('probonopro/landing' /*$context->getConfig('defaultRoute')*/, [], ['query' => ['message' => 'activated']]);
+				return $this->redirect()->toRoute($context->getConfig('defaultRoute'), [], ['query' => ['message' => 'activated']]);
 			}
 			elseif ($request == 'request-activation') {
 				$identity = $this->params()->fromQuery('identity');

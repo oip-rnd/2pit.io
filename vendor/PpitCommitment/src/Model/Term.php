@@ -829,7 +829,7 @@ class Term
 		);
 		$configProperties = Term::getConfig($this->type);
 		foreach ($data as $propertyId => $value) {
-			if (!array_key_exists($propertyId, $configProperties)) $errors[$propertyId] = "The accounts of type $type does not manage the property $propertyId";
+			if (!array_key_exists($propertyId, $configProperties)) $errors[$propertyId] = "The terms of type $this->type does not manage the property $propertyId";
 			else {
 				$property = $configProperties[$propertyId];
 				if (in_array($property['type'], ['array', 'key_value', 'structure'])) $value = $data[$propertyId];

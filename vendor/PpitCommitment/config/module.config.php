@@ -924,7 +924,7 @@ return array(
             	array('route' => 'commitment/serviceAdd', 'roles' => array('guest')),
 //            	array('route' => 'commitment/workflow', 'roles' => array('sales_manager')),
             	array('route' => 'commitment/serviceSettle', 'roles' => array('accountant')),
-            	array('route' => 'commitment/downloadInvoice', 'roles' => array('sales_manager', 'accountant')),
+            	array('route' => 'commitment/downloadInvoice', 'roles' => array('user')),
             	array('route' => 'commitment/sendMessage', 'roles' => array('sales_manager', 'accountant')),
             	array('route' => 'commitment/paymentResponse', 'roles' => array('accountant')),
             	array('route' => 'commitment/delete', 'roles' => array('sales_manager')),
@@ -2647,7 +2647,7 @@ table.note-report td {
 	),
 	
 	'commitment/invoice_identifier_mask' => array(
-		'format' => array('default' => '%s-%5d'),
+		'format' => array('default' => '%s-%05d'),
 		'params' => array('year', 'counter'),
 	),
 	'commitment/invoice_tax_mention' => '',

@@ -41,7 +41,14 @@ class ProfileController extends AbstractActionController
 		$accountType = $context->getConfig('landing_account_type');
 		$account = null;
 		if ($account_id) $account = Account::get('account_id');
-		else $account = Account::instanciate($accountType);
+		else {
+			$account = Account::instanciate($accountType);
+		
+			// pre-filled form
+			$account->email = $this->params()->fromQuery('email');
+			$account->n_first = $this->params()->fromQuery('n_first');
+			$account->n_last = $this->params()->fromQuery('n_last');
+		}
 	
 		// Data description
 		$description = Account::getConfig($accountType);
@@ -58,7 +65,7 @@ class ProfileController extends AbstractActionController
 		// CSRF protection
 		$csrfForm = new CsrfForm();
 		$csrfForm->addCsrfElement('csrf');
-	
+		
 		// Process the post data after input
 		$actionStatus = null;
 		if ($this->request->isPost()) {

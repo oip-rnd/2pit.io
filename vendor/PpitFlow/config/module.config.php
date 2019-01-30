@@ -288,7 +288,7 @@ return array (
 					'payzen' => array(
 						'type' => 'segment',
 						'options' => array(
-							'route' => '/payzen',
+							'route' => '/payzen[/:commitment_id]',
 							'defaults' => array(
 								'action' => 'payzen',
 							),
@@ -550,9 +550,9 @@ return array (
 				array('route' => 'flowEvent/signOut', 'roles' => array('user')),
 				array('route' => 'flowEvent/repair', 'roles' => array('admin')),
 
-				array('route' => 'funnel', 'roles' => array('user')),
-            	array('route' => 'funnel/payzen', 'roles' => array('user')),
-            	array('route' => 'funnel/payzenReturn', 'roles' => array('user')),
+				array('route' => 'funnel', 'roles' => array('guest')),
+            	array('route' => 'funnel/payzen', 'roles' => array('guest')),
+            	array('route' => 'funnel/payzenReturn', 'roles' => array('guest')),
 				array('route' => 'funnel/paypal', 'roles' => array('user')),
 				
 				array('route' => 'profile', 'roles' => array('user')),

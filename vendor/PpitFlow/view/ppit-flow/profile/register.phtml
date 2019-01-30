@@ -55,17 +55,17 @@
 
     <div class="md-form mb-3">
       <input type="email" id="register-email" class="form-control validate modal_input" required="required" value="<?php echo $account->email ?>" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
-      <label <?php if ($isDisabled) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="register-email">* <?php echo $this->translate('Email', 'ppit-core', $locale) ?></label>
+      <label <?php if ($isDisabled || $account->email) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="register-email">* <?php echo $this->translate('Email', 'ppit-core', $locale) ?></label>
     </div>
   
     <div class="md-form mb-3">
       <input type="text" id="register-n_first" class="form-control validate modal_input" required="required" value="<?php echo $account->n_first ?>" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
-      <label <?php if ($isDisabled) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="register-n_first">* <?php echo $this->translate('First name', 'ppit-core', $locale) ?></label>
+      <label <?php if ($isDisabled || $account->n_first) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="register-n_first">* <?php echo $this->translate('First name', 'ppit-core', $locale) ?></label>
     </div>
   
     <div class="md-form mb-3">
       <input type="text" id="register-n_last" class="form-control validate modal_input" required="required" value="<?php echo $account->n_last ?>" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
-      <label <?php if ($isDisabled) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="register-n_last">* <?php echo $this->translate('Last name', 'ppit-core', $locale) ?></label>
+      <label <?php if ($isDisabled || $account->n_last) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="register-n_last">* <?php echo $this->translate('Last name', 'ppit-core', $locale) ?></label>
     </div>
   
 <?php if (!$isDisabled) : ?>
@@ -79,7 +79,10 @@
        <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="register-password2">* <?php echo $this->translate('Confirm the password', 'ppit-core', $locale) ?></label>
     </div>
 
-  <?php $origin = $context->getConfig('core_account/'.$accountType.'/property/origine') ?>  
+  <?php 
+  $origin = $context->getConfig('core_account/'.$accountType.'/property/origine');
+  if ($origin['definition'] != 'inline') $origin = $context->getConfig($origin['definition']);
+  ?>
    <div class="md-form mb-3">
       <select id="register-origine" class="mdb-select validate modal_input" required="required">
         <option></option>
@@ -87,7 +90,7 @@
         <option value="<?php echo $modalityId ?>"><?php echo $context->localize($modality, $locale) ?></option>
   <?php endforeach;?>
       </select>
-      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="origine">* <?php echo $this->translate('How did you know us?', $locale) ?></label>
+      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="origine">* <?php echo $this->translate('How did you know us?', 'ppit-flow', $locale) ?></label>
     </div>
 <?php endif;?>
 

@@ -143,22 +143,30 @@ class FunnelController extends AbstractActionController
     	$payZenConfig = $context->getConfig('ppitUserSettings')['safe'][$context->getInstance()->caption]['PayZen'];
     	
     	// Term id
-    	$id = $this->params()->fromRoute('id');
-    	    	
+    	$commitment_id = $this->params()->fromRoute('commitment_id');
+    	$commitment = Commitment::get($commitment_id);
+		$payment_config = 'MULTI_EXT:';
+		$first = true;
+		foreach ($commitment->terms as $term) {
+			if (!$first) $payment_config .= ';';
+			$first = false;
+			$payment_config .= substr($term->due_date, 0, 4) . substr($term->due_date, 5, 2) . substr($term->due_date, 8, 2) . '=' . $term->amount * 100;
+		}
+    	
     	// PayZen form date
     	$formData = array(
     		'vads_action_mode' => 'INTERACTIVE',
-    		'vads_amount' => '100',
+    		'vads_amount' => $commitment->tax_inclusive * 100,
     		'vads_capture_delay' => '0',
     		'vads_ctx_mode' => 'TEST',
     		'vads_currency' => '978',
     		'vads_page_action' => 'PAYMENT',
-    		'vads_payment_config' => 'SINGLE',
+    		'vads_payment_config' => $payment_config,
     		'vads_return_mode' => 'POST',
     		'vads_site_id' => '88978876',
     		'vads_trans_date' => date('YmdHis'),
-    		'vads_trans_id' => $id,
-    		'vads_url_return' => 'https://www.p-pit.fr/commitment-term/payzen-return',
+    		'vads_trans_id' => sprintf('%06d', $commitment_id),
+    		'vads_url_return' => $this->url()->fromRoute($context->getConfig('defaultRoute'), ['identity' => $commitment->email], ['force_canonical' => true]),
     		'vads_validation_mode' => '0',
     		'vads_version' => 'V2',
     	);
@@ -179,18 +187,32 @@ class FunnelController extends AbstractActionController
     {
 		// Context
     	$context = Context::getCurrent();
-
+    	$payZenConfig = $context->getConfig('ppitUserSettings')['safe'][$context->getInstance()->caption]['PayZen'];
+    	 
     	// Form data
     	$form = explode('&', $this->request->getPost()->toString());
     	$formData = array();
     	foreach ($form as $var) {
     		$tuplet = explode('=', $var);
-    		$formData[$tuplet[0]] = $tuplet[1];
+    		if (substr($tuplet[0], 0, 5) == 'vads_') $formData[$tuplet[0]] = $tuplet[1];
+    		elseif ($tuplet[0] == 'signature') $receivedSignature = $tuplet[1];
     	}
 
-    	// Term
-    	$term = Term::get($formData['vads_trans_id']);
-    	
+    	$signature = '';
+    	ksort($formData);
+    	foreach ($formData as $name => $value) $signature .= $value . '+';
+    	$signature = base64_encode(hash_hmac('sha256', $signature . $payZenConfig['key'], $payZenConfig['key'], true));
+
+    	if ($signature == $receivedSignature) {
+	    	// Term
+	    	$commitment = Commitment::getTable()->transGet($formData['vads_trans_id']);
+	    	reset($commitment->terms);
+	    	$term = current($commitment->terms);
+	    	$term->status = 'collected';
+	    	$term->collection_date = $term->settlement_date = date('Y-m-d');
+	    	$term->update(null);
+    	}
+    	 
     	$this->getResponse()->setStatusCode('200');
     	return $this->response;
     }
