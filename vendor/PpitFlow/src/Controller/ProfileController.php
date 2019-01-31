@@ -296,7 +296,11 @@ class ProfileController extends AbstractActionController
 				}
 				else {
 					$userContact = UserContact::getTable()->transGet($context->getInstanceId(), 'instance_id', $user->user_id, 'user_id');
-					if (!$userContact) {
+					if ($userContact && $user->vcard_id != $userContact->vcard_id) {
+						$user->vcard_id = $userContact->vcard_id;
+						$user->update(null);
+					}
+/*					if (!$userContact) {
 						$accountType = $context->getConfig('landing_account_type');
 						$vcard = Vcard::getTable()->transGet($user->vcard_id);
 						$vcard->id = null;
@@ -316,7 +320,7 @@ class ProfileController extends AbstractActionController
 						$user->instance_id = $context->getInstanceId();
 						$user->vcard_id = $userContact->vcard_id;
 						$user->update(null);
-					}
+					}*/
 				}
 
 				if (!$actionStatus) {
