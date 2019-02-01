@@ -166,7 +166,7 @@ class FunnelController extends AbstractActionController
     		'vads_site_id' => '88978876',
     		'vads_trans_date' => date('YmdHis'),
     		'vads_trans_id' => sprintf('%06d', $commitment_id),
-    		'vads_url_return' => $this->url()->fromRoute($context->getConfig('defaultRoute'), ['identity' => $commitment->email], ['force_canonical' => true]),
+    		'vads_url_return' => $this->url()->fromRoute($context->getConfig('defaultRoute'), [], ['force_canonical' => true, 'query' => ['email' => $commitment->email]]),
     		'vads_validation_mode' => '0',
     		'vads_version' => 'V2',
     	);
