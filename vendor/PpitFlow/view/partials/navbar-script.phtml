@@ -119,6 +119,11 @@ function showLogin() {
       if (xhttp.status == 200) {
         $('#modalLoginContent').html(xhttp.responseText);
 
+        $('#lost_password_anchor').click(function () {
+            $('#modalLoginForm').modal('hide');
+            $('#modalLostPasswordForm').modal('show');
+        });
+
         var form = document.getElementById('loginForm');
         form.onsubmit = function(event) {
           event.preventDefault();
@@ -132,13 +137,6 @@ function showLogin() {
 }
 
 $('#modalLoginForm').on('show.bs.modal', showLogin);
-
-// Lost password
-
-$('#lost_password_anchor').click(function () {
-    $('#modalLoginForm').modal('hide');
-    $('#modalLostPasswordForm').modal('show');
-});
 
 // Lost password
 

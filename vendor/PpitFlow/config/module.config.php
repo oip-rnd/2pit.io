@@ -623,11 +623,15 @@ return array (
 			'url' => 'flowEvent',
 		),
 	),
+
+	'automatic_registration' => 'false',
 	
 	'landing_account_type' => 'generic',
+
 	'flow_steps' => array(
 		'candidate' => 'payment',
 	),
+	
 	'event_default_type' => 'request',
 	
 	'matching/skills' => array(
@@ -1522,33 +1526,30 @@ table.note-report td {
 	
 	'landing/generic' => array(
 		'header' => array(
-			'title' => ['default' => 'ProBonoCorpo - Skills', 'fr_FR' => 'ProBonoCorpo - Compétences'],
+			'title' => ['default' => '2pit.io - Professional Pluggable IT'],
 			'description' => array(
-				'default' => 'Besoin occasionnel d\'expertise et/ou prêt à consacrer du temps pour aider un projet ? ProBonoCorpo valorise le savoir-faire et le service.',
-				'fr_FR' => 'Occasionnel need for expertise and/or ready to give time and help a project? ProBonoCorpo makes value with the know-how and service spirit.',
+				'default' => 'All you need to run a business is available for free and open-source. See 2pit.io.',
 			),
-			'analytics-id' => 'UA-82264844-4',
-			'campaign' => '1er sondage',
 			'style' => array(
 				'navbar' => 'background-color: transparent;',
-				'topNavCollapse' => 'background-color: #ffffff;',
+				'topNavCollapse' => 'background-color: #79CCF3;',
 			),
 			'navbar' => array(
 				'class' => 'navbar navbar-expand-lg fixed-top scrolling-navbar navbar-black',
-				'account' => true,
+				'account' => false,
 				'collapse' => false,
 			),
 			'logo' => array(
 				'href' => 'landing/template2',
-				'params' => ['place_identifier' => 'probonocorpo'],
-				'src' => '/logos/probonocorpo/PBC-logo-web-fleur.png',
+				'params' => ['place_identifier' => '2pit.io'],
+				'src' => '/logos/2pit.io/p-pit.png',
 				'height' => 40,
-				'alt' => 'probonocorpo logo',
+				'alt' => '2pit.io logo',
 			),
 			'intro_height' => '100%',
 			'background_image' => array(
-				'mask' => '',
-				'src' => ['default' => '/img/probonocorpo/groupe-en.jpg', 'fr_FR' => '/img/probonocorpo/groupe.jpg'],
+				'mask' => 'rgba-stylish-light',
+				'src' => ['default' => '/img/2pit.io/intro.jpg'],
 				'class' => 'img-fluid',
 				'alt' => 'Collaboration',
 			),
@@ -1556,25 +1557,27 @@ table.note-report td {
 		),
 		'intro' => array(
 			array(
-				'type' => 'h4',
+				'type' => 'h2',
 				'class' => 'd-flex justify-content-center text-responsive',
+//				'style' => 'color: #006179',
 				'text' => array(
-					'default' => '<span class="h4-responsive font-bold mb-2">LET\'S SHARE OUR SKILLS!</span>', 
-					'fr_FR' => '<span class="h4-responsive font-bold mb-2">PARTAGEZ VOS TALENTS !</span>',
+					'default' => '<span class="h4-responsive font-bold mb-2">Pluggable Professional IT</span>', 
 				),
 			),
 			array(
 				'type' => 'div',
-				'button' => ['id' => 'a_survey', 'href' => '#descr', 'class' => 'btn btn-outline-secondary'], 
+				'button' => ['data-toggle' => 'modal', 'data-target' => '#modalLoginForm', 'class' => 'btn btn-primary btn-rounded'], 
 				'text' => array(
-					'default' => 'Discover',
-					'fr_FR' => 'Découvrir',
+					'default' => 'Sign In <i class="fa fa-user ml-2"></i>',
 				),
 			),
-			array('type' => 'br', 'class' => 'hr-light'),
-			array('type' => 'br', 'class' => 'hr-light'),
-			array('type' => 'br', 'class' => 'hr-light'),
-			array('type' => 'br', 'class' => 'hr-light'),
+			array(
+				'type' => 'div',
+				'button' => ['data-toggle' => 'modal', 'data-target' => '#modalRegisterForm', 'class' => 'btn btn-primary btn-rounded'], 
+				'text' => array(
+					'default' => 'Log In <i class="fa fa-sign-in-alt ml-2"></i>',
+				),
+			),
 		),
 		'presentation' => array(
 			array(
@@ -2124,7 +2127,7 @@ table.note-report td {
 		),
 	),
 	
-	// FLow Request (deprecated)
+	// FLow Request
 	
 	'request/generic' => array(
 		'header' => array(

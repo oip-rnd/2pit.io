@@ -1,3 +1,8 @@
+<?php 
+$mdbCss = $context->getConfig('mdbCss');
+if (!$mdbCss) $mdbCss = 'MDB-Pro';
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -30,8 +35,8 @@
     <link rel="stylesheet" href="<?php echo $this->basePath('/bootstrap-4-2/css/bootstrap.min.css') ?>">
 
 	<!-- Material Design Bootstrap -->
-	<link href="<?php echo $this->basePath('MDB-Pro/css/mdb.min.css" rel="stylesheet') ?>">
-	<link href="<?php echo $this->basePath('MDB-Pro/css/style.css" rel="stylesheet') ?>">
+	<link href="<?php echo $this->basePath($mdbCss . '/css/mdb.min.css" rel="stylesheet') ?>">
+	<link href="<?php echo $this->basePath($mdbCss . '/css/style.css" rel="stylesheet') ?>">
 	
 	<!-- medium editor -->
 	<link rel="stylesheet" href="<?php echo $this->basePath('medium-editor-master/dist/css/medium-editor.css') ?>">
@@ -356,14 +361,16 @@ tr:nth-child(4) td:nth-of-type(4) {
 <!-- SCRIPTS -->
 <!-- Font Awesome -->
 <!-- JQuery -->
-<script type="text/javascript" src="<?php echo $this->basePath('MDB-Pro/js/jquery-3.3.1.min.js') ?>"></script>
+<script type="text/javascript" src="<?php echo $this->basePath('js/jquery-3.3.1.min.js') ?>"></script>
 <!-- Bootstrap tooltips -->
-<script type="text/javascript" src="<?php echo $this->basePath('MDB-Pro/js/popper.min.js') ?>"></script>
+<script type="text/javascript" src="<?php echo $this->basePath($mdbCss . '/js/popper.min.js') ?>"></script>
 <!-- Bootstrap core JavaScript -->
-<!-- <script type="text/javascript" src="<?php echo $this->basePath('MDB-Pro/js/bootstrap.min.js') ?>"></script> -->
+<!-- <script type="text/javascript" src="<?php echo $this->basePath($mdbCss . '/js/bootstrap.min.js') ?>"></script> -->
 <script src="<?php echo $this->basePath('/bootstrap-4-2/js/bootstrap.min.js') ?>"></script>
 <!-- MDB core JavaScript -->
-<script type="text/javascript" src="<?php echo $this->basePath('MDB-Pro/js/mdb.min.js') ?>"></script>
+<script type="text/javascript" src="<?php echo $this->basePath($mdbCss . '/js/mdb.min.js') ?>"></script>
+<!-- toastr -->
+<script type="text/javascript" src="<?php echo $this->basePath('js/toastr.js') ?>"></script>
 
 <script type="text/javascript">
 // Material Select Initialization
@@ -378,7 +385,7 @@ $('.carousel').carousel({
 })
 //MDB Lightbox Init
 $(function () {
-  $("#mdb-lightbox-ui").load("<?php echo $this->basePath('MDB-Pro/mdb-addons/mdb-lightbox-ui.html') ?>");
+  $("#mdb-lightbox-ui").load("<?php echo $this->basePath($mdbCss . '/mdb-addons/mdb-lightbox-ui.html') ?>");
 });
 
 $('#a_survey').click(function () {
