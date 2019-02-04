@@ -300,27 +300,32 @@ class ProfileController extends AbstractActionController
 						$user->vcard_id = $userContact->vcard_id;
 						$user->update(null);
 					}
-/*					if (!$userContact) {
-						$accountType = $context->getConfig('landing_account_type');
-						$vcard = Vcard::getTable()->transGet($user->vcard_id);
-						$vcard->id = null;
-						$vcard->add();
-						$account = Account::instanciate($accountType);
-						$data = array();
-						$data['status'] = 'interested';
-						$data['email'] = $vcard->email;
-						$rc = $account->loadAndAdd($data);
-						if ($rc[0] == '206') $account = Account::get($rc[1]);
-						$userContact = UserContact::instanciate();
-				    	$userContact->user_id = $user->user_id;
-				    	$userContact->vcard_id = $vcard->id;
-				    	if ($userContact->add() != 'OK') throw new \Exception();
+					if ($context->getConfig('automatic_registration')) {
+						if (!$userContact) {
+							$accountType = $context->getConfig('landing_account_type');
+							$vcard = Vcard::getTable()->transGet($user->vcard_id);
+							$vcard->id = null;
+							$vcard->applications = [];
+							$vcard->roles = [];
+							$vcard->perimeters = [];
+							$vcard->add();
+							$account = Account::instanciate($accountType);
+							$data = array();
+							$data['status'] = 'interested';
+							$data['email'] = $vcard->email;
+							$rc = $account->loadAndAdd($data);
+							if ($rc[0] == '206') $account = Account::get($rc[1]);
+							$userContact = UserContact::instanciate();
+					    	$userContact->user_id = $user->user_id;
+					    	$userContact->vcard_id = $vcard->id;
+					    	if ($userContact->add() != 'OK') throw new \Exception();
+						}
+						if ($user->vcard_id != $userContact->vcard_id) {
+							$user->instance_id = $context->getInstanceId();
+							$user->vcard_id = $userContact->vcard_id;
+							$user->update(null);
+						}
 					}
-					if ($user->vcard_id != $userContact->vcard_id) {
-						$user->instance_id = $context->getInstanceId();
-						$user->vcard_id = $userContact->vcard_id;
-						$user->update(null);
-					}*/
 				}
 
 				if (!$actionStatus) {
