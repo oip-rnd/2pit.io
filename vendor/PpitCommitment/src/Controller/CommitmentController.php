@@ -1051,6 +1051,54 @@ class CommitmentController extends AbstractActionController
 		    	}
     	return $this->response;
     }
+
+    public function cancelInvoiceAction()
+    {
+    	// Retrieve the context
+    	$context = Context::getCurrent();
+    
+    	// Retrieve the commitment
+    	$id = (int) $this->params()->fromRoute('id', 0);
+    	if (!$id) return $this->redirect()->toRoute('home');
+    	$commitment = Commitment::get($id);
+    	$commitmentMessage = CommitmentMessage::get($commitment->invoice_message_id);
+    	// Instanciate the csrf form
+    	$csrfForm = new CsrfForm();
+    	$csrfForm->addCsrfElement('csrf');
+    	$error = null;
+    	$message = null;
+    	$request = $this->getRequest();
+    	if ($request->isPost()) {
+    		$csrfForm->setInputFilter((new Csrf('csrf'))->getInputFilter());
+    		$csrfForm->setData($request->getPost());
+    		 
+    		if ($csrfForm->isValid()) { // CSRF check
+    
+    			// Atomically save
+    			$connection = Commitment::getTable()->getAdapter()->getDriver()->getConnection();
+    			$connection->beginTransaction();
+    			try {
+    				
+    				// The status "canceled" in the message drives the mention "Canceled invoice" in the document
+	    			$commitmentMessage->status = 'canceled';
+	    			$commitmentMessage->update(null);
+	    			
+	    			// The reference to the invoice message set to NULL in the commitment drives the ability to update it and generate a new commitment
+	    			$commitment->invoice_message_id = null;
+	    			$commitment->update(null);
+	    			$connection->commit();
+    			}
+    			catch (\Exception $e) {
+    				$connection->rollback();
+    				throw $e;
+    			}
+    			$action = null;
+    		}
+    	}
+    	if ($error) echo $error."\n";
+    	echo $message;
+    	return $this->response;
+    }
     
     public function settleAction()
     {

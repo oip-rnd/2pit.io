@@ -1878,23 +1878,21 @@ return array(
 	
 	'instance/general_terms_of_use' => array(
 			'default' => '
-<h4 class="dark-grey-text text-uppercase text-center mb-3">Terms of Use MyCTO</h4>
+<h4 class="dark-grey-text text-uppercase text-center mb-3">Terms of Use 2pit.io</h4>
 		
 <h5 class="dark-grey-text font-weight-bold mb-3">Legal notice</h5>
 		
-<p class="dark-grey-text">This site is published by P-Pit SAS FRANCE.</p>
+<p class="dark-grey-text">This site is published by 2pit.io.</p>
 <p class="dark-grey-text">
-SAS capital 5 000.00 €<br>
-Registered at the registry of Commercial Paris Chamber under the unique identification number 804 199 594<br>
 Headquarter: 25 rue du Faubourg du Temple - Bâtiment C - 75010 PARIS - FRANCE<br>
-Legal Representative & Publication director: M. Bruno LARTILLOT, CEO<br>
-Host: OVH 59820 Gravelines for P-PIT SAS
+Legal Representative & Publication director: M. Bruno LARTILLOT<br>
+Host: OVH 59820 Gravelines for 2pit.io
 </p>
-<p class="dark-grey-text">Contact : <a href="mailto:contact@p-pit.fr?subject=MyCTO - Give a title for your request">contact@p-pit.fr</a></p>
+<p class="dark-grey-text">Contact : <a href="mailto:contact@2pit.io?subject=2pit.io - Give a title for your request">contact@2pit.io</a></p>
 		
 <h5 class="dark-grey-text font-weight-bold mb-3">1 Purpose of the platform</h5>
 		
-<p class="dark-grey-text">P-Pit uses MyCTO to securize and facilitate the digital survey for small businesses and professional individuals. The purpose of this platform is to allow the users to centralize and securize their documents and data while sharing them with their teams and partners, and make them operate smoothly with other digital solutions.</p>
+<p class="dark-grey-text">2pit.io provides small businesses and professional individuals with a complete application to help operating the business. The purpose of this platform is to illustrate the features proposed in the 2pit.io distribution. Even the present General Terms of Use can be reused and adapted to your instance based on the 2pit.io distribution.</p>
 		
 <h5 class="dark-grey-text font-weight-bold mb-3">2 Rules of use</h5>
 		
@@ -1902,30 +1900,26 @@ Host: OVH 59820 Gravelines for P-PIT SAS
 <ol class="dark-grey-text">
 <li>Not to put online inappropriate contents including pornographic, pedophile, racist, xenophobic, defamatory content, which infringes human respect and its dignity, inciting the commission of an offence or a crime, contrary to public order and moral laws.</li>
 <li>Not to commit reprehensible acts under the applicable law, in particular with regards to intellectual property and third-party rights, including personality rights. In this respect, Users must not upload third-party works or third-party representative works (photos, texts etc.) for which they do not hold the necessary rights of use or operating authorizations, or to reproduce trademarks for which they are not authorized depositaries and for which they do not hold rights of use.</li>
-<li>Regardless of content put online by users on the platform, all brands, computer programs (firmware, software, computer developments, etc...), graphics, moving images or not, sounds, and more generally all or part of the MyCTO platform are likely to be protected by intellectual property rights and are and remain the exclusive property of P-Pit SAS or the assigns to which P-Pit SAS has obtained the necessary rights to their use.</li>
-<li>Do not put online political, philosophic, trade-union, religious contents. Do not communicate information relating to private life of a third party without its writing agreement. Regarding the profile picture if it is provided, it must be centered on the user face and adapted to professional environment.</li>
+<li>Do not put online political, trade-union, religious contents. Do not communicate information relating to private life of a third party without its writing agreement. Regarding the profile picture if it is provided, it must be centered on the user face and adapted to professional environment.</li>
 </ol>
 <p class="dark-grey-text">Data put online by users are susceptible to be moderated by the platform administrator and be removed whatever the reason, without the need to justify.</p>
 		
 <h5 class="dark-grey-text font-weight-bold mb-3">3 Protection of confidential information</h5>
 		
 <p class="dark-grey-text font-weight-bold mb-3">Collection</p>
-<p class="dark-grey-text">As part of the use of the MyCTO platform, P-Pit is required to collect personal data about you as a processing manager.</p>
-		
-<p class="dark-grey-text font-weight-bold mb-3">Use</p>
-<p class="dark-grey-text">Participation in this platform is optional, and the data collected is called to be used primarily for connecting small businesses and professional individuals. The data collected are subject to computerized processing based on the legitimate interest of MyCTO and P-Pit SAS.</p>
+<p class="dark-grey-text">As part of the use of the platform, 2pit.io is required to collect personal data about you as a processing manager.</p>
 		
 <p class="dark-grey-text font-weight-bold mb-3">Recipients</p>
-<p class="dark-grey-text">The data is for the MyCTO platform administrator. Data stored on the platform will not be subject to any external communication except to third parties authorized under a legal or regulatory provision.</p>
+<p class="dark-grey-text">The data collected on the platform is for the platform administrator. Data stored on the platform will not be subject to any external communication except to third parties authorized under a legal or regulatory provision.</p>
 		
 <p class="dark-grey-text font-weight-bold mb-3">Duration of retention</p>
-<p class="dark-grey-text">Unless disposition provided by law or regulation, personal data used for administrative management purposes are retained for the period of subscription of the MyCTO offer. More generically, the data collected are kept only for the duration necessary for the purposes of the working and/or business relationship, within the time limits periods in effect.</p>
+<p class="dark-grey-text">Unless disposition provided by law or regulation, personal data used for administrative management purposes are kept only for the duration necessary for the purposes of the working and/or business relationship, within the time limit periods in effect.</p>
 		
 <p class="dark-grey-text font-weight-bold mb-3">Processing safety</p>
-<p class="dark-grey-text">P-Pit SAS takes the appropriate physical, technical and organizational measures to ensure the security and confidentiality of personal data, in particular to protect them against loss, accidental destruction, tampering, and unauthorized access.</p>
+<p class="dark-grey-text">2pit.io takes the appropriate physical, technical and organizational measures to ensure the security and confidentiality of personal data, in particular to protect them against loss, accidental destruction, tampering, and unauthorized access.</p>
 		
 <p class="dark-grey-text font-weight-bold mb-3">Application of the local regulations on the transfer of personal data outside the user’s Economic Area</p>
-<p class="dark-grey-text">For a given user, no personal data transfer outside his/her Economic Area will be carried out as part of the use of the MyCTO platform.</p>
+<p class="dark-grey-text">For a given user, no personal data transfer outside his/her Economic Area will be carried out as part of the use of the 2pit.io platform.</p>
 
 <p class="dark-grey-text font-weight-bold mb-3">Exercise of rights</p>
 <p class="dark-grey-text">The employee shall, under the conditions laid down in the applicable rules, have the following rights:</p>
@@ -1937,10 +1931,10 @@ Host: OVH 59820 Gravelines for P-PIT SAS
 <li>Opposition for legitimate reasons;</li>
 <li>Portability.</li>
 </ol>
-<p class="dark-grey-text">These rights can be exercised by e-mail at the following e-mail address: <a href="mailto:contact@p-pit.fr?subject=MyCTO - Exercise of rights regarding personal data">contact@p-pit.fr</a></p>
+<p class="dark-grey-text">These rights can be exercised by e-mail at the following e-mail address: <a href="mailto:contact@2pit.io?subject=2pit.io - Exercise of rights regarding personal data">contact@2pit.io</a></p>
 
 <p class="dark-grey-text font-weight-bold mb-3">Informations</p>
-<p class="dark-grey-text">For any question relating to the protection of their personal data, employees may contact the MyCTO Data Protection officer at the address <a href="mailto:"contact@p-pit.fr?subject=MyCTO - Give a title for your request">contact@p-pit.fr</a>. Employees also have the possibility to submit a complaint to the supervisory authority in charge of data protection.</p>
+<p class="dark-grey-text">For any question relating to the protection of their personal data, employees may contact the 2pit.io Data Protection officer at the address <a href="mailto:"contact@2pit.io?subject=2pit.io - Give a title for your request">contact@2pit.io</a>. Employees also have the possibility to submit a complaint to the supervisory authority in charge of data protection.</p>
 
 <h5 class="dark-grey-text font-weight-bold mb-3">5 Modification of Terms of Use</h5>
 <p class="dark-grey-text">The user is invited to take regular notice of these Terms of Use, which can be changed at any time.</p>
@@ -1949,29 +1943,27 @@ Host: OVH 59820 Gravelines for P-PIT SAS
 <p class="dark-grey-text">The present general conditions are subject to French law.</p>
 		
 <h5 class="dark-grey-text font-weight-bold mb-3">7 Suspension or closure of access to the platform</h5>
-<p class="dark-grey-text">P-Pit SAS reserves the option of shutting down access to the MyCTO platform at any time and for any reason without having to justify it or suspend a user’s access to the platform, in case of non-compliance with the general conditions of use. If a user suspends his/her subscription to the MyCTO offer, his/her account will be disabled. His/her profile will be kept during a maximum period of one year and can be deleted on his/her request.</p>
+<p class="dark-grey-text">2pit.io reserves the option of shutting down access to the 2pit.io platform at any time and for any reason without having to justify it or suspend a user’s access to the platform, in case of non-compliance with the general conditions of use. If a user suspends his/her subscription to the 2pit.io offer, his/her account will be disabled. His/her profile will be kept during a maximum period of one year and can be deleted on his/her request.</p>
 
 <h5 class="dark-grey-text font-weight-bold mb-3">8 Miscellaneous</h5>
-<p class="dark-grey-text">Requests for support or further information on the use of the platform should be sent to the following e-mail address: <a href="mailto:contact@p-pit.fr?subject=MyCto - Give a title for your request">contact@p-pit.fr</a>. Elsewhere, if the user notices content that should not be displayed on MyCTO for any reason, including because it does not comply with current laws, please contact the P-Pit support at <a href="mailto:contact@p-pit.fr?subject=MyCTO - SUSPICIOUS CONTENT">contact@p-pit.fr</a> with the topic “SUSPICIOUS CONTENT".</p>
+<p class="dark-grey-text">Requests for support or further information on the use of the platform should be sent to the following e-mail address: <a href="mailto:contact@2pit.io?subject=2pit.io - Give a title for your request">contact@2pit.io</a>. Elsewhere, if the user notices content that should not be displayed on 2pit.io for any reason, including because it does not comply with current laws, please contact the 2pit.io support at <a href="mailto:contact@2pit.io?subject=2pit.io - SUSPICIOUS CONTENT">contact@2pit.io</a> with the topic “SUSPICIOUS CONTENT".</p>
 ',
 			'fr_FR' => '
-<h4 class="dark-grey-text text-uppercase text-center mb-3">Conditions Générales d’Utilisation (CGU) de MyCTO</h4>
+<h4 class="dark-grey-text text-uppercase text-center mb-3">Conditions Générales d’Utilisation (CGU) de 2pit.io</h4>
 		
 <h5 class="dark-grey-text font-weight-bold mb-3">Mentions légales</h5>
 		
-<p class="dark-grey-text">Ce site est publié par P-Pit SAS FRANCE</p>
+<p class="dark-grey-text">Ce site est publié par 2pit.io</p>
 <p class="dark-grey-text">
-SAS au capital de 5000,00 €<br>
-Immatriculée au RCS de Paris sous le numéro unique d’identification 804 199 594<br>
-Siège social : 25 rue du Faubourg du Temple - Bâtiment C - 75010 PARIS<br>
+25 rue du Faubourg du Temple - Bâtiment C - 75010 PARIS<br>
 Représentant légal et Directeur de la publication : M. Bruno LARTILLOT<br>
-Hébergeur : OVH 59820 Gravelines pour P-Pit SAS
+Hébergeur : OVH 59820 Gravelines pour 2pit.io
 </p>
-<p class="dark-grey-text">Contact: <a href="mailto:contact@p-pit.fr?subject=MyCTO - Donnez un titre à votre demande">contact@p-pit.fr</a></p>
+<p class="dark-grey-text">Contact: <a href="mailto:contact@2pit.io?subject=2pit.io - Donnez un titre à votre demande">contact@2pit.io</a></p>
 		
 <h5 class="dark-grey-text font-weight-bold mb-3">Objet de la plateforme</h5>
 		
-<p class="dark-grey-text">P-Pit SAS a recours à la plateforme MyCTO pour sécuriser et simplifier le parcours digital pour les petites entreprises et les professionnels. L’objet de cette plateforme est de permettre aux utilisateurs de centraliser et sécuriser leur documents et données tout en les partageant avec leurs équipes et partenaires, et les faire interagir en toute fluidité avec leurs autres solutions digitales.</p>
+<p class="dark-grey-text">2pit.io procure aux petites entreprises et professionnels une application complète et gratuite pour les aider à exécuter leur métier. L’objet de cette plateforme est d’illustrer les fonctionnalités proposées dans la distribution open-source 2pit.io. Les présentes Conditions Générales d’Utilisation peuvent elles-même être réutilisées et adaptées à votre instance basée sur la distribution 2pit.io.</p>
 		
 <h5 class="dark-grey-text font-weight-bold mb-3">2 Règles d’utilisation</h5>
 		
@@ -1979,8 +1971,7 @@ Hébergeur : OVH 59820 Gravelines pour P-Pit SAS
 <ol class="dark-grey-text">
 <li>Ne pas mettre en ligne des contenus inappropriés notamment à caractère pornographique, pédophile, raciste, xénophobe, diffamatoire, portant atteinte au respect de la personne humaine et à sa dignité, incitant à la commission d’un délit ou d’un crime, contraires à l’ordre public ou aux bonnes mœurs.</li>
 <li>Ne pas commettre des actes répréhensibles au regard des lois applicables, notamment en ce qui concerne la propriété intellectuelle et les droits de tiers, dont les droits de la personnalité. Par exemple, les utilisateurs ne doivent pas mettre en ligne des œuvres de tiers et/ou représentant des tiers (photos, textes etc.) pour lesquelles ils ne détiennent pas les droits d’utilisation ou les autorisations d’exploitation nécessaires, ou reproduire des marques dont ils ne sont pas dépositaires et pour lesquelles ils ne détiennent pas de droits d’utilisation.</li>
-<li>Indépendamment des contenus mis en ligne par les utilisateurs sur la plateforme, l’ensemble des marques, programmes informatiques (progiciels, logiciels, développements informatiques, etc.), graphismes, images animées ou non, sons, et plus généralement tout ou partie de la plateforme MyCTO sont susceptibles d’être protégés par des droits de propriété intellectuelle et sont et demeurent la propriété exclusive de P-Pit SAS ou des ayant-droits auprès desquels P-Pit SAS a obtenu les droits nécessaires à leur utilisation. </li>
-<li>Ne pas mettre en ligne de contenu lié à une activité d’ordre politique, philosophique, syndical ou religieux. Ne doivent pas être communiquées les informations relatives à la vie privée d’un tiers sans son accord écrit. S’agissant de la photo du profil si elle est renseignée, elle doit être centrée sur le visage de l’utilisateur et adaptée à l’environnement professionnel.</li>
+<li>Ne pas mettre en ligne de contenu lié à une activité d’ordre politique, syndical ou religieux. Ne doivent pas être communiquées les informations relatives à la vie privée d’un tiers sans son accord écrit. S’agissant de la photo du profil si elle est renseignée, elle doit être centrée sur le visage de l’utilisateur et adaptée à l’environnement professionnel.</li>
 </ol>
 
 <p class="dark-grey-text">Les données mises en ligne par les utilisateurs sont susceptibles d’être modérées par l’administrateur de la plateforme et d’être supprimées pour quelque raison que ce soit, sans nécessité de le justifier.</p>
@@ -1988,22 +1979,19 @@ Hébergeur : OVH 59820 Gravelines pour P-Pit SAS
 <h5 class="dark-grey-text font-weight-bold mb-3">3 Protection des données à caractère personnel</h5>
 		
 <p class="dark-grey-text font-weight-bold mb-3">Collecte</p>
-<p class="dark-grey-text">Dans le cadre de l’utilisation de la plateforme MyCTO, P-Pit SAS est amenée à collecter des données personnelles vous concernant en qualité de responsable de traitement.</p>
-		
-<p class="dark-grey-text font-weight-bold mb-3">Utilisation</p>
-<p class="dark-grey-text">La participation à cette plateforme est facultative, et les données collectées sont appelées à être utilisées principalement pour mettre en relation les petites entreprises et les professionnels. Les données collectées font l’objet de traitements informatisés sur la base de l’intérêt légitime de MyCTO et P-Pit SAS.</p>
+<p class="dark-grey-text">Dans le cadre de l’utilisation de la plateforme, 2pit.io est amenée à collecter des données personnelles vous concernant en qualité de responsable de traitement.</p>
 		
 <p class="dark-grey-text font-weight-bold mb-3">Destinataires</p>
-<p class="dark-grey-text">Les données sont destinées à l’administrateur de la plateforme MyCTO. Les données enregistrées sur la plateforme ne feront l’objet d’aucune communication extérieure sauf aux tiers autorisés en vertu d’une disposition légale ou réglementaire.</p>
+<p class="dark-grey-text">Les données sont destinées à l’administrateur de la plateforme. Les données enregistrées sur la plateforme ne feront l’objet d’aucune communication extérieure sauf aux tiers autorisés en vertu d’une disposition légale ou réglementaire.</p>
 		
 <p class="dark-grey-text font-weight-bold mb-3">Durée de conservation</p>
-<p class="dark-grey-text">Sauf dispositions législatives ou réglementaires contraires, les données à caractère personnel utilisées aux fins de gestion administrative sont conservées le temps de la période de souscription à l’offre MyCTO. De manière plus générique, les données collectées sont conservées uniquement pendant la durée nécessaire à l’accomplissement des finalités relatives aux relations de travail et/ou d’affaires, dans la limite des délais de prescription en vigueur.</p>
+<p class="dark-grey-text">Sauf dispositions législatives ou réglementaires contraires, les données à caractère personnel utilisées aux fins de gestion administrative sont conservées uniquement pendant la durée nécessaire à l’accomplissement des finalités relatives aux relations de travail et/ou d’affaires, dans la limite des délais de prescription en vigueur.</p>
 		
 <p class="dark-grey-text font-weight-bold mb-3">Sécurité des traitements</p>
-<p class="dark-grey-text">P-Pit SAS prend les mesures physiques, techniques et organisationnelles appropriées pour assurer la sécurité et la confidentialité des données à caractère personnel, en vue notamment de les protéger contre toute perte, destruction accidentelle, altération, et accès non autorisés.</p>
+<p class="dark-grey-text">2pit.io prend les mesures physiques, techniques et organisationnelles appropriées pour assurer la sécurité et la confidentialité des données à caractère personnel, en vue notamment de les protéger contre toute perte, destruction accidentelle, altération, et accès non autorisés.</p>
 		
 <p class="dark-grey-text font-weight-bold mb-3">Application des réglementations locales en matière de transferts de données à caractère personnel en dehors de l\'Espace Économique propre à chaque utilisateur.</p>
-<p class="dark-grey-text">Aucun transfert de données à caractères personnel en dehors de l’Espace Economique dont relève l’utilisateur ne sera effectué dans le cadre de l’utilisation de la plateforme MyCTO.</p>
+<p class="dark-grey-text">Aucun transfert de données à caractères personnel en dehors de l’Espace Economique dont relève l’utilisateur ne sera effectué dans le cadre de l’utilisation de la plateforme 2pit.io.</p>
 		
 <p class="dark-grey-text font-weight-bold mb-3">Exercice des droits</p>
 <p class="dark-grey-text">Le collaborateur dispose, dans les conditions prévues par la réglementation applicable, des droits suivants :</p>
@@ -2015,10 +2003,10 @@ Hébergeur : OVH 59820 Gravelines pour P-Pit SAS
 <li>Opposition pour motifs légitimes ;</li>
 <li>Portabilité.</li>
 </ol>
-<p class="dark-grey-text">Ces droits peuvent être exercés par messagerie électronique à l’adresse mail suivante : <a href="mailto:contact@p-pit.fr?subject=MyCTO - Exercice des droits relatifs aux données personnelles">contact@p-pit.fr</a></p>
+<p class="dark-grey-text">Ces droits peuvent être exercés par messagerie électronique à l’adresse mail suivante : <a href="mailto:contact@2pit.io?subject=2pit.io - Exercice des droits relatifs aux données personnelles">contact@2pit.io</a></p>
 		
 <p class="dark-grey-text font-weight-bold mb-3">Informations</p>
-<p class="dark-grey-text">Pour toute question relative à la protection de leurs données personnelles, les collaborateurs peuvent s’adresser au Délégué à la Protection des Données de MyCTO à l’adresse <a href="mailto:contact@p-pit.fr?subject=MyCTO - Question relative aux données personnelles">contact@p-pit.fr</a>. Les collaborateurs ont également la possibilité d’introduire une réclamation auprès de l’autorité de contrôle en charge de la protection des données.</p>
+<p class="dark-grey-text">Pour toute question relative à la protection de leurs données personnelles, les collaborateurs peuvent s’adresser au Délégué à la Protection des Données de 2pit.io à l’adresse <a href="mailto:contact@2pit.io?subject=2pit.io - Question relative aux données personnelles">contact@2pit.io</a>. Les collaborateurs ont également la possibilité d’introduire une réclamation auprès de l’autorité de contrôle en charge de la protection des données.</p>
 		
 <h5 class="dark-grey-text font-weight-bold mb-3">5 Modification des conditions d’utilisation</h5>
 <p class="dark-grey-text">L’Utilisateur est invité à prendre régulièrement connaissance des présentes CGU, qui peuvent être modifiées à tout moment.</p>
@@ -2027,10 +2015,10 @@ Hébergeur : OVH 59820 Gravelines pour P-Pit SAS
 <p class="dark-grey-text">Les présentes conditions générales sont soumises au droit français.</p>
 		
 <h5 class="dark-grey-text font-weight-bold mb-3">7 Suspension ou Fermeture de l’accès à la Plateforme</h5>
-<p class="dark-grey-text">P-Pit SAS se réserve la possibilité de fermer l’accès à la plateforme MyCTO à tout moment et pour quelque raison que ce soit sans avoir à le justifier ou de suspendre l’accès d’un utilisateur à la plateforme, notamment en cas de non-respect des conditions générales d’utilisation. Si un Utilisateur interrompt sa souscription à l’offre MyCTO, son compte sera désactivé. Son profil sera conservé durant une période maximale de 1 (un) an et pourra être supprimé à sa demande.</p>
+<p class="dark-grey-text">P-Pit SAS se réserve la possibilité de fermer l’accès à la plateforme 2pit.io à tout moment et pour quelque raison que ce soit sans avoir à le justifier ou de suspendre l’accès d’un utilisateur à la plateforme, notamment en cas de non-respect des conditions générales d’utilisation. Si un Utilisateur interrompt sa souscription à l’offre 2pit.io, son compte sera désactivé. Son profil sera conservé durant une période maximale de 1 (un) an et pourra être supprimé à sa demande.</p>
 		
 <h5 class="dark-grey-text font-weight-bold mb-3">8 Divers</h5>
-<p class="dark-grey-text">Les demandes de support ou d’informations complémentaires sur l’utilisation de la plateforme, doivent être envoyées à l’adresse mail suivante : <a href="mailto:contact@p-pit.fr?subject=MyCTO - Donnez un titre à votre demande">contact@p-pit.fr</a>. Par ailleurs, si l’utilisateur constate un contenu qui ne devrait pas être présent sur MyCTO pour quelque raison que ce soit, y compris parce qu’il n’est pas conforme aux réglementations en vigueur, il est invité à contacter sans délai <a href="mailto:contact@p-pit.fr?subject=MyCTO - CONTENU SUSPECT">contact@p-pit.fr</a> avec le sujet « CONTENU SUSPECT ».</p>
+<p class="dark-grey-text">Les demandes de support ou d’informations complémentaires sur l’utilisation de la plateforme, doivent être envoyées à l’adresse mail suivante : <a href="mailto:contact@2pit.io?subject=2pit.io - Donnez un titre à votre demande">contact@2pit.io</a>. Par ailleurs, si l’utilisateur constate un contenu qui ne devrait pas être présent sur MyCTO pour quelque raison que ce soit, y compris parce qu’il n’est pas conforme aux réglementations en vigueur, il est invité à contacter sans délai <a href="mailto:contact@2pit.io?subject=2pit.io - CONTENU SUSPECT">contact@2pit.io</a> avec le sujet « CONTENU SUSPECT ».</p>
 ',
 		),
 
@@ -2252,21 +2240,21 @@ Hébergeur : OVH 59820 Gravelines pour P-Pit SAS
 		'body' => 'fixed-sn indigo-skin',
 		'navbar' => 'navbar-toggleable-md navbar-dark background-primary indigo lighten-2',
 		'footer' => 'indigo lighten-3 center-on-small-only',
-		'logo' => 'p-pit.png',
+		'logo' => '2pit.png',
 		'logo-height' => '20',
 	),
 
 	'headerParams' => array(
 		'background-color' => '#79CCF3',
 		'shift' => 0,
-		'logo' => 'p-pit.png',
+		'logo' => '2pit.png',
 		'logo-href' => "https://www.p-pit.fr",
 		'logo-height' => '60',
 		'advert' => 'p-pit-advert.png',
 		'advert-width' => 180,
-		'signature' => 'p-pit-signature.png',
-		'signature-href' => "https://www.p-pit.fr",
-		'signature-width' => '280px',
+		'signature' => null,
+/*		'signature-href' => "https://www.p-pit.fr",
+		'signature-width' => '280px',*/
 		'footer' => array(
 			'type' => 'text',
 			'value' => 'P-Pit – SAS au capital de xxx € - R.C.S PARIS xxx xxx xxx - ...',

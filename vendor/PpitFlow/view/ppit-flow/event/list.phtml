@@ -3,7 +3,7 @@
   <div class="media d-block d-md-flex my-5">
   <?php if (array_key_exists('display', $content['card'])) : ?>
     <?php if ($content['card']['display']['type'] == 'avatar') : ?>
-    <img  class="card-img-64 rounded-circle d-flex mx-auto mb-3" src="<?php echo $this->basePath('photos/'.(($request['photo_link_id']) ? $request['photo_link_id'] : 'no-photo.png')) ?>" width="40" height="40" alt="Sample image" />
+    <img class="card-img-64 rounded-circle d-flex mx-auto mb-3" style="object-fit: cover" src="<?php echo $this->basePath('photos/'.(($request['photo_link_id']) ? $request['photo_link_id'] : 'no-photo.png')) ?>" width="40" height="40" alt="Sample image" />
     <?php elseif ($content['card']['display']['type'] == 'image') : ?>
       <?php if (array_key_exists($request['category'], $content['card']['display']['class'])) : ?>
     <i class="<?php echo $content['card']['display']['class'][$request['category']] ?>"></i>

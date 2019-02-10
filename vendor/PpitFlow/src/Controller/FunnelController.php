@@ -145,13 +145,16 @@ class FunnelController extends AbstractActionController
     	// Term id
     	$commitment_id = $this->params()->fromRoute('commitment_id');
     	$commitment = Commitment::get($commitment_id);
-		$payment_config = 'MULTI_EXT:';
-		$first = true;
-		foreach ($commitment->terms as $term) {
-			if (!$first) $payment_config .= ';';
-			$first = false;
-			$payment_config .= substr($term->due_date, 0, 4) . substr($term->due_date, 5, 2) . substr($term->due_date, 8, 2) . '=' . $term->amount * 100;
-		}
+    	if (count($commitment->terms) == 1) $payment_config = 'SINGLE';
+    	else {
+			$payment_config = 'MULTI_EXT:';
+			$first = true;
+			foreach ($commitment->terms as $term) {
+				if (!$first) $payment_config .= ';';
+				$first = false;
+				$payment_config .= substr($term->due_date, 0, 4) . substr($term->due_date, 5, 2) . substr($term->due_date, 8, 2) . '=' . $term->amount * 100;
+			}
+    	}
     	
     	// PayZen form date
     	$formData = array(

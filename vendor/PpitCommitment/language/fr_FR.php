@@ -23,6 +23,7 @@
 			'Begin of display' => 'Début d\'affichage',
 			'Begin' => 'Début',
 			'By entering this few informations, you will get a fresh-installed, immediately available version of P-Pit application.' => 'Veuillez saisir ces quelques informations, nécessaires à l\'installation de votre version de P-Pit, disponible immédiatement, et gratuite pendant un mois.',
+			'Cancel the invoice' => 'Annuler la facture',
 			'Check deposit' => 'Remise de chèques',
 			'Collection' => 'Encaisst',
 			'Comming events' => 'Evènements à venir',
@@ -135,7 +136,7 @@
 			'Term' => 'Echéance',
 			'Terms' => 'Echéances',
 			'Terms and conditions' => 'Conditions Générales de Vente',
-			'This commitment is invoiced and cannot be updated anymore.' => 'Cet engagement est facturé et ne peut plus être modifié.',
+			'This invoice has been submitted and cannot be updated anymore.' => 'Cette facture a été émise et ne peut plus être modifiée.',
 			'This commitment is settled and cannot be updated anymore.' => 'Cet engagement est réglé et ne peut plus être modifié.',
 			'Title' => 'Titre',
 			'To be validated' => 'A valider',
@@ -154,4 +155,5 @@
 			'Welcome on your fresh-installed version of P-Pit application. You have received a registering email. To start, please click on the link inside.' => "Bienvenue sur votre nouvelle application P-Pit. Vous avez reçu un email d'enregistrement. Pour démarrer, veuillez cliquer sur le lien inclus dans cet email.",
 			'Width in pixels' => 'Largeur en pixels',
 			'You should have destroyed any previous version of this invoice. Please confirm.' => 'Vous devez avoir détruit toute version antérieure de cette facture. Veuillez confirmer.',
+			'You should transmit to the client the cancelled invoiced before submit him a new one. Please confirm.' => 'Vous devez transmettre au client la facture annulée avant d’en émettre une nouvelle',
 	);

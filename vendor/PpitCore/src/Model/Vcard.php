@@ -619,26 +619,22 @@ class Vcard
     			$path = 'data/photos/';
     			$publicPath = 'public/photos/';
 
-    			$adapter = new \Zend\File\Transfer\Adapter\Http();
-
     			// Create the file on the file system with $id as a name
-    			$adapter->addFilter('Rename', $path.$src);
     			if (file_exists($path.$src)) unlink($path.$src);
-    			if ($adapter->receive($file['name'])) {
-		    		$info = getimagesize($path.$src);
-		    		if (file_exists($path.$dest)) unlink($path.$dest);
-		    		if ($info['mime'] == 'image/gif' || $info['mime'] == 'image/png') {
-    					// Compress the image
-		    			if ($info['mime'] == 'image/gif') $image = imagecreatefromgif($path.$src);
-		    			elseif ($info['mime'] == 'image/png') $image = imageCreateFromPng($path.$src);
-		    			//compress and save file to jpg
-		    			imagejpeg($image, $path.$dest, 75);
-    				}
-    				else rename($path.$src, $path.$dest);
-
-    				if (file_exists($publicPath.$dest)) unlink($publicPath.$dest);
-		    		copy($path.$dest, $publicPath.$dest);
+		    	move_uploaded_file ($file['tmp_name'], $path.$src);
+    			$info = getimagesize($path.$src);
+		    	if (file_exists($path.$dest)) unlink($path.$dest);
+		    	if ($info['mime'] == 'image/gif' || $info['mime'] == 'image/png') {
+    				// Compress the image
+		    		if ($info['mime'] == 'image/gif') $image = imagecreatefromgif($path.$src);
+		    		elseif ($info['mime'] == 'image/png') $image = imageCreateFromPng($path.$src);
+		    		//compress and save file to jpg
+		    		imagejpeg($image, $path.$dest, 75);
     			}
+    			else rename($path.$src, $path.$dest);
+
+    			if (file_exists($publicPath.$dest)) unlink($publicPath.$dest);
+		    	copy($path.$dest, $publicPath.$dest);
     		}
     	}
     }

@@ -620,7 +620,7 @@ return array (
 	'ppitApplications' => array(
 		'frontOffice' => array(
 			'labels' => array('fr_FR' => 'Front office', 'en_US' => 'Front office'),
-			'url' => 'flowEvent',
+			'url' => 'landing/template2',
 		),
 	),
 
@@ -1529,6 +1529,7 @@ table.note-report td {
 			'title' => ['default' => '2pit.io - Professional Pluggable IT'],
 			'description' => array(
 				'default' => 'All you need to run a business is available for free and open-source. See 2pit.io.',
+				'fr_FR' => 'Tout ce dont vous avez besoin pour gérer votre business est disponible gratuitement et open-source. Voir 2pit.io.',
 			),
 			'style' => array(
 				'navbar' => 'background-color: transparent;',
@@ -1540,9 +1541,9 @@ table.note-report td {
 				'collapse' => false,
 			),
 			'logo' => array(
-				'href' => 'landing/template2',
-				'params' => ['place_identifier' => '2pit.io'],
-				'src' => '/logos/2pit.io/p-pit.png',
+				'href' => 'home',
+				'params' => [],
+				'src' => '/logos/2pit.io/2pit.png',
 				'height' => 40,
 				'alt' => '2pit.io logo',
 			),
@@ -1561,21 +1562,23 @@ table.note-report td {
 				'class' => 'd-flex justify-content-center text-responsive',
 //				'style' => 'color: #006179',
 				'text' => array(
-					'default' => '<span class="h4-responsive font-bold mb-2">Pluggable Professional IT</span>', 
-				),
-			),
-			array(
-				'type' => 'div',
-				'button' => ['data-toggle' => 'modal', 'data-target' => '#modalLoginForm', 'class' => 'btn btn-primary btn-rounded'], 
-				'text' => array(
-					'default' => 'Sign In <i class="fa fa-user ml-2"></i>',
+					'default' => '<span class="h4-responsive font-bold mb-2 white-text">Pluggable Professional IT</span>', 
 				),
 			),
 			array(
 				'type' => 'div',
 				'button' => ['data-toggle' => 'modal', 'data-target' => '#modalRegisterForm', 'class' => 'btn btn-primary btn-rounded'], 
 				'text' => array(
+					'default' => 'Sign In <i class="fa fa-user ml-2"></i>',
+					'fr_FR' => 'Ouvrir un compte <i class="fa fa-user ml-2"></i>',
+				),
+			),
+			array(
+				'type' => 'div',
+				'button' => ['data-toggle' => 'modal', 'data-target' => '#modalLoginForm', 'class' => 'btn btn-primary btn-rounded'], 
+				'text' => array(
 					'default' => 'Log In <i class="fa fa-sign-in-alt ml-2"></i>',
+					'fr_FR' => 'Se connecter <i class="fa fa-sign-in-alt ml-2"></i>',
 				),
 			),
 		),
@@ -1585,49 +1588,6 @@ table.note-report td {
 				'margin' => false,
 				'rows' => array(
 					'columns' => array(
-						array(
-							'column-class' => 'col-md-12',
-							'paragraphs' => array(
-								array(
-									'type' => 'h2',
-									'class' => 'section-heading h2-responsive text-center text-uppercase grey-text',
-									'text' => array(
-										'default' => 'Probono corpo makes collaboration and mutual aid easier',
-										'fr_FR' => 'Probono corpo facilite la collaboration et l’entraide',
-									),
-								),
-							),
-						),
-						array(
-							'column-class' => 'col-lg-12',
-							'paragraphs' => array(
-								array(
-									'class' => 'px-3 py-3',
-									'style' => 'background-color: #98BD29',
-									'type' => 'div',
-									'text' => array(
-										'default' => '
-<!-- Category -->
-<!-- Post title -->
-<h2 class="section-heading h2-responsive my-4 text-center text-uppercase font-weight-bold" style="color: #FFF;">The challenges for the business</h2>
-<!-- Excerpt -->
-<h5 class="h5-responsive my-3"><span style="color: #007837;"><i class="fa fa-check pr-2"></i></span>Share and pass on the skills</h5>
-<h5 class="h5-responsive my-3"><span style="color: #007837;"><i class="fa fa-check pr-2"></i></span>Quickly mobilize resources that fit the need</h5>
-<h5 class="h5-responsive my-3"><span style="color: #007837;"><i class="fa fa-check pr-2"></i></span>Help engagement with an agile and innovative organization</h5>
-', 
-										'fr_FR' => '
-<!-- Category -->
-<!-- Post title -->
-<h2 class="section-heading h2-responsive my-4 text-center text-uppercase font-weight-bold" style="color: #FFF;">Les challenges pour l’entreprise</h2>
-<!-- Excerpt -->
-<h5 class="h5-responsive my-3"><span style="color: #007837;"><i class="fa fa-check pr-2"></i></span>Partager et transmettre les compétences</h5>
-<h5 class="h5-responsive my-3"><span style="color: #007837;"><i class="fa fa-check pr-2"></i></span>Mobiliser rapidement des ressources au plus près des besoins</h5>
-<h5 class="h5-responsive my-3"><span style="color: #007837;"><i class="fa fa-check pr-2"></i></span>Favoriser l’engagement par une organisation agile et innovante</h5>
-',
-									),
-								),
-							),
-						),
 					),
 				),
 			),
@@ -1635,13 +1595,11 @@ table.note-report td {
 		'form' => array(
 			'introduction' => [],
 			'inputs' => array(
-				'property_1_contributor' => ['definition' => 'inline', 'type' => 'checkbox', 'class' => 'col-md-3', 'property_id' => 'property_1', 'value' => 'contributor', 'labels' => ['default' => 'Contributor', 'fr_FR' => 'Contributeur']],
-				'property_1_requestor' => ['definition' => 'inline', 'type' => 'checkbox', 'class' => 'col-md-3', 'property_id' => 'property_1', 'value' => 'requestor', 'labels' => ['default' => 'Requestor', 'fr_FR' => 'Demandeur']],
-				'email' => ['mandatory' => true, 'updatable' => false],
+				'email' => ['mandatory' => true],
 			),
 			'submit' => array(
-				'class' => 'btn btn-light-blue btn-rounded',
-				'labels' => ['default' => 'Submit', 'fr_FR' => 'Soumettre'],
+				'class' => 'btn btn-primary btn-rounded',
+				'labels' => ['default' => 'Submit'],
 			),
 		),
 		'contact_section' => array(

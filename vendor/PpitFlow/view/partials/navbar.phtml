@@ -77,7 +77,7 @@ body.modal-open {
   <?php if ($navbarAccount) : ?>
     <?php if ($photo_link_id) : ?>
                     <li class="nav-item">
-                      <a class="nav-link" <?php if (array_key_exists('anchorStyle', $header['navbar'])) echo 'style="'.$header['navbar']['anchorStyle'].'"' ?> data-toggle="modal" data-target="#modalProfileForm"><img src="<?php echo $this->basePath('/photos/'.$photo_link_id).'?random='.time() ?>" height="40" class="rounded-circle z-depth-0" alt="avatar image"></a>
+                      <a class="nav-link" <?php if (array_key_exists('anchorStyle', $header['navbar'])) echo 'style="'.$header['navbar']['anchorStyle'].'"' ?> data-toggle="modal" data-target="#modalProfileForm"><img style="object-fit: cover" src="<?php echo $this->basePath('/photos/'.$photo_link_id).'?random='.time() ?>" height="40" class="rounded-circle z-depth-0" alt="avatar"></a>
                     </li>
     <?php else : ?>
                     <li class="nav-item active">

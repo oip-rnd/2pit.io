@@ -211,6 +211,18 @@ return array(
         								),
         						),
         				),
+        				'cancelInvoice' => array(
+        						'type' => 'segment',
+        						'options' => array(
+        								'route' => '/cancel-invoice[/:id]',
+        								'constraints' => array(
+        										'id'     => '[0-9]*',
+        								),
+        								'defaults' => array(
+        										'action' => 'cancelInvoice',
+        								),
+        						),
+        				),
         				'settle' => array(
         						'type' => 'segment',
         						'options' => array(
@@ -913,6 +925,7 @@ return array(
             	array('route' => 'commitment/post', 'roles' => array('admin')),
             	array('route' => 'commitment/try', 'roles' => array('guest')),
             	array('route' => 'commitment/invoice', 'roles' => array('sales_manager', 'accountant')),
+            	array('route' => 'commitment/cancelInvoice', 'roles' => array('sales_manager', 'accountant')),
             	array('route' => 'commitment/xmlUblInvoice', 'roles' => array('sales_manager', 'accountant')),
             	array('route' => 'commitment/settle', 'roles' => array('sales_manager', 'accountant')),
             	array('route' => 'commitment/update', 'roles' => array('sales_manager')),
@@ -3756,6 +3769,22 @@ table.note-report td {
 			'count_label' => ['definition' => 'inline', 'type' => 'title', 'col_name' => 'B', 'labels' => ['default' => "'==> Nombre de chèques"]],
 			'sum' => ['definition' => 'inline', 'type' => 'number', 'col_name' => 'D'],
 		)
+	),
+	
+	// CommitmentMessage
+	
+	'commitmentMessage/property/status' => array(
+		'definition' => 'inline',
+		'type' => 'select',
+		'modalities' => array(
+			'new' => array('default' => 'New', 'fr_FR' => 'Nouveau'),
+			'submitted' => array('default' => 'Submitted', 'fr_FR' => 'Emis'),
+			'rejected' => array('default' => 'Rejected', 'fr_FR' => 'Rejeté'),
+		),
+		'labels' => array(
+			'en_US' => 'Status',
+			'fr_FR' => 'Statut',
+		),
 	),
 	
 	'commitmentMessage' => array(
