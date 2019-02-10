@@ -621,7 +621,7 @@ class Vcard
 
     			// Create the file on the file system with $id as a name
     			if (file_exists($path.$src)) unlink($path.$src);
-		    	move_uploaded_file ($file['name'], $path.$src);
+		    	move_uploaded_file ($file['tmp_name'], $path.$src);
     			$info = getimagesize($path.$src);
 		    	if (file_exists($path.$dest)) unlink($path.$dest);
 		    	if ($info['mime'] == 'image/gif' || $info['mime'] == 'image/png') {

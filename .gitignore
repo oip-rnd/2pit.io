@@ -4,9 +4,8 @@ config/autoload/*
 !config/autoload/*template.php
 config/application.config.php
 config/modules.config.php
-data/log/*
+data
 !data/log/template.log
-data/photos/*
 !data/photos/no-photo.png
 module/*
 !module/Application
