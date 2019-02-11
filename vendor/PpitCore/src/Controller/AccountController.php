@@ -1390,7 +1390,7 @@ class AccountController extends AbstractActionController
 			['adapter' => 'Zend\Http\Client\Adapter\Curl', 'maxredirects' => 0, 'timeout' => 30]
 		);
 		$client->setEncType('application/json');
-		$client->getRequest()->getHeaders()->addHeaders(array('Authorization' => 'Bearer ' . $context->getConfig()['ppitUserSettings']['safe'][$context->getInstance()->identifier]['facebook']));
+		$client->getRequest()->getHeaders()->addHeaders(array('Authorization' => 'Bearer ' . $context->getConfig()['ppitUserSettings']['safe'][$context->getInstance()->caption]['facebook']));
 		$client->setMethod('GET');
 		$response = $client->send();
 		if ($response->getStatusCode() != 200) {
@@ -1411,7 +1411,7 @@ class AccountController extends AbstractActionController
 				['adapter' => 'Zend\Http\Client\Adapter\Curl', 'maxredirects' => 0, 'timeout' => 30]
 			);
 			$client->setEncType('application/json');
-			$client->getRequest()->getHeaders()->addHeaders(array('Authorization' => 'Bearer ' . $context->getConfig()['ppitUserSettings']['safe'][$context->getInstance()->identifier]['facebook']));
+			$client->getRequest()->getHeaders()->addHeaders(array('Authorization' => 'Bearer ' . $context->getConfig()['ppitUserSettings']['safe'][$context->getInstance()->caption]['facebook']));
 			$client->setMethod('GET');
 			$response = $client->send();
 			if ($response->getStatusCode() == 200) {
