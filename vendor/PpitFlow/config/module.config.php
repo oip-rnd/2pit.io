@@ -620,7 +620,7 @@ return array (
 	'ppitApplications' => array(
 		'frontOffice' => array(
 			'labels' => array('fr_FR' => 'Front office', 'en_US' => 'Front office'),
-			'url' => 'landing/template2',
+			'url' => 'flowEvent',
 		),
 	),
 

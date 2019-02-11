@@ -1390,7 +1390,7 @@ class AccountController extends AbstractActionController
 			['adapter' => 'Zend\Http\Client\Adapter\Curl', 'maxredirects' => 0, 'timeout' => 30]
 		);
 		$client->setEncType('application/json');
-		$client->getRequest()->getHeaders()->addHeaders(array('Authorization' => 'Bearer EAAIWKgrCgLgBAHnXpwxHKDz77IIETg5OMfHRyOzyLJ40om3IpGEEZBQaaJtoE55OtgepAZB07sjDEov9sI435RUMFgXnzZAZAbdGBeJNLxdgpL2o9sPhj0UbtCalPcpcDcwNZAM7CZAUZBqRjllizs9Ig1usL38yqApeh9Sbhe7ZCKaS0K72ZCP3a'));
+		$client->getRequest()->getHeaders()->addHeaders(array('Authorization' => 'Bearer ' . $context->getConfig()['ppitUserSettings']['safe'][$context->getInstance()->identifier]['facebook']));
 		$client->setMethod('GET');
 		$response = $client->send();
 		if ($response->getStatusCode() != 200) {
@@ -1411,7 +1411,7 @@ class AccountController extends AbstractActionController
 				['adapter' => 'Zend\Http\Client\Adapter\Curl', 'maxredirects' => 0, 'timeout' => 30]
 			);
 			$client->setEncType('application/json');
-			$client->getRequest()->getHeaders()->addHeaders(array('Authorization' => 'Bearer EAAIWKgrCgLgBAHnXpwxHKDz77IIETg5OMfHRyOzyLJ40om3IpGEEZBQaaJtoE55OtgepAZB07sjDEov9sI435RUMFgXnzZAZAbdGBeJNLxdgpL2o9sPhj0UbtCalPcpcDcwNZAM7CZAUZBqRjllizs9Ig1usL38yqApeh9Sbhe7ZCKaS0K72ZCP3a'));
+			$client->getRequest()->getHeaders()->addHeaders(array('Authorization' => 'Bearer ' . $context->getConfig()['ppitUserSettings']['safe'][$context->getInstance()->identifier]['facebook']));
 			$client->setMethod('GET');
 			$response = $client->send();
 			if ($response->getStatusCode() == 200) {
