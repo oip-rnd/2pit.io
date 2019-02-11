@@ -276,7 +276,8 @@ class AccountController extends AbstractActionController
     		if (count($accounts) > 0) $account = Account::get(current($accounts)->id);
     		else $account = null;
     		if ($account /*&& $account->place_id == $place->id*/) { // Demande D. Elfassy de dédoublonner tous centres confondus. Règle non retenue dans l'API REST standard (account/v1)
-    			if (!$account->callback_date || $account->callback_date > date('Y-m-d')) $account->callback_date = date('Y-m-d');
+    			if ($account->status == 'gone') $account->status = 'new';
+    			$account->callback_date = date('Y-m-d');
     			$account->contact_history[] = array(
     					'time' => date('Y-m-d H:i:s'),
     					'n_fn' => 'support@p-pit.fr',

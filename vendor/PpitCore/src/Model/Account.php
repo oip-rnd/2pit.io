@@ -1823,7 +1823,9 @@ class Account
 		if (!$account) $account = $vcard->id ? current(Account::getList($type, ['place_id' => $place->id, 'contact_1_id' => $vcard->id])) : null;
     	if ($account) {
 			if (array_key_exists('contact_history', $accountData) && $accountData['contact_history']) {
-	    		$rc = $account->loadData($type, ['contact_history' => $accountData['contact_history'].' (ignored)']);
+				$minimumData = ['callback_date' => date('Y-m-d'), 'contact_history' => $accountData['contact_history'].' (ignored)'];
+				if ($account->status == 'gone') $minimumData['status'] = 'new';
+	    		$rc = $account->loadData($type, $minimumData);
 		    	if ($rc != 'OK') return ['500', $rc];
 	    		$account->update(null);
 				if ($rc != 'OK') return ['500', 'account->update: '.$rc];

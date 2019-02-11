@@ -201,7 +201,6 @@
 
               <label class="input_label" for="<?php echo $fieldId ?>"><?php if ($mandatory) echo '* '?><?php echo $field['labels'][$context->getLocale()]?></label>
               <select class="input_select" name="<?php echo $fieldId ?>" id="<?php echo $fieldId ?>">
-				<option/>
 					<?php foreach ($field['modalities'] as $modalityId => $modality) : ?>
                 <option value="<?php echo $modalityId?>" <?php if ($account->properties[$fieldId] == $modalityId) echo 'selected="selected"' ?>><?php echo $modality[$context->getLocale()]?></option>
 					<?php endforeach;?>
