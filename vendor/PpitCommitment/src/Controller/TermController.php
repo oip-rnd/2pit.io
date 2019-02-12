@@ -1009,7 +1009,8 @@ class TermController extends AbstractActionController
 			foreach ($months as $monthId => $unused) $matrix[$statusId][$monthId] = 0;
 		}
 		foreach ($terms as $term) {
-			if ($term->status && $term->collection_date) $matrix[$term->status][substr($term->collection_date, 0, 7)] += $term->amount;
+			$period = substr($term->collection_date, 0, 7);
+			if (array_key_exists($period, $matrix[$term->status]) && $term->status && $term->collection_date) $matrix[$term->status][$period] += $term->amount;
 		}
 
 		include 'public/PHPExcel_1/Classes/PHPExcel.php';
