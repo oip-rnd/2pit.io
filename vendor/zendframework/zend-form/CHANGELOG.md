@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.14.0 - 2019-01-07
+
+### Added
+
+- [#228](https://github.com/zendframework/zend-form/pull/228) adds support for PHP 7.3.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- [#228](https://github.com/zendframework/zend-form/pull/228) removes support for zend-stdlib v2 releases.
+
+### Fixed
+
+- Nothing.
+
 ## 2.13.0 - 2018-12-11
 
 ### Added

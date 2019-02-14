@@ -45,6 +45,21 @@
 	<?php endif;?>
 <?php endif;?>
 
+<?php if ($commitment->id) : ?>
+  <div>
+  <?php if (in_array($commitment->status, array('invoiced', 'settled', 'registered'))) : ?>
+    <a target="_blank" href="<?php echo $this->url('commitmentMessage/downloadInvoice', array('id' => $commitment->invoice_message_id)) ?>"><?php echo $this->translate('Invoice', 'ppit-commitment', $context->getLocale()) ?></a>
+    &nbsp;&nbsp;|&nbsp;&nbsp;
+  <?php endif;?>
+    <a target="_blank" href="<?php echo $this->url('commitment/downloadInvoice', array('type' => $type, 'id' => $commitment->id)) ?>?proforma=true"><?php echo $this->translate('Proforma', 'ppit-commitment', $context->getLocale()) ?></a>
+  <?php if ($commitment->id && $context->isDemoModeActive()) : ?>
+    <a class="tip" href="#" title="<?php echo $context->getConfig('demo')['commitment/invoice'][$context->getLocale()] ?>">
+        <img src="<?php echo $this->basePath('img/tip.png') ?>" width="20" />
+    </a>
+  <?php endif;?>
+  </div>
+<?php endif;?>
+
 <!-- Form header -->
 <?php echo $this->partial('/partials/form-header', array(
 		'update_time' => $commitment->update_time,

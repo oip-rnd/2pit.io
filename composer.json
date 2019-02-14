@@ -36,6 +36,7 @@
     "autoload": {
         "psr-4": {
             "Application\\": "module/Application/src/",
+            "Esi\\": "module/Esi/src/",
             "P_Pit\\": "module/P_Pit/src/",
             "Probonopro\\": "module/Probonopro/src/",
             "Probonocorpo\\": "module/Probonocorpo/src/",

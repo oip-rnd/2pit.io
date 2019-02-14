@@ -3780,6 +3780,8 @@ table.note-report td {
 			'new' => array('default' => 'New', 'fr_FR' => 'Nouveau'),
 			'submitted' => array('default' => 'Submitted', 'fr_FR' => 'Emis'),
 			'rejected' => array('default' => 'Rejected', 'fr_FR' => 'Rejeté'),
+			'canceled' => array('default' => 'Canceled', 'fr_FR' => 'Annulé'),
+			'registered' => array('default' => 'Registered', 'fr_FR' => 'Comptabilisé'),
 		),
 		'labels' => array(
 			'en_US' => 'Status',

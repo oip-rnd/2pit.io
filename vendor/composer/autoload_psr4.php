@@ -58,6 +58,7 @@ return array(
     'PpitCommitment\\' => array($vendorDir . '/PpitCommitment/src'),
     'P_Pit\\' => array($baseDir . '/module/P_Pit/src'),
     'Interop\\Container\\' => array($vendorDir . '/container-interop/container-interop/src/Interop/Container'),
+    'Esi\\' => array($baseDir . '/module/Esi/src'),
     'Application\\' => array($baseDir . '/module/Application/src'),
     'ApplicationTest\\' => array($baseDir . '/module/Application/test'),
 );

@@ -83,6 +83,10 @@ class ComposerStaticInit85293ecee4f033dd340b761c2c703716
         array (
             'Interop\\Container\\' => 18,
         ),
+        'E' => 
+        array (
+            'Esi\\' => 4,
+        ),
         'A' => 
         array (
             'Application\\' => 12,
@@ -298,6 +302,10 @@ class ComposerStaticInit85293ecee4f033dd340b761c2c703716
         'Interop\\Container\\' => 
         array (
             0 => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container',
+        ),
+        'Esi\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/module/Esi/src',
         ),
         'Application\\' => 
         array (

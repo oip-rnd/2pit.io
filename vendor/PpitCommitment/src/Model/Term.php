@@ -693,8 +693,7 @@ class Term
 				$column = Term::$model['properties'][$propertyKey]['column'];
 
 				if ($propertyId == 'place_id') {
-					if (strpos($value, ',')) $where->in('commitment_term.'.$propertyId, array_map('trim', explode(',', $value)));
-					$where->equalTo('core_account.place_id', $params['place_id']);
+					$where->in('core_account.'.$propertyId, array_map('trim', explode(',', $value)));
 				}
 				elseif (substr($propertyId, 0, 4) == 'min_') {
 					if (in_array($property['type'], ['date', 'datetime']) && !$value) $where->isNull($entity.'.'.substr($propertyId, 4));
