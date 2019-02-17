@@ -48,6 +48,15 @@ return array (
 				),
 				'may_terminate' => true,
 				'child_routes' => array(
+					'requestList' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/request-list',
+							'defaults' => array(
+								'action' => 'requestList',
+							),
+						),
+					),
 					'generate' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -519,6 +528,7 @@ return array (
 		'guards' => array(
 			'BjyAuthorize\Guard\Route' => array(
 				
+				array('route' => 'emailing/requestList', 'roles' => array('guest')),
 				array('route' => 'emailing/generate', 'roles' => array('operational_management')),
 				array('route' => 'emailing/serialize', 'roles' => array('admin')),
 				
