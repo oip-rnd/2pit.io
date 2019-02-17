@@ -3,9 +3,9 @@
 
 Introduction
 ------------
-This is the minimal 2pit application. It is based on a standard ZF2 installation. It is packaged with the core module (\vendor\PpitCore) and the default security manager (\vendor\PpitUser), providing a classic authentication mode based on login/password in a form.
+This is the minimal 2pit.io application. It is based on a standard ZF3 installation. It is packaged with the core module (\vendor\PpitCore) and the default security manager (\vendor\PpitUser), providing a classic authentication mode based on login/password in a form, an account management and customizable data structures named events related to accounts.
 
-Please note that only the 2pit application is under GPL license. Each file under GPL mentions it explicitly. The ZF2 application on which is packaged 2pit has it own license which is not affected by 2pit.
+Please note that only the 2pit application is under GPL license. Each file under GPL mentions it explicitly. The ZF3 application on which is packaged 2pit.io and incorporated free vendor packages have their own license.
 
 Installation
 ------------
@@ -28,9 +28,7 @@ Load in mysql the full and all the incremental sql file in database/
 	
 In your database you have a table named 'core_instance' with only one row. Change the fqdn value (which is localhost) to reflect the one of your site. The fqdn is for example of the form www.2pit.io.
 
-Install MDB Pro that you should get separately in public/MDB-Pro.
-
-The config/application.config.php and config/modules.config.php files are ignored by git since they refer to your local modules and files. Create them by copying from the templates
+The config/application.config.php and config/modules.config.php files are ignored by git since they refer to your local modules and files. Create them by copying from the templates:
 
 	cd ../config/
 	cp application.config.template.php application.config.php
@@ -60,18 +58,7 @@ Adapt these three lines in config/autoload/global.php according to your own mysq
 Web Server Setup
 ----------------
 
-### PHP CLI Server
-
-The simplest way to get started if you are using PHP 5.4 or above is to start the internal PHP cli-server in the root directory:
-
-    php -S 0.0.0.0:8080 -t public/ public/index.php
-
-This will start the cli-server on port 8080, and bind it to all network
-interfaces.
-
-**Note: ** The built-in CLI server is *for development only*.
-
-### Apache Setup
+### Example Apache Setup
 
 To setup apache, setup a virtual host to point to the public/ directory of the
 project and you should be ready to go! It should look something like below:
@@ -97,7 +84,7 @@ Adapt this line in config/autoload/local.php, replacing the value with your emai
 
     'mailTo' => 'no-reply@2pit.io', // Overrides the real email if not NULL (for test purposes)
     
-Specifying here an email has the result that each email sent by 2pit is routed to this address, regardless the real destination email (depending on the context). This parameter should be set to null in production environment to end email to real addresses.
+Specifying here an email has the result that each email sent by 2pit is routed to this address, regardless the real destination email. This parameter should be set to null in production environment in order to send email to real addresses.
 
 Login
 -----

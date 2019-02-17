@@ -161,7 +161,7 @@ class UserController extends AbstractActionController
     	// Retrieve the context
 		$context = Context::getCurrent();
 		$apps = Vcard::get($context->getContactId())->applications;
-    	$app = $this->params()->fromRoute('app', 'p-pit-admin');
+    	$app = $this->params()->fromRoute('app', 'p-pit-engagements');
 		
     	// Retrieve the user in update mode or create a new one in add mode
     	$id = (int) $this->params()->fromRoute('id', 0);
@@ -252,15 +252,21 @@ class UserController extends AbstractActionController
 			    	$data['is_notified'] = $request->getPost('is_notified');
 			    	if (!$contact->id) $data['is_demo_mode_active'] = true;
 			    	if ($contact->loadData($data) != 'OK') throw new \Exception('View error');
-			    	$rc = $user->loadData($request, $contact);
+/*			    	$rc = $user->loadData($request, $contact);
 			    	if ($rc != 'OK') $error = $rc;
-					else {
+					else {*/
 						// Save the contact
 						$rc = $contact->add();
 						if ($rc != 'OK') $error = $rc;
 						else {
 							$vcard_id = $contact->id;
-			        		$user->vcard_id = $vcard_id;
+							$user_id = $context->getSecurityAgent()->register($request->getPost('username'), $vcard_id, null, true);
+							$user = User::get($user_id);
+							$context->getSecurityAgent()->requestPasswordInit($user, true, $this->url(), $contact);
+							$connection->commit();
+							$message = 'OK';
+
+/*			        		$user->vcard_id = $vcard_id;
 	
 		        			// Save the user
 			        		if ($user->user_id) {
@@ -270,9 +276,9 @@ class UserController extends AbstractActionController
 			        		else {
 			        			$rc = $user->add($contact->email);
 			        			$creationMode = true;
-			        		}
+			        		}*/
 						}
-		        		if ($rc != 'OK') $error = $rc;
+/*		        		if ($rc != 'OK') $error = $rc;
 
 						if (!$error) {
 
@@ -289,8 +295,8 @@ class UserController extends AbstractActionController
 				    			$connection->commit();
 				    			$message = 'OK';
 							}
-						}
-					}
+						}*/
+//					}
         		}
         	    catch (\Exception $e) {
 		    		$connection->rollback();
@@ -552,7 +558,7 @@ class UserController extends AbstractActionController
 	    			else {
 				 		$email_body = $config['ppitUserSettings']['messages']['passwordChangedText'][$context->getLocale()];
 				 		$email_title = $config['ppitUserSettings']['messages']['passwordChangedTitle'][$context->getLocale()];
-			    		ContactMessage::sendMail($vcard->email, $email_body, $email_title, null);
+			    		Context::sendMail($vcard->email, $email_body, $email_title, null);
 	
 						$this->redirect()->toRoute('user/passwordChanged', array('id' => $id));
 	    			}
@@ -1038,7 +1044,7 @@ class UserController extends AbstractActionController
 		
 		// Post
 		elseif ($this->request->isPost()) {
-			
+/*			
 			if ($request == 'register') {
 				$data = array();
 				$data['email'] = $this->request->getPost('email');
@@ -1101,7 +1107,7 @@ class UserController extends AbstractActionController
 			    		return $this->getResponse();
 					}
 				}
-			}
+			}*/
 
 			// Init password
 			if ($request == 'init-password') {

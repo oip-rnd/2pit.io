@@ -178,10 +178,10 @@ class SecurityAgent
 		// Send the email to the user
 		if ($sendMail) {
 			$email_body = $config['ppitUserSettings']['messages']['addText'][$context->getLocale()];
-			$link = $context->getConfig()['ppitCoreSettings']['domainName'].$url->fromRoute('user/initpassword', array('id' => $user->user_id)).'?hash='.$user->password_init_token;
+			$link = $url->fromRoute('user/initpassword', ['id' => $user->user_id], ['force_canonical' => true]).'?hash='.$user->password_init_token;
 			$email_body = sprintf($email_body, $user->username, $link, $link);
 			$email_title = $config['ppitUserSettings']['messages']['addTitle'][$context->getLocale()];
-	        if (!$contact) $contact = Vcard::getTable()->transGet($user->username, 'email');
+	        if (!$contact) $contact = Vcard::getTable()->transGet($user->vcard_id);
 			Context::sendMail($contact->email, $email_body, $email_title, null);
 		}
 		
@@ -332,20 +332,34 @@ class SecurityAgent
 		$container->token_value = null;
     }
     
-    // V2 + registration and activation
-    
-    public function register($username, $vcard_id, $password)
+    /**
+     * encapsulates all the model logic and security for adding a new user. 
+     * Callable both from any kind of controller: web client, web-service, app
+     */
+    public function register($username, $vcard_id, $password, $activated = false)
     {
     	$context = Context::getCurrent();
     	 
-    	// Save the user
-    	$user = User::instanciate();
-    	$user->instance_id = $context->getInstanceId();
-    	$user->state = 0; // Account to be activated before use
-    	$user->username = $username;
-    	$user->vcard_id = $vcard_id;
-    	if ($user->add() != 'OK') throw new \Exception();
-    	if ($this->changePassword($user, $username, null, $password, null) != 'OK') throw new \Exception();;
+    	// Search for an already existing account
+    	$user = User::get($username, 'username');
+
+    	if (!$user) {
+	    	// Create the user
+	    	$user = User::instanciate();
+	    	$user->instance_id = $context->getInstanceId();
+	    	$user->state = ($activated) ? 1 : 0; // Account to be activated before use
+	    	$user->username = $username;
+	    	$user->vcard_id = $vcard_id;
+	    	$rc = $user->add();
+	    	if ($rc != 'OK') throw new \Exception($rc);
+    		if ($password && $this->changePassword($user, $username, null, $password, null) != 'OK') throw new \Exception();
+    	}
+    	else {
+	    	$user->vcard_id = $vcard_id;
+    		$rc = $user->update(null);
+    		if ($rc != 'OK') throw new \Exception($rc);
+    	}
+    	
     	$userContact = UserContact::instanciate();
     	$userContact->user_id = $user->user_id;
     	$userContact->vcard_id = $vcard_id;
