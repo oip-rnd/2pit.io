@@ -160,7 +160,7 @@
                     <tr>
 
                         <td align="center" class="section-img">
-                            <a href="" style=" border-style: none !important; display: block; border: 0 !important;"><img src="http://img.probonocorpo.com/probonocorpo/groupe.jpg" style="display: block; width: 590px;" width="590" border="0" alt="" /></a>
+                            <a href="" style=" border-style: none !important; display: block; border: 0 !important;"><img src="https://<?php echo $context->getInstance()->fqdn ?>/probonocorpo/groupe.jpg" style="display: block; width: 590px;" width="590" border="0" alt="" /></a>
 
 
 
@@ -211,7 +211,7 @@
 
   <?php if (array_key_exists('display', $contentDescription['card'])) : ?>
     <?php if ($contentDescription['card']['display']['type'] == 'avatar') : ?>
-    <img class="card-img-64 rounded-circle d-flex mx-auto mb-3" style="object-fit: cover" src="<?php echo $this->basePath('photos/'.(($request['photo_link_id']) ? $request['photo_link_id'] : 'no-photo.png')) ?>" width="40" height="40" />
+    <img class="card-img-64 rounded-circle d-flex mx-auto mb-3" style="object-fit: cover" src="<?php echo 'https://' . $context->getInstance()->fqdn . '/photos/'.(($request['photo_link_id']) ? $request['photo_link_id'] : 'no-photo.png') ?>" width="40" height="40" />
     <?php elseif ($contentDescription['card']['display']['type'] == 'image') : ?>
       <?php if (array_key_exists($request['category'], $contentDescription['card']['display']['class'])) : ?>
     <i class="<?php echo $contentDescription['card']['display']['class'][$request['category']] ?>"></i>
