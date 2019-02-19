@@ -1748,7 +1748,7 @@ class Account
 	/**
 	* Restfull implementation
 	*/
-    public function loadAndAdd($data, $config = null /* Deprecated */)
+    public function loadAndAdd($data, $config = null /* Deprecated */, $logDuplicate = true)
     {
     	$context = Context::getCurrent();
     	$type = $this->type;
@@ -1822,7 +1822,7 @@ class Account
     	if (!$vcard) $vcard = Vcard::instanciate();
 		if (!$account) $account = $vcard->id ? current(Account::getList($type, ['place_id' => $place->id, 'contact_1_id' => $vcard->id])) : null;
     	if ($account) {
-			if (array_key_exists('contact_history', $accountData) && $accountData['contact_history']) {
+			if ($logDuplicate && array_key_exists('contact_history', $accountData) && $accountData['contact_history']) {
 				$minimumData = ['callback_date' => date('Y-m-d'), 'contact_history' => $accountData['contact_history'].' (ignored)'];
 				if ($account->status == 'gone') $minimumData['status'] = 'new';
 	    		$rc = $account->loadData($type, $minimumData);

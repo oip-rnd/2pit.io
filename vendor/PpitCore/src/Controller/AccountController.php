@@ -1443,7 +1443,7 @@ class AccountController extends AbstractActionController
 								else $rest .= (' '.$property['name'].': '.$property['values'][0]);
 							}
 							$data['contact_history'] = $rest;
-							$rc = $account->loadAndAdd($data, Account::getConfig($type));
+							$rc = $account->loadAndAdd($data, Account::getConfig($type), false /* Don't log duplicate for Facebook forms */);
 							echo ++$i.': '.$lead['id'].' '.$rc[0]."<br>\n";
 						}
 					}
