@@ -252,12 +252,25 @@ class UserController extends AbstractActionController
 			    	$data['is_notified'] = $request->getPost('is_notified');
 			    	if (!$contact->id) $data['is_demo_mode_active'] = true;
 			    	if ($contact->loadData($data) != 'OK') throw new \Exception('View error');
-/*			    	$rc = $user->loadData($request, $contact);
-			    	if ($rc != 'OK') $error = $rc;
-					else {*/
-						// Save the contact
+
+					// Save the contact
+					if ($contact->id) {
+						$rc = $contact->update(null);
+						if ($rc != 'OK') {
+							$error = $rc;
+		    				$connection->rollback();
+						}
+						else {
+							$connection->commit();
+							$message = 'OK';
+						}
+					}
+					else {
 						$rc = $contact->add();
-						if ($rc != 'OK') $error = $rc;
+						if ($rc != 'OK') {
+							$error = $rc;
+				    		$connection->rollback();
+						}
 						else {
 							$vcard_id = $contact->id;
 							$user_id = $context->getSecurityAgent()->register($request->getPost('username'), $vcard_id, null, true);
@@ -265,38 +278,8 @@ class UserController extends AbstractActionController
 							$context->getSecurityAgent()->requestPasswordInit($user, true, $this->url(), $contact);
 							$connection->commit();
 							$message = 'OK';
-
-/*			        		$user->vcard_id = $vcard_id;
-	
-		        			// Save the user
-			        		if ($user->user_id) {
-		        				$rc = $user->update($request->getPost('update_time'));
-		        				$creationMode = false;
-		        			}
-			        		else {
-			        			$rc = $user->add($contact->email);
-			        			$creationMode = true;
-			        		}*/
 						}
-/*		        		if ($rc != 'OK') $error = $rc;
-
-						if (!$error) {
-
-							if ($creationMode) {
-								// Save the user-contact link
-								$userContact = UserContact::instanciate();
-								$userContact->user_id = $user->user_id;
-								$userContact->vcard_id = $vcard_id;
-								$rc = $userContact->add();
-								if ($rc == 'OK') $context->getSecurityAgent()->requestPasswordInit($user, true, $this->url(), $contact);
-								else $error = $rc;
-							}
-							if ($rc == 'OK') {
-				    			$connection->commit();
-				    			$message = 'OK';
-							}
-						}*/
-//					}
+					}
         		}
         	    catch (\Exception $e) {
 		    		$connection->rollback();
