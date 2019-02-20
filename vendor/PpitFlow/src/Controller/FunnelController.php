@@ -202,6 +202,7 @@ class FunnelController extends AbstractActionController
     	$formData = array();
     	foreach ($form as $var) {
     		$tuplet = explode('=', $var);
+	    	$logger->info($var);
     		if (substr($tuplet[0], 0, 5) == 'vads_') $formData[$tuplet[0]] = $tuplet[1];
     		elseif ($tuplet[0] == 'signature') $receivedSignature = $tuplet[1];
     	}
