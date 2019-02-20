@@ -202,13 +202,13 @@ class FunnelController extends AbstractActionController
     	$formData = array();
     	foreach ($form as $var) {
     		$tuplet = explode('=', $var);
-	    	$logger->info($var);
     		if (substr($tuplet[0], 0, 5) == 'vads_') $formData[$tuplet[0]] = $tuplet[1];
     		elseif ($tuplet[0] == 'signature') $receivedSignature = $tuplet[1];
     	}
 
     	$signature = '';
     	ksort($formData);
+    	foreach ($form as $var) $logger->info($var);
     	foreach ($formData as $name => $value) $signature .= $value . '+';
     	$signature = base64_encode(hash_hmac('sha256', $signature . $payZenConfig['key'], $payZenConfig['key'], true));
 
