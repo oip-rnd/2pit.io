@@ -1022,9 +1022,8 @@ function activateAccount() {
 $properties = array();
 $properties['commitment-type'] = array('type' => 'select', 'mandatory' => 'true', 'maxSize' => 255);
 if ($type == 'p-pit-studies') {
-	foreach ($context->getConfig('commitment/update'.(($type) ? '/'.$type : '')) as $propertyId => $options) {
-		$property = $context->getConfig('commitment'.(($type) ? '/'.$type : ''))['properties'][$propertyId];
-		if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
+	foreach ($commitmentProperties as $propertyId => $property) {
+		$options = $property['options'];
 		$properties['commitment-'.$propertyId] = array('type' => $property['type'], 'mandatory' => $options['mandatory'], 'maxSize' => ($property['type'] == 'textarea' || $property['type'] == 'log') ? 2047 : 255);
 	}
 }
