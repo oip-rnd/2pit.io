@@ -225,9 +225,13 @@ class FunnelController extends AbstractActionController
 		    	$term->collection_date = $term->settlement_date = date('Y-m-d');
 		    	$term->update(null);
     		}
-	    	$this->getResponse()->setStatusCode('200');
+	    	$logger->info('status: 200');
+    		$this->getResponse()->setStatusCode('200');
     	}
-		else $this->getResponse()->setStatusCode('500');
+		else {
+	    	$logger->info('status: 500');
+			$this->getResponse()->setStatusCode('500');
+		}
     	return $this->response;
     }
 	
