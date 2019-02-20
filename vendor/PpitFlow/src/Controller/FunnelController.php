@@ -212,7 +212,7 @@ class FunnelController extends AbstractActionController
     	foreach ($formData as $name => $value) $signature .= $value . '+';
     	$signature = base64_encode(hash_hmac('sha256', $signature . $payZenConfig['key'], $payZenConfig['key'], true));
 
-    	if ($signature == $receivedSignature) {
+//    	if ($signature == $receivedSignature) {
     		if (	in_array($formData['vads_url_check_src'], ['PAY', 'BATCH_AUTO', 'RETRY']) 
     			&& 	$formData['vads_operation_type'] == 'DEBIT'
     			&&	$formData['vads_trans_status'] == 'CAPTURED') {
@@ -227,11 +227,11 @@ class FunnelController extends AbstractActionController
     		}
 	    	$logger->info('status: 200');
     		$this->getResponse()->setStatusCode('200');
-    	}
+/*    	}
 		else {
 	    	$logger->info('status: 500');
 			$this->getResponse()->setStatusCode('500');
-		}
+		}*/
     	return $this->response;
     }
 	
