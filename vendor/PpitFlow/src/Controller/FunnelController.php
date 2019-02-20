@@ -191,6 +191,11 @@ class FunnelController extends AbstractActionController
 		// Context
     	$context = Context::getCurrent();
     	$payZenConfig = $context->getConfig('ppitUserSettings')['safe'][$context->getInstance()->caption]['PayZen'];
+ 
+    	$writer = new \Zend\Log\Writer\Stream('data/log/payzen.txt');
+    	$logger = new \Zend\Log\Logger();
+    	$logger->addWriter($writer);
+    	$logger->info(date('Y-m-d H:i:s'));
     	 
     	// Form data
     	$form = explode('&', $this->request->getPost()->toString());
@@ -200,23 +205,28 @@ class FunnelController extends AbstractActionController
     		if (substr($tuplet[0], 0, 5) == 'vads_') $formData[$tuplet[0]] = $tuplet[1];
     		elseif ($tuplet[0] == 'signature') $receivedSignature = $tuplet[1];
     	}
-var_dump($formData);
+
     	$signature = '';
     	ksort($formData);
     	foreach ($formData as $name => $value) $signature .= $value . '+';
     	$signature = base64_encode(hash_hmac('sha256', $signature . $payZenConfig['key'], $payZenConfig['key'], true));
 
     	if ($signature == $receivedSignature) {
-	    	// Term
-	    	$commitment = Commitment::getTable()->transGet($formData['vads_trans_id']);
-	    	reset($commitment->terms);
-	    	$term = current($commitment->terms);
-	    	$term->status = 'collected';
-	    	$term->collection_date = $term->settlement_date = date('Y-m-d');
-	    	$term->update(null);
+    		if (	in_array($formData['vads_url_check_src'], ['PAY', 'BATCH_AUTO', 'RETRY']) 
+    			&& 	$formData['vads_operation_type'] == 'DEBIT'
+    			&&	$formData['vads_trans_status'] == 'CAPTURED') {
+	    		
+		    	// Term
+		    	$commitment = Commitment::getTable()->transGet($formData['vads_trans_id']);
+		    	reset($commitment->terms);
+		    	$term = current($commitment->terms);
+		    	$term->status = 'collected';
+		    	$term->collection_date = $term->settlement_date = date('Y-m-d');
+		    	$term->update(null);
+    		}
+	    	$this->getResponse()->setStatusCode('200');
     	}
-    	 
-    	$this->getResponse()->setStatusCode('200');
+		else $this->getResponse()->setStatusCode('500');
     	return $this->response;
     }
 	
