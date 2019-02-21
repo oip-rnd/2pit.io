@@ -220,8 +220,8 @@ class FunnelController extends AbstractActionController
     			&&	$formData['vads_trans_status'] == 'AUTHORISED') {
 	    		
 		    	// Term
-		    	$commitment = Commitment::getTable()->transGet((int)$formData['vads_trans_id']);
-		    	$logger->info('commitment: ' . (int)$formData['vads_trans_id'] . ', ' . $commitment->status . ', ' . $commitment->amount);
+		    	$commitment = Commitment::get((int)$formData['vads_trans_id']);
+		    	$logger->info('commitment: ' . (int)$formData['vads_trans_id'] . ', ' . $commitment->status . ', ' . $commitment->tax_inclusive);
 		    	foreach ($commitment->terms as $term) {
 		    		
 		    		if (	!in_array($term->status, ['collected', 'registered'])
