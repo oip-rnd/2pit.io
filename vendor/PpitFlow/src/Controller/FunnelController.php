@@ -217,7 +217,7 @@ class FunnelController extends AbstractActionController
 //    	if ($signature == $receivedSignature) {
     		if (	in_array($formData['vads_url_check_src'], ['PAY', 'BATCH_AUTO', 'RETRY']) 
     			&& 	$formData['vads_operation_type'] == 'DEBIT'
-    			&&	$formData['vads_trans_status'] == 'AUTHORIZED') {
+    			&&	$formData['vads_trans_status'] == 'AUTHORISED') {
 	    		
 		    	// Term
 		    	$commitment = Commitment::getTable()->transGet((int)$formData['vads_trans_id']);
