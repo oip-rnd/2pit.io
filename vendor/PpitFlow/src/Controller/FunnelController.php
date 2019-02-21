@@ -161,7 +161,7 @@ class FunnelController extends AbstractActionController
     		'vads_action_mode' => 'INTERACTIVE',
     		'vads_amount' => 100, //$commitment->tax_inclusive * 100,
     		'vads_capture_delay' => '0',
-    		'vads_ctx_mode' => 'TEST',
+    		'vads_ctx_mode' => $payZenConfig['vads_ctx_mode'],
     		'vads_currency' => '978',
     		'vads_page_action' => 'PAYMENT',
     		'vads_payment_config' => $payment_config,
