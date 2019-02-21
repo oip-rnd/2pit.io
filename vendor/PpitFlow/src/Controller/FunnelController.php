@@ -159,7 +159,7 @@ class FunnelController extends AbstractActionController
     	// PayZen form date
     	$formData = array(
     		'vads_action_mode' => 'INTERACTIVE',
-    		'vads_amount' => $commitment->tax_inclusive * 100,
+    		'vads_amount' => 100, //$commitment->tax_inclusive * 100,
     		'vads_capture_delay' => '0',
     		'vads_ctx_mode' => 'TEST',
     		'vads_currency' => '978',
