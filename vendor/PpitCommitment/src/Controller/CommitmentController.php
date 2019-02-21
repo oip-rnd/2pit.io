@@ -721,7 +721,7 @@ class CommitmentController extends AbstractActionController
     	$product = Product::get($commitment->product_identifier, 'identifier');
     	$taxExemptAmount = $commitment->amount - $commitment->taxable_1_amount - $commitment->taxable_2_amount - $commitment->taxable_3_amount;
     	if ($commitment->product_caption) $caption = $commitment->product_caption;
-    	else $caption = $commitment->description;
+    	else $caption = ''; // $commitment->description;
     	 
     	$invoice['lines'] = array();
     	if ($caption) {
