@@ -208,8 +208,10 @@ class FunnelController extends AbstractActionController
 
     	$signature = '';
     	ksort($formData);
-    	foreach ($form as $var) $logger->info($var);
-    	foreach ($formData as $name => $value) $signature .= $value . '+';
+    	foreach ($formData as $name => $value) {
+    		$logger->info($name . ' => ' . $value);
+    		$signature .= $value . '+';
+    	}
     	$signature = base64_encode(hash_hmac('sha256', $signature . $payZenConfig['key'], $payZenConfig['key'], true));
 
 //    	if ($signature == $receivedSignature) {
@@ -218,12 +220,24 @@ class FunnelController extends AbstractActionController
     			&&	$formData['vads_trans_status'] == 'CAPTURED') {
 	    		
 		    	// Term
-		    	$commitment = Commitment::getTable()->transGet($formData['vads_trans_id']);
-		    	reset($commitment->terms);
-		    	$term = current($commitment->terms);
-		    	$term->status = 'collected';
-		    	$term->collection_date = $term->settlement_date = date('Y-m-d');
-		    	$term->update(null);
+		    	$commitment = Commitment::getTable()->transGet((int)$formData['vads_trans_id']);
+		    	foreach ($commitment->terms as $term) {
+		    		
+		    		if (	!in_array($term->status, ['collected', 'registered'])
+		    			&&	$term->due_date <= date('Y-m-d')
+		    			&&	$term->amount == $formData['vads_effective_amount'] / 100) {
+
+		    			$logger->info('term: ' . $term->id . ', ' . $term->status . ', ' . $term->amount . ' => Updated');
+		    			$logger->info('term_id: ' . $term->id);
+				    	$term->status = 'collected';
+				    	$term->collection_date = $term->settlement_date = date('Y-m-d');
+				    	$term->update(null);
+				    	$break;
+		    		}
+		    		else {
+		    			$logger->info('term: ' . $term->id . ', ' . $term->status . ', ' . $term->amount . ' => Skipped');
+		    		}
+		    	}
     		}
 	    	$logger->info('status: 200');
     		$this->getResponse()->setStatusCode('200');
