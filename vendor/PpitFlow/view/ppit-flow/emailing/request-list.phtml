@@ -205,8 +205,27 @@
                             <table border="0" width="600" align="center" cellpadding="0" cellspacing="0" class="container590">
                                 <tr>
                                     <td align="justify" style="color: #888888; font-size: 16px; font-family: 'Work Sans', Calibri, sans-serif; line-height: 24px;">
-<?php foreach ($contentDescription['data'] as $requestId => $request) : ?>
+<?php $currentStatus = null; foreach ($contentDescription['data'] as $requestId => $request) : ?>
+  <?php if ($request['status'] != $currentStatus) : ?>
+    <?php $currentStatus = $request['status'] ?>
+                                        <div style="font-size: 18px; font-family: Quicksand, Calibri, sans-serif; font-weight:700; line-height: 35px; text-align: center">
+    <?php if ($currentStatus == 'new') : ?>
+                                          <span style="color: #ff3547">Demandes qui attendent un contributeur</span>
+
+    <?php elseif ($currentStatus == 'connected') : ?>
+                                          <span style="color: #33b5e5">Demandes matchées à réaliser</span>
+
+    <?php elseif ($currentStatus == 'realized') : ?>
+                                          <span style="color: #ff8800">Demandes qui attendent un feedback</span>
+
+    <?php elseif ($currentStatus == 'completed') : ?>
+                                          <span style="color: #00c851">Demandes terminées</span>
+
+    <?php endif;?>
+                                        </div>
   
+                                        <div style="line-height: 24px">&nbsp;</div>
+  <?php endif;?>
                                         <div style="line-height: 24px; text-align: center">
 
   <?php if (array_key_exists('display', $contentDescription['card'])) : ?>
@@ -344,7 +363,6 @@
                                         <div style="line-height: 24px">&nbsp;</div>
 
 <?php endforeach ?>
-                                        <div style="line-height: 24px; text-align: center"><a href="mailto:nicole@probonopro.net">Nicole</a>, <a href="mailto:daniel@probonopro.net">Daniel</a>, <a href="mailto:gisele@probonopro.net">Gisèle</a>, <a href="mailto:bruno@probonopro.net">Bruno</a></div>
                                     </td>
                                 </tr>
                             </table>
@@ -396,7 +414,7 @@
                                     <td align="left" style="color: #888888; font-size: 14px; font-family: 'Work Sans', Calibri, sans-serif; line-height: 23px;" class="text_color">
                                         <div style="color: #333333; font-size: 14px; font-family: 'Work Sans', Calibri, sans-serif; font-weight: 600; mso-line-height-rule: exactly; line-height: 23px;">
 
-                                            <a href="mailto:contact@probonopro.net" style="color: #888888; font-size: 14px; font-family: 'Hind Siliguri', Calibri, Sans-serif; font-weight: 400;">contact@probonopro.net</a>
+                                            <a href="mailto:probonocorpo.par@socgen.com" style="color: #888888; font-size: 14px; font-family: 'Hind Siliguri', Calibri, Sans-serif; font-weight: 400;">Contact PRO BONO CORPO</a>
 
                                         </div>
                                     </td>
@@ -480,7 +498,7 @@
                                         <table align="center" border="0" cellpadding="0" cellspacing="0">
                                             <tr>
                                                 <td align="center">
-                                                    <a style="font-size: 14px; font-family: 'Work Sans', Calibri, sans-serif; line-height: 24px;color: #5caad2; text-decoration: none;font-weight:bold;" href="mailto:contact@probonopro.net?subject=Se désabonner">SE DESABONNER</a>
+                                                    <a style="font-size: 14px; font-family: 'Work Sans', Calibri, sans-serif; line-height: 24px;color: #5caad2; text-decoration: none;font-weight:bold;" href="mailto:probonocorpo.par@socgen.com?subject=Se désabonner">SE DESABONNER</a>
                                                 </td>
                                             </tr>
                                         </table>
