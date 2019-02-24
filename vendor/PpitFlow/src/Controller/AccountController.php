@@ -277,11 +277,11 @@ class AccountController extends AbstractActionController
 		}
 
 		// Retrieve the content
-		if ($context->getConfig('specificationMode') == 'config') {
+//		if ($context->getConfig('specificationMode') == 'config') {
 			$content = $context->getConfig('account/'.$place->identifier);
 			if (!$content) $content = $context->getConfig('account/generic');
-		}
-		else $content = Config::get($place->identifier.'_account', 'identifier')->content;
+/*		}
+		else $content = Config::get($place->identifier.'_account', 'identifier')->content;*/
 
 		// Card
 		foreach ($content['card']['properties'] as $propertyId => $options) {
