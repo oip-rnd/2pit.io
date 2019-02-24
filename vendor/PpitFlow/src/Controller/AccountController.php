@@ -104,11 +104,11 @@ class AccountController extends AbstractActionController
 		}
 		
 		// Account template
-		if ($context->getConfig('specificationMode') == 'config') {
+//		if ($context->getConfig('specificationMode') == 'config') {
 			$content = $context->getConfig('account/'.$place_identifier);
 			if (!$content) $content = $context->getConfig('account/generic');
-		}
-		else $content = Config::get($place_identifier.'_account', 'identifier')->content;
+/*		}
+		else $content = Config::get($place_identifier.'_account', 'identifier')->content;*/
 
 		// compute ranking in gaming mode
 		if ($profile && array_key_exists('rewards', $content)) {
