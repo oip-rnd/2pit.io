@@ -118,14 +118,14 @@ var homeSearch_<?php echo $propertyId ?> = {
 };
 
 $('.homeSearch').hide();
-
+/*
 $('#homeSearch-<?php echo $propertyId ?>').mdb_autocomplete({
   data: homeSearch_<?php echo $propertyId ?>
-});
+});*/
 
-$('#homeSearch-<?php echo $propertyId ?>').change(function () {
+$('#homeSearch-<?php echo $propertyId ?>').keyup(function () {
   keywords = $('#homeSearch-<?php echo $propertyId ?>').val();
-  showList();
+  if (keywords.length > 2) showList();
 /*  $('.aMode').removeClass('active');
   $('#aModePublic').addClass('active');
   mode = 'Public';
@@ -142,14 +142,14 @@ $('#homeSearch-<?php echo $propertyId ?>').change(function () {
     showList();
   }, 600);*/
 });
-
+/*
 $('.homeSearchClose').click(function () {
 <?php foreach ($context->getConfig($property['repository']) as $entryId => $entry) : ?>
-if ($(this).attr('id').split('-')[1] == '<?php echo $entryId ?>') $('#skill-<?php echo $entryId ?>').val(0);
+//if ($(this).attr('id').split('-')[1] == '<?php echo $entryId ?>') $('#skill-<?php echo $entryId ?>').val(0);
 <?php endforeach;?>
 $(this).parent().parent().hide();
 showList();
-});
+});*/
 
     <?php endif; ?>
 
