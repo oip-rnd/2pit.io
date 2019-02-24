@@ -1015,7 +1015,7 @@ class Commitment
     	return $data;
     }
     
-    public static function getList($type, $params, $major, $dir, $mode)
+    public static function getList($type, $params, $major = 'update_time', $dir = 'DESC', $mode = 'search')
     {
     	$context = Context::getCurrent();
     	$select = Commitment::getTable()->getSelect()

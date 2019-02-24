@@ -1,0 +1,221 @@
+<?php foreach ($content['data'] as $accountId => $account) : ?>
+  
+  <div class="media d-block d-md-flex my-5">
+  <?php if (array_key_exists('display', $content['card'])) : ?>
+    <?php if ($content['card']['display']['type'] == 'avatar') : ?>
+    <img class="card-img-64 rounded-circle d-flex mx-auto mb-3" style="object-fit: cover" src="<?php echo $this->basePath('photos/'.(($account['photo_link_id']) ? $account['photo_link_id'] : 'no-photo.png')) ?>" width="40" height="40" alt="Sample image" />
+    <?php elseif ($content['card']['display']['type'] == 'image') : ?>
+      <?php if (array_key_exists($account['category'], $content['card']['display']['class'])) : ?>
+    <i class="<?php echo $content['card']['display']['class'][$account['category']] ?>"></i>
+      <?php else : ?>
+    <i class="fa fa-hands-calendar-alt fa-3x red-text"></i>
+      <?php endif;?>
+    <?php endif;?>
+  <?php endif;?>
+    <div class="media-body text-md-left ml-md-3">
+
+  <?php if (array_key_exists('status', $content)) : ?>      
+      <div class="progress md-progress" style="height: 15px">
+        <div class="progress-bar <?php echo $content['status'][$account['status']]['color'] ?>" role="progressbar" style="width: <?php echo $content['status'][$account['status']]['value'] ?>%; height: 15px" aria-valuenow="<?php echo $content['status'][$account['status']]['value'] ?>" aria-valuemin="0" aria-valuemax="100"><?php echo $context->localize($content['status'][$account['status']]['labels'], $locale) ?></div>
+      </div>
+  <?php endif;?>
+
+      <div class="grey-text font-weight-bold mb-2">
+        <span class="h5">
+
+          <?php echo $account['n_first'] ?>
+          &nbsp;&nbsp;|&nbsp;&nbsp;
+
+          <?php echo $account['name'] ?>
+
+    <?php if (array_key_exists('rewards', $content) && $account['value']) : ?>
+          &nbsp;&nbsp;
+          <span class="badge badge-success"><?php echo $content['rewards']['brand'] ?>: <?php echo $account['value']?></span>
+    <?php endif;?>
+        </span>
+
+        &nbsp;&nbsp;<a class="text-secondary aDetailAction" id="aDetailAction-<?php echo $accountId ?>"><i class="fa fa-search mr-1"></i><?php echo $this->translate('Details', 'ppit-core', $locale) ?></a>
+
+      </div>
+      
+      <div class="">
+
+  <?php $first = true ?>
+  
+  <?php if ($mode == 'Owner' && $account['status'] == 'new') : ?>
+    <?php 
+    $first = false;
+    $action = $content['actions']['Owner']['update'];
+    ?>
+        <a class="text-secondary font-weight-bold aUpdateAction" id="aUpdateAction-<?php echo $accountId ?>">
+    <?php if (array_key_exists('icon', $action)) : ?>
+          <i class="far fa-<?php echo $action['icon'] ?> mr-1"></i>
+    <?php endif;?>
+          <?php echo $context->localize($action['labels'], $locale) ?>
+        </a>
+  <?php endif;?>
+  
+  <?php foreach ($content['data'][$accountId][$mode.'Actions'] as $actionId => $action) : ?>
+
+    <?php 
+    if (!$first) echo '&nbsp;&nbsp;|&nbsp;&nbsp;';
+    $first = false;
+    ?>
+        <a class="text-secondary font-weight-bold a<?php echo $mode ?>Action a<?php echo $mode ?>Action-<?php echo $actionId ?>" id="a<?php echo $mode ?>Action-<?php echo $actionId ?>-<?php echo $accountId ?>">
+    <?php if (array_key_exists('icon', $action)) : ?>
+          <i class="far fa-<?php echo $action['icon'] ?> mr-1"></i>
+    <?php endif;?>
+          <?php echo $context->localize($action['labels'], $locale) ?>
+        </a>
+
+  <?php endforeach;?>
+
+    </div>
+
+    <div class="grey-text">
+
+<?php if (array_key_exists('mask', $content['card'])) : ?>
+  <?php $arguments = array() ?>
+  <?php foreach ($content['card']['properties'] as $inputId => $property) : ?>
+      <?php 
+      if (in_array($property['type'], ['select', 'textarea'])) {
+        $arguments[] = $context->localize($property['modalities'][$account[$inputId]], $locale);
+      }
+      elseif (in_array($property['type'], ['email'])) {
+        $arguments[] = '<a class="text-secondary" href="mailto:'.$account['email'].'?subject=probono corpo - '.$account['caption'].'"><i class="far fa-envelope"></i></a>';
+      }
+      elseif (in_array($property['type'], ['phone'])) {
+        $arguments[] = '<a class="text-secondary" href="tel:'.$account['tel_work'].'"><i class="fa fa-mobile-alt"></i></a>';
+      }
+      elseif ($property['type'] == 'date') {
+        $arguments[] = date_format(date_create_from_format('Y-m-d', $account[$inputId]), $context->localize($property['format']));
+      }
+      elseif ($property['type'] == 'time') {
+        $arguments[] = date_format(date_create_from_format('H:i:s', $account[$inputId]), $context->localize($property['format']));
+      }
+      elseif (in_array($property['type'], ['input', 'time'])) {
+        $arguments[] = $account[$inputId];
+      }
+      ?>
+  <?php endforeach;?>
+  <?php echo vsprintf($context->localize($content['card']['mask']['format']), $arguments) ?>
+
+<?php else : ?>
+  <?php $first = true; foreach ($content['card']['properties'] as $inputId => $property) : ?>
+    <?php 
+    if (!$first) echo '&nbsp;&nbsp;';
+    $first = false;
+    ?>
+  <?php if ($property['type'] == 'separation') : ?>
+  
+      |
+
+  <?php elseif ($property['type'] != 'chips') : ?>
+
+    <?php if ($account[$inputId]) : ?>
+
+      <?php if ($property['type'] == 'select') : ?>
+      <strong><?php echo $context->localize($property['labels'], $locale) ?>:</strong>
+      <?php echo $context->localize($property['modalities'][$account[$inputId]], $locale) ?>
+
+      <?php elseif ($property['type'] == 'textarea') : ?>
+      <strong><?php echo $context->localize($property['labels'], $locale) ?>:</strong>
+      <?php echo $account[$inputId] ?>
+
+      <?php elseif ($property['type'] == 'email') : ?>
+      <a class="text-secondary" href="mailto:<?php echo $account['email'] ?>?subject=2pit.io - <?php echo $account['name'] ?>"><i class="far fa-envelope"></i></a>
+
+      <?php elseif ($property['type'] == 'phone') : ?>
+      <a class="text-secondary" href="tel:<?php echo $account['tel_work'] ?>"><i class="fa fa-mobile-alt"></i></a>
+
+      <?php elseif ($property['type'] == 'date') : ?>
+      <strong><?php echo $context->localize($property['labels'], $locale) ?>:</strong>
+      <?php echo date_format(date_create_from_format('Y-m-d', $account[$inputId]), $context->localize($property['format'])) ?>
+
+      <?php elseif ($property['type'] == 'time') : ?>
+      <strong><?php echo $context->localize($property['labels'], $locale) ?>:</strong>
+      <?php echo date_format(date_create_from_format('H:i:s', $account[$inputId]), $context->localize($property['format'])) ?>
+
+      <?php elseif ($property['type'] == 'input') : ?>
+      <strong><?php echo $context->localize($property['labels'], $locale) ?>:</strong>
+      <?php echo $account[$inputId] ?>
+
+      <?php endif;?>
+    <?php endif;?>
+  <?php endif;?>
+  <?php endforeach;?>
+<?php endif;?>
+    </div>
+    
+<?php foreach ($content['card']['properties'] as $inputId => $property) : ?>
+  <?php if ($property['type'] == 'chips') : ?>
+
+    <?php $currentSkills = ($account[$inputId]) ? explode(',', $account[$inputId]) : [] ?>
+    <div class="text-center">
+    <?php foreach ($currentSkills as $entryId) : ?>
+      <?php $entry = $property['repository'][$entryId] ?>
+      <span class="chip <?php echo $entry['color'] ?> white-text">
+        <?php echo $context->localize($entry['labels'], $locale) ?>
+      </span>
+    <?php endforeach;?>
+    </div>
+
+  <?php endif;?>
+<?php endforeach;?>
+
+<?php if ($mode == 'Owner') : ?>
+      <div>&nbsp;</div>
+	  <div class="card-header border-0 font-weight-bold font-small d-flex justify-content-between py-1">
+	    <p class="mr-4 mb-0"><?php echo $this->translate('Commitments', 'ppit-commitment', $locale) ?></p>
+	    <ul class="list-unstyled list-inline mb-0">
+	      <li class="list-inline-item"><a class="text-secondary mr-3 aMatchingSearchAction" id="aMatchingSearchAction-<?php echo $accountId ?>"><i class="fa fa-plus mr-1"></i><?php echo $this->translate('Search for profiles', 'ppit-flow', $context->getLocale()) ?></a>
+	    </ul>
+	  </div>
+
+  <?php foreach ($account['commitments'] as $commitment_id => $commitment) : ?>
+  <div class="media mt-4 px-1">
+    <div class="media-body text-center text-md-left ml-md-3">
+      <h6 class="mt-0 grey-text">
+        <span class="font-weight-bold">
+          <?php echo $commitment['caption'] ?>
+        </span>&nbsp;&nbsp;
+        <a class="text-secondary font-small aMatchingDetailAction" id="aMatchingDetailAction-<?php echo $commitmentId ?>-<?php echo $commitment_id ?>"><i class="fa fa-search mr-1"></i></a>
+      </h6>
+
+      <div class="">
+    <?php $first = true; foreach ($commitment['actions'] as $actionId => $action) : ?>
+
+      <?php 
+      if (!$first) echo '&nbsp;&nbsp;|&nbsp;&nbsp;';
+      $first = false;
+      ?>
+        <a class="text-secondary font-weight-bold font-small aMatchingAction aMatchingAction-<?php echo $actionId ?>" id="aMatchingAction-<?php echo $actionId ?>-<?php echo $accountId ?>-<?php echo $account_id ?>">
+      <?php if (array_key_exists('icon', $content['actions']['Matching'][$actionId])) : ?>
+          <i class="far fa-<?php echo $content['actions']['Matching'][$actionId]['icon'] ?> mr-1"></i>
+      <?php endif;?>
+          <?php echo $context->localize($content['actions']['Matching'][$actionId]['labels']) ?>
+        </a>
+        
+    <?php endforeach;?>
+      </div>
+    </div>
+  </div>
+  <?php endforeach;?>
+  <hr>
+<?php endif;?>
+    </div>
+  </div>
+  
+<?php endforeach ?>
+
+</section>
+<!-- Section: Blog v.1 -->
+      
+</div>
+<!--Bottom Table UI-->
+
+    </div>
+    <!--/.Card content-->
+
+</div>
+<!--/.Card-->

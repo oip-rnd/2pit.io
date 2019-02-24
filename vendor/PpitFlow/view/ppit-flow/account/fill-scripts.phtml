@@ -1,0 +1,113 @@
+<script>
+
+<?php if ($error) : ?>
+toastr.error('<?php echo $this->translate('Technical information: ', 'ppit-core', $context->getLocale()).$error ?>');
+toastr.error('<?php echo $this->translate('An error has occurred, please try again later', 'ppit-core', $context->getLocale()) ?>');
+<?php endif;?>
+
+$('.aMatchingSearchAction').click(function () {
+  var xhttp = new XMLHttpRequest();
+  xhttp.open('GET', '<?php echo $this->url('profile/list') ?>', true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      $('#modalShowProfileTitle').html('<?php echo $this->translate('Profile', 'ppit-flow', $locale) ?>');
+      $('#modalShowProfileContent').html(xhttp.responseText);
+      $('.dataProtected').hide();
+      $('#modalShowProfileForm').modal('show');
+    }
+  };
+  xhttp.send();
+});
+
+$('.datepicker').pickadate({
+	monthsFull: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+	weekdaysShort: ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'],
+	today: 'aujourd\'hui',
+	clear: 'effacer',
+	format: 'dd/mm/yyyy',
+	formatSubmit: 'yyyy-mm-dd'
+});
+$('.timepicker').pickatime({});
+
+// Submit the form
+
+<?php foreach ($form['inputs'] as $inputId => $property) : ?>
+	<?php if ($property['type'] == 'chips') : ?>
+	var <?php echo $inputId ?> = {
+	<?php $first = true; foreach ($property['repository'] as $entryId => $entry) : ?>
+	<?php 
+	if (!$first) echo ',';
+	$first = false;
+	 ?>
+	 	"<?php echo $entryId ?>": "<?php echo $context->localize($entry['labels'], $locale) ?>"
+	<?php endforeach;?>
+	};
+
+    $('.search-<?php echo $inputId ?>-hidden').hide();
+
+    $('#<?php echo $property['trigger'] ?>').mdb_autocomplete({
+        data: <?php echo $inputId ?>
+    });
+
+    $('#<?php echo $property['trigger'] ?>').change(function () {
+        var matched;
+        setTimeout(function () {
+	        for (id in <?php echo $inputId ?>) {
+	        	if (<?php echo $inputId ?>[id] == $('#<?php echo $property['trigger'] ?>').val()) {
+		        	$('#<?php echo $inputId ?>-' + id).val(1);
+		        	$('#search-<?php echo $inputId ?>-' + id).show();
+		        	$('#<?php echo $property['trigger'] ?>').val('');
+		        	break;
+	        	}
+	        }
+        }, 600);
+    });
+
+    $('.search-<?php echo $inputId ?>-close').click(function () {
+	<?php foreach ($property['repository'] as $entryId => $entry) : ?>
+    	if ($(this).attr('id').split('-')[2] == '<?php echo $entryId ?>') $('#<?php echo $inputId ?>-<?php echo $entryId ?>').val(0);
+	<?php endforeach;?>
+    	$(this).parent().parent().hide();
+    });
+    <?php endif;?>
+<?php endforeach;?>
+
+<?php if ($message) : ?>
+toastr.success('<?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?>');
+<?php endif;?>
+
+//Tooltips Initialization
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+
+<?php foreach ($tooltips as $itemId => $tooltip) : ?>
+$('<?php echo $itemId ?>').attr('data-toggle', 'tooltip');
+$('<?php echo $itemId ?>').addClass('red-tooltip');
+$('<?php echo $itemId ?>').attr('data-placement', '<?php echo (array_key_exists('data-placement', $tooltip)) ? $tooltip['data-placement'] : 'right' ?>');
+$('<?php echo $itemId ?>').attr('title', '<?php echo $context->localize($tooltip['title'], $locale) ?>');
+	<?php if (array_key_exists('data-html', $tooltip)) : ?>
+$('<?php echo $itemId ?>').attr('data-html', true);
+	<?php endif;?>
+<?php endforeach;?>
+
+<?php if ($form['options']['examples']) : ?>
+var example = 0;
+
+function loadExample(number) {
+<?php foreach ($examples as $number => $example) : ?>
+	if (number == <?php echo $number ?>) {
+	<?php foreach ($example as $propertyId => $labels) : ?>
+		$('#<?php echo $propertyId ?>').html('<?php echo $context->localize($labels) ?>');
+	<?php endforeach;?>
+	}
+<?php endforeach;?>
+}
+
+loadExample(example);
+$('#other-example').click(function () { 
+	example = (example + 1) % <?php echo count($examples) ?>;
+	loadExample(example); 
+});
+<?php endif;?>
+</script>

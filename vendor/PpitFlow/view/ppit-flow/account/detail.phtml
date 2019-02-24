@@ -1,0 +1,81 @@
+
+<!-- Card -->
+<div class="card card-cascade narrower">
+
+  <!-- Card image -->
+  <div class="view view-cascade gradient-card-header <?php echo $content['detail']['background'] ?>">
+    <!-- Title -->
+    <h2 class="card-header-title mb-0">
+ 
+  <?php if ($content['detail']['display']['type'] == 'avatar') : ?>
+      <img class="rounded-circle" style="object-fit: cover" src="<?php echo $this->basePath('photos/'.(($viewData['photo_link_id']) ? $viewData['photo_link_id'] : 'no-photo.png')) ?>" width="100" height="100" alt="" />
+      <?php echo $viewData['n_first'] ?>
+      <h5 class="card-header-subtitle mb-0"><?php echo $viewData['caption'] ?></h5>
+ 
+  <?php elseif ($content['detail']['display']['type'] == 'image') : ?>
+    <?php if (array_key_exists('class', $content['detail']['display']) && array_key_exists($viewData['category'], $content['detail']['display']['class'])) : ?>
+      <i class="<?php echo $content['detail']['display']['class'][$viewData['category']] ?>"></i>
+      <h5 class="card-header-subtitle mb-0"><?php echo $viewData['caption'] ?></h5>
+ 
+    <?php elseif (array_key_exists('image_name', $content['detail']['display'])) : ?>
+      <img class="" src="<?php echo $this->basePath($imagePath.$viewData[$content['detail']['display']['image_name']]) ?>" width="100%" alt="Sample image" />
+    <?php endif;?>
+  <?php endif;?>
+    </h2>
+  </div>
+
+  <!-- Card content -->
+  <div class="card-body card-body-cascade text-center">
+
+ <?php foreach ($content['detail']['properties'] as $propertyId => $property) : ?>
+  <?php if (/*$propertyId != 'caption' &&*/ $viewData[$propertyId]) : ?>
+
+  <div>
+ 
+    <?php if ($property['type'] == 'select') : ?>
+      <div class="text-left mb-3 grey-text">
+        <span class="font-weight-bold"><?php echo $context->localize($property['labels'], $locale) ?></span>: <?php echo $context->localize($property['modalities'][$viewData[$propertyId]], $locale) ?>
+      </div>
+
+    <?php elseif ($property['type'] == 'separation') : ?>
+        <hr>
+
+    <?php elseif ($property['type'] == 'chips') : ?>
+      <div class="text-center mb-3 grey-text">
+      <?php foreach (explode(',', $viewData[$propertyId]) as $skillId) : ?>
+        <?php if (array_key_exists($skillId, $context->getConfig('matching/skills'))) : ?>
+        <span class="chip chip-lg <?php echo $context->getConfig('matching/skills')[$skillId]['color'] ?> white-text">
+        <?php echo $context->localize($description['properties'][$propertyId]['modalities'][$skillId]) ?>
+        </span>
+        <?php endif;?>
+      <?php endforeach;?>
+      </div>
+
+    <?php elseif ($property['type'] == 'date') : ?>
+      <div class="text-left mb-3 grey-text">
+        <span class="font-weight-bold"><?php echo $context->localize($property['labels'], $locale) ?></span>: <?php echo date_format(date_create_from_format('Y-m-d', $viewData[$propertyId]), $context->localize($property['format'])) ?>
+      </div>
+
+    <?php elseif ($property['type'] == 'time') : ?>
+      <div class="text-left mb-3 grey-text">
+        <span class="font-weight-bold"><?php echo $context->localize($property['labels'], $locale) ?></span>: <?php echo date_format(date_create_from_format('H:i:s', $viewData[$propertyId]), $context->localize($property['format'])) ?>
+      </div>
+
+    <?php elseif ($property['type'] == 'textarea') : ?>
+      <div class="text-left mb-3 grey-text font-weight-bold"><?php echo $context->localize($property['labels'], $locale) ?>:</div>
+      <div class="text-left mb-3 grey-text"><?php echo nl2br($viewData[$propertyId]) ?></div>
+
+    <?php else : ?>
+      <div class="text-left mb-3 grey-text">
+        <span class="font-weight-bold"><?php echo $context->localize($property['labels'], $locale) ?></span>: <?php echo $viewData[$propertyId] ?>
+      </div>
+
+    <?php endif;?>
+
+    </div>
+
+  <?php endif;?>
+<?php endforeach;?>
+
+</div> 
+  

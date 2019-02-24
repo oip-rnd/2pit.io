@@ -10,6 +10,7 @@
 return array (
 	'controllers' => array(
 		'invokables' => array(
+			'PpitFlow\Controller\Account' => 'PpitFlow\Controller\AccountController',
 			'PpitFlow\Controller\Contact' => 'PpitFlow\Controller\ContactController',
 			'PpitFlow\Controller\Emailing' => 'PpitFlow\Controller\EmailingController',
 			'PpitFlow\Controller\Event' => 'PpitFlow\Controller\EventController',
@@ -22,6 +23,166 @@ return array (
 	
 	'router' => array(
 		'routes' => array(
+			'flowAccount' => array(
+				'type'    => 'literal',
+				'options' => array(
+					'route'    => '/flow-account',
+					'constraints' => ['id' => '[0-9]*'],
+					'defaults' => array(
+						'controller' => 'PpitFlow\Controller\Account',
+						'action'     => 'index',
+					),
+				),
+				'may_terminate' => true,
+				'child_routes' => array(
+					'index' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/index[/:type]',
+							'defaults' => array(
+								'action' => 'index',
+							),
+						),
+					),
+					'dashboard' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/dashboard[/:type]',
+							'defaults' => array(
+								'action' => 'dashboard',
+							),
+						),
+					),
+					'list' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/list[/:type]',
+							'defaults' => array(
+								'action' => 'list',
+							),
+						),
+					),
+					'detail' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/detail[/:type][/:id]',
+							'defaults' => array('action' => 'detail'),
+						),
+					),
+					'update' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/update[/:id]',
+							'defaults' => array('action' => 'update'),
+						),
+					),
+					'fill' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/fill[/:type][/:id]',
+							'defaults' => array('action' => 'fill'),
+						),
+					),
+					'contact' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/contact[/:type][/:id]',
+							'defaults' => array('action' => 'contact'),
+						),
+					),
+					'propose' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/propose[/:type][/:id]',
+							'defaults' => array('action' => 'propose'),
+						),
+					),
+					'transfer' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/transfer[/:type][/:id]',
+							'defaults' => array('action' => 'transfer'),
+						),
+					),
+					'accept' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/accept[/:type][/:id]',
+							'defaults' => array('action' => 'accept'),
+						),
+					),
+					'decline' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/decline[/:type][/:id]',
+							'defaults' => array('action' => 'decline'),
+						),
+					),
+					'close' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/close[/:type][/:id]',
+							'defaults' => array('action' => 'close'),
+						),
+					),
+					'open' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/open[/:type][/:id]',
+							'defaults' => array('action' => 'open'),
+						),
+					),
+					'feedback' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/feedback[/:type][/:id]',
+							'defaults' => array('action' => 'feedback'),
+						),
+					),
+					'abandon' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/abandon[/:type][/:id]',
+							'defaults' => array('action' => 'abandon'),
+						),
+					),
+					'complete' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/complete[/:type][/:id]',
+							'defaults' => array('action' => 'complete'),
+						),
+					),
+					'consultFeedback' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/consult-feedback[/:type][/:id]',
+							'defaults' => array('action' => 'consultFeedback'),
+						),
+					),
+					'cancel' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/cancel[/:type][/:id]',
+							'defaults' => array('action' => 'cancel'),
+						),
+					),
+					'signOut' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/sign-out[/:type]',
+							'defaults' => array('action' => 'signOut'),
+						),
+					),
+					'repair' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/repair',
+							'defaults' => array('action' => 'repair'),
+						),
+					),
+				),
+			),
 			'flowContact' => array(
 				'type'    => 'literal',
 				'options' => array(
@@ -527,6 +688,28 @@ return array (
 		// Guard listeners to be attached to the application event manager
 		'guards' => array(
 			'BjyAuthorize\Guard\Route' => array(
+
+				array('route' => 'flowAccount', 'roles' => array('guest')),
+				array('route' => 'flowAccount/index', 'roles' => array('guest')),
+				array('route' => 'flowAccount/dashboard', 'roles' => array('guest')),
+				array('route' => 'flowAccount/list', 'roles' => array('guest')),
+				array('route' => 'flowAccount/detail', 'roles' => array('guest')),
+				array('route' => 'flowAccount/update', 'roles' => array('user')),
+				array('route' => 'flowAccount/fill', 'roles' => array('user')),
+				array('route' => 'flowAccount/contact', 'roles' => array('user')),
+				array('route' => 'flowAccount/abandon', 'roles' => array('user')),
+				array('route' => 'flowAccount/propose', 'roles' => array('guest')),
+				array('route' => 'flowAccount/transfer', 'roles' => array('user')),
+				array('route' => 'flowAccount/accept', 'roles' => array('user')),
+				array('route' => 'flowAccount/decline', 'roles' => array('user')),
+				array('route' => 'flowAccount/close', 'roles' => array('user')),
+				array('route' => 'flowAccount/open', 'roles' => array('user')),
+				array('route' => 'flowAccount/feedback', 'roles' => array('user')),
+				array('route' => 'flowAccount/complete', 'roles' => array('user')),
+				array('route' => 'flowAccount/consultFeedback', 'roles' => array('user')),
+				array('route' => 'flowAccount/cancel', 'roles' => array('user')),
+				array('route' => 'flowAccount/signOut', 'roles' => array('user')),
+				array('route' => 'flowAccount/repair', 'roles' => array('admin')),
 				
 				array('route' => 'emailing/requestList', 'roles' => array('guest')),
 				array('route' => 'emailing/generate', 'roles' => array('operational_management')),
@@ -1726,6 +1909,329 @@ table.note-report td {
 		'tooltips' => array(
 			'#photo_upload' => ['data-placement' => 'right', 'title' => ['default' => 'You can upload your photo by clicking in this place', 'fr_FR' => 'Vous pouvez télécharger votre photo en cliquant sur cet emplacement']],
 			'#property_3' => ['data-placement' => 'right', 'title' => ['default' => 'Type a few character and choose some keywords. You can also input in free text', 'fr_FR' => 'Saisissez quelques caractères et choisissez dans la liste. Vous pouvez également saisir en texte libre']],
+		),
+		'footer' => array(
+			'links' => array(
+				'column_1' => array(
+					'title' => ['default' => 'Resources', 'fr_FR' => 'Ressources'],
+					'list' => array(
+						'charter' => array(
+							'href' => ['route' => 'instance/charter'],
+							'target' => 'modal',
+							'data-target' => 'modalShowCharterForm',
+							'content_id' => 'show_charter_content',
+							'html' => ['default' => 'Charter', 'fr_FR' => 'Charte'],
+						),
+						'generalTermsOfUse' => array(
+							'href' => ['route' => 'instance/generalTermsOfUse'],
+							'target' => 'modal',
+							'data-target' => 'modalShowGtouForm',
+							'content_id' => 'show_gtou_content',
+							'html' => ['default' => 'General Terms Of Use', 'fr_FR' => 'Conditions Générales d’Utilisation'],
+						),
+					),
+				)
+			),
+			'copyright' => array(
+				'class' => 'footer-copyright py-3 text-center container-fluid',
+				'html' => ['default' => '© 2018 Copyright: <a href="https://github.com/2pit-io/PpitCore/blob/master/license.txt"> 2pit.io </a>'],
+			),
+		),
+	),
+
+	// FLow Account
+	
+	'account/generic' => array(
+		'header' => array(
+			'title' => ['default' => '2pit.io - Accounts', 'fr_FR' => '2pit.io - Comptes'],
+			'description' => ['default' => '2pit.io is a complete CRM ans much more than that...', 'fr_FR' => '2pit.io est un CRM complet et beaucoup plus que cela...'],
+			'style' => array(
+				'navbar' => 'background-color: transparent;',
+				'topNavCollapse' => 'background-color: #ffffff;',
+			),
+			'navbar' => array(
+				'class' => 'navbar navbar-expand-lg fixed-top scrolling-navbar navbar-black',
+				'account' => true,
+				'collapse' => false,
+			),
+			'logo' => array(
+				'href' => 'home',
+				'params' => [],
+				'src' => '/logos/2pit.io/carre80.png',
+				'height' => 40,
+				'alt' => '2pit.io logo',
+			),
+			'intro_height' => '65%',
+			'background_image' => array(
+				'mask' => null,
+				'src' => ['default' => '/img/2pit.io/notes-coul.png'],
+				'class' => 'img-fluid',
+				'alt' => 'A coffee and the bill',
+			),
+		),
+	
+		'index' => array(
+			'navbar' => array(
+				'publicMode' => ['type' => 'mode', 'value' => 'Public', 'labels' => ['default' => 'Everybody', 'fr_FR' => 'Tout le monde']],
+				'skills' => ['type' => 'search', 'property' => 'property_2', 'labels' => ['default' => 'Keywords', 'fr_FR' => 'Mots clés']],
+				'ownerMode' => ['type' => 'mode', 'value' => 'Owner', 'labels' => ['default' => 'My contacts', 'fr_FR' => 'Mes contacts']],
+				'contributorMode' => ['type' => 'mode', 'value' => 'Contributor', 'labels' => ['default' => 'My contributions', 'fr_FR' => 'Mes contributions']],
+				'new' => ['type' => 'new', 'labels' => ['default' => 'New contact', 'fr_FR' => 'Nouveau contact']],
+			),
+			'links' => array(
+				'request' => ['route' => ['flowEvent/index', ['type' => 'request']], 'icon' => ['class' => 'fa fa-calendar-alt mr-2'], 'labels' => ['default' => 'Requests', 'fr_FR' => 'Demandes']],
+			),
+		),
+	
+		'intro' => array(
+		),
+	
+		'card' => array(
+			'display' => array(
+				'type' => 'avatar',
+			),
+			'properties' => array(
+				'name' => ['definition' => 'core_account/generic/property/name', 'labels' => ['default' => 'Name', 'fr_FR' => 'Nom']],
+				'origine' => ['definition' => 'core_account/generic/property/origine', 'labels' => ['default' => 'Origin', 'fr_FR' => 'Origine']],
+				'callback_date' => ['definition' => 'core_account/generic/property/callback_date', 'labels' => ['default' => 'Callback date', 'fr_FR' => 'Date de rappel'], 'format' => ['default' => 'l dS F', 'fr_FR' => 'd/m/Y']],
+				'email' => ['definition' => 'core_account/generic/property/email', 'labels' => ['default' => 'Email', 'fr_FR' => 'Email']],
+				'tel_cell' => ['definition' => 'core_account/generic/property/tel_cell', 'labels' => ['default' => 'Phone', 'fr_FR' => 'Tél.']],
+			),
+		),
+	
+		'status' => array(
+			'new' => ['labels' => ['default' => 'New', 'fr_FR' => 'Nouveau'], 'nextSteps' => ['update', 'cancel', 'close', 'open'], 'value' => 25, 'color' => 'bg-danger'],
+			'interested' => ['labels' => ['default' => 'Interested', 'fr_FR' => 'Intéressé'], 'nextSteps' => ['update', 'cancel', 'close', 'open'], 'value' => 75, 'color' => 'bg-info'],
+			'candidate' => ['labels' => ['default' => 'Candidate', 'fr_FR' => 'Candidat'], 'nextSteps' => ['update', 'cancel', 'close', 'open'], 'value' => 100, 'color' => 'bg-warning'],
+			'active' => ['labels' => ['default' => 'Active', 'fr_FR' => 'Actif'], 'nextSteps' => ['update', 'cancel', 'close', 'open'], 'value' => 100, 'color' => 'bg-success'],
+		),
+	
+		'actions' => array(
+			'Owner' => array(
+				'update' => ['icon' => 'edit', 'labels' => ['default' => 'Update', 'fr_FR' => 'Modifier']],
+				'cancel' => ['icon' => 'trash-alt', 'labels' => ['default' => 'Cancel', 'fr_FR' => 'Annuler']],
+				'close' => ['icon' => 'eye-slash',  'labels' => ['default' => 'Mask', 'fr_FR' => 'Masquer']],
+				'open' => ['icon' => 'eye',  'labels' => ['default' => 'Unmask', 'fr_FR' => 'Rendre visible']],
+			),
+			'Public' => array(
+			),
+		),
+	
+		'form' => array(
+			'title' => ['default' => 'Submit/update a request', 'fr_FR' => 'Créer/modifier une demande'],
+			'options' => array(
+				'examples' => true,
+			),
+			'introduction' => array(
+			),
+			'inputs' => array(
+				'caption' => ['class' => 'col-md-6', 'definition' => 'event/request/property/caption', 'mandatory' => true],
+				'caption_example' => ['class' => 'col-md-6 grey-text', 'definition' => 'inline', 'type' => 'html', 'updatable' => false],
+				'property_24' => ['class' => 'col-md-6', 'definition' => 'event/request/property/property_24', 'mandatory' => true, 'rows' => 6],
+				'property_24_example' => ['class' => 'col-md-6 grey-text', 'definition' => 'inline', 'type' => 'html', 'updatable' => false],
+				'property_25' => ['class' => 'col-md-6', 'definition' => 'event/request/property/property_25', 'mandatory' => true, 'rows' => 8],
+				'property_25_example' => ['class' => 'col-md-6 grey-text', 'definition' => 'inline', 'type' => 'html', 'updatable' => false],
+				'property_3' => ['class' => 'col-md-6', 'definition' => 'event/request/property/property_3', 'mandatory' => true],
+				'property_3_example' => ['class' => 'col-md-6 grey-text', 'definition' => 'inline', 'type' => 'html', 'updatable' => false],
+				'property_1' => ['feature' => 'skill', 'class' => 'col-md-6', 'definition' => 'inline', 'type' => 'keywords', 'labels' => ['default' => 'Expected skills', 'fr_FR' => 'Compétences attendues'], 'placeholder' => ['default' => 'Ex. finance, design thinking, video editing...', 'fr_FR' => 'Ex. finance, design thinking, montage vidéo...']],
+				'property_1_example' => ['class' => 'col-md-6 grey-text', 'definition' => 'inline', 'type' => 'html', 'updatable' => false],
+				'property_2' => ['feature' => 'keyword_skill', 'class' => 'col-md-6', 'definition' => 'inline', 'type' => 'chips', 'repository' => 'matching/skills', 'trigger' => 'property_1'],
+				['definition' => 'inline', 'type' => 'empty'],
+				'property_4' => ['class' => 'col-md-6', 'definition' => 'event/request/property/property_4'],
+				'property_4_example' => ['class' => 'col-md-6 grey-text', 'definition' => 'inline', 'type' => 'html', 'updatable' => false],
+				'property_5' => ['class' => 'col-md-6', 'definition' => 'event/request/property/property_5'],
+				['definition' => 'inline', 'type' => 'empty'],
+				'property_6' => ['class' => 'col-md-6', 'definition' => 'event/request/property/property_6'],
+				['definition' => 'inline', 'type' => 'empty'],
+				'property_7' => ['class' => 'col-md-6', 'definition' => 'event/request/property/property_7'],
+				['definition' => 'inline', 'type' => 'empty'],
+				'property_26' => ['class' => 'col-md-6', 'definition' => 'inline', 'type' => 'textarea', 'rows' => 4, 'labels' => ['default' => 'Other logistic constraints', 'fr_FR' => 'Autres contraintes logistiques']],
+				'property_26_example' => ['class' => 'col-md-6 grey-text', 'definition' => 'inline', 'type' => 'html', 'updatable' => false],
+			),
+			'submit' => array(
+				'class' => 'btn btn-light-blue btn-rounded',
+				'labels' => ['default' => 'Submit', 'fr_FR' => 'Soumettre'],
+			),
+			'legal' => array(
+				array(
+					'type' => 'p',
+					'class' => 'section-description',
+					'text' => array(
+						'default' => 'The informations provided here will not be communicated to anyone. They will never been communicated to third-parts without your agreement. For more information, contact us on <a href="mailto:contact@2pit.io?subject=Request for informations about data privacy in Pro Bono Corpo">contact@2pit.io</a>.',
+						'fr_FR' => 'Les informations saisies sont uniquement destinées à améliorer la mise en relation. Elles ne peuvent en aucun cas être communiquées à des tiers sans votre consentement. Pour en savoir plus, consultez nous sur <a href="mailto:contact@2pit.io?subject=Demande d’informations sur la protection des données dans Pro Bono Corpo">contact@2pit.io</a>.',
+					),
+				),
+			),
+		),
+	
+		'detail' => array(
+			'background' => 'blue',
+			'title' => array(
+				'detail' => ['default' => 'Request detail', 'fr_FR' => 'Détail de la demande'],
+				'Owner' => array(
+					'new' => ['default' => 'Managing your request', 'fr_FR' => 'Gérer votre demande'],
+					'connected' => ['default' => 'Managing your request', 'fr_FR' => 'Gérer votre demande'],
+					'realized' => ['default' => 'This request is waiting for a feedback', 'fr_FR' => 'Cette demande est en attente de feedback'],
+					'requestor_feedback' => ['default' => 'At least one contributor on this request is waiting for a feedback from your side.<br>Please check each from the contributor’s panel', 'fr_FR' => 'Au moins un contributeur à cette demande attend un feedback de votre part.<br>Veuillez vérifier chacun d’entre eux depuis le panneau des contributeurs.'],
+					'contributor_feedback' => ['default' => 'This request is waiting for feedback.<br>You will be notified at soon as it is available.', 'fr_FR' => 'Cette demande est en attente de feedback contributeur.<br>Vous serez notifié dès qu’il sera disponible.'],
+					'completed' => ['default' => 'This request is over', 'fr_FR' => 'Cette demande est terminée'],
+				),
+				'Contributor' => array(
+					'new' => ['default' => 'Wishing to contribute to this request?', 'fr_FR' => 'Envie de contribuer à cette demande ?'],
+					'linked' => ['default' => 'The requestor will contact you following your proposal', 'fr_FR' => 'Suite à votre proposition le demandeur va vous contacter'],
+					'contributor_feedback' => ['default' => 'This contribution is waiting for a feedback from your side', 'fr_FR' => 'Cette contribution est en attente de feedback de votre part'],
+					'requestor_feedback' => ['default' => 'This request is waiting for a feedback from the requestor’s side', 'fr_FR' => 'Cette demande est en attente de feedback de la part du demandeur'],
+					'completed' => ['default' => 'This request is over. Thank you for your contribution', 'fr_FR' => 'Cette demande est terminée. Merci de votre contribution'],
+				),
+				'Public' => array(
+					'new' => ['default' => 'Wishing to contribute to this request?', 'fr_FR' => 'Envie de contribuer à cette demande ?'],
+					'linked' => ['default' => 'The requestor will contact you following your proposal', 'fr_FR' => 'Suite à votre proposition le demandeur va vous contacter'],
+					//					'realization' => ['default' => 'The realisation of this request is in progress', 'fr_FR' => 'Cette demande est en cours de réalisation'],
+					'contributor_feedback' => ['default' => 'This contribution is waiting for a feedback from your side', 'fr_FR' => 'Cette contribution est en attente de feedback de votre part'],
+					'requestor_feedback' => ['default' => 'This request is waiting for a feedback from the requestor’s side', 'fr_FR' => 'Cette demande est en attente de feedback de la part du demandeur'],
+					'completed' => ['default' => 'This request is over', 'fr_FR' => 'Cette demande est terminée'],
+				),
+			),
+			'display' => array(
+				'type' => 'avatar',
+			),
+			'introduction' => array(
+			),
+			'properties' => array(
+				'caption' => ['class' => 'col-md-12', 'definition' => 'event/request/property/caption', 'mandatory' => true],
+				'property_24' => ['class' => 'col-md-12', 'definition' => 'event/request/property/property_24', 'mandatory' => true, 'rows' => 6],
+				'property_25' => ['class' => 'col-md-12', 'definition' => 'event/request/property/property_25', 'mandatory' => true, 'rows' => 8],
+				'property_3' => ['class' => 'col-md-12', 'definition' => 'event/request/property/property_3', 'mandatory' => true],
+				'property_1' => ['feature' => 'skill', 'class' => 'col-md-12', 'definition' => 'inline', 'type' => 'keywords', 'labels' => ['default' => 'Expected skills', 'fr_FR' => 'Compétences attendues'], 'placeholder' => ['default' => 'Ex. finance, design thinking, video editing...', 'fr_FR' => 'Ex. finance, design thinking, montage vidéo...']],
+				'property_2' => ['feature' => 'keyword_skill', 'class' => 'col-md-12', 'definition' => 'inline', 'type' => 'chips', 'repository' => 'matching/skills', 'trigger' => 'property_1'],
+				'property_4' => ['class' => 'col-md-12', 'definition' => 'event/request/property/property_4'],
+				'property_5' => ['class' => 'col-md-12', 'definition' => 'event/request/property/property_5'],
+				'property_6' => ['class' => 'col-md-12', 'definition' => 'event/request/property/property_6'],
+				'property_7' => ['class' => 'col-md-12', 'definition' => 'event/request/property/property_7'],
+				'property_26' => ['class' => 'col-md-12', 'definition' => 'inline', 'type' => 'textarea', 'rows' => 4, 'labels' => ['default' => 'Other logistic constraints', 'fr_FR' => 'Autres contraintes logistiques']],
+			),
+			'legal' => array(
+				array(
+					'type' => 'p',
+					'class' => 'section-description',
+					'text' => array(
+						'default' => 'For more information, contact us on <a href="mailto:contact@2pit.io">contact@2pit.io</a>.',
+						'fr_FR' => 'Proposer sa contribution constitue un engagement moral de votre part vis-à-vis du demandeur qui s’engage de son côté à vous donner rapidement une réponse, positive ou non. Pour en savoir plus, consultez nous sur <a href="mailto:contact@2pit.io">contact@2pit.io</a>.',
+					),
+				),
+			),
+		),
+	
+		'profile' => array(
+			'title' => array(
+				'Owner' => ['default' => 'Matching profiles', 'fr_FR' => 'Profils correspondants'],
+				'Public' => ['default' => 'Requestor profile', 'fr_FR' => 'Profil du demandeur'],
+			),
+		),
+	
+		'matched_accounts' => array(
+			'title' => ['default' => 'Possible contributors', 'fr_FR' => 'Contributeurs potentiels'],
+			'contact_subject' => ['default' => 'probono corpo - Opportunity to contribute', 'fr_FR' => 'probono corpo - Opportunité de contribution'],
+			'properties' => array(
+				'n_fn' => [],
+				'email' => [],
+			),
+		),
+	
+		'feedback' => array(
+			'title' => array(
+				'requestor' => array(
+					'new' => ['default' => 'Giving a feedback', 'fr_FR' => 'Donner un feedback'],
+				),
+				'contributor' => array(
+					'new' => ['default' => 'Giving a feedback', 'fr_FR' => 'Donner un feedback'],
+				),
+			),
+			'introduction' => array(
+			),
+			'inputs' => array(
+				['mode' => 'requestor', 'definition' => 'inline', 'class' => 'col-md-12 grey-text font-weight-bold', 'type' => 'html', 'markup' => 'p', 'text' => ['default' => 'You submitted via <em>proBono corpo</em> the following request: <em>%s</em>', 'fr_FR' => 'Tu as fait via <em>proBono corpo</em> la demande suivante : <em>%s</em>'], 'params' => array('caption')],
+				['mode' => 'public', 'definition' => 'inline', 'class' => 'col-md-12 grey-text font-weight-bold', 'type' => 'html', 'markup' => 'p', 'text' => ['default' => 'You gave of a helping hand via <em>proBono corpo</em> for the following request: <em>%s</em>', 'fr_FR' => 'Tu as donné un coup de main via <em>proBono corpo</em> pour la demande suivante : <em>%s</em>'], 'params' => array('caption')],
+				['definition' => 'inline', 'class' => 'col-md-12 grey-text font-weight-bold', 'type' => 'html', 'markup' => 'p', 'text' => ['default' => 'Conversely, can you help us by giving a feedback?', 'fr_FR' => 'A ton tour, peux-tu nous aider en donnant ton feedback ?']],
+				['definition' => 'inline', 'class' => 'col-md-12 grey-text font-weight-bold my-3', 'type' => 'html', 'markup' => 'h5', 'text' => ['default' => 'Feedback to your interlocutor (only visible to him/her)', 'fr_FR' => 'Feedback pour ton interlocuteur (visible uniquement de lui/elle)']],
+				'private_comment' => ['definition' => 'inline', 'property_id' => 'private_comment', 'class' => 'col-md-12', 'type' => 'textarea', 'rows' => 4, 'labels' => ['default' => 'What do you want to share ex-post?', 'fr_FR' => 'Que souhaites-tu partager à postériori ?']],
+				['definition' => 'inline', 'class' => 'col-md-12 grey-text font-weight-bold my-3', 'type' => 'html', 'markup' => 'h5', 'text' => ['default' => 'Feedback only to the <em>probono corpo</em> team (not visible to anyone else)', 'fr_FR' => 'Feedback pour l’équipe ProBono Corpo uniquement (ne sera visible de personne d’autre)']],
+				'platform_benefit' => ['definition' => 'inline', 'property_id' => 'platform_benefit', 'class' => 'col-md-12', 'type' => 'textarea', 'rows' => 4, 'labels' => ['default' => 'What did you learned from this experience (from your request / proposition to contribute, to the completed helping hand:', 'fr_FR' => 'Qu’est-ce que tu as retiré de cette expérience (de ta demande / proposition de contribution au coup de main réalisé) :']],
+				['definition' => 'inline', 'class' => 'col-md-12 grey-text font-weight-bold', 'type' => 'html', 'markup' => 'p', 'text' => ['default' => 'On a scale of 1 to 10, how would you evaluate?', 'fr_FR' => 'Sur une échelle de 0 à 10, comment noterais-tu ?']],
+				'platform_satisfaction' => ['definition' => 'inline', 'property_id' => 'platform_satisfaction', 'class' => 'col-md-12', 'type' => 'radio-inline', 'radio-values' => ['0' => 0, '1' => 1, '2' => 2, '3' => 3, '4' => 4, '5' => 5, '6' => 6, '7' => 7, '8' => 8, '9' => 9, '10' => 10], 'labels' => ['default' => 'Your satisfaction of this experience (0: unsatisfied, 10: Great!)?', 'fr_FR' => 'Ta satisfaction de l’expérience (0 : insatisfait, 10 : Waouh!) ?']],
+				'platform_accessibility' => ['definition' => 'inline', 'property_id' => 'platform_accessibility', 'type' => 'radio-inline', 'radio-values' => ['0' => 0, '1' => 1, '2' => 2, '3' => 3, '4' => 4, '5' => 5, '6' => 6, '7' => 7, '8' => 8, '9' => 9, '10' => 10], 'labels' => ['default' => 'The accessibility of the request (0: course too complicated, 10: Completely fluent, it only took me a short time)?', 'fr_FR' => 'Ton ressenti pour accéder à la demande : (0 : parcours trop compliqué, 10 : parfaitement fluide, ça ne m’a pris qu’un instant) ?']],
+				'platform_comment' => ['definition' => 'inline', 'property_id' => 'platform_comment', 'class' => 'col-md-12', 'type' => 'textarea', 'rows' => 4, 'labels' => ['default' => 'Feel free to leave any comment helping us to enhance your experience', 'fr_FR' => 'N’hésites pas à nous laisser tout commentaire qui pourrait nous aider à améliorer ton expérience']],
+				['definition' => 'inline', 'class' => 'col-md-12 grey-text font-weight-bold', 'type' => 'html', 'markup' => 'h5', 'text' => ['default' => 'Feedback to the whole community (can be use as a testimonial)', 'fr_FR' => 'Feedback à l’ensemble de la communauté (peut être utilisé en témoignage)']],
+				'community_comment' => ['definition' => 'inline', 'property_id' => 'community_comment', 'class' => 'col-md-12', 'type' => 'textarea', 'rows' => 4, 'labels' => ['default' => 'Which testimonial of your experience would you share with the community?', 'fr_FR' => 'Quel témoignage souhaites tu faire de ton expérience pour la partager avec la communauté ?']],
+				['definition' => 'inline', 'class' => 'col-md-12 grey-text font-weight-bold', 'type' => 'html', 'markup' => 'p', 'text' => ['default' => 'Thank you for helping. Feel free to come back and contribute or post requests again', 'fr_FR' => 'Merci pour ta participation. N’hésite-pas à revenir contribuer ou faire de nouvelles demandes.']],
+			),
+			'requestorActions' => array(
+			),
+			'contributorActions' => array(
+			),
+			'legal' => array(
+				array(
+					'type' => 'p',
+					'class' => 'section-description',
+					'text' => array(
+						'default' => 'For more information, contact us on <a href="mailto:contact@2pit.io?subject=Request for informations about data privacy in Pro Bono Corpo">contact@2pit.io</a>.',
+						'fr_FR' => 'Donner un feedback constitue un engagement moral de votre part vis-à-vis de votre interlocuteur qui s’engage de son côté à vous en donner rapidement un également. Pour en savoir plus, consultez nous sur <a href="mailto:contact@2pit.io?subject=Demande d’informations sur la protection des données dans Pro Bono Corpo">contact@2pit.io</a>.',
+					),
+				),
+			),
+		),
+	
+		'tooltips' => array(
+			'#photo_upload' => ['data-placement' => 'right', 'title' => ['default' => 'You can upload your photo by clicking in this place', 'fr_FR' => 'Vous pouvez télécharger votre photo en cliquant sur cet emplacement']],
+			'#property_1' => ['data-placement' => 'right', 'title' => ['default' => 'Type a few character and choose some keywords. You can also input in free text', 'fr_FR' => 'Saisissez quelques caractères et choisissez dans la liste. Vous pouvez également saisir en texte libre']],
+			'#property_3' => ['data-placement' => 'right', 'data-html' => true, 'title' => ['default' => '<ul style="text-align: left"><li>Besoin d’infos, de connaissances pointues, de mise en relation</li><li>Besoin d’Expertise</li><li>Besoin de Solutions personnalisée</li><li>Besoin de diagnostic</li><li>Besoin de montée en compétences</li><li>Besoin d’intégrer une ressource à temps partiel</li><li>Besoin de produire un Livrable</li><li>...</li></ul>']],
+			'.pending_contact' => ['data-placement' => 'right', 'data-html' => true, 'title' => ['default' => 'The contributor proposed to contribute more than 5 days ago', 'fr_FR' => 'Le contributeur s’est proposé pour contribuer depuis plus de 5 jours']],
+		),
+	
+		'examples' => array(
+			array(
+				'caption_example' => array(
+					'default' => '<p class="font-weight-bold">Exemple à titre purement informatif</p><p>Journée d’intégration pour les alternants</p>',
+				),
+				'property_24_example' => array(
+					'default' => '<p class="font-weight-bold">Exemple</p><p><em>Les alternants ne sont pas toujours accueillis dans les meilleures conditions.<br>Les managers n’ont pas beaucoup de temps, et chacun se débrouille de son côté.<br>Il faudrait mutualiser l’accueil pour la centaine de personnes attendue en septembre et profiter pour faire un atelier Code de conduite.</em></p>',
+				),
+				'property_25_example' => array(
+					'default' => '<p class="font-weight-bold">Exemple</p><em>J’aurai besoin d’aide pour concevoir et organiser les 4 demi-journées en trouvant des contributeurs  pour présenter le Groupe (son organisation et ses valeurs) et les trucs et astuces (Ce qu’il faut savoir quand on arrive).<br>L’animation doit être sympa pour que les alternants aient une bonne expérience collaborateur en arrivant à la SG.</em>',
+				),
+				'property_1_example' => array(
+					'default' => '<p class="font-weight-bold">Exemple informatif</p><p>Animation, présentation, coaching...</p>',
+				),
+				'property_4_example' => array(
+					'default' => '<p class="font-weight-bold">Exemple</p><p>Tuteurs / Mentors souhaitant transmettre leur savoir – Jeunes embauchés / anciens Alternants</p>',
+				),
+				'property_26_example' => array(
+					'default' => '<p class="font-weight-bold">Exemple</p>1 jour par semaine à répartir sur 3 semaines',
+				),
+			),
+			array(
+				'caption_example' => array(
+					'default' => '<p class="font-weight-bold">Exemple à titre purement informatif</p><p>Ateliers coding sur Scratch pour IT4Girls</p>',
+				),
+				'property_24_example' => array(
+					'default' => '<p class="font-weight-bold">Exemple à titre purement informatif</p><p>La startup IT4Girls organise des ateliers de coding sur scratch pour les jeunes filles à partir de 7 ans dans l’optique de ramener de la mixité au sein des équipes IT.</p>',
+				),
+				'property_3_example' => array(
+					'default' => '<p class="font-weight-bold">Exemple</p><p>Animation</p>',
+				),
+				'property_25_example' => array(
+					'default' => '<p class="font-weight-bold">Exemple</p>IT4Girls recherche des animatrices/animateurs pour co-animer les ateliers de coding, les mercredi après-midi, ou tous les jours pendant les vacances. Les ateliers sont d’une durée de 1h30 suivi d’un gouter avec les enfants.<br>Les candidat(e)s auront la possibilité d’assister à un atelier pour voir comment cela se passe et d’être formé(e)s à scratch.<br>En fonction de leur disponibilité, les animatrices / animateurs, pourront s’inscrire pour l’animation aux ateliers qui seront proposés.',
+				),
+				'property_1_example' => array(
+					'default' => '<p class="font-weight-bold">Exemple informatif</p><p>Etre à l’aise avec les enfants ainsi que dans l’animation, le BAFA est un plus.</p>',
+				),
+				'property_4_example' => array(
+					'default' => '<p class="font-weight-bold">Exemple</p><p>Une appétence à l’IT, même sans connaissance avancé est suffisant.</p>',
+				),
+				'property_26_example' => array(
+					'default' => '<p class="font-weight-bold">Exemple</p>Les mercredis après-midi, tous les jours pendant les congés scolaires, en fonction des disponibilités.<br>Localisation : La Défense, les Dunes, Paris<br>Estimation de la charge : 1h30 à 2h par atelier + 15 minutes de préparation (prise de connaissance du jeu).',
+				),
+			),
 		),
 		'footer' => array(
 			'links' => array(

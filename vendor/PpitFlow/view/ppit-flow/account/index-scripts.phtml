@@ -1,0 +1,504 @@
+<script>
+
+var keywords = null;
+
+<?php if (array_key_exists('signOut', $index)) : ?>
+
+// Rewards
+
+        $('#signOut-identifier').keyup(function () {
+          if ($('#signOut-identifier').val()) {//            $('#signOutButton').removeAttr('disabled');
+            $('#signOutButton').show();
+          }
+          else {
+              $('#signOutButton').hide();
+          }
+        });
+
+        $('#signOutButton').hide();
+        $('#signOutButton').click(function () {
+          var xhttp = new XMLHttpRequest();
+          var formData = new FormData();
+          formData.append('identifier', $('#signOut-identifier').val());
+          xhttp.open('POST', '<?php echo $this->url('flowAccount/signOut', ['type' => $type]) ?>', true);
+          xhttp.onload = function () {
+            if (xhttp.readyState == 4) {
+              if (xhttp.status == 200) {
+                var format = '<?php echo $context->localize($index['signOut']['identifier']['message']['ok'], $locale) ?>';
+                var pos = format.search('%s');
+                var message = format.substr(0, pos) + xhttp.responseText + format.substr(pos + 2);
+                toastr.success('<h4 class="text-center">' + message + '</h4>');
+                showDashboard();
+              }
+              else if (xhttp.status == 400 && xhttp.statusText == 'Unknown') {
+                toastr.error('<h4 class="text-center"><?php echo $context->localize($index['signOut']['identifier']['message']['unknown'], $locale) ?></h4>');
+                showDashboard();
+              }
+              else if (xhttp.status == 401 && xhttp.statusText == 'Duplicate') {
+                toastr.error('<h4 class="text-center"><?php echo $context->localize($index['signOut']['identifier']['message']['duplicate'], $locale) ?></h4>');
+                showDashboard();
+              }
+              else technicalError();
+            }
+          };
+          xhttp.send(formData);
+          $('#signOutButton').hide();
+          $('#signOut-identifier').val('');
+        });
+
+<?php endif;?>
+        
+// Dashboard
+
+function showDashboard() {
+<?php if ($account_id) : ?>
+  var xhttp = new XMLHttpRequest();
+  xhttp.open('GET', '<?php echo $this->url('flowAccount/dashboard', ['type' => $type]) ?>', true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4) {
+      if (xhttp.status == 200) {
+
+        // Show the dashboard
+        $('#dashboard').html(xhttp.responseText);
+        $('.min-chart#chart-sales').easyPieChart({
+          barColor: "#4caf50",
+          onStep: function (from, to, percent) {
+            $(this.el).find('.percent').text(Math.round(percent));
+          }
+        });
+      }
+      else technicalError();
+    }
+  };
+  xhttp.send();
+<?php endif;?>
+}
+
+//showDashboard();
+
+// Accounts
+
+var mode = '<?php echo $mode ?>';
+
+<?php foreach ($index['navbar'] as $navId => $navItem) : ?>
+
+<!-- Mode change -->
+
+  <?php if ($navItem['type'] == 'mode') : ?>
+
+$('#aMode<?php echo $navItem['value'] ?>').click(function () {
+  $('.aMode').removeClass('active');
+  $('#aMode<?php echo $navItem['value'] ?>').addClass('active');
+  mode = '<?php echo $navItem['value'] ?>';
+  resetHomeSearch();
+  showList();
+});
+
+if (mode == '<?php echo $navItem['value'] ?>') $('#aMode<?php echo $navItem['value'] ?>').addClass('active');
+
+<!-- Search -->
+
+  <?php elseif ($navItem['type'] == 'search') : ?>
+    <?php
+    $propertyId = $navItem['property'];
+    $property = $detail['properties'][$propertyId];
+    ?>
+
+    <?php if ($property['type'] == 'chips') : ?>
+
+// Skills search
+var homeSearch_<?php echo $propertyId ?> = {
+  <?php $first = true; foreach ($context->getConfig($property['repository']) as $entryId => $entry) : ?>
+    <?php 
+    if (!$first) echo ',';
+    $first = false;
+    ?>
+  "<?php echo $entryId ?>": "<?php echo $context->localize($entry['labels'], $locale) ?>"
+  <?php endforeach;?>
+};
+
+$('.homeSearch').hide();
+/*
+$('#homeSearch-<?php echo $propertyId ?>').mdb_autocomplete({
+  data: homeSearch_<?php echo $propertyId ?>
+});*/
+
+$('#homeSearch-<?php echo $propertyId ?>').keyup(function () {
+  keywords = $('#homeSearch-<?php echo $propertyId ?>').val();
+  if (keywords.length > 2) showList();
+/*  $('.aMode').removeClass('active');
+  $('#aModePublic').addClass('active');
+  mode = 'Public';
+  var matched;
+  setTimeout(function () {
+    for (id in homeSearch_<?php echo $propertyId ?>) {
+      if (homeSearch_<?php echo $propertyId ?>[id] == $('#homeSearch-<?php echo $propertyId ?>').val()) {
+        $('#skill-' + id).val(1);
+        $('#homeSearch-' + id).show();
+        $('#homeSearch-<?php echo $propertyId ?>').val('');
+        break;
+      }
+    }
+    showList();
+  }, 600);*/
+});
+/*
+$('.homeSearchClose').click(function () {
+<?php foreach ($context->getConfig($property['repository']) as $entryId => $entry) : ?>
+//if ($(this).attr('id').split('-')[1] == '<?php echo $entryId ?>') $('#skill-<?php echo $entryId ?>').val(0);
+<?php endforeach;?>
+$(this).parent().parent().hide();
+showList();
+});*/
+
+    <?php endif; ?>
+
+// Input filter
+
+<?php elseif (in_array($navItem['type'], ['input'])) : ?>
+    <?php
+      $propertyId = $navItem['property'];
+      $property = $detail['properties'][$propertyId];
+    ?>
+
+$('#homeSearch-<?php echo $propertyId ?>').keyup(function () {
+  var value = $('#homeSearch-<?php echo $propertyId ?>').val();
+  if (value && value.length > 2) {
+    $('.aMode').removeClass('active');
+    $('#aModePublic').addClass('active');
+    mode = 'Public';
+    showList();
+  }
+});
+
+// Select or date filter
+
+  <?php elseif (in_array($navItem['type'], ['select', 'date'])) : ?>
+    <?php
+      $propertyId = $navItem['property'];
+      $property = $detail['properties'][$propertyId];
+    ?>
+
+$('#homeSearch-<?php echo $propertyId ?>').change(function () {
+  $('.aMode').removeClass('active');
+  $('#aModePublic').addClass('active');
+  mode = 'Public';
+  showList();
+});
+
+  <?php endif; ?>
+<?php endforeach; ?>
+
+function resetHomeSearch() {
+  $('.homeSearchValue').val(0);
+  $('.homeSearchInput').val('');
+  $('.homeSearch').hide();
+}
+  
+$('.aDetailAction').click(function () {
+  var account_id = $(this).attr('id').split('-')[1];
+  xhttp.open('GET', '<?php echo $this->url('flowAccount/detail', ['type' => $type]) ?>/' + account_id, true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      $('#modalAccountDetailTitle').html('<?php echo $this->translate('Account detail', 'ppit-core', $locale) ?>');
+      $('#modalAccountDetailContent').html(xhttp.responseText);
+      $('#modalAccountDetailForm').modal('show');
+    }
+  };
+  xhttp.send();
+});
+
+function encodeDate(value) {
+  <?php if ($context->getLocale() == 'en_US') : ?>
+	return value.substr(6, 4) + "-" + value.substr(0, 2) + "-" + value.substr(3, 2);
+  <?php else : ?>
+    return value.substr(6, 4) + "-" + value.substr(3, 2) + "-" + value.substr(0, 2);
+  <?php endif;?>
+}
+
+// Public actions
+
+<?php foreach ($actions['Public'] as $action_id => $action) : ?>
+
+function public<?php echo $action_id ?>Action(account_id) {
+    var xhttp = new XMLHttpRequest();
+
+    $('#modalAccountActionTitle').html('<?php echo $context->localize($action['labels'], $locale) ?>');
+    xhttp.open('GET', '<?php echo $this->url('flowAccount/detail', ['type' => $type]) ?>/' + account_id, true);
+    xhttp.onload = function () {
+      if (xhttp.readyState == 4 && xhttp.status == 200) {
+        $('#modalAccountActionContent').html(xhttp.responseText);
+        $('#buttonAccountAction').html('<?php echo $context->localize($action['labels'], $locale) ?>');
+        $('#buttonAccountAction').unbind();
+        $('#buttonAccountAction').click(function () {
+          var xhttp = new XMLHttpRequest();
+          var formData = new FormData();
+<?php if ($action_id == 'transfer') : ?>
+          formData.append('transfer-email', $('#transfer-email').val());
+<?php endif; ?>
+          xhttp.open('POST', '<?php echo $this->url('flowAccount/'.$action_id, ['type' => $type]) ?>/' + account_id, true);
+          xhttp.onload = function () {
+            if (xhttp.readyState == 4) {
+              if (xhttp.status == 200) {
+                toastr.success('<h4 class="text-center"><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h4>');
+                $('#modalAccountActionForm').modal('hide');
+                showList();
+              }
+              else technicalError();
+            }
+          };
+          xhttp.send(formData);  
+        });
+
+        $('#modalAccountActionForm').modal('show');
+<?php if ($action_id == 'transfer') : ?>
+        $('#transfer-email').show();
+<?php else : ?>
+        $('#transfer-email').hide();
+<?php endif; ?>
+      }
+    };
+    xhttp.send();
+}
+
+<?php endforeach;?>
+
+function showList() {
+  
+  var xhttp = new XMLHttpRequest();
+  var route = '<?php echo $this->url('flowAccount/list', ['type' => $type]) ?>?mode=' + mode;
+  var value;
+
+  <?php foreach ($index['navbar'] as $navId => $navItem) : ?>
+    <?php if ($navId == 'skills') : ?>
+  
+    var skills = '', first = true;
+    for (id in homeSearch_property_2) {
+      if ($('#skill-' + id).val() == 1) {
+        if (!first) skills += ',';
+        skills += id;
+        first = false;
+      }
+    }
+
+  if (keywords) route += '&keywords=' + keywords;
+
+    <?php elseif (in_array($navItem['type'], ['input'])) : ?>
+
+  value = $('#homeSearch-<?php echo $navItem['property'] ?>').val();
+  if (value) route += '&<?php echo $navItem['property'] ?>=%' + value + '%';
+
+    <?php elseif (in_array($navItem['type'], ['select'])) : ?>
+
+  value = $('#homeSearch-<?php echo $navItem['property'] ?>').val();
+  if (value) {
+    route += '&<?php echo $navItem['property'] ?>=' + value;
+  }
+
+    <?php elseif (in_array($navItem['type'], ['date'])) : ?>
+
+  value = $('#homeSearch-<?php echo $navItem['property'] ?>').val();
+  if (value) {
+    value = encodeDate(value);
+    route += '&<?php echo $navItem['property'] ?>=' + value;
+  }
+    
+    <?php endif; ?>
+  <?php endforeach; ?>
+
+<?php foreach ($filters as $filterId => $predicate) : ?>
+  route += '&' + '<?php echo $filterId ?>' + '=' + '<?php echo $predicate ?>';
+<?php endforeach; ?>
+
+  xhttp.open('GET', route, true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      document.getElementById('accounts').innerHTML = xhttp.responseText;
+
+      $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+      })
+
+      $('.aUpdateAction').click(function () {
+        var account_id = $(this).attr('id').split('-')[1];
+      	location.href = '<?php echo $this->url('flowAccount/fill', ['type' => $type]) ?>/' + account_id;
+      });
+      
+      $('.aDetailAction').click(function () {
+          var account_id = $(this).attr('id').split('-')[1];
+          xhttp.open('GET', '<?php echo $this->url('flowAccount/detail', ['type' => $type]) ?>/' + account_id, true);
+          xhttp.onload = function () {
+            if (xhttp.readyState == 4 /*&& xhttp.status == 200*/) {
+              $('#modalAccountDetailTitle').html('<?php echo $context->localize($detail['title']['detail'], $locale) ?>');
+              $('#modalAccountDetailContent').html(xhttp.responseText);
+              $('#modalAccountDetailForm').modal('show');
+            }
+          };
+          xhttp.send();
+      });
+
+<?php foreach ($actions['Owner'] as $action_id => $action) : ?>
+  <?php if ($action_id == 'consultFeedback') : ?>
+
+      $('.aOwnerAction-<?php echo $action_id ?>').click(function () {
+        var account_id = $(this).attr('id').split('-')[2];
+        $('#modalShowProfileTitle').html('<?php echo $context->localize($action['labels'], $locale) ?>');
+        xhttp.open('GET', '<?php echo $this->url('flowAccount/consultFeedback', ['type' => $type]) ?>/' + account_id, true);
+        xhttp.onload = function () {
+          if (xhttp.readyState == 4 && xhttp.status == 200) {
+            $('#modalShowProfileContent').html(xhttp.responseText);
+            $('#modalShowProfileForm').modal('show');
+          }
+        };
+        xhttp.send();
+      });
+ 
+  <?php else : ?>
+
+      $('.aOwnerAction-<?php echo $action_id ?>').click(function () {
+        var action = $(this).attr('id').split('-')[1];
+        var account_id = $(this).attr('id').split('-')[2];
+        $('#modalAccountActionTitle').html('<?php echo $context->localize($action['labels'], $locale) ?>');
+        xhttp.open('GET', '<?php echo $this->url('flowAccount/detail', ['type' => $type]) ?>/' + account_id, true);
+        xhttp.onload = function () {
+          if (xhttp.readyState == 4 && xhttp.status == 200) {
+            $('#modalAccountActionContent').html(xhttp.responseText);
+            $('#buttonAccountAction').html('<?php echo $context->localize($action['labels'], $locale) ?>');
+            $('#buttonAccountAction').unbind();
+            $('#buttonAccountAction').click(function () {
+              var xhttp = new XMLHttpRequest();
+              xhttp.open('POST', '<?php echo $this->url('flowAccount/'.$action_id, ['type' => $type]) ?>/' + account_id, true);
+              xhttp.onload = function () {
+                if (xhttp.readyState == 4) {
+                  if (xhttp.status == 200) {
+                    toastr.success('<h4 class="text-center"><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h4>');
+                    $('#modalAccountActionForm').modal('hide');
+                    showList();
+                    showDashboard();
+                  }
+                  else technicalError();
+                }
+              };
+              xhttp.send();  
+            });
+
+            $('#modalAccountActionForm').modal('show');
+  <?php if ($action_id != 'transfer') : ?>
+            $('#transfer-email').hide();
+  <?php endif; ?>
+          }
+        };
+        xhttp.send();
+      });
+
+  <?php endif;?>
+<?php endforeach;?>
+
+      $('.aMatchingDetailAction').click(function () {
+        var account_id = $(this).attr('id').split('-')[1];
+        var account_id = $(this).attr('id').split('-')[2];
+        var xhttp = new XMLHttpRequest();
+        xhttp.open('GET', '<?php echo $this->url('profile/detail') ?>/' + account_id + '/' + account_id, true);
+        xhttp.onload = function () {
+          if (xhttp.readyState == 4 && xhttp.status == 200) {
+            $('#modalShowProfileTitle').html('<?php echo $this->translate('Profile', 'ppit-flow', $locale) ?>');
+            $('#modalShowProfileContent').html(xhttp.responseText);
+            $('.dataProtected').hide();
+            $('#modalShowProfileForm').modal('show');
+          }
+        };
+        xhttp.send();
+      });
+
+      $('.aMatchingSearchAction').click(function () {
+        var id = $(this).attr('id').split('-')[1];
+        var xhttp = new XMLHttpRequest();
+        xhttp.open('GET', '<?php echo $this->url('profile/list') ?>/' + id, true);
+        xhttp.onload = function () {
+          if (xhttp.readyState == 4 && xhttp.status == 200) {
+            $('#modalShowProfileTitle').html('<?php echo $this->translate('Profile', 'ppit-flow', $locale) ?>');
+            $('#modalShowProfileContent').html(xhttp.responseText);
+            $('.dataProtected').hide();
+            $('.buttonContact').click(function () {
+              var account_id = $(this).attr('id').split('-')[1];
+              var xhttp = new XMLHttpRequest();
+              xhttp.open('POST', '<?php echo $this->url('flowAccount/contact', ['type' => $type]) ?>/' + id + '?accounts=' + account_id, true);
+              xhttp.onload = function () {
+                if (xhttp.readyState == 4) {
+                  if (xhttp.status == 200) {
+                      toastr.success('<h4 class="text-center"><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h4>');
+                      $('#modalShowProfileForm').modal('hide');
+                      showList();
+                  }
+                  else technicalError;
+                }
+              };
+              xhttp.send();
+            });
+            $('#modalShowProfileForm').modal('show');
+          }
+        };
+        xhttp.send();
+      });
+
+// Public actions
+
+<?php foreach ($actions['Public'] as $action_id => $action) : ?>
+
+      $('.aPublicAction-<?php echo $action_id ?>').click(function () {
+          var action_id = $(this).attr('id').split('-')[2];
+
+          public<?php echo $action_id ?>Action(action_id);
+      });
+
+<?php endforeach;?>
+
+    }
+  };
+  xhttp.send();
+}
+
+showList();
+
+<?php if ($mode == 'detail' && $queryAction && $queryId) : ?>
+  public<?php echo $queryAction ?>Action(<?php echo $queryId ?>);
+<?php endif; ?>
+
+// Date and time picker
+
+$('.datepicker').pickadate({
+<?php if ($context->getLocale() == 'en_US') : ?>
+  monthsFull: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+  weekdaysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+  today: 'today',
+  clear: 'clear',
+  format: 'mm/dd/yyyy',
+  formatSubmit: 'yyyy-mm-dd'
+<?php else : ?>
+  monthsFull: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+  weekdaysShort: ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'],
+  today: 'aujourd\'hui',
+  clear: 'effacer',
+  format: 'dd/mm/yyyy',
+  formatSubmit: 'yyyy-mm-dd'
+<?php endif;?>
+});
+$('.timepicker').pickatime({});
+  
+// Tooltips
+
+$(function () {
+$('[data-toggle="tooltip"]').tooltip()
+})
+
+<?php foreach ($tooltips as $itemId => $tooltip) : ?>
+$('<?php echo $itemId ?>').attr('data-toggle', 'tooltip');
+$('<?php echo $itemId ?>').addClass('red-tooltip');
+$('<?php echo $itemId ?>').attr('data-placement', '<?php echo (array_key_exists('data-placement', $tooltip)) ? $tooltip['data-placement'] : 'right' ?>');
+$('<?php echo $itemId ?>').attr('title', '<?php echo $context->localize($tooltip['title'], $locale) ?>');
+<?php endforeach;?>
+
+function technicalError() {
+  toastr.error('<h4 class="text-center"><?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?></h4>');  
+}
+</script>

@@ -1,0 +1,278 @@
+<!--Main layout-->
+<main>
+  <div class="container" name="descr" id="descr">
+
+<section class="my-3">
+
+  <div class="row border-0 font-weight-bold d-flex justify-content-between">
+
+  <?php if (array_key_exists('signOut', $content['index'])) : ?>
+
+    <div class="col-md-12">      
+      <ul class="nav grey lighten-4 py-1 nav-fill">
+
+    <?php foreach ($content['index']['signOut'] as $entryId => $entry) : ?>
+      <?php if ($entry['type'] == 'signOut') : ?>
+        <li class="nav-item">
+          <div class="form-group">
+            <label for="signOut-identifier"><?php echo $context->localize($entry['labels'], $locale) ?></label>
+            <input class="" id="signOut-identifier" type="text" placeholder="<?php if (array_key_exists('placeholder', $entry)) echo $context->localize($entry['placeholder'], $locale) ?>" aria-label="">
+            <a class="grey-text ml-2" id="signOutButton"><i class="fa fa-key" aria-hidden="true"></i></a>
+          </div>
+        </li>
+        
+      <?php elseif (array_key_exists($entry['item'], $profile['credits'])) : ?>
+        <li class="nav-item">
+           <span class="grey-text"><?php echo sprintf($context->localize($entry['labels'], $locale), $profile['credits'][$entry['item']], (array_key_exists('rank', $profile['credits'])) ? $profile['credits']['rank'] : '') ?></span>
+        </li>
+        
+      <?php endif;?>
+    <?php endforeach;?>
+
+      </ul>
+    </div>
+    
+  <?php endif;?>
+
+<!-- Navbar -->
+      
+    <div class="col-md-12">      
+<ul class="nav grey lighten-4 md-pills pills-primary nav-fill">
+
+  <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <?php echo $this->translate('Accounts', 'ppit-core', $locale); ?>
+    </a>
+    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+      <a class="dropdown-item" href="<?php echo $this->url('flowEvent/index', ['type' => 'request']) ?>"><?php echo $this->translate('Requests', 'ppit-flow', $locale)?></a>
+      <a class="dropdown-item" href="<?php echo $this->url('flowEvent/index', ['type' => 'event']) ?>"><?php echo $this->translate('Events', 'ppit-flow', $locale)?></a>
+    </div>
+  </li>
+
+<?php foreach ($content['index']['navbar'] as $navId => $navItem) : ?>
+
+<!-- Mode change -->
+
+  <?php if ($navItem['type'] == 'mode') : ?>
+  <li class="nav-item">
+    <a class="nav-link aMode" id="aMode<?php echo $navItem['value'] ?>"><?php echo $context->localize($navItem['labels'], $locale) ?></a>
+  </li>
+
+<!-- Search -->
+
+  <?php elseif ($navItem['type'] == 'search') : ?>
+    <?php
+    $propertyId = $navItem['property'];
+    $property = $content['detail']['properties'][$propertyId];
+    ?>
+ 
+  <li class="nav-item">
+    <div>
+      <!-- Search form -->
+      <form class="form-inline">
+        <i class="fa fa-search" aria-hidden="true"></i>
+        <input class="form-control form-control-sm mdb-autocomplete ml-3 w-75" id="homeSearch-<?php echo $navItem['property'] ?>" type="text" placeholder="<?php echo $context->localize($navItem['labels'], $locale) ?>" aria-label="">
+      </form><br>
+    </div>
+  </li>
+
+<!-- Date -->
+
+  <?php elseif ($navItem['type'] == 'date') : ?>
+ 
+  <li class="nav-item">
+    <div>
+      <!-- Search form -->
+      <form class="form-inline">
+        <i class="fa fa-calendar" aria-hidden="true"></i>
+        <input class="form-control form-control-sm datepicker homeSearchInput ml-3 w-75" id="homeSearch-<?php echo $navItem['property'] ?>" type="text" placeholder="<?php echo $context->localize($navItem['labels'], $locale) ?>" aria-label="">
+      </form>
+    </div>
+  </li>
+
+<!-- Select -->
+
+  <?php elseif ($navItem['type'] == 'select') : ?>
+ 
+  <li class="nav-item">
+    <div>
+      <!-- Search form -->
+      <form class="form-inline">
+        <i class="<?php echo $navItem['icon']['class'] ?>" aria-hidden="true"></i>
+        <select class="form-control form-control-sm browser-default homeSearchInput ml-3 w-75" id="homeSearch-<?php echo $navItem['property'] ?>">
+          <option value=""><?php echo $context->localize($navItem['labels'], $locale) ?></option>
+      <?php foreach ($navItem['modalities'] as $modalityId => $modality) : ?>
+          <option value="<?php echo $modalityId ?>"><?php echo $context->localize($modality, $locale) ?></option>
+      <?php endforeach;?>
+        </select>
+      </form>
+    </div>
+  </li>
+
+<!-- Search input -->
+
+  <?php elseif ($navItem['type'] == 'input') : ?>
+ 
+  <li class="nav-item">
+    <div>
+      <!-- Search form -->
+      <form class="form-inline">
+        <i class="fa fa-search" aria-hidden="true"></i>
+        <input class="form-control form-control-sm homeSearchInput ml-3 w-75" id="homeSearch-<?php echo $navItem['property'] ?>" type="text" placeholder="<?php echo $context->localize($navItem['labels'], $locale) ?>" aria-label="">
+      </form>
+    </div>
+  </li>
+
+<!-- New account -->
+
+  <?php elseif ($profile && $navItem['type'] == 'new') : ?>
+    <?php if ($type != 'event' || $context->hasRole('ambassador')) : ?>
+  <li class="nav-item">
+    <a class="nav-link" href="<?php //echo $this->url('flowAccount/fill', ['type' => $type]) ?>" class="text-secondary mr-3"><i class="fa fa-plus mr-1"></i><?php echo $context->localize($navItem['labels'], $locale) ?></a>
+  </li>
+    <?php endif;?>
+  <?php endif;?>
+<?php endforeach;?>
+</ul>
+    </div>
+  </div>
+
+  <section class="section pb-5">
+    
+    <div class="row">
+
+      <!--Grid column-->
+      <div class="col-md-9">
+        <div id="accounts"></div>
+      </div>
+      <div class="col-md-3">
+        <div id="dashboard"></div>
+      </div>
+    </div>
+    <br>
+    
+    <div class="row">
+<?php foreach ($content['form']['legal'] as $paragraph) : ?>
+    <?php if (array_key_exists('a', $paragraph)) : ?>
+          <a 
+            href="<?php echo $paragraph['a']['href']?>" 
+            <?php if (array_key_exists('class', $paragraph['a'])) echo 'class="'.$paragraph['a']['class'].'"' ?>
+            <?php if (array_key_exists('id', $paragraph['a'])) echo 'id="'.$paragraph['a']['id'].'"' ?>
+          >
+    <?php elseif (array_key_exists('button', $paragraph)) : ?>
+          <button type="button" 
+            <?php if (array_key_exists('class', $paragraph['button'])) echo 'class="'.$paragraph['button']['class'].'"' ?>
+            <?php if (array_key_exists('id', $paragraph['button'])) echo 'id="'.$paragraph['button']['id'].'"' ?>
+          >
+    <?php else : ?>
+          <<?php echo $paragraph['type']?> <?php if (array_key_exists('class', $paragraph)) echo 'class="'.$paragraph['class'].'"' ?>>
+    <?php endif;?>
+    <?php if (array_key_exists('text', $paragraph)) : ?>
+      <?php echo $context->localize($paragraph['text'], $locale) ?>
+    <?php endif;?>
+    <?php if (array_key_exists('a', $paragraph)) : ?>
+          </a>
+    <?php elseif (array_key_exists('button', $paragraph)) : ?>
+          </button>
+    <?php else : ?>
+          </<?php echo $paragraph['type']?>>
+    <?php endif;?>
+<?php endforeach;?>
+    </div>
+
+  </section> 
+  <!--Section: Contact v.2-->
+
+</div>
+  
+<div class="modal fade" id="modalShowProfileForm" tabindex="-1" role="dialog" aria-labelledby="modalShowProfileLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+              <div class="modal-header text-center">
+                  <h4 class="modal-title w-100 font-weight-bold" id="modalShowProfileTitle"></h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body mx-3">
+                  <div id="modalShowProfileContent"></div>
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+
+            <button type="button" class="btn btn-link" data-dismiss="modal" aria-label="Close">
+              <?php echo $this->translate('Close', 'ppit-core', $context->getLocale()) ?>
+            </button>
+              </div>
+        </div>
+    </div>
+</div>
+
+<!-- Accounts -->
+  
+<div class="modal fade" id="modalAccountActionForm" tabindex="-1" role="dialog" aria-labelledby="modalAccountActionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+              <div class="modal-header text-center">
+                  <h4 class="modal-title w-100 font-weight-bold" id="modalAccountActionTitle"></h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body mx-3">
+                  <div id="modalAccountActionContent"></div>
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+
+            <a class="btn btn-warning btn-rounded" id="buttonAccountAction"></a>
+            <span><input type="email" id="transfer-email" class="form-control validate modal_input" placeholder="Email"></span>
+            <button type="button" class="btn btn-link" data-dismiss="modal" aria-label="Close">
+              <?php echo $this->translate('Close', 'ppit-core', $context->getLocale()) ?>
+            </button>
+              </div>
+        </div>
+    </div>
+</div>
+ 
+<div class="modal fade" id="modalAccountDetailForm" tabindex="-1" role="dialog" aria-labelledby="modalAccountDetailLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+              <div class="modal-header text-center">
+                  <h4 class="modal-title w-100 font-weight-bold" id="modalAccountDetailTitle"></h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body mx-3">
+                  <div id="modalAccountDetailContent"></div>
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+
+            <button type="button" class="btn btn-link" data-dismiss="modal" aria-label="Close">
+              <?php echo $this->translate('Close', 'ppit-core', $context->getLocale()) ?>
+            </button>
+              </div>
+        </div>
+    </div>
+</div>
+ 
+<div class="modal fade" id="modalAccountUpdateForm" tabindex="-1" role="dialog" aria-labelledby="modalAccountUpdateLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+              <div class="modal-header text-center">
+                  <h4 class="modal-title w-100 font-weight-bold" id="modalAccountUpdateTitle"></h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body mx-3">
+                  <div id="modalAccountUpdateContent"></div>
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+
+            <button type="button" class="btn btn-link" data-dismiss="modal" aria-label="Close">
+              <?php echo $this->translate('Close', 'ppit-core', $context->getLocale()) ?>
+            </button>
+              </div>
+        </div>
+    </div>
+</div>
