@@ -118,11 +118,11 @@ class AccountController extends AbstractActionController
 
 		// Profile form
 		$accountType = $context->getConfig('landing_account_type');
-		if ($context->getConfig('specificationMode') == 'config') {
+//		if ($context->getConfig('specificationMode') == 'config') {
 			$profileForm = $context->getConfig('profile/'.$place_identifier)['form'];
 			if (!$profileForm) $profileForm = $context->getConfig('profile/generic')['form'];
-		}
-		else $profileForm = Config::get($place_identifier.'_profile', 'identifier')->content['form'];
+/*		}
+		else $profileForm = Config::get($place_identifier.'_profile', 'identifier')->content['form'];*/
 		$accountDescription = Account::getDescription($accountType);
 		foreach ($profileForm['inputs'] as $inputId => $options) {
 			if (array_key_exists('definition', $options) && $options['definition'] == 'inline') $property = $options;
