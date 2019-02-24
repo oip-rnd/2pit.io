@@ -381,8 +381,8 @@ class EventController extends AbstractActionController
 			$skills = $this->params()->fromQuery('skills');
 			$requests = Event::getListV2($description, $filters, '+begin_date,+begin_time');
 			$ranking = array(
-				'query:skills' => [['matches', '%s', ['property_2'], 900], ['matches', '%s', ['property_1'], 800], ['matches', '%s', ['caption'], 700], ['matches', '%s', ['property_3'], 600], ['matches', '%s', ['property_7'], 500]],
-				'event:status' => [['=', 'new', [], 9000], ['=', 'connected', [], 8000], ['=', 'realized', [], 7000], ['=', 'completed', [], 6000]],
+				'query:skills' => [['matches', '%s', ['property_2'], 9000], ['matches', '%s', ['property_1'], 8000], ['matches', '%s', ['caption'], 7000], ['matches', '%s', ['property_3'], 6000], ['matches', '%s', ['property_7'], 5000]],
+				'event:status' => [['=', 'new', [], 900], ['=', 'connected', [], 800], ['=', 'realized', [], 700], ['=', 'completed', [], 600]],
 				'profile:profile_tiny_4' => [['like', '%s', ['property_7'], 90]],
 			);
 			foreach ($requests as $request) {
