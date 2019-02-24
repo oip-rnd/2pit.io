@@ -1,5 +1,7 @@
 <script>
 
+var keywords = null;
+
 <?php if (array_key_exists('signOut', $index)) : ?>
 
 // Rewards
@@ -122,7 +124,9 @@ $('#homeSearch-<?php echo $propertyId ?>').mdb_autocomplete({
 });
 
 $('#homeSearch-<?php echo $propertyId ?>').change(function () {
-  $('.aMode').removeClass('active');
+  keywords = $('#homeSearch-<?php echo $propertyId ?>').val();
+  showList();
+/*  $('.aMode').removeClass('active');
   $('#aModePublic').addClass('active');
   mode = 'Public';
   var matched;
@@ -136,7 +140,7 @@ $('#homeSearch-<?php echo $propertyId ?>').change(function () {
       }
     }
     showList();
-  }, 600);
+  }, 600);*/
 });
 
 $('.homeSearchClose').click(function () {
@@ -277,7 +281,7 @@ function showList() {
       }
     }
 
-  route += '&skills=' + skills;
+  if (keywords) route += '&keywords=' + keywords;
 
     <?php elseif (in_array($navItem['type'], ['input'])) : ?>
 

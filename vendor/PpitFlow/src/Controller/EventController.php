@@ -378,10 +378,10 @@ class EventController extends AbstractActionController
 
 			if (!$filters) $filters = ['status' => 'new,connected,realized,completed'];
 			if ($type == 'request') $filters['account_status'] = 'active';
-			$skills = $this->params()->fromQuery('skills');
+			$keywords = $this->params()->fromQuery('keywords');
 			$requests = Event::getListV2($description, $filters, '+begin_date,+begin_time');
 			$ranking = array(
-				'query:skills' => [['matches', '%s', ['property_2'], 9000], ['matches', '%s', ['property_1'], 8000], ['matches', '%s', ['caption'], 7000], ['matches', '%s', ['property_3'], 6000], ['matches', '%s', ['property_7'], 5000]],
+				'query:keywords' => [['matches', '%s', ['property_2'], 9000], ['matches', '%s', ['property_1'], 8000], ['matches', '%s', ['caption'], 7000], ['matches', '%s', ['property_3'], 6000], ['matches', '%s', ['property_7'], 5000]],
 				'event:status' => [['=', 'new', [], 900], ['=', 'connected', [], 800], ['=', 'realized', [], 700], ['=', 'completed', [], 600]],
 				'profile:profile_tiny_4' => [['like', '%s', ['property_7'], 90]],
 			);
