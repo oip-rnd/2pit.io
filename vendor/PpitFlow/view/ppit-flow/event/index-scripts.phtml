@@ -266,7 +266,7 @@ function showList() {
   var value;
 
   <?php foreach ($index['navbar'] as $navId => $navItem) : ?>
-    <?php if ($navItem['type'] == 'skills') : ?>
+    <?php if ($navId == 'skills') : ?>
   
     var skills = '', first = true;
     for (id in homeSearch_property_2) {
