@@ -137,6 +137,7 @@
 			'Terms' => 'Echéances',
 			'Terms and conditions' => 'Conditions Générales de Vente',
 			'This invoice has been submitted and cannot be updated anymore.' => 'Cette facture a été émise et ne peut plus être modifiée.',
+			'This invoice has been registered and cannot be updated anymore.' => 'Cette facture a été comptabilisée et ne peut plus être modifiée.',
 			'This commitment is settled and cannot be updated anymore.' => 'Cet engagement est réglé et ne peut plus être modifié.',
 			'Title' => 'Titre',
 			'To be validated' => 'A valider',
