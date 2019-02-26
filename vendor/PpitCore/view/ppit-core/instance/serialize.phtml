@@ -1,0 +1,38 @@
+<!-- 
+/**
+ * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
+ *
+ * @link      https://github.com/p-pit/PpitCore
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
+ */
+-->
+
+<!-- Main panel -->
+<div class="row">
+
+<?php if (!$statusCode ) : ?>
+
+  <form action="<?php echo $this->url('instance/serialize') ?>" method="post" class="form-horizontal" enctype="multipart/form-data">
+    <div class="col-sm-12">
+      <textarea class="form-control" name="specifications" rows="10"><?php echo $specifications ?></textarea>
+    </div>
+    <div class="col-sm-12">
+      <input name="submit" type="submit" id="submit-button" class="btn btn-warning" value="<?php echo $this->translate('Load the config', 'ppit-core', $context->getLocale()) ?>">
+    </div>
+  </form>
+</div>
+
+<?php elseif ($statusCode[0] == '200') : ?>
+        <div id="message">
+            <div class="alert alert-success"><h4><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h4></div>
+        </div>
+
+<?php else : ?>
+        <div class="alert alert-danger" style="text-align: center">
+          <strong><?php echo $this->translate('An error has occured, please try again later', 'ppit-core', $context->getLocale()) ?></strong>
+        </div>
+
+<?php endif;?>
+
+<div>&nbsp;</div>

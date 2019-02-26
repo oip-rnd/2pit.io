@@ -449,18 +449,34 @@ class InstanceController extends AbstractActionController
     {
     	$context = Context::getCurrent();
     	$config = $context->getConfig();
-
-    	$instance = $context->getInstance();
-		$instance->specifications = array();
-		$places = array();
-    	foreach ($config['specifications'] as $paramId => $param) {
-    		if (substr($paramId, 0, 12) != 'place_config') $instance->specifications[$paramId] = $param;
-    		else $places[substr($paramId, 13)]->config = $param;
-    	}
-    	$instance->specifications = $config['specifications'];
-    	$instance->update($instance->update_time);
     	
-    	return $this->response;
+    	$instance = Instance::get($context->getInstanceId());
+
+    	// Instanciate the csrf form
+    	$csrfForm = new CsrfForm();
+    	$csrfForm->addCsrfElement('csrf');
+    	$statusCode = null;
+    	if ($this->request->isPost()) {
+    		$csrfForm->setInputFilter((new Csrf('csrf'))->getInputFilter());
+    		$csrfForm->setData($this->request->getPost());
+    		if ($csrfForm->isValid()) {
+		    	$config = json_decode($this->request->getPost('specifications'), true);
+		    	if ($config) {
+			    	$instance->specifications_backup = json_encode($instance->specifications, JSON_PRETTY_PRINT);
+		    		$instance->specifications = $config;
+			    	$instance->update($instance->update_time);
+			    	$statusCode = ['200'];
+		    	}
+    		}
+    	}
+
+    	$view = new ViewModel(array(
+    		'context' => $context,
+    		'instance' => $instance,
+    		'specifications' => json_encode($context->getInstance()->specifications, JSON_PRETTY_PRINT),
+    		'statusCode' => $statusCode,
+    	));
+    	return $view;
     }
 
     public function addImageAction() {

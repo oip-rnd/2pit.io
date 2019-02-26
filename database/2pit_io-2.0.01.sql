@@ -27,3 +27,5 @@ ALTER TABLE `core_account`
 ADD `shopping_cart` VARCHAR(255) NULL DEFAULT NULL AFTER `credits`;
 
 ALTER TABLE `core_product_option` ADD `category` VARCHAR(255) NULL DEFAULT NULL AFTER `type`;
+
+ALTER TABLE `core_instance` ADD `specifications_backup` LONGTEXT NULL DEFAULT NULL AFTER `specifications`;

@@ -36,7 +36,8 @@ class Instance
     /** @var string */ public $applications;
 	/** @var string */ public $home_page;
     /** @var array */ public $specifications;
-    /** @var string */ public $legal_notices;
+    /** @var array */ public $specifications_backup;
+	/** @var string */ public $legal_notices;
     /** @var array */ public $audit = array();
     /** @var string */ public $update_time;
 
@@ -75,6 +76,7 @@ class Instance
         $this->applications = (isset($data['applications'])) ? json_decode($data['applications'], true) : null;
         $this->home_page = (isset($data['home_page'])) ? $data['home_page'] : null;
         $this->specifications = (isset($data['specifications'])) ? json_decode($data['specifications'], true) : null;
+        $this->specifications_backup = (isset($data['specifications_backup'])) ? $data['specifications_backup'] : null;
         $this->legal_notices = (isset($data['legal_notices'])) ? $data['legal_notices'] : null;
         $this->audit = (isset($data['audit'])) ? json_decode($data['audit'], true) : array();
         $this->update_time = (isset($data['update_time'])) ? $data['update_time'] : null;
@@ -99,6 +101,7 @@ class Instance
     	$data['applications'] = $this->applications;
     	$data['home_page'] = $this->home_page;
     	$data['specifications'] = $this->specifications;
+    	$data['specifications_backup'] = $this->specifications_backup;
     	$data['legal_notices'] = $this->legal_notices;
     	$data['audit'] = $this->audit;
     	return $data;
