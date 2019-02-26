@@ -11,7 +11,7 @@ function check<?php echo $entity ?>UpdateProperties()
 	var validity = true, error, number, val;
 <?php foreach ($properties as $property_id => $property ) : ?>
 
-	<?php if ($property['type'] == 'input' || $property['type'] == 'textarea') : ?>
+	<?php if (in_array($property['type'], ['input', 'textarea', 'log'])) : ?>
 	
 	val = $('#<?php echo $property_id ?>').val();
 		<?php if ($property['mandatory']) : ?>
