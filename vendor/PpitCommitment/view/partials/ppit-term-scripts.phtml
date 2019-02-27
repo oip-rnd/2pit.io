@@ -365,6 +365,12 @@ function connectTermUpdateForm(commitment_id, id, action, target)
 	}
 }
 
+function getTermInvoiceForm(id) {
+  $('#term-invoice-anchor').removeClass('btn-default').addClass('btn-danger');
+  $('#term-invoice-alert').show();
+  $('#term-invoice-anchor').click(function () { invoice(id, 'GET'); });
+}
+
 function getTermUpdate(commitment_id, id, action, target) {
 
 	var xhttp = new XMLHttpRequest();
@@ -391,10 +397,11 @@ function getTermUpdate(commitment_id, id, action, target) {
             $('#input_term-quantity').change(function() { if ($('#input_term-quantity').val()) $('#input_term-amount').val(''); });
             $('#input_term-amount').change(function() { if ($('#input_term-amount').val()) { $('#input_term-quantity').val(''); $('#input_term-unit_price').val(''); } });
 
+            $('#term-invoice-alert').hide();
 			if (id) {
 				$('#term-update-anchor').click(function () { getTermUpdate(commitment_id, id, 'update', target); });
 				$('#term-delete-anchor').click(function () { getTermUpdate(commitment_id, id, 'delete', target); });
-				$('#invoice-anchor').click(function () { invoice(id, 'GET'); });
+				$('#term-invoice-anchor').click(function () { getTermInvoiceForm(id); });
 			}
 			else $('#term-add-anchor').click(function () { getTermUpdate(commitment_id, id, 'add', target); });
 			

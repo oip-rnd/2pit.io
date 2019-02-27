@@ -894,43 +894,52 @@ class TermController extends AbstractActionController
     			$connection = CommitmentMessage::getTable()->getAdapter()->getDriver()->getConnection();
     			$connection->beginTransaction();
     			try {
-    				$year = CommitmentYear::getcurrent($commitment->place_id);
-    				if (!$year) $year = CommitmentYear::instanciate(date('Y'));
-					$mask = $context->getConfig('commitment/invoice_identifier_mask');
-					$arguments = array();
-					foreach ($mask['params'] as $param) {
-						if ($param == 'year') $arguments[] = date('Y');
-						elseif ($param == 'month') $arguments[] = date('m');
-						elseif ($param == 'counter') $arguments[] = $year->next_value;
+					if ($term->invoice_id) {
+						$commitmentMessage = CommitmentMessage::get($term->invoice_id);
+						$invoice_identifier = json_decode($commitmentMessage->content, true)['identifier'];
 					}
-					$invoice['identifier'] = vsprintf($context->localize($mask['format']), $arguments);
-    				$commitmentMessage->status = 'new';
-    				$commitmentMessage->account_id = $invoiceAccount->id;
-    				$commitmentMessage->identifier = $context->getInstance()->fqdn.'_'.$invoice['identifier'];
-    				$commitmentMessage->direction = 'O';
-    				$commitmentMessage->format = 'application/json';
-    				$year->increment();
-    				
-    				$invoice = $this->generateInvoice($type, $invoiceAccount, $term, $commitment, $invoice['identifier']);
+					else {
+	    				$year = CommitmentYear::getcurrent($commitment->place_id);
+	    				if (!$year) $year = CommitmentYear::instanciate(date('Y'));
+						$mask = $context->getConfig('commitment/invoice_identifier_mask');
+						$arguments = array();
+						foreach ($mask['params'] as $param) {
+							if ($param == 'year') $arguments[] = date('Y');
+							elseif ($param == 'month') $arguments[] = date('m');
+							elseif ($param == 'counter') $arguments[] = $year->next_value;
+						}
+						$invoice_identifier = vsprintf($context->localize($mask['format']), $arguments);
+	    				$commitmentMessage->status = 'new';
+	    				$commitmentMessage->account_id = $invoiceAccount->id;
+	    				$commitmentMessage->identifier = $context->getInstance()->fqdn.'_'.$invoice_identifier;
+	    				$commitmentMessage->direction = 'O';
+	    				$commitmentMessage->format = 'application/json';
+	    				$year->increment();
+					}
+    				$invoice = $this->generateInvoice($type, $invoiceAccount, $term, $commitment, $invoice_identifier);
     				
 					$commitmentMessage->content = json_encode($invoice, JSON_PRETTY_PRINT);
-			    	$rc = $commitmentMessage->add();
-    				if ($rc != 'OK') {
+			    	if (!$commitmentMessage->id) $rc = $commitmentMessage->add();
+				    else $rc = $commitmentMessage->update(null);
+			    	
+			    	if ($rc != 'OK') {
     					$connection->rollback();
     					$error = $rc;
     				}
-    				else {
-    					$term->status = 'invoiced';
-    					$term->invoice_id = $commitmentMessage->id;
-    					$rc = $term->update($request->getPost('update_time'));
-	    				if ($rc != 'OK') {
-	    					$connection->rollback();
-	    					$error = $rc;
-	    				}
-	    				else {
-	    					$connection->commit();
-	    					$message = 'OK';
-	    				}
+    				if (!$error) {
+    					if (!$term->invoice_id) {
+	    					$term->status = 'invoiced';
+	    					$term->invoice_id = $commitmentMessage->id;
+	    					$rc = $term->update($request->getPost('update_time'));
+		    				if ($rc != 'OK') {
+		    					$connection->rollback();
+		    					$error = $rc;
+		    				}
+    					}
+    				}
+    			    if (!$error) {
+    					$connection->commit();
+    					$message = 'OK';
     				}
     			}
     			catch (\Exception $e) {
