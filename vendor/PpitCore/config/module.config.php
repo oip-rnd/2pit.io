@@ -327,6 +327,15 @@ return array(
 							),
 						),
 					),
+					'repair' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/repair',
+							'defaults' => array(
+								'action' => 'repair',
+							),
+						),
+					),
 				),
 			),
 			'home' => array(
@@ -1686,6 +1695,7 @@ return array(
 				array('route' => 'account/indexCard', 'roles' => array('operational_management', 'sales_manager', 'manager')),
 				array('route' => 'account/fbgetleads', 'roles' => array('guest')),
 				array('route' => 'account/v1', 'roles' => array('guest')),
+				array('route' => 'account/repair', 'roles' => array('admin')),
 /*
 				array('route' => 'community', 'roles' => array('admin')),
 				array('route' => 'community/dataList', 'roles' => array('admin')),

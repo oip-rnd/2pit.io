@@ -386,44 +386,43 @@ class AccountController extends AbstractActionController
 	}
 	
 	/**
-	 * To adapt from flowEvent to flowAccount
+	 * Adapted from flowEvent to flowAccount
 	 * @return \Zend\View\Model\ViewModel
 	 */
 	public function fillAction()
 	{
 		// Retrieve the context and the parameters
 		$context = Context::getCurrent();
-		$type = $this->params()->fromRoute('type', 'event');
+		$type = $this->params()->fromRoute('type', 'generic');
 		$id = $this->params()->fromRoute('id');
-		$availableSkills = $context->getConfig('matching/skills');
 		$locale = $this->params()->fromQuery('locale');
 		
-		// Retrieve the account
-		$account = Account::get($context->getContactId(), 'contact_1_id');
-		$charter_status = $account->getCharterStatus();
-		$gtou_status = $account->getGtouStatus();
+		// Retrieve my account
+		$myAccount = Account::get($context->getContactId(), 'contact_1_id');
+		$charter_status = $myAccount->getCharterStatus();
+		$gtou_status = $myAccount->getGtouStatus();
 		
-		$place = Place::get($account->place_id);
+		$place = Place::get($myAccount->place_id);
 		$place_identifier = $place->identifier;
-		$profile = Vcard::get($account->contact_1_id);
+		$profile = Vcard::get($myAccount->contact_1_id);
 		if (!$locale) $locale = $profile->locale;
 		
-		if ($id) $event = Event::get($id);
-		else $event = Event::instanciate($type);
+		if ($id) $account = Account::get($id);
+		else $account = Account::instanciate($type);
 
-		$description = Event::getDescription($event->type);
+		$description = Account::getDescription($account->type);
 		
 		// Retrieve the content
-		if ($context->getConfig('specificationMode') == 'config') {
-			$content = $context->getConfig($type.'/'.$place->identifier);
-			if (!$content) $content = $context->getConfig($type.'/generic');
-		}
-		else $content = Config::get($place->identifier.'_'.$type, 'identifier')->content;
+//		if ($context->getConfig('specificationMode') == 'config') {
+			$content = $context->getConfig('account/'.$place->identifier);
+			if (!$content) $content = $context->getConfig('account/generic');
+/*		}
+		else $content = Config::get($place->identifier.'_account', 'identifier')->content;*/
 		if (!array_key_exists('options', $content['form'])) $content['form']['options'] = array();
 		if (!array_key_exists('examples', $content['form']['options'])) $content['form']['options']['examples'] = false;
 		
 		$viewData = array();
-		$viewData['account_id'] = $account->id;
+		$viewData['account_id'] = $myAccount->id;
 		$viewData['photo_link_id'] = ($profile->photo_link_id) ? $profile->photo_link_id : 'no-photo.png';
 		
 		// Form
@@ -459,7 +458,6 @@ class AccountController extends AbstractActionController
 		if ($this->request->isPost()) {
 			$data = array();
 			$data['place_id'] = $place->id;
-			$data['account_id'] = $account->id;
 			
 			foreach ($content['form']['inputs'] as $inputId => $property) {
 				if (array_key_exists('property_id', $property)) $propertyId = $property['property_id'];
@@ -489,16 +487,14 @@ class AccountController extends AbstractActionController
 						$data[$propertyId] = ($viewData[$propertyId]) ? substr($viewData[$propertyId], 6, 4).'-'.substr($viewData[$propertyId], 3, 2).'-'.substr($viewData[$propertyId], 0, 2) : null;
 					}
 					else $data[$propertyId] = $viewData[$propertyId];
-
-					if (array_key_exists('account_property', $property)) $accountData[$property['account_property']] = $data[$propertyId];
 				}
 			}
 
-			if ($id) $rc = $event->loadAndUpdate($data, $description['properties']);
-			else $rc = $event->loadAndAdd($data, $description['properties']);
+			if ($id) $rc = $account->loadAndUpdate($data);
+			else $rc = $account->loadAndAdd($data);
 
 			if (in_array($rc[0], ['200'])) {
-				$id = $event->id;
+				$id = $account->id;
 				$message = 'OK';
 			}
 			else $error = $rc[1];
@@ -511,7 +507,7 @@ class AccountController extends AbstractActionController
 			'place_identifier' => $place_identifier,
 			'panel' => $this->params()->fromQuery('panel', null),
 			'token' => $this->params()->fromQuery('hash', null),
-			'accountType' => $context->getConfig('landing_account_type'),
+//			'accountType' => $context->getConfig('landing_account_type'),
 			'header' => $content['header'],
 			'intro' => $content['intro'],
 			'form' => $content['form'],
@@ -533,29 +529,27 @@ class AccountController extends AbstractActionController
 			'type' => $type,
 			'id' => $id,
 			'locale' => $locale,
-			'event' => $event,
+			'account' => $account,
 			'content' => $content,
 			'viewData' => $viewData,
 			'message' => $message,
 			'error' => $error,
-			'availableSkills' => $availableSkills,
 		));
 		return $view;
 	}
 
 	/**
-	 * To adapt from flowEvent to flowAccount
+	 * Adapted from flowEvent to flowAccount
 	 * @return \Zend\View\Model\ViewModel
 	 */
 	public function detailAction()
 	{
 		// Retrieve the context and the parameters
 		$context = Context::getCurrent();
-		$type = $this->params()->fromRoute('type', 'event');
+		$type = $this->params()->fromRoute('type', 'generic');
 		$id = $this->params()->fromRoute('id');
 		$place = Place::get($context->getPlaceId());
 		$place_identifier = $place->identifier;
-		$availableSkills = $context->getConfig('matching/skills');
 		$locale = $this->params()->fromQuery('locale');
 		$message = $this->params()->fromQuery('message');
 		
@@ -569,25 +563,24 @@ class AccountController extends AbstractActionController
 		}
 
 		// Retrieve the request, the owner profile and the matched accounts
-		$request = Event::get($id);
-		$account = Account::get($request->account_id);
-		
-		// Discriminate between the mode 'requestor' (consultation of a request of mine) and the mode 'public' (requests from others)
-		if ($myAccount && $request->account_id == $myAccount->id) $mode = 'Owner';
+		$account = Account::get($id);
+
+		// Discriminate between the mode 'requestor' (consultation of an account of mine) and the mode 'public' (public accounts)
+		if ($account->place_id == $place->id) $mode = 'Owner';
 		else $mode = 'Public';
 		
-		// Retrieve the request description according to its type
-		$description = Event::getDescription($request->type);
+		// Retrieve the account description according to its type
+		$description = Account::getDescription($account->type);
 	
 		// Retrieve the content
-		if ($context->getConfig('specificationMode') == 'config') {
-			$content = $context->getConfig($type.'/'.$place->identifier);
-			if (!$content) $content = $context->getConfig($type.'/generic');
-		}
-		else $content = Config::get($place->identifier.'_'.$type, 'identifier')->content;
+//		if ($context->getConfig('specificationMode') == 'config') {
+			$content = $context->getConfig('account/'.$place->identifier);
+			if (!$content) $content = $context->getConfig('account/generic');
+/*		}
+		else $content = Config::get($place->identifier.'_'.$type, 'identifier')->content;*/
 		if (!array_key_exists('options', $content['detail'])) $content['detail']['options'] = array();
 		
-		$viewData = $request->getProperties();
+		$viewData = $account->getProperties();
 	
 		// Form
 		foreach ($content['detail']['properties'] as $inputId => $options) {
@@ -612,7 +605,7 @@ class AccountController extends AbstractActionController
 			else $propertyId = $inputId;
 			if ($id) {
 				if ($inputId != $propertyId) $viewData[$inputId] = (in_array($property['value'], explode(',', $request->properties[$propertyId])) ? $property['value'] : null);
-				elseif (array_key_exists($propertyId, $request->properties)) $viewData[$inputId] = $request->properties[$propertyId];
+				elseif (array_key_exists($propertyId, $account->properties)) $viewData[$inputId] = $account->properties[$propertyId];
 				$queryValue = $this->params()->fromQuery($inputId);
 				if ($queryValue !== null) $viewData[$inputId] = $queryValue;
 			}
@@ -624,12 +617,12 @@ class AccountController extends AbstractActionController
 			if ($viewData['status'] == 'new') {
 				$actions['update'] = $content['actions']['Owner']['update'];
 				$actions['cancel'] = $content['actions']['Owner']['cancel'];
-				$actions['complete'] = $content['actions']['Owner']['complete'];
-				$content['detail']['title'] = $content['detail']['title']['Owner'][$request->status];
+//				$actions['complete'] = $content['actions']['Owner']['complete'];
+				$content['detail']['title'] = $content['detail']['title']['Owner'][$account->status];
 			}
-			else if ($viewData['status'] == 'connected') {
+/*			else if ($viewData['status'] == 'connected') {
 				$actions['complete'] = $content['actions']['Owner']['complete'];
-				$content['detail']['title'] = $content['detail']['title']['Owner'][$request->status];
+				$content['detail']['title'] = $content['detail']['title']['Owner'][$account->status];
 			}
 			else if ($viewData['status'] == 'realized') {
 				$requestorFeedbackGiven = true;
@@ -640,15 +633,15 @@ class AccountController extends AbstractActionController
 			else if ($viewData['status'] == 'completed') {
 				$content['detail']['title'] = $content['detail']['title']['Owner'][$request->status];
 				$actions['consultFeedback'] = $content['actions']['Public']['consultFeedback'];
-			}
+			}*/
 			$content['actions']['Owner'] = $actions;
 		}
 		else { // Public mode
 			$actions = array();
-			if (!$myAccount || !in_array($myAccount->id, explode(',', $request->matched_accounts))) {
+//			if (!$myAccount || !in_array($myAccount->id, explode(',', $request->matched_accounts))) {
 				$content['detail']['title'] = $content['detail']['title']['Public']['new'];
-				$actions['propose'] = $content['actions']['Public']['propose'];
-			}
+//				$actions['propose'] = $content['actions']['Public']['propose'];
+/*			}
 			else {
 				if ($request->status == 'realized') {
 					if ($request->matching_log[$myAccount->id]['action'] == 'accept') {
@@ -670,12 +663,12 @@ class AccountController extends AbstractActionController
 				else {
 					$content['detail']['title'] = $content['detail']['title']['Public']['linked'];
 				}
-			}
+			}*/
 			$content['actions']['Public'] = $actions;
 		}
 				
 		// Matched Accounts
-		foreach ($content['matched_accounts']['properties'] as $propertyId => $options) {
+/*		foreach ($content['matched_accounts']['properties'] as $propertyId => $options) {
 			if (array_key_exists('definition', $options) && $options['definition'] == 'inline') $property = $options;
 			else {
 				$property = $description['properties'][$propertyId];
@@ -683,32 +676,31 @@ class AccountController extends AbstractActionController
 				if (array_key_exists('labels', $options)) $property['labels'] = $options['labels'];
 			}
 			$content['matched_accounts']['properties'][$propertyId] = $property;
-		}
+		}*/
 		
 		$matchedAccounts = array();
-		if ($request->matched_accounts) {
+/*		if ($request->matched_accounts) {
 			foreach (explode(',', $request->matched_accounts) as $matchedId) {
 				$account = Account::get($matchedId);
 				if ($account) $matchedAccounts[$matchedId] = $account->properties;
 			}
-		}
+		}*/
 		$viewData['matched_accounts'] = $matchedAccounts;
-		$viewData['matching_log'] = $request->matching_log;
+//		$viewData['matching_log'] = $request->matching_log;
 
 		// Return the view
 		$view = new ViewModel(array(
 			'context' => $context,
 			'imagePath' => 'img/'.$place_identifier.'/event_'.$type.'/',
 			'id' => $id,
-			'status' => $request->status,
+			'status' => $account->status,
 			'mode' => $mode,
 			'locale' => $locale,
 			'description' => $description,
 			'content' => $content,
 			'viewData' => $viewData,
-			'availableSkills' => $availableSkills,
 		));
-		$view->setTerminal(true); // Version sprint 07/09
+		$view->setTerminal(true);
 		return $view;
 	}
 

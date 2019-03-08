@@ -1,6 +1,6 @@
     <!--Main layout-->
     <main>
-<form action="<?php echo $this->url('flowEvent/fill', ['type' => $type, 'id' => $id]) ?>?locale=<?php echo $locale ?>" method="post">
+<form action="<?php echo $this->url('flowAccount/fill', ['type' => $type, 'id' => $id]) ?>?locale=<?php echo $locale ?>" method="post">
 <div class="container" name="descr" id="descr">
 	<br>
 
@@ -145,7 +145,7 @@
 
 				<div class="center-on-small-only">
 <?php if ($message || $error) : ?>
-                    <a href="<?php echo $this->url('home') ?>" class=""><?php echo $this->translate('Return to list', 'ppit-core', $context->getLocale()) ?></a>
+                    <a href="<?php echo $this->url('flowAccount') ?>" class=""><?php echo $this->translate('Return to list', 'ppit-core', $context->getLocale()) ?></a>
 <?php else : ?>
 					<button class="btn btn-secondary btn-rounded" type="submit"><?php echo $context->localize($content['form']['submit']['labels'], $locale) ?></button>&nbsp;&nbsp;
                     <a href="<?php echo $this->url('flowEvent/index', ['type' => $type]) ?>?mode=Owner" class=""><?php echo $this->translate('Cancel', 'ppit-core', $context->getLocale()) ?></a>

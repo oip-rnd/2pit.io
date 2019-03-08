@@ -46,7 +46,7 @@ The config/autoload/local.php file deals with security and so is ignored by git.
 	chown www-data:www-data local.php
 	chmod 500 local.php
 
-Adapt these three lines in config/autoload/global.php according to your own mysql settings:
+Adapt these three lines in config/autoload/local.php according to your own mysql settings:
 
     'dsn' => 'mysql:dbname=yourdbname;host=localhost',
     'driver_options' => array(

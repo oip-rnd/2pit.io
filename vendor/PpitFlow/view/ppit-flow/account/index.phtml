@@ -41,7 +41,7 @@
 
   <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      <?php echo $this->translate('Accounts', 'ppit-core', $locale); ?>
+      <?php echo $this->translate('Contacts', 'ppit-core', $locale); ?>
     </a>
     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
       <a class="dropdown-item" href="<?php echo $this->url('flowEvent/index', ['type' => 'request']) ?>"><?php echo $this->translate('Requests', 'ppit-flow', $locale)?></a>
@@ -128,7 +128,7 @@
   <?php elseif ($profile && $navItem['type'] == 'new') : ?>
     <?php if ($type != 'event' || $context->hasRole('ambassador')) : ?>
   <li class="nav-item">
-    <a class="nav-link" href="<?php //echo $this->url('flowAccount/fill', ['type' => $type]) ?>" class="text-secondary mr-3"><i class="fa fa-plus mr-1"></i><?php echo $context->localize($navItem['labels'], $locale) ?></a>
+    <a class="nav-link" href="<?php echo $this->url('flowAccount/fill', ['type' => $type]) ?>" class="text-secondary mr-3"><i class="fa fa-plus mr-1"></i><?php echo $context->localize($navItem['labels'], $locale) ?></a>
   </li>
     <?php endif;?>
   <?php endif;?>

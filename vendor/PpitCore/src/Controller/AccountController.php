@@ -1672,4 +1672,17 @@ class AccountController extends AbstractActionController
 			return $this->response;
 		}
 //	}
+
+	public function repairAction()
+	{
+		$context = Context::getCurrent();
+		$accounts = Account::getList(null, ['bank_identifier' => '*'], '+id', null);
+		foreach ($accounts as $account_id => $account) {
+			$bank_identifier = $context->getSecurityAgent()->unprotectPrivateData($account->bank_identifier);
+			echo $account_id . ' => ' . $bank_identifier . "\n";
+			$account->bank_identifier = $context->getSecurityAgent()->protectPrivateDataV2($bank_identifier);
+//			$account->update(null);
+		}
+		return $this->response;
+	}
 }

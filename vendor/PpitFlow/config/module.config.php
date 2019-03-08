@@ -1972,10 +1972,10 @@ table.note-report td {
 	
 		'index' => array(
 			'navbar' => array(
+				'keywords' => ['type' => 'search', 'property' => 'name', 'labels' => ['default' => 'Keywords', 'fr_FR' => 'Mots clés']],
 				'publicMode' => ['type' => 'mode', 'value' => 'Public', 'labels' => ['default' => 'Everybody', 'fr_FR' => 'Tout le monde']],
-				'skills' => ['type' => 'search', 'property' => 'property_2', 'labels' => ['default' => 'Keywords', 'fr_FR' => 'Mots clés']],
 				'ownerMode' => ['type' => 'mode', 'value' => 'Owner', 'labels' => ['default' => 'My contacts', 'fr_FR' => 'Mes contacts']],
-				'contributorMode' => ['type' => 'mode', 'value' => 'Contributor', 'labels' => ['default' => 'My contributions', 'fr_FR' => 'Mes contributions']],
+//				'contributorMode' => ['type' => 'mode', 'value' => 'Contributor', 'labels' => ['default' => 'My contributions', 'fr_FR' => 'Mes contributions']],
 				'new' => ['type' => 'new', 'labels' => ['default' => 'New contact', 'fr_FR' => 'Nouveau contact']],
 			),
 			'links' => array(
@@ -2018,16 +2018,15 @@ table.note-report td {
 		),
 	
 		'form' => array(
-			'title' => ['default' => 'Submit/update a request', 'fr_FR' => 'Créer/modifier une demande'],
+			'title' => ['default' => 'Add/update a contact', 'fr_FR' => 'Ajouter/modifier un contact'],
 			'options' => array(
 				'examples' => true,
 			),
 			'introduction' => array(
 			),
 			'inputs' => array(
-				'caption' => ['class' => 'col-md-6', 'definition' => 'event/request/property/caption', 'mandatory' => true],
-				'caption_example' => ['class' => 'col-md-6 grey-text', 'definition' => 'inline', 'type' => 'html', 'updatable' => false],
-				'property_24' => ['class' => 'col-md-6', 'definition' => 'event/request/property/property_24', 'mandatory' => true, 'rows' => 6],
+				'name' => ['class' => 'col-md-6', 'definition' => 'event/request/property/caption', 'mandatory' => true],
+/*				'property_24' => ['class' => 'col-md-6', 'definition' => 'event/request/property/property_24', 'mandatory' => true, 'rows' => 6],
 				'property_24_example' => ['class' => 'col-md-6 grey-text', 'definition' => 'inline', 'type' => 'html', 'updatable' => false],
 				'property_25' => ['class' => 'col-md-6', 'definition' => 'event/request/property/property_25', 'mandatory' => true, 'rows' => 8],
 				'property_25_example' => ['class' => 'col-md-6 grey-text', 'definition' => 'inline', 'type' => 'html', 'updatable' => false],
@@ -2046,7 +2045,7 @@ table.note-report td {
 				'property_7' => ['class' => 'col-md-6', 'definition' => 'event/request/property/property_7'],
 				['definition' => 'inline', 'type' => 'empty'],
 				'property_26' => ['class' => 'col-md-6', 'definition' => 'inline', 'type' => 'textarea', 'rows' => 4, 'labels' => ['default' => 'Other logistic constraints', 'fr_FR' => 'Autres contraintes logistiques']],
-				'property_26_example' => ['class' => 'col-md-6 grey-text', 'definition' => 'inline', 'type' => 'html', 'updatable' => false],
+				'property_26_example' => ['class' => 'col-md-6 grey-text', 'definition' => 'inline', 'type' => 'html', 'updatable' => false],*/
 			),
 			'submit' => array(
 				'class' => 'btn btn-light-blue btn-rounded',
@@ -2067,7 +2066,7 @@ table.note-report td {
 		'detail' => array(
 			'background' => 'blue',
 			'title' => array(
-				'detail' => ['default' => 'Request detail', 'fr_FR' => 'Détail de la demande'],
+				'detail' => ['default' => 'Contact detail', 'fr_FR' => 'Détail du contact'],
 				'Owner' => array(
 					'new' => ['default' => 'Managing your request', 'fr_FR' => 'Gérer votre demande'],
 					'connected' => ['default' => 'Managing your request', 'fr_FR' => 'Gérer votre demande'],
@@ -2098,8 +2097,8 @@ table.note-report td {
 			'introduction' => array(
 			),
 			'properties' => array(
-				'caption' => ['class' => 'col-md-12', 'definition' => 'event/request/property/caption', 'mandatory' => true],
-				'property_24' => ['class' => 'col-md-12', 'definition' => 'event/request/property/property_24', 'mandatory' => true, 'rows' => 6],
+				'name' => ['class' => 'col-md-12', 'definition' => 'core_account/generic/property/name', 'mandatory' => true, /* temporary*/ 'type' => 'chips', 'repository' => 'matching/skills', 'trigger' => 'property_1'],
+/*				'property_24' => ['class' => 'col-md-12', 'definition' => 'event/request/property/property_24', 'mandatory' => true, 'rows' => 6],
 				'property_25' => ['class' => 'col-md-12', 'definition' => 'event/request/property/property_25', 'mandatory' => true, 'rows' => 8],
 				'property_3' => ['class' => 'col-md-12', 'definition' => 'event/request/property/property_3', 'mandatory' => true],
 				'property_1' => ['feature' => 'skill', 'class' => 'col-md-12', 'definition' => 'inline', 'type' => 'keywords', 'labels' => ['default' => 'Expected skills', 'fr_FR' => 'Compétences attendues'], 'placeholder' => ['default' => 'Ex. finance, design thinking, video editing...', 'fr_FR' => 'Ex. finance, design thinking, montage vidéo...']],
@@ -2108,7 +2107,7 @@ table.note-report td {
 				'property_5' => ['class' => 'col-md-12', 'definition' => 'event/request/property/property_5'],
 				'property_6' => ['class' => 'col-md-12', 'definition' => 'event/request/property/property_6'],
 				'property_7' => ['class' => 'col-md-12', 'definition' => 'event/request/property/property_7'],
-				'property_26' => ['class' => 'col-md-12', 'definition' => 'inline', 'type' => 'textarea', 'rows' => 4, 'labels' => ['default' => 'Other logistic constraints', 'fr_FR' => 'Autres contraintes logistiques']],
+				'property_26' => ['class' => 'col-md-12', 'definition' => 'inline', 'type' => 'textarea', 'rows' => 4, 'labels' => ['default' => 'Other logistic constraints', 'fr_FR' => 'Autres contraintes logistiques']],*/
 			),
 			'legal' => array(
 				array(

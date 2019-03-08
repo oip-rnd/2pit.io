@@ -415,4 +415,37 @@ class SecurityAgent
     	$decoded = base64_decode($data);
     	return rtrim(mcrypt_decrypt(SecurityAgent::$cipher, $key, $decoded, SecurityAgent::$mode, $iv));
     }
+
+    public function protectPrivateDataV2($data) {
+    	$context = Context::getCurrent();
+    	$safe = $context->getConfig('ppitUserSettings')['safe'][$context->getInstance()->caption];
+    	$key = (array_key_exists('passphrase', $safe)) ? $safe['passphrase'] : null;
+    	if (!$key) return $data;
+    	$cipher = "AES-128-CBC";
+		$ivlen = openssl_cipher_iv_length($cipher);
+		$iv = openssl_random_pseudo_bytes($ivlen);
+		$ciphertext_raw = openssl_encrypt($data, $cipher, $key, OPENSSL_RAW_DATA, $iv);
+		$hmac = hash_hmac('sha256', $ciphertext_raw, $key, $as_binary=true);
+		$ciphertext = base64_encode( $iv.$hmac.$ciphertext_raw );
+    	return $ciphertext;
+    }
+
+    public function unprotectPrivateDataV2($data) {
+    	$context = Context::getCurrent();
+    	$safe = $context->getConfig('ppitUserSettings')['safe'][$context->getInstance()->caption];
+    	$key = (array_key_exists('passphrase', $safe)) ? $safe['passphrase'] : null;
+    	if (!$key) return $data;
+		$c = base64_decode($data);
+    	$cipher="AES-128-CBC";
+    	$ivlen = openssl_cipher_iv_length($cipher);
+		$iv = substr($c, 0, $ivlen);
+		$hmac = substr($c, $ivlen, $sha2len=32);
+		$ciphertext_raw = substr($c, $ivlen+$sha2len);
+		$original_plaintext = openssl_decrypt($ciphertext_raw, $cipher, $key, OPENSSL_RAW_DATA, $iv);
+		$calcmac = hash_hmac('sha256', $ciphertext_raw, $key, $as_binary=true);
+
+		//PHP 5.6+ timing attack safe comparison
+		if (hash_equals($hmac, $calcmac)) return $original_plaintext;
+		else return $data;
+    }
 }

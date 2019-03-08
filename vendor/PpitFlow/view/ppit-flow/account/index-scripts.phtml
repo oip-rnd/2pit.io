@@ -270,16 +270,7 @@ function showList() {
   var value;
 
   <?php foreach ($index['navbar'] as $navId => $navItem) : ?>
-    <?php if ($navId == 'skills') : ?>
-  
-    var skills = '', first = true;
-    for (id in homeSearch_property_2) {
-      if ($('#skill-' + id).val() == 1) {
-        if (!first) skills += ',';
-        skills += id;
-        first = false;
-      }
-    }
+    <?php if ($navItem['type'] == 'search') : ?>
 
   if (keywords) route += '&keywords=' + keywords;
 

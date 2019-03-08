@@ -1002,7 +1002,7 @@ class Account
     	if ($description) {
 	    	foreach ($description['properties'] as $propertyId => $property) {
 	    		if ($property['private'] && $data[$propertyId]) {
-	    			$value = $context->getSecurityAgent()->unprotectPrivateData($data[$propertyId]);
+	    			$value = $context->getSecurityAgent()->unprotectPrivateDataV2($data[$propertyId]);
 	    			if ($value) $data[$propertyId] = $value;
 	    			else unset($data[$propertyId]);
 	    		}
@@ -1497,7 +1497,7 @@ class Account
 
 				// Private data protection
 				if ($property['private'] && $value) {
-					$value = $context->getSecurityAgent()->protectPrivateData($value);
+					$value = $context->getSecurityAgent()->protectPrivateDataV2($value);
 				}
 
 				if ($propertyId == 'status') $this->status = $value;
