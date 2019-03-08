@@ -1675,7 +1675,12 @@ class AccountController extends AbstractActionController
 
 	public function repairAction()
 	{
-		$context = Context::getCurrent();
+    			
+		// Atomically save
+		$connection = Account::getTable()->getAdapter()->getDriver()->getConnection();
+		$connection->beginTransaction();
+		
+    	$context = Context::getCurrent();
 		$accounts = Account::getList(null, ['bank_identifier' => '*'], '+id', null);
 		foreach ($accounts as $account_id => $account) {
 			$bank_identifier = $context->getSecurityAgent()->unprotectPrivateData($account->bank_identifier);
@@ -1683,6 +1688,8 @@ class AccountController extends AbstractActionController
 			$account->bank_identifier = $context->getSecurityAgent()->protectPrivateDataV2($bank_identifier);
 			$account->update(null);
 		}
+		
+		$connection->commit();
 		return $this->response;
 	}
 }
