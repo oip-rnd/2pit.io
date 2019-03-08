@@ -508,7 +508,7 @@ class Term
 		$data['transfer_order_id'] = $this->transfer_order_id;
 
 		if ($context->hasRole('dpo')) {
-			$value = $context->getSecurityAgent()->unprotectPrivateData($this->bank_identifier);
+			$value = $context->getSecurityAgent()->unprotectPrivateDataV2($this->bank_identifier);
 			if ($value) $data['bank_identifier'] = $value;
 		}
 
@@ -569,7 +569,7 @@ class Term
 		if ($description) {
 			foreach ($description['properties'] as $propertyId => $property) {
 				if ($property['private'] && $data[$propertyId]) {
-					$value = $context->getSecurityAgent()->unprotectPrivateData($data[$propertyId]);
+					$value = $context->getSecurityAgent()->unprotectPrivateDataV2($data[$propertyId]);
 					if ($value) $data[$propertyId] = $value;
 				}
 			}
@@ -858,7 +858,7 @@ class Term
 
 				// Private data protection
 				if ($property['private'] && $value) {
-					$value = $context->getSecurityAgent()->protectPrivateData($value);
+					$value = $context->getSecurityAgent()->protectPrivateDataV2($value);
 				}
     				 
 				if ($propertyId == 'status') $this->status = $value;
