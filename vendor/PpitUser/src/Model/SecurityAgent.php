@@ -431,6 +431,7 @@ class SecurityAgent
     }
 
     public function unprotectPrivateDataV2($data) {
+    	if (!$data) return null;
     	$context = Context::getCurrent();
     	$safe = $context->getConfig('ppitUserSettings')['safe'][$context->getInstance()->caption];
     	$key = (array_key_exists('passphrase', $safe)) ? $safe['passphrase'] : null;
