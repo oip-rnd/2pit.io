@@ -24,7 +24,7 @@ use Zend\Session\Container;
 
 class SecurityAgent
 {    
-	private static $cipher  = MCRYPT_RIJNDAEL_128;
+//	private static $cipher  = MCRYPT_RIJNDAEL_128;
 	private static $mode    = 'cbc';
 	
 	private $acl;
@@ -391,7 +391,7 @@ class SecurityAgent
     	$user->nb_trials = 0;
     	return $user->update($update_time);
     }
-
+/*
     public function protectPrivateData($data) {
     	$context = Context::getCurrent();
     	$safe = $context->getConfig('ppitUserSettings')['safe'][$context->getInstance()->caption];
@@ -414,7 +414,7 @@ class SecurityAgent
     	$iv  = substr($keyHash, 0, mcrypt_get_block_size(SecurityAgent::$cipher, SecurityAgent::$mode) );
     	$decoded = base64_decode($data);
     	return rtrim(mcrypt_decrypt(SecurityAgent::$cipher, $key, $decoded, SecurityAgent::$mode, $iv));
-    }
+    }*/
 
     public function protectPrivateDataV2($data) {
     	$context = Context::getCurrent();

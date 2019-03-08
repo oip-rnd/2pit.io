@@ -1686,7 +1686,7 @@ class AccountController extends AbstractActionController
 			$bank_identifier = $context->getSecurityAgent()->unprotectPrivateData($account->bank_identifier);
 			echo $account_id . ' => ' . $bank_identifier . "\n";
 			$account->bank_identifier = $context->getSecurityAgent()->protectPrivateDataV2($bank_identifier);
-			$account->update(null);
+//			$account->update(null);
 		}
 		
 		$connection->commit();
