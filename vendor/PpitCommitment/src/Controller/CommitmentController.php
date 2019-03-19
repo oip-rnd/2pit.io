@@ -1933,12 +1933,16 @@ class CommitmentController extends AbstractActionController
     
     public function rephaseAction()
     {
-    	$select = Commitment::getTable()->getSelect()->where(array('commitment.id > ?' => 0));
-    	$cursor = Commitment::getTable()->selectWith($select);
-    	foreach ($cursor as $commitment) {
-    		$commitment->computeFooter();
-    		$commitment->update(null);
-    		echo $commitment->id.'<br>';
+    	$select = Term::getTable()->getSelect()->where(array('invoice_id > ?' => 0));
+    	$cursor = Term::getTable()->selectWith($select);
+    	foreach ($cursor as $term) {
+    		$message = CommitmentMessage::get($term->invoice_id);
+    		if ($message) {
+    			$term->invoice_identifier = json_decode($message->content, true)['identifier'];
+    			echo $term->id . ': ' . $term->invoice_identifier . "\n";
+//    			$term->update(null);
+    		}
     	}
+    	return $this->response;
     }
 }
