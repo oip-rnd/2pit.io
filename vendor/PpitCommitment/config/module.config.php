@@ -3664,7 +3664,6 @@ table.note-report td {
 			'collection_date' => [],
 			'means_of_payment' => [],
 			'amount' => [],
-			'invoice_identifier' => [],
 			'reference' => [],
 			'comment' => [],
 		),
@@ -3697,7 +3696,6 @@ table.note-report td {
 		'means_of_payment' => [],
 		'bank_name' => [],
 		'invoice_n_last' => [],
-		'invoice_identifier' => ['readonly' => true],
 		'reference' => [],
 		'comment' => [],
 		'document' => [],
@@ -3728,7 +3726,6 @@ table.note-report td {
 		'reference' => 'M',
 		'comment' => 'N',
 		'document' => 'O',
-		'invoice_identifier' => 'P',
 	),
 
 	'commitmentTerm/invoice/generic' => array(
