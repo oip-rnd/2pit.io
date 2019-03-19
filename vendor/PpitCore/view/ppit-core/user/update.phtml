@@ -181,7 +181,7 @@
 		?>
 
 	<div class="form-group" id="<?php echo $specificationId.'_'.$modalityId ?>_group">
-		<label class="col-sm-5 control-label"><?php echo $modality[$context->getLocale()] ?></label>
+		<label class="col-sm-5 control-label"><?php echo $context->localize($modality) ?></label>
 		<div class="col-sm-7">
 			<input type="checkbox" id="<?php echo $specificationId.'_'.$modalityId ?>" class="form-control" value="1" <?php if ($found) echo 'checked="checked"' ?><?php if (isset($isDisabled) && $isDisabled || $contact->id == $context->getContactId()) echo ' disabled ="disabled"' ?>>
 		</div>

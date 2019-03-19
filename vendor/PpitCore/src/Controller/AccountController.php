@@ -302,7 +302,7 @@ class AccountController extends AbstractActionController
 		\PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
 		 
 		$workbook = new \PHPExcel;
-		(new SsmlAccountViewHelper)->formatXls($description, $workbook, $view);		
+		(new SsmlAccountViewHelper)->formatXls($description, $workbook, $view->accounts);		
 		$writer = new \PHPExcel_Writer_Excel2007($workbook);
 		
 		header('Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -350,7 +350,7 @@ class AccountController extends AbstractActionController
 		}
 		return $this->response;
 	}
-
+	
 	/**
 	 * To be moved to EventController after moving the model logic to the model layer
 	 */

@@ -37,4 +37,5 @@ return array(
 	'To be contacted' => 'A contacter',
 	'Validate and Sign In' => 'Valider et s\'enregistrer',
 	'View/update a request' => 'Visualiser/modifier une demande',
+	'Your answer' => 'Votre réponse',
 );

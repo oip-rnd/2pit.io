@@ -11,6 +11,7 @@ use PpitCore\Model\GroupAccount;
 use PpitCore\Model\Place;
 use PpitCore\Model\UserContact;
 use PpitCore\Model\Vcard;
+use PpitCore\ViewHelper\SsmlAccountViewHelper;
 use Zend\Http\Headers;
 use Zend\Http\Request;
 use Zend\Http\Response\Stream;
@@ -384,6 +385,49 @@ class AccountController extends AbstractActionController
 		$view->setTerminal(true);
 		return $view;
 	}
+
+	/**
+	 * Action for exporting to Excel
+	 */
+	public function exportAction()
+	{
+		// Retrieve the context and the parameters
+		$context = Context::getCurrent();
+		$type = $this->params()->fromRoute('type', 'generic');
+		$description = Account::getDescription($type);
+		$params = array();
+		if ($context->getPlaceId()) $params['place_id'] = $context->getPlaceId(); // Restriction on place defined according to the current user rights
+		foreach ($description['search'] as $propertyId => $property) {
+			if ($propertyId != 'place_id') { // Restriction on place already defined according to the current user rights
+				$filter = ($this->params()->fromQuery($propertyId, null));
+				if ($filter !== null) $params[$propertyId] = $filter;
+			}
+		}
+		$limit = $this->params()->fromQuery('limit');
+		$order = $this->params()->fromQuery('order', '+name');
+	
+		// Retrieve the list
+		$accounts = Account::getList($type, $params, $order, $limit);
+	
+		include 'public/PHPExcel_1/Classes/PHPExcel.php';
+		include 'public/PHPExcel_1/Classes/PHPExcel/Writer/Excel2007.php';
+		include 'public/PHPExcel_1/Classes/PHPExcel/CachedObjectStorageFactory.php';
+	
+		$cacheMethod = \PHPExcel_CachedObjectStorageFactory:: cache_to_phpTemp;
+		$cacheSettings = array( ' memoryCacheSize ' => '8MB');
+		\PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
+			
+		$workbook = new \PHPExcel;
+		(new SsmlAccountViewHelper)->formatXls($description, $workbook, $accounts);
+		$writer = new \PHPExcel_Writer_Excel2007($workbook);
+	
+		header('Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Disposition:inline;filename=P-Pit_Account.xlsx ');
+		ob_end_clean();
+		$writer->save('php://output');
+		
+		return $this->response;
+	}
 	
 	/**
 	 * Adapted from flowEvent to flowAccount
@@ -445,13 +489,14 @@ class AccountController extends AbstractActionController
 			if (array_key_exists('property_id', $property)) $propertyId = $property['property_id'];
 			else $propertyId = $inputId;
 			if ($id) {
-				if ($inputId != $propertyId) $viewData[$inputId] = (in_array($property['value'], explode(',', $event->properties[$propertyId])) ? $property['value'] : null);
-				elseif (array_key_exists($propertyId, $event->properties)) $viewData[$inputId] = $event->properties[$propertyId];
+				if ($inputId != $propertyId) $viewData[$inputId] = (in_array($property['value'], explode(',', $account->properties[$propertyId])) ? $property['value'] : null);
+				elseif (array_key_exists($propertyId, $account->properties)) $viewData[$inputId] = $account->properties[$propertyId];
 				$queryValue = $this->params()->fromQuery($inputId);
 				if ($queryValue !== null) $viewData[$inputId] = $queryValue;
 			}
 			else $viewData[$inputId] = (array_key_exists('default', $property)) ? $property['default'] : null;
 		}
+		$viewData['json_property_1'] = $account->json_property_1;
 		
 		// Process the post data after input
 		$message = $error = null;
@@ -504,8 +549,10 @@ class AccountController extends AbstractActionController
 		$this->layout('/layout/flow-layout');
 		$this->layout()->setVariables(array(
 			'context' => $context,
+			'id' => $id,
 			'place_identifier' => $place_identifier,
 			'panel' => $this->params()->fromQuery('panel', null),
+			'account_id' => $myAccount->id,
 			'token' => $this->params()->fromQuery('hash', null),
 //			'accountType' => $context->getConfig('landing_account_type'),
 			'header' => $content['header'],
@@ -516,9 +563,10 @@ class AccountController extends AbstractActionController
 			'footer' => $content['footer'],
 			'locale' => $locale,
 			'photo_link_id' => ($account) ? $account->photo_link_id : null,
+			'profileForm' => ['inputs' => []], // To manage via the context
 			'charter_status' => $charter_status,
 			'gtou_status' => $gtou_status,
-			'pageScripts' => 'ppit-flow/event/fill-scripts',
+			'pageScripts' => 'ppit-flow/account/fill-scripts',
 			'message' => null,
 			'error' => null,
 		));
@@ -538,6 +586,47 @@ class AccountController extends AbstractActionController
 		return $view;
 	}
 
+	/**
+	 * 
+	 * @return \Zend\Stdlib\ResponseInterface
+	 */
+	public function captureAction()
+	{
+		// Retrieve the context and the parameters
+		$context = Context::getCurrent();
+		$id = $this->params()->fromRoute('id');
+		if (!$id) {
+			$this->getResponse()->setStatusCode('400');
+			$this->getResponse()->setReasonPhrase('No id is provided for the account to update');
+			return $this->getResponse();
+		}
+
+		// Retrieve the account to update
+		$account = Account::get($id);
+		if (!$account) {
+			$this->getResponse()->setStatusCode('400');
+			$this->getResponse()->setReasonPhrase('The account does not exist');
+			return $this->getResponse();
+		}
+		
+		if ($this->request->isPost()) {
+			
+			// Retrieve the key-value pairs to update in the account's json_property_1
+			$data = array('json_property_1' => $account->json_property_1);
+			$pairs = json_decode($this->request->getContent(), true)['content'];
+			foreach ($pairs as $key => $value) {
+				$key = substr($key, 5);
+				$data['json_property_1'][$key] = $value;
+			}
+			$rc = $account->loadAndUpdate($data);
+			if ($rc[0] != '200') {
+				$this->getResponse()->setStatusCode($rc[0]);
+				return $this->getResponse();
+			}
+		}
+		return $this->response;
+	}
+	
 	/**
 	 * Adapted from flowEvent to flowAccount
 	 * @return \Zend\View\Model\ViewModel

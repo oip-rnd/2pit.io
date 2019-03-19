@@ -48,6 +48,7 @@ class Term
 			'comment' => 					['entity' => 'commitment_term', 'column' => 'comment'],
 			'document' => 					['entity' => 'commitment_term', 'column' => 'document'],
 			'invoice_id' => 				['entity' => 'commitment_term', 'column' => 'invoice_id'],
+			'invoice_identifier' => 		['entity' => 'commitment_term', 'column' => 'invoice_identifier'],
 			'tiny_1' => 					['entity' => 'commitment_term', 'column' => 'tiny_1'],
 			'tiny_2' => 					['entity' => 'commitment_term', 'column' => 'tiny_2'],
 			'tiny_3' => 					['entity' => 'commitment_term', 'column' => 'tiny_3'],
@@ -272,6 +273,7 @@ class Term
 	public $comment;
 	public $document;
 	public $invoice_id;
+	public $invoice_identifier;
 	public $tiny_1;
 	public $tiny_2;
 	public $tiny_3;
@@ -384,6 +386,7 @@ class Term
 		$this->comment = (isset($data['comment'])) ? $data['comment'] : null;
 		$this->document = (isset($data['document'])) ? $data['document'] : null;
 		$this->invoice_id = (isset($data['invoice_id'])) ? $data['invoice_id'] : null;
+		$this->invoice_identifier = (isset($data['invoice_identifier'])) ? $data['invoice_identifier'] : null;
 		$this->tiny_1 = (isset($data['tiny_1'])) ? $data['tiny_1'] : null;
 		$this->tiny_2 = (isset($data['tiny_2'])) ? $data['tiny_2'] : null;
 		$this->tiny_3 = (isset($data['tiny_3'])) ? $data['tiny_3'] : null;
@@ -485,6 +488,7 @@ class Term
 		$data['comment'] = $this->comment;
 		$data['document'] = $this->document;
 		$data['invoice_id'] = (int) $this->invoice_id;
+		$data['invoice_identifier'] = $this->invoice_identifier;
 		$data['tiny_1'] = $this->tiny_1;
 		$data['tiny_2'] = $this->tiny_2;
 		$data['tiny_3'] = $this->tiny_3;
@@ -877,6 +881,7 @@ class Term
 				elseif ($propertyId == 'comment') $this->comment = $value;
 				elseif ($propertyId == 'document') $this->document = $value;
 				elseif ($propertyId == 'invoice_id') $this->invoice_id = $value;
+				elseif ($propertyId == 'invoice_identifier') $this->invoice_identifier = $value;
 				elseif ($propertyId == 'tiny_1') $this->tiny_1 = $value;
 				elseif ($propertyId == 'tiny_2') $this->tiny_2 = $value;
 				elseif ($propertyId == 'tiny_3') $this->tiny_3 = $value;

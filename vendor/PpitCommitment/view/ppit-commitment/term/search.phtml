@@ -9,7 +9,7 @@
 		</strong>
 		
 <?php if ($context->isDemoModeActive()) : ?>
-		<a class="tip" href="#" title="<?php echo $context->getConfig('demo')['commitmentTerm/search/title'][$context->getLocale()] ?>">
+		<a class="tip" href="#" title="<?php echo $context->localize($context->getConfig('demo')['commitmentTerm/search/title']) ?>">
 		    <img src="<?php echo $this->basePath('img/tip.png') ?>" width="20" />
 		</a>
 <?php endif;?>
@@ -57,12 +57,12 @@
 		} 
 		elseif ($property['type'] == 'select') {
 			foreach ($property['modalities'] as $modalityId => $modality) {
-				$modalities[$modalityId] = $modality[$context->getLocale()];
+				$modalities[$modalityId] = $context->localize($modality);
 			}
 		}
 		else {
 			foreach ($context->getConfig($property['name'])['modalities'] as $modalityId => $modality) {
-				$modalities[$modalityId] = $modality[$context->getLocale()];
+				$modalities[$modalityId] = $context->localize($modality);
 			}
 		}
 		?>
@@ -103,7 +103,7 @@
 					<span class="glyphicon glyphicon-remove"></span>
 				</button>
 <?php if ($context->isDemoModeActive()) : ?>
-				<a class="tip" href="#" title="<?php echo $context->getConfig('demo')['commitmentTerm/search/x'][$context->getLocale()] ?>">
+				<a class="tip" href="#" title="<?php echo $context->localize($context->getConfig('demo')['commitmentTerm/search/x']) ?>">
 				    <img src="<?php echo $this->basePath('img/tip.png') ?>" width="20" />
 				</a>
 <?php endif;?>
@@ -117,7 +117,7 @@
 					<span><?php echo $this->translate('Export', 'ppit-core', $context->getLocale())?></span>
 				</button>
 <?php if ($context->isDemoModeActive()) : ?>
-				<a class="tip" href="#" title="<?php echo $context->getConfig('demo')['commitmentTerm/search/export'][$context->getLocale()] ?>">
+				<a class="tip" href="#" title="<?php echo $context->localize($context->getConfig('demo')['commitmentTerm/search/export']) ?>">
 				    <img src="<?php echo $this->basePath('img/tip.png') ?>" width="20" />
 				</a>
 <?php endif;?>

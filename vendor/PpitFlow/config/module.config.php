@@ -17,7 +17,6 @@ return array (
 			'PpitFlow\Controller\Landing' => 'PpitFlow\Controller\LandingController',
 			'PpitFlow\Controller\Funnel' => 'PpitFlow\Controller\FunnelController',
 			'PpitFlow\Controller\Profile' => 'PpitFlow\Controller\ProfileController',
-			'PpitFlow\Controller\Survey' => 'PpitFlow\Controller\SurveyController',
 		),
 	),
 	
@@ -62,6 +61,15 @@ return array (
 							),
 						),
 					),
+					'export' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/export[/:type]',
+							'defaults' => array(
+								'action' => 'export',
+							),
+						),
+					),
 					'detail' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -81,6 +89,13 @@ return array (
 						'options' => array(
 							'route' => '/fill[/:type][/:id]',
 							'defaults' => array('action' => 'fill'),
+						),
+					),
+					'capture' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/capture[/:id]',
+							'defaults' => array('action' => 'capture'),
 						),
 					),
 					'contact' => array(
@@ -467,7 +482,7 @@ return array (
 					'payzenReturn' => array(
 						'type' => 'segment',
 						'options' => array(
-							'route' => '/payzen-return',
+							'route' => '/payzen-return[/:place_identifier]',
 							'defaults' => array(
 								'action' => 'payzenReturn',
 							),
@@ -611,76 +626,6 @@ return array (
 					),
 				),
 			),
-			'survey' => array(
-				'type'    => 'literal',
-				'options' => array(
-					'route'    => '/survey',
-					'defaults' => array(
-						'controller' => 'PpitFlow\Controller\Survey',
-						'action'     => 'fill',
-					),
-				),
-				'may_terminate' => true,
-				'child_routes' => array(
-					'fill' => array(
-						'type' => 'segment',
-						'options' => array(
-							'route' => '/fill[/:id]',
-							'defaults' => array('action' => 'fill'),
-						),
-					),
-					'template1' => array(
-						'type' => 'segment',
-						'options' => array(
-							'route' => '/template1[/:id]',
-							'defaults' => array('action' => 'template1'),
-						),
-					),
-					'template2' => array(
-						'type' => 'segment',
-						'options' => array(
-							'route' => '/template2[/:id]',
-							'defaults' => array('action' => 'template2'),
-						),
-					),
-					'selectTest' => array(
-						'type' => 'segment',
-						'options' => array(
-							'route' => '/select-test[/:place_identifier]',
-							'defaults' => array(
-								'action' => 'selectTest',
-							),
-						),
-					),
-					'inviteToTest' => array(
-						'type' => 'segment',
-						'options' => array(
-							'route' => '/invite-to-test[/:place_identifier]',
-							'defaults' => array(
-								'action' => 'inviteToTest',
-							),
-						),
-					),
-					'newRequest' => array(
-						'type' => 'segment',
-						'options' => array(
-							'route' => '/new-request[/:id]',
-							'defaults' => array(
-								'action' => 'newRequest',
-							),
-						),
-					),
-					'patch' => array(
-						'type' => 'segment',
-						'options' => array(
-							'route' => '/patch',
-							'defaults' => array(
-								'action' => 'patch',
-							),
-						),
-					),
-				),
-			),
 		),
 	),
 
@@ -693,9 +638,11 @@ return array (
 				array('route' => 'flowAccount/index', 'roles' => array('guest')),
 				array('route' => 'flowAccount/dashboard', 'roles' => array('guest')),
 				array('route' => 'flowAccount/list', 'roles' => array('guest')),
+				array('route' => 'flowAccount/export', 'roles' => array('user')),
 				array('route' => 'flowAccount/detail', 'roles' => array('guest')),
 				array('route' => 'flowAccount/update', 'roles' => array('user')),
 				array('route' => 'flowAccount/fill', 'roles' => array('user')),
+				array('route' => 'flowAccount/capture', 'roles' => array('user')),
 				array('route' => 'flowAccount/contact', 'roles' => array('user')),
 				array('route' => 'flowAccount/abandon', 'roles' => array('user')),
 				array('route' => 'flowAccount/propose', 'roles' => array('guest')),
@@ -764,14 +711,6 @@ return array (
 				array('route' => 'profile/removeContact', 'roles' => array('user')),
 				array('route' => 'profile/dashboard', 'roles' => array('user')),
 				array('route' => 'profile/photoUpload', 'roles' => array('user')),
-				
-				array('route' => 'survey/fill', 'roles' => array('guest')),
-				array('route' => 'survey/template1', 'roles' => array('guest')),
-				array('route' => 'survey/template2', 'roles' => array('guest')),
-				array('route' => 'survey/selectTest', 'roles' => array('operational_management', 'sales_manager', 'manager')),
-				array('route' => 'survey/inviteToTest', 'roles' => array('operational_management', 'sales_manager', 'manager')),
-				array('route' => 'survey/newRequest', 'roles' => array('user')),
-				array('route' => 'survey/patch', 'roles' => array('admin')),
 			),
 		),
 	),
@@ -2020,32 +1959,50 @@ table.note-report td {
 		'form' => array(
 			'title' => ['default' => 'Add/update a contact', 'fr_FR' => 'Ajouter/modifier un contact'],
 			'options' => array(
-				'examples' => true,
+//				'examples' => true,
 			),
 			'introduction' => array(
 			),
 			'inputs' => array(
-				'name' => ['class' => 'col-md-6', 'definition' => 'event/request/property/caption', 'mandatory' => true],
-/*				'property_24' => ['class' => 'col-md-6', 'definition' => 'event/request/property/property_24', 'mandatory' => true, 'rows' => 6],
-				'property_24_example' => ['class' => 'col-md-6 grey-text', 'definition' => 'inline', 'type' => 'html', 'updatable' => false],
-				'property_25' => ['class' => 'col-md-6', 'definition' => 'event/request/property/property_25', 'mandatory' => true, 'rows' => 8],
-				'property_25_example' => ['class' => 'col-md-6 grey-text', 'definition' => 'inline', 'type' => 'html', 'updatable' => false],
-				'property_3' => ['class' => 'col-md-6', 'definition' => 'event/request/property/property_3', 'mandatory' => true],
-				'property_3_example' => ['class' => 'col-md-6 grey-text', 'definition' => 'inline', 'type' => 'html', 'updatable' => false],
-				'property_1' => ['feature' => 'skill', 'class' => 'col-md-6', 'definition' => 'inline', 'type' => 'keywords', 'labels' => ['default' => 'Expected skills', 'fr_FR' => 'Compétences attendues'], 'placeholder' => ['default' => 'Ex. finance, design thinking, video editing...', 'fr_FR' => 'Ex. finance, design thinking, montage vidéo...']],
-				'property_1_example' => ['class' => 'col-md-6 grey-text', 'definition' => 'inline', 'type' => 'html', 'updatable' => false],
-				'property_2' => ['feature' => 'keyword_skill', 'class' => 'col-md-6', 'definition' => 'inline', 'type' => 'chips', 'repository' => 'matching/skills', 'trigger' => 'property_1'],
-				['definition' => 'inline', 'type' => 'empty'],
-				'property_4' => ['class' => 'col-md-6', 'definition' => 'event/request/property/property_4'],
-				'property_4_example' => ['class' => 'col-md-6 grey-text', 'definition' => 'inline', 'type' => 'html', 'updatable' => false],
-				'property_5' => ['class' => 'col-md-6', 'definition' => 'event/request/property/property_5'],
-				['definition' => 'inline', 'type' => 'empty'],
-				'property_6' => ['class' => 'col-md-6', 'definition' => 'event/request/property/property_6'],
-				['definition' => 'inline', 'type' => 'empty'],
-				'property_7' => ['class' => 'col-md-6', 'definition' => 'event/request/property/property_7'],
-				['definition' => 'inline', 'type' => 'empty'],
-				'property_26' => ['class' => 'col-md-6', 'definition' => 'inline', 'type' => 'textarea', 'rows' => 4, 'labels' => ['default' => 'Other logistic constraints', 'fr_FR' => 'Autres contraintes logistiques']],
-				'property_26_example' => ['class' => 'col-md-6 grey-text', 'definition' => 'inline', 'type' => 'html', 'updatable' => false],*/
+				'n_first' => ['class' => 'col-md-6', 'definition' => 'core_account/generic/property/n_first', 'mandatory' => true],
+				'n_last' => ['class' => 'col-md-6', 'definition' => 'core_account/generic/property/n_last', 'mandatory' => true],
+				'email' => ['class' => 'col-md-6', 'definition' => 'core_account/generic/property/email', 'mandatory' => true],
+				'tel_cell' => ['class' => 'col-md-6', 'definition' => 'core_account/generic/property/tel_cell', 'mandatory' => true],
+				'name' => ['class' => 'col-md-6', 'definition' => 'core_account/generic/property/name', 'mandatory' => true],
+			),
+			'texts' => array(
+				'title_description' => ['type' => 'title', 'text' => ['default' => 'Description de l’entrepreneur']],
+				'metier' => ['type' => 'Q&A', 'question' => ['default' => 'Description du métier de l’entreprise']],
+				'age' => ['type' => 'Q&A', 'question' => ['default' => 'Age de l’entreprise']],
+				'motivation' => ['type' => 'Q&A', 'question' => ['default' => 'Quelle est votre motivation ?']],
+				'challenge' => ['type' => 'Q&A', 'question' => ['default' => 'Quels sont vos challenges ?']],
+				'rentabilite' => ['type' => 'Q&A', 'question' => ['default' => 'Est-ce que vous en vivez aujourd’hui ?']],
+				'title_parcours' => ['type' => 'title', 'text' => ['default' => 'Parcours utilisateurs actuels']],
+				'creation' => ['type' => 'Q&A', 'question' => ['default' => 'Lorsque vous avez créé votre entreprise, qu’est-ce qui était le plus difficile ?']],
+				'manque' => ['type' => 'Q&A', 'question' => ['default' => 'Qu’est-ce qui vous a manqué au début ?']],
+				'administratif_quoi' => ['type' => 'Q&A', 'question' => ['default' => 'Quels sont pour vous les éléments administratifs à traiter ?']],
+				'administratif_comment' => ['type' => 'Q&A', 'question' => ['default' => 'Comment les avez-vous traités ?']],
+				'administratif_outil' => ['type' => 'Q&A', 'question' => ['default' => 'Quels outils avez-vous utilisés ? Au début, mais aussi par la suite (évolution)']],
+				'crm_comment' => ['type' => 'Q&A', 'question' => ['default' => 'Comment avez-vous géré la partie CRM ?']],
+				'crm_besoin' => ['type' => 'Q&A', 'question' => ['default' => 'De quoi aviez-vous besoin ?']],
+				'compta_comment' => ['type' => 'Q&A', 'question' => ['default' => 'Comment avez-vous géré la partie comptabilité ?']],
+				'compta_besoin' => ['type' => 'Q&A', 'question' => ['default' => 'De quoi aviez-vous besoin ?']],
+				'specificite_quoi' => ['type' => 'Q&A', 'question' => ['default' => 'Quelles sont les spécificités de votre métier ?']],
+				'specificite_outil' => ['type' => 'Q&A', 'question' => ['default' => 'Les avez-vous outillées ?']],
+				'prix_service_outil' => ['type' => 'Q&A', 'question' => ['default' => 'Quel prix avez-vous mis pour vous équiper en services / outils ?']],
+				'prix_evolution' => ['type' => 'Q&A', 'question' => ['default' => 'Au lancement ? À la première facturation ? Maintenant ?']],
+				'prix_acceptable' => ['type' => 'Q&A', 'question' => ['default' => 'Combien, au lancement (alors que vous ne gagniez pas encore votre vie) étiez-vous prêt à mettre pour vous équiper sur les aspects c&oelig;ur de métier ?']],
+				'title_proposition' => ['type' => 'title', 'text' => ['default' => 'Notre proposition']],
+				'text_proposition' => ['type' => 'text', 'text' => ['default' => '<b>Outil CRM + C&oelig;ur de métier + Facturation et compta associée + Mise en relation entre freelances inscrits sur la plateforme</b>']],
+				'proposition_avis' => ['type' => 'Q&A', 'question' => ['default' => 'Qu’en pensez-vous?']],
+				'proposition_besoin_crm' => ['type' => 'Q&A', 'question' => ['default' => 'De quoi avez-vous besoin sur la partie CRM ?']],
+				'proposition_besoin_metier' => ['type' => 'Q&A', 'question' => ['default' => 'Quel type de fonctionnalités verriez-vous sur la partie métier ?']],
+				'proposition_besoin_compta' => ['type' => 'Q&A', 'question' => ['default' => 'De quoi avez-vous besoin sur la partie compta ?']],
+				'proposition_besoin_relation' => ['type' => 'Q&A', 'question' => ['default' => 'De quoi avez-vous besoin sur la partie mise en relation ? Besoin de savoir quoi ? Demander quoi ?']],
+				'proposition_prix_acceptable' => ['type' => 'Q&A', 'question' => ['default' => 'Combien seriez-vous prêt à payer pour un service comme celui-ci ? (sur un modèle d’abonnement)']],
+				'title_call_to_action' => ['type' => 'title', 'text' => ['default' => 'Call to action']],
+				'early_adopter' => ['type' => 'Q&A', 'question' => ['default' => 'Souhaitez-vous faire partie de nos <i>early-adopters</i> à un tarif préférentiel ?']],
+				'focus_group' => ['type' => 'Q&A', 'question' => ['default' => 'Souhaitez-vous faire partie d’un <i>focus-group</i> pour définir notre solution ?']],
 			),
 			'submit' => array(
 				'class' => 'btn btn-light-blue btn-rounded',

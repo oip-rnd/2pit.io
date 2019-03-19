@@ -11,7 +11,7 @@ else {
 }
 ?>
 
-<?php //if ($navbarAccount) : ?>
+<?php if (!$context->isAuthenticated()) : ?>
 
 toastr.options = {
   "timeOut": "6000",
@@ -295,7 +295,7 @@ xhttp.send();
 $('#modalRequestActivationForm').on('show.bs.modal', showRequestActivation);
 
 // Profile
-<?php if ($account_id) : ?>
+	<?php if ($account_id) : ?>
 $('#modalProfileForm').on('hide.bs.modal', function () { 
   $('#modalProfileInputs').html('');
 });
@@ -314,12 +314,9 @@ $('#modalProfileForm').on('show.bs.modal', function () {
   };
   xhttp.send();
 });
-<?php endif;
-?>
+	<?php endif;?>
 
-// Payment
-
-<?php if (isset ($payPal) && $payPal) : ?>
+	<?php if (isset ($payPal) && $payPal) : ?>
 
 <!-- PayPal -->
 
@@ -407,10 +404,12 @@ function showPayment() {
 
 $('#modalPaymentForm').on('show.bs.modal', showPayment);
 
-  <?php if ($panel == 'payment') : ?>
+		<?php if ($panel == 'payment') : ?>
 $('#modalPaymentForm').modal('show');
-  <?php endif;?>
-<?php endif;?>
+		<?php endif;?>
+	<?php endif;?>
+
+<?php else : ?>
 
 // Validate charter
 
@@ -534,6 +533,8 @@ form.onsubmit = function(event) {
   event.preventDefault();
   logout();
 }
+
+<?php endif;?>
 
 <?php if ($panel) : ?>
   $('#<?php echo $panel ?>').modal('show');

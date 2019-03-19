@@ -218,15 +218,8 @@ class VcardController extends AbstractActionController
 	  			if (!$profile->tiny_3 && $account->comment_1) {
     			 	$profile->tiny_3 = $account->comment_1;
     				$updated = true;
-    			 }
-    			    
-/*    			$survey = \Model\Event::get('course_test', 'type', 'survey_profile', 'category', 'contributor', 'subcategory', $account->id, 'account_id');
-    			if ($survey && ($survey->property_2 || $survey->property_3)) {
-    				if (!$profile->tiny_2) $profile->tiny_2 = $survey->property_2;
-    				if (!$profile->tiny_3) $profile->tiny_3 = $survey->property_3;
-	    			$updated = true;
-    			}*/
-
+    			}
+    			
     			if ($updated) {
 	    			print_r(json_encode($profile, JSON_PRETTY_PRINT));
 	    			$profile->update(null);

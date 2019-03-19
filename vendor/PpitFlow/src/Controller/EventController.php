@@ -411,7 +411,7 @@ class EventController extends AbstractActionController
 				$content['data'][$request->id] = $request->getProperties();
 				$content['data'][$request->id]['rank'] = $rank;
 				if ($myAccount && $myAccount->id == $request->account_id) $content['data'][$request->id]['role'] = 'requestor';
-				elseif (in_array($myAccount && $myAccount->id, explode(',', $request->matched_accounts))) $content['data'][$request->id]['role'] = 'contributor';
+				elseif ($myAccount && in_array($myAccount->id, explode(',', $request->matched_accounts))) $content['data'][$request->id]['role'] = 'contributor';
 				else $content['data'][$request->id]['role'] = null;
 				if (in_array($request->status, ['new', 'connected'])) {
 					if ($myAccount && $myAccount->id != $request->account_id && !in_array($myAccount->id, explode(',', $request->matched_accounts))) {

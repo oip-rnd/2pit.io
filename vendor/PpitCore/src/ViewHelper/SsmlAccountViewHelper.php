@@ -5,7 +5,7 @@ use PpitCore\Model\Context;
 
 class SsmlAccountViewHelper
 {
-	public static function formatXls($description, $workbook, $view)
+	public static function formatXls($description, $workbook, $accounts)
 	{
 		$context = Context::getCurrent();
 		$translator = $context->getServiceManager()->get(\Zend\I18n\Translator\TranslatorInterface::class);
@@ -24,14 +24,30 @@ class SsmlAccountViewHelper
 		$sheet = $workbook->getActiveSheet();
 		
 		$i = 0;
-		$colNames = array(1 => 'A', 2 => 'B', 3 => 'C', 4 => 'D', 5 => 'E', 6 => 'F', 7 => 'G', 8 => 'H', 9 => 'I', 10 => 'J', 11 => 'K', 12 => 'L', 13 => 'M', 14 => 'N', 15 => 'O', 16 => 'P', 17 => 'Q', 18 => 'R', 19 => 'S', 20 => 'T', 21 => 'U', 22 => 'V', 23 => 'W', 24 => 'X', 25 => 'Y', 26 => 'Z', 27 => 'AA', 28 => 'AB', 29 => 'AC', 30 => 'AD', 31 => 'AE', 32 => 'AF', 33 => 'AG', 34 => 'AH', 35 => 'AI', 36 => 'AJ', 37 => 'AK', 38 => 'AL', 39 => 'AM', 40 => 'AN', 41 => 'AO', 42 => 'AP', 43 => 'AQ', 44 => 'AR', 45 => 'AS', 46 => 'AT', 47 => 'AU', 48 => 'AV', 49 => 'AW', 50 => 'AX', 51 => 'AY', 52 => 'AZ');
+		$colNames = array(1 => 'A', 2 => 'B', 3 => 'C', 4 => 'D', 5 => 'E', 6 => 'F', 7 => 'G', 8 => 'H', 9 => 'I', 10 => 'J', 11 => 'K', 12 => 'L', 13 => 'M', 14 => 'N', 15 => 'O', 16 => 'P', 17 => 'Q', 18 => 'R', 19 => 'S', 20 => 'T', 21 => 'U', 22 => 'V', 23 => 'W', 24 => 'X', 25 => 'Y', 26 => 'Z', 27 => 'AA', 28 => 'AB', 29 => 'AC', 30 => 'AD', 31 => 'AE', 32 => 'AF', 33 => 'AG', 34 => 'AH', 35 => 'AI', 36 => 'AJ', 37 => 'AK', 38 => 'AL', 39 => 'AM', 40 => 'AN', 41 => 'AO', 42 => 'AP', 43 => 'AQ', 44 => 'AR', 45 => 'AS', 46 => 'AT', 47 => 'AU', 48 => 'AV', 49 => 'AW', 50 => 'AX', 51 => 'AY', 52 => 'AZ', 53 => 'BA', 54 => 'BB', 55 => 'BC', 56 => 'BD', 57 => 'BE', 58 => 'BF', 59 => 'BG', 60 => 'BH', 61 => 'BI', 62 => 'BJ', 63 => 'BK', 64 => 'BL', 65 => 'BM', 66 => 'BN', 67 => 'BO', 68 => 'BP', 69 => 'BQ', 70 => 'BR', 71 => 'BS', 72 => 'BT', 73 => 'BU', 74 => 'BV', 75 => 'BW', 76 => 'BX', 77 => 'BY', 78 => 'BZ');
 		foreach($description['export'] as $propertyId => $property) {
-			$i++;
-			$sheet->setCellValue($colNames[$i].'1', $context->localize($property['labels']));
-		}
 
+			if (in_array($propertyId, ['json_property_1', 'json_property_2', 'json_property_3', 'json_property_4'])) {
+			
+				// Define the columns for each modality of properties of type dictionary
+				$modalities = array('json_property_1' => array());
+				foreach ($accounts as $account) {
+					foreach ($account->json_property_1 as $key => $unused) $modalities['json_property_1'][$key] = null;
+				}
+				foreach ($modalities['json_property_1'] as $key => $unused) {
+					$i++;
+					$modalities['json_property_1'][$key] = $colNames[$i];
+					$sheet->setCellValue($colNames[$i].'1', $key);
+				}
+			}
+			else {
+				$i++;
+				$sheet->setCellValue($colNames[$i].'1', $context->localize($property['labels']));
+			}
+		}
+		
 		$j = 1;
-		foreach ($view->accounts as $account) {
+		foreach ($accounts as $account) {
 			$j++;
 			$i = 0;
 			foreach($description['export'] as $propertyId => $property) {
@@ -135,6 +151,12 @@ class SsmlAccountViewHelper
 						$sheet->getStyle($colNames[$i].$j)->getAlignment()->setWrapText(true);
 						$sheet->setCellValue($colNames[$i].$j, $text);
 					}
+					elseif (in_array($propertyId, ['json_property_1', 'json_property_2', 'json_property_3', 'json_property_4'])) {
+						foreach ($account->json_property_1 as $key => $value) {
+							$sheet->setCellValue($modalities['json_property_1'][$key].$j, strip_tags($value));
+							$sheet->getStyle($modalities['json_property_1'][$key].$j)->getAlignment()->setWrapText(true);
+						}
+					}
 					else $sheet->setCellValue($colNames[$i].$j, $account->properties[$propertyId]);
 					if ($color) $sheet->getStyle($colNames[$i].$j)->getFont()->getColor()->setRGB($color);
 					if ($backgroundColor) $sheet->getStyle($colNames[$i].$j)->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setRGB($backgroundColor);
@@ -143,12 +165,25 @@ class SsmlAccountViewHelper
 		}
 		$i = 0;
 		foreach($description['export'] as $propertyId => $property) {
-			$i++;
-			$sheet->getStyle($colNames[$i].'1')->getFont()->getColor()->setRGB(substr($context->getConfig('styleSheet')['panelHeadingColor'], 1, 6));
-			$sheet->getStyle($colNames[$i].'1')->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setRGB(substr($context->getConfig('styleSheet')['panelHeadingBackground'], 1, 6));
-			$sheet->getStyle($colNames[$i].'1')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-			$sheet->getStyle($colNames[$i].'1')->getFont()->setBold(true);
-			$sheet->getColumnDimension($colNames[$i])->setAutoSize(true);
+
+			if (in_array($propertyId, ['json_property_1', 'json_property_2', 'json_property_3', 'json_property_4'])) {
+				foreach ($modalities['json_property_1'] as $key => $colName) {
+					$colName = $modalities['json_property_1'][$key];
+					$sheet->getStyle($colName.'1')->getFont()->getColor()->setRGB(substr($context->getConfig('styleSheet')['panelHeadingColor'], 1, 6));
+					$sheet->getStyle($colName.'1')->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setRGB(substr($context->getConfig('styleSheet')['panelHeadingBackground'], 1, 6));
+					$sheet->getStyle($colName.'1')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+					$sheet->getStyle($colName.'1')->getFont()->setBold(true);
+					$sheet->getColumnDimension($colName)->setWidth(50);
+				}
+			}
+			else {
+				$i++;
+				$sheet->getStyle($colNames[$i].'1')->getFont()->getColor()->setRGB(substr($context->getConfig('styleSheet')['panelHeadingColor'], 1, 6));
+				$sheet->getStyle($colNames[$i].'1')->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setRGB(substr($context->getConfig('styleSheet')['panelHeadingBackground'], 1, 6));
+				$sheet->getStyle($colNames[$i].'1')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+				$sheet->getStyle($colNames[$i].'1')->getFont()->setBold(true);
+				$sheet->getColumnDimension($colNames[$i])->setAutoSize(true);
+			}
 		}
 	}
 }

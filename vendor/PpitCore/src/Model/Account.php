@@ -1021,11 +1021,11 @@ class Account
     	$data['availability_exceptions'] = json_encode($this->availability_exceptions);
     	$data['availability_constraints'] = json_encode($this->availability_constraints);
     	$data['credits'] = json_encode($this->credits, JSON_PRETTY_PRINT);
-    	$data['json_property_1'] = json_encode($this->json_property_1);
-    	$data['json_property_2'] = json_encode($this->json_property_2);
-    	$data['json_property_3'] = json_encode($this->json_property_3);
-    	$data['json_property_4'] = json_encode($this->json_property_4);
-    	$data['json_property_5'] = json_encode($this->json_property_5);
+    	$data['json_property_1'] = json_encode($this->json_property_1, JSON_PRETTY_PRINT);
+    	$data['json_property_2'] = json_encode($this->json_property_2, JSON_PRETTY_PRINT);
+    	$data['json_property_3'] = json_encode($this->json_property_3, JSON_PRETTY_PRINT);
+    	$data['json_property_4'] = json_encode($this->json_property_4, JSON_PRETTY_PRINT);
+    	$data['json_property_5'] = json_encode($this->json_property_5, JSON_PRETTY_PRINT);
     	$data['audit'] = json_encode($this->audit);
 
     	unset($data['place_caption']);
@@ -1576,7 +1576,7 @@ class Account
 	        	elseif ($propertyId == 'comment_3') $this->comment_3 = $value;
 	        	elseif ($propertyId == 'comment_4') $this->comment_4 = $value;
 
-				if ($propertyId && $propertyId != 'contact_history' && $this->properties[$propertyId] != $value) $auditRow[$propertyId] = $value;
+				if ($propertyId && !in_array($propertyId, ['contact_history', 'json_property_1', 'json_property_2', 'json_property_3', 'json_property_4']) && $this->properties[$propertyId] != $value) $auditRow[$propertyId] = $value;
 			}
 		}
 		if ($errors) return 'Integrity';
@@ -1642,9 +1642,9 @@ class Account
 					foreach ($property['modalities'] as $modalityId => $modality) if ($context->localize($modality) == $value) $valueKey = $modalityId;
 					if ($valueKey) $data[$propertyId] = $valueKey;
 				}
-				elseif ($property['type'] == 'date' && $value) {
+/*				elseif ($property['type'] == 'date' && $value) {
 					$data[$propertyId] = date('Y-m-d', \PHPExcel_Shared_Date::ExcelToPHP($value));
-				}
+				}*/
     		}
 		}
 
@@ -1909,7 +1909,7 @@ class Account
 		return ['200', $account->id];
     }
 
-    public function loadAndUpdate($data, $config /* deprecated */, $update_time = null)
+    public function loadAndUpdate($data, $config = null /* deprecated */, $update_time = null)
     {
 		$context = Context::getCurrent();
 		$type = $this->type;

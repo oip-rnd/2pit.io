@@ -3548,6 +3548,15 @@ table.note-report td {
 		),
 	),
 
+	'commitmentTerm/generic/property/invoice_identifier' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'en_US' => 'Invoice identifier',
+			'fr_FR' => 'Numéro de facture',
+		),
+	),
+	
 	'commitmentTerm/generic/property/tiny_1' => array(
 		'definition' => 'inline',
 		'type' => 'input',
@@ -3629,7 +3638,7 @@ table.note-report td {
 		'statuses' => array(),
 		'properties' => array(
 				'commitment_id', 'name', 'status', 'place_id', 'caption', 'invoice_account_id', 'due_date', 'settlement_date', 'collection_date',
-				'quantity', 'unit_price', 'amount', 'means_of_payment', 'bank_name', 'invoice_n_last', 'reference', 'comment', 'document', 'commitment_caption', 
+				'quantity', 'unit_price', 'amount', 'means_of_payment', 'bank_name', 'invoice_n_last', 'reference', 'comment', 'document', 'invoice_identifier', 'commitment_caption', 
 				'commitment_property_1', 'commitment_property_2', 'commitment_property_3', 'commitment_property_4', 'commitment_property_5', 'commitment_property_6', 'commitment_property_7', 'commitment_property_8', 
 				'tiny_1', 'tiny_2', 'tiny_3', 'tiny_4', 'tiny_5',
 				'account_status', 'account_date_1', 'account_date_2', 'account_date_3', 'account_date_4', 'account_date_5',
@@ -3655,6 +3664,7 @@ table.note-report td {
 			'collection_date' => [],
 			'means_of_payment' => [],
 			'amount' => [],
+			'invoice_identifier' => [],
 			'reference' => [],
 			'comment' => [],
 		),
@@ -3687,6 +3697,7 @@ table.note-report td {
 		'means_of_payment' => [],
 		'bank_name' => [],
 		'invoice_n_last' => [],
+		'invoice_identifier' => ['readonly' => true],
 		'reference' => [],
 		'comment' => [],
 		'document' => [],
@@ -3717,6 +3728,7 @@ table.note-report td {
 		'reference' => 'M',
 		'comment' => 'N',
 		'document' => 'O',
+		'invoice_identifier' => 'P',
 	),
 
 	'commitmentTerm/invoice/generic' => array(

@@ -930,6 +930,7 @@ class TermController extends AbstractActionController
     					if (!$term->invoice_id) {
 	    					$term->status = 'invoiced';
 	    					$term->invoice_id = $commitmentMessage->id;
+	    					$term->invoice_identifier = $invoice_identifier;
 	    					$rc = $term->update($request->getPost('update_time'));
 		    				if ($rc != 'OK') {
 		    					$connection->rollback();
