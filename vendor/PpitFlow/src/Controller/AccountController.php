@@ -95,8 +95,8 @@ class AccountController extends AbstractActionController
 		$locale = $this->params()->fromQuery('locale');
 		if (!$locale) if ($profile) $locale = $profile->locale; else $locale = $context->getLocale();
 
-		$charter_status = null;
-		$gtou_status = $profile->getGtouStatus();
+		$charter_status = $gtou_status = null;
+		if ($profile) $gtou_status = $profile->getGtouStatus();
 
 		$filters = array();
 		foreach ($description['search']['properties'] as $propertyId => $unused) {
