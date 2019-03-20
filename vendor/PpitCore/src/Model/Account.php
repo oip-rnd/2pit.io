@@ -1824,7 +1824,7 @@ class Account
     	if ($account) {
 			if ($logDuplicate && array_key_exists('contact_history', $accountData) && $accountData['contact_history']) {
 				$minimumData = ['callback_date' => date('Y-m-d'), 'contact_history' => $accountData['contact_history'].' (ignored)'];
-				if (in_array($account->status == ['new', 'gone'])) $minimumData['status'] = $accountData['status'];
+				if (in_array($account->status, ['new', 'gone'])) $minimumData['status'] = $accountData['status'];
 	    		$rc = $account->loadData($type, $minimumData);
 		    	if ($rc != 'OK') return ['500', $rc];
 	    		$account->update(null);
