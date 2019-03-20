@@ -1940,7 +1940,7 @@ class CommitmentController extends AbstractActionController
     		if ($message) {
     			$term->invoice_identifier = json_decode($message->content, true)['identifier'];
     			echo $term->id . ': ' . $term->invoice_identifier . "\n";
-    			$term->update(null);
+//    			$term->update(null);
     		}
     	}
     	return $this->response;
