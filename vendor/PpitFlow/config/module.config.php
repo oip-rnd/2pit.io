@@ -634,12 +634,12 @@ return array (
 		'guards' => array(
 			'BjyAuthorize\Guard\Route' => array(
 
-				array('route' => 'flowAccount', 'roles' => array('guest')),
-				array('route' => 'flowAccount/index', 'roles' => array('guest')),
-				array('route' => 'flowAccount/dashboard', 'roles' => array('guest')),
-				array('route' => 'flowAccount/list', 'roles' => array('guest')),
+				array('route' => 'flowAccount', 'roles' => array('user')),
+				array('route' => 'flowAccount/index', 'roles' => array('user')),
+				array('route' => 'flowAccount/dashboard', 'roles' => array('user')),
+				array('route' => 'flowAccount/list', 'roles' => array('user')),
 				array('route' => 'flowAccount/export', 'roles' => array('user')),
-				array('route' => 'flowAccount/detail', 'roles' => array('guest')),
+				array('route' => 'flowAccount/detail', 'roles' => array('user')),
 				array('route' => 'flowAccount/update', 'roles' => array('user')),
 				array('route' => 'flowAccount/fill', 'roles' => array('user')),
 				array('route' => 'flowAccount/capture', 'roles' => array('user')),
