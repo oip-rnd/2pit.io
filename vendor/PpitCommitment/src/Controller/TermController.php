@@ -360,7 +360,10 @@ class TermController extends AbstractActionController
 		    			$data[$propertyId] = $request->getPost(('term-'.$propertyId));
 		    		}
 		    	}
-				if ($term->loadData($data, $request->getFiles()->toArray()) != 'OK') throw new \Exception('View error');
+
+				if (!array_key_exists('status', $data) || $data['status']) { // Temporary : Bug 03/2019
+					if ($term->loadData($data, $request->getFiles()->toArray()) != 'OK') throw new \Exception('View error');
+				}
 
 	    		// Atomically save
 	    		$connection = Term::getTable()->getAdapter()->getDriver()->getConnection();

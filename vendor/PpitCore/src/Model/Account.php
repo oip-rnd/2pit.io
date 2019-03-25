@@ -1825,7 +1825,7 @@ class Account
 			if ($logDuplicate && array_key_exists('contact_history', $accountData) && $accountData['contact_history']) {
 				if (in_array($account->status, ['new', 'gone'])) $accountData['callback_date'] = date('Y-m-d');
 				else $accountData = ['callback_date' => date('Y-m-d'), 'contact_history' => $accountData['contact_history'].' (ignored)'];
-	    		$rc = $account->loadData($type, $accountData);
+				$rc = $account->loadData($type, $accountData);
 		    	if ($rc != 'OK') return ['500', $rc];
 	    		$account->update(null);
 				if ($rc != 'OK') return ['500', 'account->update: '.$rc];

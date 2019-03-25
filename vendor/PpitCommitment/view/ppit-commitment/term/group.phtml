@@ -58,6 +58,9 @@
 			  <li data-toggle="tab" class="term-group-tab" id="term-debit-tab"><a><?php echo $this->translate('Debit order', 'ppit-commitment', $context->getLocale()) ?></a></li>
 <?php endif;?>
               <li data-toggle="tab" class="term-group-tab" id="term-check-deposit-tab"><a><?php echo $this->translate('Check deposit', 'ppit-commitment', $context->getLocale()) ?></a></li>
+<?php if ($context->hasRole('accountant')) : ?>
+              <li data-toggle="tab" class="term-group-tab" id="term-register-settlements-tab"><a><?php echo $this->translate('Register settlements', 'ppit-accounting', $context->getLocale()) ?></a></li>
+<?php endif;?>
 			</ul>
 
 			<div class="term-group-panel" id="term-update-panel">
@@ -145,6 +148,9 @@ if ($message == 'OK') $isDisabled = true; else $isDisabled = false;
 			<div class="term-group-panel" id="term-debit-panel"></div>
       
             <div class="term-group-panel" id="term-check-deposit-panel"></div>
+<?php if ($context->hasRole('accountant')) : ?>
+            <div class="group-panel" id="register-settlements-panel"></div>
+<?php endif;?>
 		</form>
 	</div>
 </div>

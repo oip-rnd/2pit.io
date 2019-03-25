@@ -1146,6 +1146,8 @@ class Commitment
 	    	$commitment->account->contact_1 = Vcard::get($commitment->account->contact_1_id);
 	    	$commitment->n_fn = $commitment->account->contact_1->n_fn;
 	    	$commitment->email = $commitment->account->contact_1->email;
+	    	$commitment->n_first = $commitment->account->contact_1->n_first;
+	    	$commitment->n_last = $commitment->account->contact_1->n_last;
 	    	$place = Place::get($commitment->account->place_id);
 	    	$commitment->place_caption = $place->caption;
 	    	$commitment->place_identifier = $place->identifier;

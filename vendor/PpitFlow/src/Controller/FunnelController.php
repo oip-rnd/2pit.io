@@ -163,6 +163,9 @@ class FunnelController extends AbstractActionController
     		'vads_capture_delay' => '0',
     		'vads_ctx_mode' => $payZenConfig['vads_ctx_mode'],
     		'vads_currency' => '978',
+    		'vads_cust_email' => $commitment->email,
+    		'vads_cust_first_name' => $commitment->n_first,
+    		'vads_cust_last_name' => $commitment->n_last,
     		'vads_page_action' => 'PAYMENT',
     		'vads_payment_config' => $payment_config,
     		'vads_return_mode' => 'POST',
@@ -173,7 +176,6 @@ class FunnelController extends AbstractActionController
     		'vads_validation_mode' => '0',
     		'vads_version' => 'V2',
     	);
-
     	$signature = '';
     	foreach ($formData as $name => $value) $signature .= $value . '+';
     	$formData['signature'] = base64_encode(hash_hmac('sha256', $signature . $payZenConfig['key'], $payZenConfig['key'], true));    	

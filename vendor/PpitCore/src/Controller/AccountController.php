@@ -1675,7 +1675,13 @@ class AccountController extends AbstractActionController
 
 	public function repairAction()
 	{
-    			
+		$config = array();
+		foreach (Context::getCurrent()->getConfig() as $paramId => $param) {
+			if (substr($paramId, 0, 13) == 'core_account/') $config[$paramId] = $param;
+		}
+		echo json_encode($config, JSON_PRETTY_PRINT);
+		return $this->response;
+/*    			
 		// Atomically save
 		$connection = Account::getTable()->getAdapter()->getDriver()->getConnection();
 		$connection->beginTransaction();
@@ -1690,6 +1696,6 @@ class AccountController extends AbstractActionController
 		}
 		
 		$connection->commit();
-		return $this->response;
+		return $this->response;*/
 	}
 }
