@@ -488,7 +488,7 @@ class AccountController extends AbstractActionController
 				$content['data']['group_id'] = $selectedGroup;
 				foreach ($accounts as $account) {
 					$content['data']['account_id'] = $account->id;
-					$rc = $groupAccount->loadAndAdd($groupDescription, $content);
+					$rc = $groupAccount->loadAndAdd($groupDescription, $content, true, true);
 					if ($rc[0] != '200') {
 						print_r($content);
 						$error = $rc[0];
@@ -985,7 +985,7 @@ class AccountController extends AbstractActionController
 	    			$connection->beginTransaction();
 	    			try {
 	    				if (!$account->id) {
-	    					$rc = $account->loadAndAdd($data, $configProperties);
+	    					$rc = $account->loadAndAdd($data, $configProperties, true, true);
 	    					if ($rc[0] == '206') $account = Account::get($rc[1]); // Partially accepted on an already existing account which is returned as rc[1]
 	    					elseif ($rc[0] != '200') $error = $rc;
 	    				}

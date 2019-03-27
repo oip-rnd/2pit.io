@@ -1968,7 +1968,7 @@ table.note-report td {
 	'core_account/update/b2c' => array(
 		'place_id' => array('mandatory' => true),
 		'status' => array('mandatory' => true),
-		'name' => array('mandatory' => true),
+		'name' => array('mandatory' => false),
 		'identifier' => array('mandatory' => true),
 		'n_first' => array('mandatory' => false),
 		'n_last' => array('mandatory' => true),
