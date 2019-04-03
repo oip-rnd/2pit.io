@@ -198,11 +198,11 @@ class ConfigController extends AbstractActionController
 
 		$place = Place::get($place_identifier, 'identifier');
 		$category = $this->params()->fromQuery('category');
-		$config = Config::get($place_identifier.'_'.$category, 'identifier', $place->id);
-		if (!$config) $config = Config::instanciate($place->id, $place_identifier.'_'.$category);
 		$data['content'] = $context->getConfig($category.'/'.$place_identifier);
-		print_r($config->loadAndUpdate($data));
 		echo json_encode($data['content'], JSON_PRETTY_PRINT);
+/*		$config = Config::get($place_identifier.'_'.$category, 'identifier', $place->id);
+		if (!$config) $config = Config::instanciate($place->id, $place_identifier.'_'.$category);
+		print_r($config->loadAndUpdate($data));*/
 		return $this->response;
 	}
 }

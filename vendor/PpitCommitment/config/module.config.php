@@ -3391,6 +3391,7 @@ table.note-report td {
 			'collected' => array('fr_FR' => 'Encaissé', 'en_US' => 'Collected'),
 			'invoiced' => array('fr_FR' => 'Facturé', 'en_US' => 'Invoiced'),
 			'rejected' => array('fr_FR' => 'Rejeté', 'en_US' => 'Rejected'),
+			'registered' => array('fr_FR' => 'Comptabilisé', 'en_US' => 'Registered'),
 		),
 		'labels' => array(
 			'en_US' => 'Status',

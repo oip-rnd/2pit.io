@@ -2143,52 +2143,6 @@ table.note-report td {
 			'#property_3' => ['data-placement' => 'right', 'data-html' => true, 'title' => ['default' => '<ul style="text-align: left"><li>Besoin d’infos, de connaissances pointues, de mise en relation</li><li>Besoin d’Expertise</li><li>Besoin de Solutions personnalisée</li><li>Besoin de diagnostic</li><li>Besoin de montée en compétences</li><li>Besoin d’intégrer une ressource à temps partiel</li><li>Besoin de produire un Livrable</li><li>...</li></ul>']],
 			'.pending_contact' => ['data-placement' => 'right', 'data-html' => true, 'title' => ['default' => 'The contributor proposed to contribute more than 5 days ago', 'fr_FR' => 'Le contributeur s’est proposé pour contribuer depuis plus de 5 jours']],
 		),
-	
-		'examples' => array(
-			array(
-				'caption_example' => array(
-					'default' => '<p class="font-weight-bold">Exemple à titre purement informatif</p><p>Journée d’intégration pour les alternants</p>',
-				),
-				'property_24_example' => array(
-					'default' => '<p class="font-weight-bold">Exemple</p><p><em>Les alternants ne sont pas toujours accueillis dans les meilleures conditions.<br>Les managers n’ont pas beaucoup de temps, et chacun se débrouille de son côté.<br>Il faudrait mutualiser l’accueil pour la centaine de personnes attendue en septembre et profiter pour faire un atelier Code de conduite.</em></p>',
-				),
-				'property_25_example' => array(
-					'default' => '<p class="font-weight-bold">Exemple</p><em>J’aurai besoin d’aide pour concevoir et organiser les 4 demi-journées en trouvant des contributeurs  pour présenter le Groupe (son organisation et ses valeurs) et les trucs et astuces (Ce qu’il faut savoir quand on arrive).<br>L’animation doit être sympa pour que les alternants aient une bonne expérience collaborateur en arrivant à la SG.</em>',
-				),
-				'property_1_example' => array(
-					'default' => '<p class="font-weight-bold">Exemple informatif</p><p>Animation, présentation, coaching...</p>',
-				),
-				'property_4_example' => array(
-					'default' => '<p class="font-weight-bold">Exemple</p><p>Tuteurs / Mentors souhaitant transmettre leur savoir – Jeunes embauchés / anciens Alternants</p>',
-				),
-				'property_26_example' => array(
-					'default' => '<p class="font-weight-bold">Exemple</p>1 jour par semaine à répartir sur 3 semaines',
-				),
-			),
-			array(
-				'caption_example' => array(
-					'default' => '<p class="font-weight-bold">Exemple à titre purement informatif</p><p>Ateliers coding sur Scratch pour IT4Girls</p>',
-				),
-				'property_24_example' => array(
-					'default' => '<p class="font-weight-bold">Exemple à titre purement informatif</p><p>La startup IT4Girls organise des ateliers de coding sur scratch pour les jeunes filles à partir de 7 ans dans l’optique de ramener de la mixité au sein des équipes IT.</p>',
-				),
-				'property_3_example' => array(
-					'default' => '<p class="font-weight-bold">Exemple</p><p>Animation</p>',
-				),
-				'property_25_example' => array(
-					'default' => '<p class="font-weight-bold">Exemple</p>IT4Girls recherche des animatrices/animateurs pour co-animer les ateliers de coding, les mercredi après-midi, ou tous les jours pendant les vacances. Les ateliers sont d’une durée de 1h30 suivi d’un gouter avec les enfants.<br>Les candidat(e)s auront la possibilité d’assister à un atelier pour voir comment cela se passe et d’être formé(e)s à scratch.<br>En fonction de leur disponibilité, les animatrices / animateurs, pourront s’inscrire pour l’animation aux ateliers qui seront proposés.',
-				),
-				'property_1_example' => array(
-					'default' => '<p class="font-weight-bold">Exemple informatif</p><p>Etre à l’aise avec les enfants ainsi que dans l’animation, le BAFA est un plus.</p>',
-				),
-				'property_4_example' => array(
-					'default' => '<p class="font-weight-bold">Exemple</p><p>Une appétence à l’IT, même sans connaissance avancé est suffisant.</p>',
-				),
-				'property_26_example' => array(
-					'default' => '<p class="font-weight-bold">Exemple</p>Les mercredis après-midi, tous les jours pendant les congés scolaires, en fonction des disponibilités.<br>Localisation : La Défense, les Dunes, Paris<br>Estimation de la charge : 1h30 à 2h par atelier + 15 minutes de préparation (prise de connaissance du jeu).',
-				),
-			),
-		),
 		'footer' => array(
 			'links' => array(
 				'column_1' => array(

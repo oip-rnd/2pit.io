@@ -5,17 +5,17 @@
 <?php endif;?>
 
 <?php if ($term->id && !$action && !$message) : ?>
-		<button type="button" class="btn btn-default action-btn" id="term-update-anchor" title="<?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?>">
+		<button type="button" class="btn btn-default action-btn" id="term-update-anchor" title="<?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?>" <?php if ($term->status == 'registered') echo 'disabled="disabled"' ?>>
 			<span class="glyphicon glyphicon-edit"></span>
 		</button>
 
-		<button type="button" class="btn btn-default action-btn" id="term-delete-anchor" title="<?php echo $this->translate('Delete', 'ppit-core', $context->getLocale()) ?>" <?php if (!$term->isDeletable()) echo 'disabled="disabled"' ?>>
+		<button type="button" class="btn btn-default action-btn" id="term-delete-anchor" title="<?php echo $this->translate('Delete', 'ppit-core', $context->getLocale()) ?>" <?php if (!$term->isDeletable() || $term->status == 'registered') echo 'disabled="disabled"' ?>>
 			<span class="glyphicon glyphicon-trash"></span>
 		</button>
 
   <?php //if ($term->quantity) : ?>
 	<?php if (!$term->invoice_id) : ?>
-		<button type="button" class="btn btn-default action-btn" id="term-invoice-anchor" title="<?php echo $this->translate('Generate invoice', 'ppit-core', $context->getLocale()) ?>" <?php if (!$term->isDeletable()) echo 'disabled="disabled"' ?>>
+		<button type="button" class="btn btn-default action-btn" id="term-invoice-anchor" title="<?php echo $this->translate('Generate invoice', 'ppit-core', $context->getLocale()) ?>" <?php if (!$term->isDeletable() || $term->status == 'registered') echo 'disabled="disabled"' ?>>
 			<?php echo $this->translate('Generate invoice', 'ppit-commitment', $context->getLocale())?>
 		</button>
 	    <div class="form-group">
