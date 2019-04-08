@@ -996,9 +996,11 @@ class AccountController extends AbstractActionController
 								$account->contact_1->savePhoto($photo);
 								$account->contact_1->photo_link_id = null;
 							}
-	    					$rc = $account->loadAndUpdate($data, $configProperties, $account->contact_1->update_time);
-	    					if ($rc[0] != '200') $error = $rc;
-	    				}
+							if (!array_key_exists('status', $data) || $data['status']) { // Temporary : Bug 03/2019
+								$rc = $account->loadAndUpdate($data, $configProperties, $account->contact_1->update_time);
+		    					if ($rc[0] != '200') $error = $rc;
+							}
+						}
 	    				if ($error) $connection->rollback();
 	    				else {
 	    					$connection->commit();
