@@ -996,7 +996,7 @@ class AccountController extends AbstractActionController
 								$account->contact_1->savePhoto($photo);
 								$account->contact_1->photo_link_id = null;
 							}
-							if (!array_key_exists('status', $data) || $data['status']) { // Temporary : Bug 03/2019
+							if (!array_key_exists('status', $data) || $data['status']) { // Temporary : Bug 04/2019
 								$rc = $account->loadAndUpdate($data, $configProperties, $account->contact_1->update_time);
 		    					if ($rc[0] != '200') $error = $rc;
 							}
@@ -1568,6 +1568,9 @@ class AccountController extends AbstractActionController
 	    	else $requestComment = '';
     		$data['contact_history'] = 'Request: '.$requestType.' - Comment: '.$requestComment;
 
+    		// Origine defaults to 'web'
+    		if (!array_key_exists('origine', $data)) $data['origine'] = 'web';
+    		
 	    	// Database update
 	    	$connection = Account::getTable()->getAdapter()->getDriver()->getConnection();
 	    	$connection->beginTransaction();
