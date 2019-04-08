@@ -26,7 +26,7 @@ use Zend\View\Model\ViewModel;
 use Zend\Log\Logger;
 use Zend\Log\Writer;
 
-class CommitmentCreditController extends AbstractActionController
+class CommitmentCreditController_old extends AbstractActionController
 {
     public function indexAction()
     {

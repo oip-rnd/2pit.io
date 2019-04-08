@@ -5,7 +5,7 @@ return array(
         'invokables' => array(
             'PpitCommitment\Controller\Account' => 'PpitCommitment\Controller\AccountController', // Deprecated. For compatibility reasons with Shin Agency
         	'PpitCommitment\Controller\Commitment' => 'PpitCommitment\Controller\CommitmentController',
-        	'PpitCommitment\Controller\CommitmentCredit' => 'PpitCommitment\Controller\CommitmentCreditController',
+//        	'PpitCommitment\Controller\CommitmentCredit' => 'PpitCommitment\Controller\CommitmentCreditController',
         	'PpitCommitment\Controller\CommitmentMessage' => 'PpitCommitment\Controller\CommitmentMessageController',
         	'PpitCommitment\Controller\OrderResponse' => 'PpitCommitment\Controller\OrderResponseController',
         	'PpitCommitment\Controller\OrderProduct' => 'PpitCommitment\Controller\OrderProductController',
@@ -223,7 +223,7 @@ return array(
         								),
         						),
         				),
-        				'settle' => array(
+/*        				'settle' => array(
         						'type' => 'segment',
         						'options' => array(
         								'route' => '/settle[/:id]',
@@ -234,7 +234,7 @@ return array(
         										'action' => 'settle',
         								),
         						),
-        				),
+        				),*/
         				'updateProduct' => array(
         						'type' => 'segment',
         						'options' => array(
@@ -392,7 +392,7 @@ return array(
         				),
         		),
         	),
-        	'commitmentCredit' => array(
+/*        	'commitmentCredit' => array(
                 'type'    => 'literal',
                 'options' => array(
                     'route'    => '/commitment-credit',
@@ -488,7 +488,7 @@ return array(
         								),
         						),
 	       		),
-            ),
+            ),*/
         	'commitmentMessage' => array(
                 'type'    => 'literal',
                 'options' => array(
@@ -927,7 +927,7 @@ return array(
             	array('route' => 'commitment/invoice', 'roles' => array('sales_manager', 'accountant')),
             	array('route' => 'commitment/cancelInvoice', 'roles' => array('sales_manager', 'accountant')),
             	array('route' => 'commitment/xmlUblInvoice', 'roles' => array('sales_manager', 'accountant')),
-            	array('route' => 'commitment/settle', 'roles' => array('sales_manager', 'accountant')),
+//            	array('route' => 'commitment/settle', 'roles' => array('sales_manager', 'accountant')),
             	array('route' => 'commitment/update', 'roles' => array('sales_manager')),
             	array('route' => 'commitment/group', 'roles' => array('sales_manager')),
             	array('route' => 'commitment/updateProduct', 'roles' => array('sales_manager')),
@@ -943,7 +943,7 @@ return array(
             	array('route' => 'commitment/delete', 'roles' => array('sales_manager')),
             	array('route' => 'commitment/notify', 'roles' => array('admin')),
             	array('route' => 'commitment/rephase', 'roles' => array('admin')),
-
+/*
             	array('route' => 'commitmentCredit', 'roles' => array('admin')),
             	array('route' => 'commitmentCredit/index', 'roles' => array('admin')),
             	array('route' => 'commitmentCredit/search', 'roles' => array('admin')),
@@ -952,7 +952,7 @@ return array(
             	array('route' => 'commitmentCredit/detail', 'roles' => array('admin')),
             	array('route' => 'commitmentCredit/accept', 'roles' => array('admin')),
             	array('route' => 'commitmentCredit/settle', 'roles' => array('admin')),
-            	array('route' => 'commitmentCredit/downloadInvoice', 'roles' => array('admin')),
+            	array('route' => 'commitmentCredit/downloadInvoice', 'roles' => array('admin')),*/
 	
             	array('route' => 'commitmentMessage/download', 'roles' => array('admin')),
             	array('route' => 'commitmentMessage/index', 'roles' => array('admin')),

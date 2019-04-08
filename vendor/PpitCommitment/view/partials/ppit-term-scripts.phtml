@@ -574,6 +574,84 @@ function getCheckDeposit() {
 
 <?php if ($context->hasRole('accountant')) : ?>
 
+function connectRegisterSalesForm()
+{
+  var xhttp = new XMLHttpRequest();
+
+  var termNumber = $('#term-number').val(), terms = '';
+  first = true;
+  for (i = 0, j = 0; i < termNumber; i++) {
+    if (document.getElementById('term-checkbox_' + i).checked) {
+      if (!first) terms += ',';
+      first = false;
+      terms += $('#term_' + i).val();
+      j++;
+    }
+  }
+
+  var route = '<?php echo $this->url('journal/registerTermSales', ['type' => $type]) ?>' + '?terms=' + terms;
+
+  // Execute the ajax request
+  xhttp = new XMLHttpRequest();
+  xhttp.open("POST", route, true);
+  xhttp.onreadystatechange = function() {
+    if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      document.getElementById('term-register-sales-panel').innerHTML = xhttp.responseText;
+      var exportRoute = '<?php echo $this->url('journal/export').'?min_update_time='.date('Y-m-d') ?>';
+      if ($('#search_place_id').val()) exportRoute += '&place_id='+ $('#search_place_id').val();
+      location.href = exportRoute;
+    }
+  }
+  xhttp.send();
+}
+
+function getRegisterSalesForm() {
+  $('#term-register-sales-button').removeClass('btn-default').addClass('btn-warning');
+  $('#term-register-sales-alert').show();
+  $('#term-register-sales-button').click(function () { connectRegisterSalesForm(); });
+}
+
+function getRegisterSales() {
+
+  var xhttp = new XMLHttpRequest();
+
+  var termNumber = $('#term-number').val(), terms = '';
+  first = true;
+  for (i = 0, j = 0; i < termNumber; i++) {
+    if (document.getElementById('term-checkbox_' + i).checked) {
+      if (!first) terms += ',';
+      first = false;
+      terms += $('#term_' + i).val();
+      j++;
+    }
+  }
+
+  var route = '<?php echo $this->url('journal/registerTermSales', ['type' => $type]) ?>' + '?terms=' + terms;
+
+  // Execute the ajax request
+  xhttp = new XMLHttpRequest();
+  xhttp.open("GET", route, true);
+  xhttp.onreadystatechange = function() {
+      if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+    if (xhttp.readyState == 4) {
+  <?php if (!$context->getConfig()['isTraceActive']) : ?>
+      if (xhttp.status == 200) {
+  <?php endif;?>
+
+      document.getElementById('term-register-sales-panel').innerHTML = xhttp.responseText;
+      connectRemoveIcon('remove-anchor', 'form_action');
+      $('#term-register-sales-alert').hide();
+      $('#term-register-sales-button').click(function () { getRegisterSalesForm(); });
+      
+  <?php if (!$context->getConfig()['isTraceActive']) : ?>
+      }
+  <?php endif;?>
+    }
+  }
+  xhttp.send();
+}
+
 function connectRegisterSettlementsForm()
 {
   var xhttp = new XMLHttpRequest();
@@ -796,6 +874,15 @@ function getTermGroup() {
 	      });
 
 <?php if ($context->hasRole('accountant')) : ?>
+            getRegisterSales();
+
+            $('#term-register-sales-tab').click(function () {
+              $('.term-group-tab').removeClass('active');
+              $('#term-register-sales-tab').addClass('active');
+              $('.term-group-panel').hide();
+              $('#term-register-sales-panel').show();
+            });
+
             getRegisterSettlements();
 
             $('#term-register-settlements-tab').click(function () {

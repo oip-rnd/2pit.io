@@ -920,7 +920,7 @@ class CommitmentController extends AbstractActionController
     					}
     				}
     				if (!$error) {
-    					if (array_key_exists('p-pit-finance', $context->getApplications())) $commitment->record('registration');
+//    					if (array_key_exists('p-pit-finance', $context->getApplications())) $commitment->record('registration');
     					$connection->commit();
     					$message = 'OK';
     				}
@@ -1099,7 +1099,7 @@ class CommitmentController extends AbstractActionController
     	echo $message;
     	return $this->response;
     }
-    
+/*    
     public function settleAction()
     {
     	// Retrieve the context
@@ -1149,7 +1149,7 @@ class CommitmentController extends AbstractActionController
     		}
     	}
     	return $this->response;
-    }
+    }*/
     
     public function updateOptionAction()
     {

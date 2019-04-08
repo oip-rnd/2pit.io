@@ -328,7 +328,7 @@ function getCommitmentInvoiceForm(id) {
 	$('#commitment-invoice-alert').show();
 	$('#commitment-invoice-anchor').click(function () { connectCommitmentInvoiceForm(id); });
 }
-
+/*
 function connectCommitmentSettleForm(id)
 {			
 		$('#commitment-settle-anchor').removeClass('btn-default').addClass('btn-warning');
@@ -339,7 +339,7 @@ function connectCommitmentSettleForm(id)
 
 		var xhttp = new XMLHttpRequest();
 		var route, target;
-		route = '<?php echo $this->url('commitment/settle') ?>/' + id;
+		route = '<?php //echo $this->url('commitment/settle') ?>/' + id;
 		xhttp.open('POST', route, true);
 		xhttp.onload = function () {
 			if (xhttp.readyState == 4 <?php if (!$context->getConfig()['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
@@ -353,7 +353,7 @@ function getCommitmentSettleForm(id) {
 	$('#commitment-settle-anchor').removeClass('btn-default').addClass('btn-danger');
 	$('#commitment-settle-alert').show();
 	$('#commitment-settle-anchor').click(function () { connectCommitmentSettleForm(id); });
-}
+}*/
 
 /////////////////////////////
 // Commitment update panel //
@@ -469,8 +469,8 @@ function getCommitmentUpdate(id, action) {
 			$('#commitment-delete-anchor').click(function () { getCommitmentUpdate(id, 'delete'); });
 			$('#commitment-invoice-anchor').click(function () { getCommitmentInvoiceForm(id); });
 			$('#commitment-invoice-alert').hide();
-			$('#commitment-settle-anchor').click(function () { getCommitmentSettleForm(id); });
-			$('#commitment-settle-alert').hide();
+/*			$('#commitment-settle-anchor').click(function () { getCommitmentSettleForm(id); });
+			$('#commitment-settle-alert').hide();*/
 			
 			connectCommitmentUpdateForm(id, action);
 <?php if (!$config['isTraceActive']) : ?>
