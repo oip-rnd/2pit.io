@@ -31,7 +31,6 @@ class EventController extends AbstractActionController
 		$context = Context::getCurrent();
 		
 		// Rank the profiles
-		$accountType = $context->getConfig('landing_account_type');
 		$ranking = array();
 		$cursor = Account::getList($account->type, [/*'status' => 'active'*/], '+name', null);
 		foreach ($cursor as $anyAccountId => $anyAccount) {
@@ -90,7 +89,7 @@ class EventController extends AbstractActionController
 			$place = Place::get($context->getPlaceId());
 			$place_identifier = $place->identifier;
 		}
-		$accountType = $context->getConfig('landing_account_type');
+		$accountType = $context->getConfig('event_account_type')[$type];
 		$account = Account::get($context->getContactId(), 'contact_1_id');
 		$locale = $this->params()->fromQuery('locale');
 		if (!$locale) if ($account) $locale = $account->locale; else $locale = $context->getLocale();
@@ -559,7 +558,7 @@ class EventController extends AbstractActionController
 			'place_identifier' => $place_identifier,
 			'panel' => $this->params()->fromQuery('panel', null),
 			'token' => $this->params()->fromQuery('hash', null),
-			'accountType' => $context->getConfig('landing_account_type'),
+			'accountType' => $context->getConfig('event_account_type')[$type],
 			'header' => $content['header'],
 			'intro' => $content['intro'],
 			'form' => $content['form'],
@@ -1115,7 +1114,7 @@ class EventController extends AbstractActionController
 		// Retrieve the context and the parameters
 		$context = Context::getCurrent();
 		$type = $this->params()->fromRoute('type', 'event');
-		$accountType = $context->getConfig('landing_account_type');
+		$accountType = $context->getConfig('event_account_type')[$type];
 		$description = Event::getConfigProperties($type);
 		$accountConfigProperties = Account::getConfig($accountType);
 		$place = Place::get($context->getPlaceId());
@@ -1607,7 +1606,7 @@ class EventController extends AbstractActionController
 			'place_identifier' => $place_identifier,
 			'panel' => $this->params()->fromQuery('panel', null),
 			'token' => $this->params()->fromQuery('hash', null),
-			'accountType' => $context->getConfig('landing_account_type'),
+			'accountType' => $context->getConfig('event_account_type')[$type],
 			'header' => $content['header'],
 			'intro' => $content['intro'],
 			'form' => $content['feedback'],
@@ -1748,7 +1747,7 @@ class EventController extends AbstractActionController
 		$account = Account::get($context->getContactId(), 'contact_1_id');
 
 		// Rank the profiles
-		$accountType = $context->getConfig('landing_account_type');
+		$accountType = $context->getConfig($account->type);
 		$ranking = array();
 		$cursor = Account::getList($account->type, [], '+name', null);
 		foreach ($cursor as $anyAccountId => $anyAccount) {

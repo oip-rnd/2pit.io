@@ -40,12 +40,16 @@ $textColors = ['Black', 'White', 'Black', 'White', 'White', 'Black', 'White', 'B
 ?>
 	
 <?php $i = 0; foreach ($accounts as $account) : ?>
+  <?php
+  $color = ($i < 15) ? $colors[$i] : 'Gray';
+  $textColor = ($i < 15) ? $textColors[$i] : 'White';
+  ?>
 	
 			<input type="hidden"  id="account_<?php echo $i ?>" value="<?php echo $account->id ?>" />
-            <input type="hidden"  id="color_<?php echo $account->id ?>" value="<?php echo $colors[$i] ?>" />
-            <input type="hidden"  id="textColor_<?php echo $account->id ?>" value="<?php echo $textColors[$i] ?>" />
+            <input type="hidden"  id="color_<?php echo $account->id ?>" value="<?php echo $color ?>" />
+            <input type="hidden"  id="textColor_<?php echo $account->id ?>" value="<?php echo $textColor ?>" />
 		
-			<tr class="account" style="color: <?php echo $textColors[$i] ?>; background-color: <?php echo $colors[$i] ?>">
+			<tr class="account" style="color: <?php echo $textColor ?>; background-color: <?php echo $color ?>">
 				<td>
 					<input type="checkbox" class="account-checkbox" id="account-checkbox_<?php echo $i ?>"></input>
 				</td>

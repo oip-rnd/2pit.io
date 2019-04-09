@@ -758,7 +758,10 @@ return array (
 
 	'automatic_registration' => 'false',
 	
-	'landing_account_type' => 'generic',
+	'event_account_type' => array(
+		'event' => 'pbc',
+		'request' => 'pbc',
+	),
 
 	'flow_steps' => array(
 		'candidate' => 'payment',

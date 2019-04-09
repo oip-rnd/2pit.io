@@ -746,6 +746,7 @@ class Term
 			if ($account) {
 				$term->name = $account->name;
 				
+				if (!$term->invoice_identifier) $term->invoice_identifier = $commitment->invoice_identifier;
 				$term->commitment_property_1 = $commitment->property_1;
 				$term->commitment_property_2 = $commitment->property_2;
 				$term->commitment_property_3 = $commitment->property_3;

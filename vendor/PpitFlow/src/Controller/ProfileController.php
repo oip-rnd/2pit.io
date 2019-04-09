@@ -38,7 +38,7 @@ class ProfileController extends AbstractActionController
 		$place_identifier = $place->identifier;
 	
 		// Account
-		$accountType = $context->getConfig('landing_account_type');
+		$accountType = $context->getConfig('event_account_type')[$context->getConfig('event_default_type')];
 		$account = null;
 		if ($account_id) $account = Account::get('account_id');
 		else {
@@ -300,27 +300,6 @@ class ProfileController extends AbstractActionController
 						$user->vcard_id = $userContact->vcard_id;
 						$user->update(null);
 					}
-/*					if (!$userContact) {
-						$accountType = $context->getConfig('landing_account_type');
-						$vcard = Vcard::getTable()->transGet($user->vcard_id);
-						$vcard->id = null;
-						$vcard->add();
-						$account = Account::instanciate($accountType);
-						$data = array();
-						$data['status'] = 'interested';
-						$data['email'] = $vcard->email;
-						$rc = $account->loadAndAdd($data);
-						if ($rc[0] == '206') $account = Account::get($rc[1]);
-						$userContact = UserContact::instanciate();
-				    	$userContact->user_id = $user->user_id;
-				    	$userContact->vcard_id = $vcard->id;
-				    	if ($userContact->add() != 'OK') throw new \Exception();
-					}
-					if ($user->vcard_id != $userContact->vcard_id) {
-						$user->instance_id = $context->getInstanceId();
-						$user->vcard_id = $userContact->vcard_id;
-						$user->update(null);
-					}*/
 				}
 
 				if (!$actionStatus) {
@@ -378,6 +357,7 @@ class ProfileController extends AbstractActionController
 		else $content = Config::get($place_identifier.'_profile', 'identifier')->content;
 		$locale = $this->params()->fromQuery('locale');
 		
+		$accountType = $context->getConfig('event_account_type')[$context->getConfig('event_default_type')];
 		$account_id = $this->params()->fromRoute('account_id');
 		$account = null;
 		if ($account_id) {
@@ -391,7 +371,7 @@ class ProfileController extends AbstractActionController
 			$gtou_status = $account->getGtouStatus();
 		}
 		else {
-			$account = Account::instanciate($context->getConfig('landing_account_type'));
+			$account = Account::instanciate($accountType);
 			$charter_status = null;
 			$gtou_status = null;
 		}
@@ -402,7 +382,6 @@ class ProfileController extends AbstractActionController
 		$viewData = array();
 		$viewData['photo_link_id'] = ($account->photo_link_id) ? $account->photo_link_id : 'no-photo.png';
 		
-		$accountType = $context->getConfig('landing_account_type');
 		$accounts = Account::getList($accountType, ['status' => 'active'], '+name', null);
 		$viewData['accounts'] = array();
 		foreach ($accounts as $accountId => $account) $viewData['accounts'][$accountId] = $account->getProperties();
@@ -494,7 +473,7 @@ class ProfileController extends AbstractActionController
 			$gtou_status = $account->getGtouStatus();
 		}
 		else {
-			$account = Account::instanciate($context->getConfig('landing_account_type'));
+			$account = Account::instanciate($context->getConfig('event_account_type')[$context->getConfig('event_default_type')]);
 			$charter_status = null;
 			$gtou_status = null;
 		}
@@ -843,7 +822,7 @@ class ProfileController extends AbstractActionController
 			'account_id' => $account->id,
 			'panel' => $this->params()->fromQuery('panel', null),
 			'token' => $this->params()->fromQuery('hash', null),
-			'accountType' => $context->getConfig('landing_account_type'),
+			'accountType' => $context->getConfig('event_account_type')[$context->getConfig('event_default_type')],
 			'header' => $content['header'],
 			'intro' => $content['intro'],
 			'footer' => $content['footer'],

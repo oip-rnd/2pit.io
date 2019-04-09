@@ -186,7 +186,8 @@ class AccountController extends AbstractActionController
 		$configProperties = Account::getConfig($type);
     	$listPage = Account::getConfigList($type, $configProperties);
 		$eventAccountListPage = $context->getConfig('core_account/event_account_list/'.$type);
-
+		if (!$eventAccountListPage) $eventAccountListPage = $context->getConfig('core_account/event_account_list/generic');
+		
 		// Define the status list for the current perspective
 		$statusDef = $context->getConfig('core_account/'.$type.'/property/status');
 		if (!$statusDef) $statusDef = $context->getConfig('core_account/generic/property/status');

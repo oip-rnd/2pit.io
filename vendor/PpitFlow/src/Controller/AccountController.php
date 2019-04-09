@@ -31,7 +31,6 @@ class AccountController extends AbstractActionController
 		$context = Context::getCurrent();
 		
 		// Rank the profiles
-		$accountType = $context->getConfig('landing_account_type');
 		$ranking = array();
 		$cursor = Account::getList($account->type, [/*'status' => 'active'*/], '+name', null);
 		foreach ($cursor as $anyAccountId => $anyAccount) {
@@ -118,17 +117,15 @@ class AccountController extends AbstractActionController
 		}
 
 		// Profile form
-		$accountType = $context->getConfig('landing_account_type');
 //		if ($context->getConfig('specificationMode') == 'config') {
 			$profileForm = $context->getConfig('profile/'.$place_identifier)['form'];
 			if (!$profileForm) $profileForm = $context->getConfig('profile/generic')['form'];
 /*		}
 		else $profileForm = Config::get($place_identifier.'_profile', 'identifier')->content['form'];*/
-		$accountDescription = Account::getDescription($accountType);
 		foreach ($profileForm['inputs'] as $inputId => $options) {
 			if (array_key_exists('definition', $options) && $options['definition'] == 'inline') $property = $options;
 			else {
-				$property = $accountDescription['properties'][$inputId];
+				$property = $description['properties'][$inputId];
 				if (array_key_exists('mandatory', $options)) $property['mandatory'] = $options['mandatory'];
 				if (array_key_exists('updatable', $options)) $property['updatable'] = $options['updatable'];
 				if (array_key_exists('focused', $options)) $property['focused'] = $options['focused'];
@@ -554,7 +551,6 @@ class AccountController extends AbstractActionController
 			'panel' => $this->params()->fromQuery('panel', null),
 			'account_id' => $myAccount->id,
 			'token' => $this->params()->fromQuery('hash', null),
-//			'accountType' => $context->getConfig('landing_account_type'),
 			'header' => $content['header'],
 			'intro' => $content['intro'],
 			'form' => $content['form'],
@@ -1188,7 +1184,7 @@ class AccountController extends AbstractActionController
 		// Retrieve the context and the parameters
 		$context = Context::getCurrent();
 		$type = $this->params()->fromRoute('type', 'event');
-		$accountType = $context->getConfig('landing_account_type');
+		$accountType = $context->getConfig('event_account_type')[$type];
 		$description = Event::getConfigProperties($type);
 		$accountConfigProperties = Account::getConfig($accountType);
 		$place = Place::get($context->getPlaceId());
@@ -1691,7 +1687,6 @@ class AccountController extends AbstractActionController
 			'place_identifier' => $place_identifier,
 			'panel' => $this->params()->fromQuery('panel', null),
 			'token' => $this->params()->fromQuery('hash', null),
-			'accountType' => $context->getConfig('landing_account_type'),
 			'header' => $content['header'],
 			'intro' => $content['intro'],
 			'form' => $content['feedback'],
@@ -1844,7 +1839,7 @@ class AccountController extends AbstractActionController
 		$account = Account::get($context->getContactId(), 'contact_1_id');
 
 		// Rank the profiles
-		$accountType = $context->getConfig('landing_account_type');
+		$accountType = $context->getConfig($account->type);
 		$ranking = array();
 		$cursor = Account::getList($account->type, [], '+name', null);
 		foreach ($cursor as $anyAccountId => $anyAccount) {

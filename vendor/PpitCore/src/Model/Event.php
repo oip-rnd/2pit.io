@@ -270,7 +270,7 @@ class Event
 		
 		// Cache the account list for matched_accounts and rewards property
 		if (in_array('matched_accounts', $description['properties']) || in_array('rewards', $description['properties'])) {
-			$accounts = Account::getList($context->getConfig('landing_account_type'), [], '+name', null);
+			$accounts = Account::getList($context->getConfig('event/' . $type . 'property/account_id')['account_type'], [], '+name', null);
 		}
 		
 		foreach($description['properties'] as $propertyId) {

@@ -42,7 +42,7 @@ class LandingController extends AbstractActionController
 		
 		$locale = $this->params()->fromQuery('locale');
 		
-		$accountType = $context->getConfig('landing_account_type');
+		$accountType = $context->getConfig('event_account_type')[$type];
 		$account = null;
 		if (!$shopping_cart) {
 			if ($context->isAuthenticated()) {
@@ -190,7 +190,7 @@ class LandingController extends AbstractActionController
 			'token' => $this->params()->fromQuery('hash', null),
 			'place_identifier' => $place_identifier,
 			'account_id' => null,
-			'accountType' => $context->getConfig('landing_account_type'),
+			'accountType' => $accountType,
 			'header' => $content['header'],
 			'intro' => $content['intro'],
 			'form' => (array_key_exists('form', $content) && $content['form']) ? $content['form'] : false,

@@ -19,7 +19,7 @@ use Zend\View\Model\ViewModel;
 
 class FunnelController extends AbstractActionController
 {
-	public function subscribeAction()
+/*	public function subscribeAction()
 	{
 		// Retrieve the context and the parameters
 		$context = Context::getCurrent();
@@ -134,7 +134,7 @@ class FunnelController extends AbstractActionController
 		));
 		$view->setTerminal(true);
 		return $view;
-	}
+	}*/
 	
 	public function payzenAction()
     {
@@ -258,9 +258,6 @@ class FunnelController extends AbstractActionController
 		$context = Context::getCurrent();
 		$step = $this->params()->fromQuery('step');
 		$funnel = null;
-		
-		// Data description
-		$description = Account::getDescription($context->getConfig('landing_account_type'));
 		
 		// Place
 		$place = Place::get($context->getPlaceId());
