@@ -37,6 +37,7 @@ class AccountController extends AbstractActionController
 	 */
 	public function indexAction()
 	{
+var_dump(gmdate('YmdHis'));
 		// Retrieve the context and the current place
 		$context = Context::getCurrent();
 		$place = Place::get($context->getPlaceId());
