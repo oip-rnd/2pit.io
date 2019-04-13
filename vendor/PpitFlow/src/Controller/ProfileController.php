@@ -38,10 +38,13 @@ class ProfileController extends AbstractActionController
 		$place_identifier = $place->identifier;
 	
 		// Account
-		$accountType = $context->getConfig('event_account_type')[$context->getConfig('event_default_type')];
 		$account = null;
-		if ($account_id) $account = Account::get('account_id');
+		if ($account_id) {
+			$account = Account::get('account_id');
+			$accountType = $account->type;
+		}
 		else {
+			$accountType = 'generic';
 			$account = Account::instanciate($accountType);
 		
 			// pre-filled form
