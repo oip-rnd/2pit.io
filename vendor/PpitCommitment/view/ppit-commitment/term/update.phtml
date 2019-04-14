@@ -24,7 +24,8 @@
 	      </div>
 	    </div>
 
-	<?php elseif ($context->hasRole('admin') && $term->status != 'registered') : ?>
+	<?php else : ?>
+      <?php if ($context->hasRole('admin') && $term->status != 'registered') : ?>
 		<button type="button" class="btn btn-danger action-btn" id="term-invoice-anchor">
 			<?php echo $this->translate('Actualize the invoice', 'ppit-commitment', $context->getLocale()) ?>
 		</button>
@@ -33,8 +34,10 @@
 				<strong><?php echo $this->translate('You should have destroyed any previous version of this invoice. Please confirm.', 'ppit-commitment', $context->getLocale()) ?></strong>
 			</div>
 		</div>
-  <?php endif;?>
+      <?php endif;?>
+
 		&nbsp;&nbsp;<a href="<?php echo $this->url('commitmentMessage/downloadInvoice', array('id' => $term->invoice_id)) ?>"><?php echo $this->translate('Download the invoice', 'ppit-commitment', $context->getLocale())?></a>&nbsp;&nbsp;|
+	<?php endif;?>
 
     &nbsp;&nbsp;<a href="<?php echo $this->url('commitmentTerm/downloadInvoice', array('id' => $term->id)) ?>"><?php echo $this->translate('Proforma', 'ppit-commitment', $context->getLocale())?></a>
   <?php //endif;?>
