@@ -205,7 +205,7 @@ class AccountController extends AbstractActionController
 		// Retrieve the context and the parameters
 		$context = Context::getCurrent();
 		$type = $this->params()->fromRoute('type');
-		$description = Event::getDescription($type);
+		$description = Account::getDescription($type);
 		$instance_caption = $context->getInstance()->caption;
 		$place = Place::get($context->getPlaceId());
 		$place_identifier = $place->identifier;
@@ -214,17 +214,17 @@ class AccountController extends AbstractActionController
 		if (!$locale) if ($account) $locale = $account->locale; else $locale = $context->getLocale();
 		
 		// Event content
-		if ($context->getConfig('specificationMode') == 'config') {
+//		if ($context->getConfig('specificationMode') == 'config') {
 			$content = $context->getConfig($type.'/'.$place_identifier);
 			if (!$content) $content = $context->getConfig($type.'/generic');
-		}
-		else $content = Config::get($place_identifier.'_'.$type, 'identifier')->content;
+/*		}
+		else $content = Config::get($place_identifier.'_'.$type, 'identifier')->content;*/
 	
 		// compute ranking in gaming mode
-		if (array_key_exists('rewards', $content) && array_key_exists('goal', $account->credits)) {
+/*		if (array_key_exists('rewards', $content) && array_key_exists('goal', $account->credits)) {
 			if (array_key_exists('earned', $account->credits)) $account->credits['rank'] = $this->displayRank($account);
 			$account->properties['credits'] = $account->credits;
-		}
+		}*/
 	
 		// Return the view
 		$view = new ViewModel(array(
@@ -262,13 +262,14 @@ class AccountController extends AbstractActionController
 		// Retrieve the context and the parameters
 		$context = Context::getCurrent();
 		$type = $this->params()->fromRoute('type', 'generic');
+		$status = $this->params()->fromQuery('status', 'active');
 		$description = Account::getDescription($type);
 		$place = Place::get($context->getPlaceId());
 		$place_identifier = $place->identifier;
 		$profile = Account::get($context->getContactId(), 'contact_1_id');
 		$locale = $this->params()->fromQuery('locale');
 		$mode = $this->params()->fromQuery('mode', 'Owner');
-		$filters = array();
+		$filters = array('status' => $status);
 		foreach ($description['search']['properties'] as $propertyId => $unused) {
 			$predicate = $this->params()->fromQuery($propertyId, null);
 			if ($predicate !== null) $filters[$propertyId] = $predicate;
@@ -376,6 +377,7 @@ class AccountController extends AbstractActionController
 		$view = new ViewModel(array(
 			'context' => $context,
 			'mode' => $mode,
+			'status' => $status,
 			'content' => $content,
 			'locale' => $locale,
 		));

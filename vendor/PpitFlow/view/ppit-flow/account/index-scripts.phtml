@@ -1,5 +1,9 @@
 <script>
 
+function drag(ev) {
+  ev.dataTransfer.setData("text", ev.target.id);
+}
+
 var keywords = null;
 
 <?php if (array_key_exists('signOut', $index)) : ?>
@@ -74,7 +78,7 @@ function showDashboard() {
 <?php endif;?>
 }
 
-//showDashboard();
+showDashboard();
 
 // Accounts
 
@@ -263,6 +267,29 @@ function public<?php echo $action_id ?>Action(account_id) {
 
 <?php endforeach;?>
 
+// Leads
+
+function showLeads() {
+  
+  var xhttp = new XMLHttpRequest();
+  var route = '<?php echo $this->url('flowAccount/list', ['type' => $type]) ?>?mode=' + mode + '&status=new';
+  var value;
+
+  xhttp.open('GET', route, true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      document.getElementById('leads').innerHTML = xhttp.responseText;
+
+      $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+      })
+    }
+  };
+  xhttp.send();
+}
+
+// Accounts
+
 function showList() {
   
   var xhttp = new XMLHttpRequest();
@@ -449,6 +476,7 @@ function showList() {
   xhttp.send();
 }
 
+showLeads();
 showList();
 
 <?php if ($mode == 'detail' && $queryAction && $queryId) : ?>

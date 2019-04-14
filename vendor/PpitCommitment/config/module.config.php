@@ -1053,71 +1053,52 @@ return array(
 
 	'menus/p-pit-engagements' => array(
 		'entries' => array(
-					'account' => array(
-							'route' => 'account/index',
-							'params' => array('entry' => 'account', 'type' => 'business'),
-							'glyphicon' => 'glyphicon-user',
-							'label' => array(
-									'en_US' => 'Enterprises',
-									'fr_FR' => 'Entreprises',
-							),
+				'account' => array(
+					'route' => 'account/indexAlt',
+					'params' => array('entry' => 'account', 'type' => 'business'),
+					'glyphicon' => 'glyphicon-user',
+					'label' => array(
+						'en_US' => 'Clients',
+						'fr_FR' => 'Clients',
 					),
-					'b2c' => array(
-							'route' => 'account/index',
-							'params' => array('entry' => 'account', 'type' => 'b2c'),
-							'glyphicon' => 'glyphicon-user',
-							'label' => array(
-									'en_US' => 'B2C',
-									'fr_FR' => 'Particuliers',
-							),
+				),
+				'commitment' => array(
+					'route' => 'commitment/index',
+					'params' => array('type' => 'service'),
+					'glyphicon' => 'glyphicon-link',
+					'label' => array(
+						'en_US' => 'Commitments',
+						'fr_FR' => 'Engagements',
 					),
-					'service' => array(
-							'route' => 'commitment/index',
-							'params' => array('type' => 'service'),
-							'glyphicon' => 'glyphicon-link',
-							'label' => array(
-									'en_US' => 'Services',
-									'fr_FR' => 'Prestations',
-							),
+				),
+				'term' => array(
+					'route' => 'commitmentTerm/index',
+					'params' => array('type' => 'service'),
+					'glyphicon' => 'glyphicon-calendar',
+					'label' => array(
+						'en_US' => 'Terms',
+						'fr_FR' => 'Echéances',
 					),
-					'rental' => array(
-							'route' => 'commitment/index',
-							'params' => array('type' => 'rental'),
-							'glyphicon' => 'glyphicon-link',
-							'label' => array(
-									'en_US' => 'Rental',
-									'fr_FR' => 'Location',
-							),
+				),
+				'operation_general' => array(
+						'route' => 'accountingOperation/index',
+						'params' => array('year' => 2019, 'type' => 'general', 'app' => 'p-pit-engagements'),
+						'glyphicon' => 'glyphicon-book',
+						'label' => array(
+								'en_US' => 'Account books',
+								'fr_FR' => 'Journaux comptables',
+						),
+				),
+				'product' => array(
+					'route' => 'product/index',
+					'params' => array(),
+					'glyphicon' => 'glyphicon-book',
+					'label' => array(
+						'en_US' => 'Catalogue',
+						'fr_FR' => 'Catalogue',
 					),
-					'term' => array(
-							'route' => 'commitmentTerm/index',
-							'params' => array(),
-							'glyphicon' => 'glyphicon-calendar',
-							'label' => array(
-									'en_US' => 'Terms',
-									'fr_FR' => 'Echéances',
-							),
-					),
-					'product' => array(
-							'route' => 'product/index',
-							'params' => array(),
-							'glyphicon' => 'glyphicon-book',
-							'label' => array(
-									'en_US' => 'Catalogue',
-									'fr_FR' => 'Catalogue',
-							),
-					),
-/*					'interaction' => array(
-							'route' => 'commitmentMessage/index',
-							'params' => array(),
-							'urlParams' => array(),
-							'glyphicon' => 'glyphicon-transfer',
-							'label' => array(
-									'en_US' => 'Interactions',
-									'fr_FR' => 'Interactions',
-							),
-					),*/
-		),
+				),
+			),
 		'labels' => array(
 			'default' => '2pit Commitments',
 			'fr_FR' => 'P-Pit Engagements',

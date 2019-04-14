@@ -1,59 +1,67 @@
 
-<?php if (array_key_exists('rewards', $content) && array_key_exists('balance', $content['rewards'])) : ?>
+                <div class="card card-cascade narrower z-depth-1 my-5">
 
-            <!--Card-->
-            <div class="card card-cascade narrower mt-5">
+                    <!--Card image-->
+                    <div class="view view-cascade gradient-card-header blue-gradient narrower py-2 mx-4 mb-3 d-flex justify-content-between align-items-center">
 
-              <!--Card image-->
-              <div class="view view-cascade gradient-card-header blue">
-                <h5 class="mb-0"><?php echo $context->localize($content['rewards']['title'], $locale) ?></h5>
-              </div>
-              <!--/Card image-->
+                        <div>
+                        </div>
 
-              <!--Card content-->
-              <div class="card-body card-body-cascade text-center">
-  
-  <?php if (array_key_exists('goal', $account['credits'])) : ?>
-          <div class="min-chart" id="chart-sales" data-percent="<?php echo $account['credits']['earned'] / $account['credits']['goal'] * 100 ?>"><span class="percent"></span>
-    <?php foreach ($account['credits'] as $key => $value) : ?>
-            <div class="label orange"><?php echo $context->localize($content['rewards']['balance'][$key]['labels']) ?>: <strong><?php echo ($content['rewards']['balance'][$key]['precision']) ? $context->formatFloat($value, $content['rewards']['balance'][$key]['precision']) : $value ?></strong></div>
-    <?php endforeach;?>
-          </div>
-  <?php else : $balance = 0; ?>
-    <?php foreach ($account['credits'] as $key => $value) : ?>
-      <?php if (array_key_exists($key, $content['rewards']['balance'])) : ?>
-        <?php 
-        $direction = (array_key_exists('direction', $content['rewards']['balance'][$key])) ? $content['rewards']['balance'][$key]['direction'] : 1;
-        $balance += $direction * $value;
-        ?>
-            <div><?php echo $context->localize($content['rewards']['balance'][$key]['labels']) ?>: <strong><?php echo ($content['rewards']['balance'][$key]['precision']) ? $context->formatFloat($value, $content['rewards']['balance'][$key]['precision']) : $value ?></strong></div>
-      <?php endif;?>
-    <?php endforeach;?>
-    <?php if (array_key_exists('balance', $content['rewards']['balance'])) : ?>
-            <div <?php if ($balance < 0) echo 'class="red-text"' ?>><?php echo $context->localize($content['rewards']['balance']['balance']['labels']) ?>: <strong><?php echo ($content['rewards']['balance']['balance']['precision']) ? $context->formatFloat($balance, $content['rewards']['balance']['balance']['precision']) : $balance ?></strong></div>
-    <?php endif;?>    
-  <?php endif;?>
+                        <a href="" class="white-text mx-3">Dernières ventes</a>
 
-              </div>
-              <!--/.Card content-->
+                        <div>
+                        </div>
 
-            </div>
-            <!--/.Card-->
-<?php endif;?>
+                    </div>
+                    <!--/Card image-->
 
-<?php if (array_key_exists('links', $content['index'])) foreach ($content['index']['links'] as $link) : ?>
-            <div class="h6 text-center my-4">
-  
-  <?php if (array_key_exists('route', $link)) : ?>
-              <a class="text-secondary" href="<?php echo $this->url($link['route'][0], $link['route'][1]) ?>">
-  <?php else : ?>
-              <a class="text-secondary" href="<?php echo $link['uri'] ?>" target="_blank">
-  <?php endif;?>
-  
-  <?php if (array_key_exists('icon', $link)) : ?>
-                <i class="<?php echo $link['icon']['class']?>"></i>
-  <?php endif;?>
-                <?php echo $context->localize($link['labels'], $locale) ?>
-              </a>
-            </div>
-<?php endforeach;?>
+                    <div class="px-4">
+
+                        <div class="table-responsive">
+                            <!--Table-->
+                            <table class="table table-hover mb-0">
+
+                                <!--Table head-->
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <input class="form-check-input" type="checkbox" id="checkbox">
+                                            <label class="form-check-label" for="checkbox" class="mr-2 label-table"></label>
+                                        </th>
+                                        <th class="th-lg"><a>Client <i class="fa fa-sort ml-1"></i></a></th>
+                                        <th class="th-lg"><a href="">Montant<i class="fa fa-sort ml-1"></i></a></th>
+                                    </tr>
+                                </thead>
+                                <!--Table head-->
+
+                                <!--Table body-->
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">
+                                            <input class="form-check-input" type="checkbox" id="checkbox1">
+                                            <label class="form-check-label" for="checkbox1" class="label-table"></label>
+                                        </th>
+                                        <td>Test</td>
+                                        <td>2 500 €</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <input class="form-check-input" type="checkbox" id="checkbox2">
+                                            <label class="form-check-label" for="checkbox2" class="label-table"></label>
+                                        </th>
+                                        <td>Test 2</td>
+                                        <td>120 €</td>
+                                    </tr>
+                               </tbody>
+                                <!--Table body-->
+                            </table>
+                            <!--Table-->
+                        </div>
+
+                        <hr class="my-0">
+
+                        </div>
+                        <!--Bottom Table UI-->
+
+                    </div>
+                </div>

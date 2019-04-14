@@ -53,7 +53,11 @@ $applicationName = (isset($applicationName)) ? $applicationName : 'Apps'
 			<a class="navbar-brand" target="_blank" href="<?php echo $context->getConfig('headerParams')['anchor']['href'] ?>" rel="follow">
 	<?php endif;?>
 <?php endif;?>
+<?php if (array_key_exists('logo', $context->getConfig('headerParams'))) : ?>
 			   <img height="<?php echo min(60, $context->getConfig('headerParams')['logo-height']) ?>" src="<?php echo $this->basePath('/logos/'.$context->getInstance()->caption.'/'.$context->getConfig('headerParams')['logo']) ?>" alt="<?php echo $context->getInstance()->caption ?> logo" />
+<?php else : ?>
+              <span><?php echo $context->getInstance()->caption ?>&nbsp;&nbsp;|</span>
+<?php endif;?>
 <?php if ($anchor) : ?>
 			</a>
 <?php endif;?>

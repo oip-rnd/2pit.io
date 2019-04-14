@@ -1915,7 +1915,7 @@ table.note-report td {
 		'index' => array(
 			'navbar' => array(
 				'keywords' => ['type' => 'search', 'property' => 'name', 'labels' => ['default' => 'Keywords', 'fr_FR' => 'Mots clés']],
-				'publicMode' => ['type' => 'mode', 'value' => 'Public', 'labels' => ['default' => 'Everybody', 'fr_FR' => 'Tout le monde']],
+				'publicMode' => ['type' => 'mode', 'value' => 'Public', 'labels' => ['default' => 'P-Pit Community', 'fr_FR' => 'Communauté P-Pit']],
 				'ownerMode' => ['type' => 'mode', 'value' => 'Owner', 'labels' => ['default' => 'My contacts', 'fr_FR' => 'Mes contacts']],
 //				'contributorMode' => ['type' => 'mode', 'value' => 'Contributor', 'labels' => ['default' => 'My contributions', 'fr_FR' => 'Mes contributions']],
 				'new' => ['type' => 'new', 'labels' => ['default' => 'New contact', 'fr_FR' => 'Nouveau contact']],
@@ -1930,7 +1930,7 @@ table.note-report td {
 	
 		'card' => array(
 			'display' => array(
-				'type' => 'avatar',
+				'type' => 'logo',
 			),
 			'properties' => array(
 				'name' => ['definition' => 'core_account/generic/property/name', 'labels' => ['default' => 'Name', 'fr_FR' => 'Nom']],
@@ -1942,10 +1942,10 @@ table.note-report td {
 		),
 	
 		'status' => array(
-			'new' => ['labels' => ['default' => 'New', 'fr_FR' => 'Nouveau'], 'nextSteps' => ['update', 'cancel', 'close', 'open'], 'value' => 25, 'color' => 'bg-danger'],
+			'new' => ['labels' => ['default' => 'Lead', 'fr_FR' => 'Prospect'], 'nextSteps' => ['update', 'cancel', 'close', 'open'], 'value' => 25, 'color' => 'bg-danger'],
 			'interested' => ['labels' => ['default' => 'Interested', 'fr_FR' => 'Intéressé'], 'nextSteps' => ['update', 'cancel', 'close', 'open'], 'value' => 75, 'color' => 'bg-info'],
 			'candidate' => ['labels' => ['default' => 'Candidate', 'fr_FR' => 'Candidat'], 'nextSteps' => ['update', 'cancel', 'close', 'open'], 'value' => 100, 'color' => 'bg-warning'],
-			'active' => ['labels' => ['default' => 'Active', 'fr_FR' => 'Actif'], 'nextSteps' => ['update', 'cancel', 'close', 'open'], 'value' => 100, 'color' => 'bg-success'],
+			'active' => ['labels' => ['default' => 'Client', 'fr_FR' => 'Client'], 'nextSteps' => ['update', 'cancel', 'close', 'open'], 'value' => 100, 'color' => 'bg-success'],
 		),
 	
 		'actions' => array(
