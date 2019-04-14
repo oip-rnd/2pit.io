@@ -21,7 +21,7 @@ else $demoLink = null;
 <?php if ($anchor) : ?>
 	</a>
 <?php endif;?>
-<?php if (array_key_exists('signature', $context->getConfig('headerParams'))) : ?>
+<?php if (array_key_exists('signature', $context->getConfig('headerParams')) && $context->getConfig('headerParams')['signature']) : ?>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	<?php if ($anchor) : ?>
 		<?php if ($anchor['type'] == 'route') : ?>

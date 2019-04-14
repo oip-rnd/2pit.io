@@ -478,7 +478,7 @@ class Context
     		Context::$static_roles['guest'] = 'guest';
     		Context::$static_roles['user'] = 'user';
     		Context::$static_perimeters = $contact->perimeters;
-    		Context::$static_locale = $contact->locale;
+    		if (!Context::$static_locale) Context::$static_locale = $contact->locale;
     	
     		// Retrieve the place data
     		Context::$place_id = Context::$instance->default_place_id;
@@ -492,7 +492,7 @@ class Context
      */
     public static function retrieve($e) {
 
-    	Context::$exemplary = new Context;
+		Context::$exemplary = new Context;
 
     	// Retrieve the config
     	$app = $e->getApplication();
@@ -502,11 +502,18 @@ class Context
     	$config = $sm->get('config');
     	Context::$config = $config;
 
+    	$request = $sm->get('Request');
+
+    	$query = $request->getUri()->getQuery();
+    	$pos = strpos($query, 'locale');
+    	if ($pos !== false) $locale = substr($query, $pos + 7);
+    	else $locale = null;
+    	if ($locale) Context::$static_locale = $locale;
+
     	// Retrieve the currentUser
     	$user_id = Context::$exemplary->getSecurityAgent()->getUserId();
     	Context::$static_user_id = $user_id;
     	if (!$user_id) {
-    		$request = $sm->get('Request');
     		$fqdn = (method_exists($request, 'getUri')) ? $request->getUri()->getHost() : null;
     		if ($fqdn) Context::$instance = Instance::get($fqdn, 'fqdn');
     		if (!Context::$instance) Context::$instance = Instance::get($config['defaultInstanceId']);
@@ -523,10 +530,12 @@ class Context
 	    		Context::$static_is_demo_mode_active = false;
 	    		Context::$static_roles = array('guest');
 	    		Context::$static_perimeters = array();
-	    		
-	    		if (array_key_exists('HTTP_ACCEPT_LANGUAGE', $_SERVER) && substr(locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']), 0, 2) == 'en') Context::$static_locale = 'en_US';
-	    		elseif (array_key_exists('HTTP_ACCEPT_LANGUAGE', $_SERVER) && substr(locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']), 0, 2) == 'fr') Context::$static_locale = 'fr_FR';
-	    		else Context::$static_locale = Context::$instance->default_locale;
+
+	    		if (!$locale) {
+		    		if (array_key_exists('HTTP_ACCEPT_LANGUAGE', $_SERVER) && substr(locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']), 0, 2) == 'en') Context::$static_locale = 'en_US';
+		    		elseif (array_key_exists('HTTP_ACCEPT_LANGUAGE', $_SERVER) && substr(locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']), 0, 2) == 'fr') Context::$static_locale = 'fr_FR';
+		    		else Context::$static_locale = Context::$instance->default_locale;
+	    		}
     		}
     	}
     	else {

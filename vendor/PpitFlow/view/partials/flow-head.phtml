@@ -1,0 +1,221 @@
+<?php 
+$mdbCss = $context->getConfig('mdbCss');
+if (!$mdbCss) $mdbCss = 'MDB-Pro';
+?>
+
+<head>
+
+<?php if (array_key_exists('analytics-id', $header)) : ?>
+	<!--Google Analytics-->
+	<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	
+	ga('create', '<?php echo $header['analytics-id']?>', 'auto');
+	ga('send', 'pageview');
+	</script>
+	<!--/Google Analytics-->
+<?php endif;?>
+
+	<title><?php echo $context->localize($header['title']) ?></title>
+	<meta charset="utf-8">
+	<meta name="description" content="<?php echo $context->localize($header['description']) ?>">
+	<meta name="robots" content="index, follow">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <!-- Favicon -->      
+  <link rel="shortcut icon" href="<?php echo $this->basePath('/img/favicon.ico') ?>">
+
+	<!-- Font Awesome -->
+    <link href="<?php echo $this->basePath('fontawesome-free-5.2.0-web/css/all.min.css" rel="stylesheet') ?>">
+<!--	<link href="<?php echo $this->basePath('MDB-Pro/css/bootstrap.min.css" rel="stylesheet') ?>"> -->
+    <link rel="stylesheet" href="<?php echo $this->basePath('/bootstrap-4-2/css/bootstrap.min.css') ?>">
+
+	<!-- Material Design Bootstrap -->
+	<link href="<?php echo $this->basePath($mdbCss . '/css/mdb.min.css" rel="stylesheet') ?>">
+	<link href="<?php echo $this->basePath($mdbCss . '/css/style.css" rel="stylesheet') ?>">
+	
+	<!-- medium editor -->
+	<link rel="stylesheet" href="<?php echo $this->basePath('medium-editor-master/dist/css/medium-editor.css') ?>">
+	<link rel="stylesheet" href="<?php echo $this->basePath('medium-editor-master/dist/css/themes/default.css" id="medium-editor-theme') ?>">
+	
+	<!-- jquery-ui -->
+	<link href="<?php echo $this->basePath('jquery-ui-1.12.1/jquery-ui.min.css" rel="stylesheet') ?>">
+
+    <!-- Custom styles -->
+	<style>
+	html,
+	body,
+	header,
+
+    #intro {
+      height: <?php echo $header['intro_height'] ?>;
+      max-width: 100%;
+    }
+  
+	#intro {
+      background: url("<?php echo $this->basePath($context->localize($header['background_image']['src'])) ?>") no-repeat center center;
+      -webkit-background-size: contain;
+      -moz-background-size: contain;
+      -o-background-size: contain;
+      background-size: <?php echo array_key_exists('background-size', $header) ? $header['background-size'] : 'contain' ?>;
+      background-color: <?php echo array_key_exists('background-color', $header) ? $header['background-color'] : '' ?>;
+	}
+	
+	@include media-breakpoint-up(sm) {
+	  html {
+	    font-size: 16px;
+	  }
+	}
+	
+	@include media-breakpoint-up(md) {
+	  html {
+	    font-size: 20px;
+	  }
+	}
+	
+	@include media-breakpoint-up(lg) {
+	  html {
+	    font-size: 28px;
+	  }
+	}
+	
+	.portlet {
+	  margin: 0 1em 1em 0;
+	  padding: 0.3em;
+	}
+	.portlet-header {
+	  padding: 0.2em 0.3em;
+	  margin-bottom: 0.5em;
+	  position: relative;
+	}
+	.portlet-toggle {
+	  position: absolute;
+	  top: 50%;
+	  right: 0;
+	  margin-top: -8px;
+	}
+	.portlet-viewContent {
+	  padding: 0.4em;
+	}
+	.portlet-placeholder {
+	  border: 1px dotted black;
+	  margin: 0 1em 1em 0;
+	  height: 50px;
+	}
+	
+	.resizable { font-size: 16px; text-align: center; margin: 0; }
+	</style>
+  
+    <style>
+    @media only screen and (max-width: 768px) {
+
+/* Force table to not be like tables anymore */
+table,
+thead,
+tbody,
+th,
+td,
+tr {
+  display: block;
+  text-align: center;
+}
+table.table td {
+  padding-top: 1.5rem;
+  padding-bottom: .4rem;
+
+}
+img {}
+/* Hide table headers (but not display: none;, for accessibility) */
+thead tr {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+}
+
+img {
+  display: block;
+  margin: 0 auto;
+}
+td {
+  /* Behave  like a "row" */
+  border: none;
+  position: relative;
+  padding-left: 50%;
+
+}
+
+td:before {
+  /* Now like a table header */
+  position: absolute;
+  /* Top/left values mimic padding */
+  top: 6px;
+  left: 6px;
+  white-space: nowrap;
+}
+
+td:nth-of-type(1):before {
+  content: "Stage";
+  font-weight: 400;
+  left: 50%;
+  transform: translate(-50%);
+}
+td:nth-of-type(2):before {
+  content: "Conditions";
+  font-weight: 400;
+  left: 50%;
+  transform: translate(-50%);
+}
+td:nth-of-type(3) {
+  position: absolute;
+  border: none !important;
+}
+td:nth-of-type(4):before {
+  content: "Sans hébergement";
+  left: 50%;
+  transform: translate(-50%);
+  font-weight: 400;
+}
+td:nth-of-type(5):before {
+  content: "Avec hébergement";
+  left: 50%;
+  transform: translate(-50%);
+  font-weight: 400;
+}
+td:nth-of-type(7):before {
+  content: "Sélection";
+  left: 50%;
+  transform: translate(-50%);
+  font-weight: 400;
+}
+.btn-group {
+  margin-left: 0 !important;
+}
+tr:nth-child(4) td:nth-of-type(4):before,
+tr:nth-child(4) td:nth-of-type(1):before,
+tr:nth-child(4) td:nth-of-type(2):before {
+  content: '';
+}
+tr:nth-child(4) td:nth-of-type(1) {
+  position: absolute;
+  border: none !important;
+}
+tr:nth-child(4) td:nth-of-type(3) {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+tr:nth-child(4) td:nth-of-type(4) {
+  border-top: none !important;
+  display: flex;
+  justify-content: center;
+  border-bottom : 1px solid #dee2e6;
+}
+
+}
+    </style>
+  
+</head>

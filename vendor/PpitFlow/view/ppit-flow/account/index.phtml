@@ -15,15 +15,15 @@
       <?php if ($entry['type'] == 'signOut') : ?>
         <li class="nav-item">
           <div class="form-group">
-            <label for="signOut-identifier"><?php echo $context->localize($entry['labels'], $locale) ?></label>
-            <input class="" id="signOut-identifier" type="text" placeholder="<?php if (array_key_exists('placeholder', $entry)) echo $context->localize($entry['placeholder'], $locale) ?>" aria-label="">
+            <label for="signOut-identifier"><?php echo $context->localize($entry['labels']) ?></label>
+            <input class="" id="signOut-identifier" type="text" placeholder="<?php if (array_key_exists('placeholder', $entry)) echo $context->localize($entry['placeholder']) ?>" aria-label="">
             <a class="grey-text ml-2" id="signOutButton"><i class="fa fa-key" aria-hidden="true"></i></a>
           </div>
         </li>
         
       <?php elseif (array_key_exists($entry['item'], $profile['credits'])) : ?>
         <li class="nav-item">
-           <span class="grey-text"><?php echo sprintf($context->localize($entry['labels'], $locale), $profile['credits'][$entry['item']], (array_key_exists('rank', $profile['credits'])) ? $profile['credits']['rank'] : '') ?></span>
+           <span class="grey-text"><?php echo sprintf($context->localize($entry['labels']), $profile['credits'][$entry['item']], (array_key_exists('rank', $profile['credits'])) ? $profile['credits']['rank'] : '') ?></span>
         </li>
         
       <?php endif;?>
@@ -41,11 +41,11 @@
 
   <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      <?php echo $this->translate('Contacts', 'ppit-core', $locale); ?>
+      <?php echo $this->translate('Contacts', 'ppit-core', $context->getLocale()); ?>
     </a>
     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-      <a class="dropdown-item" href="<?php echo $this->url('flowEvent/index', ['type' => 'request']) ?>"><?php echo $this->translate('Requests', 'ppit-flow', $locale)?></a>
-      <a class="dropdown-item" href="<?php echo $this->url('flowEvent/index', ['type' => 'event']) ?>"><?php echo $this->translate('Events', 'ppit-flow', $locale)?></a>
+      <a class="dropdown-item" href="<?php echo $this->url('flowEvent/index', ['type' => 'request']) ?>"><?php echo $this->translate('Requests', 'ppit-flow', $context->getLocale())?></a>
+      <a class="dropdown-item" href="<?php echo $this->url('flowEvent/index', ['type' => 'event']) ?>"><?php echo $this->translate('Events', 'ppit-flow', $context->getLocale())?></a>
     </div>
   </li>
 
@@ -55,7 +55,7 @@
 
   <?php if ($navItem['type'] == 'mode') : ?>
   <li class="nav-item">
-    <a class="nav-link aMode" id="aMode<?php echo $navItem['value'] ?>"><?php echo $context->localize($navItem['labels'], $locale) ?></a>
+    <a class="nav-link aMode" id="aMode<?php echo $navItem['value'] ?>"><?php echo $context->localize($navItem['labels']) ?></a>
   </li>
 
 <!-- Search -->
@@ -71,7 +71,7 @@
       <!-- Search form -->
       <form class="form-inline">
         <i class="fa fa-search" aria-hidden="true"></i>
-        <input class="form-control form-control-sm mdb-autocomplete ml-3 w-75" id="homeSearch-<?php echo $navItem['property'] ?>" type="text" placeholder="<?php echo $context->localize($navItem['labels'], $locale) ?>" aria-label="">
+        <input class="form-control form-control-sm mdb-autocomplete ml-3 w-75" id="homeSearch-<?php echo $navItem['property'] ?>" type="text" placeholder="<?php echo $context->localize($navItem['labels']) ?>" aria-label="">
       </form><br>
     </div>
   </li>
@@ -85,7 +85,7 @@
       <!-- Search form -->
       <form class="form-inline">
         <i class="fa fa-calendar" aria-hidden="true"></i>
-        <input class="form-control form-control-sm datepicker homeSearchInput ml-3 w-75" id="homeSearch-<?php echo $navItem['property'] ?>" type="text" placeholder="<?php echo $context->localize($navItem['labels'], $locale) ?>" aria-label="">
+        <input class="form-control form-control-sm datepicker homeSearchInput ml-3 w-75" id="homeSearch-<?php echo $navItem['property'] ?>" type="text" placeholder="<?php echo $context->localize($navItem['labels']) ?>" aria-label="">
       </form>
     </div>
   </li>
@@ -100,9 +100,9 @@
       <form class="form-inline">
         <i class="<?php echo $navItem['icon']['class'] ?>" aria-hidden="true"></i>
         <select class="form-control form-control-sm browser-default homeSearchInput ml-3 w-75" id="homeSearch-<?php echo $navItem['property'] ?>">
-          <option value=""><?php echo $context->localize($navItem['labels'], $locale) ?></option>
+          <option value=""><?php echo $context->localize($navItem['labels']) ?></option>
       <?php foreach ($navItem['modalities'] as $modalityId => $modality) : ?>
-          <option value="<?php echo $modalityId ?>"><?php echo $context->localize($modality, $locale) ?></option>
+          <option value="<?php echo $modalityId ?>"><?php echo $context->localize($modality) ?></option>
       <?php endforeach;?>
         </select>
       </form>
@@ -118,7 +118,7 @@
       <!-- Search form -->
       <form class="form-inline">
         <i class="fa fa-search" aria-hidden="true"></i>
-        <input class="form-control form-control-sm homeSearchInput ml-3 w-75" id="homeSearch-<?php echo $navItem['property'] ?>" type="text" placeholder="<?php echo $context->localize($navItem['labels'], $locale) ?>" aria-label="">
+        <input class="form-control form-control-sm homeSearchInput ml-3 w-75" id="homeSearch-<?php echo $navItem['property'] ?>" type="text" placeholder="<?php echo $context->localize($navItem['labels']) ?>" aria-label="">
       </form>
     </div>
   </li>
@@ -128,7 +128,7 @@
   <?php elseif ($profile && $navItem['type'] == 'new') : ?>
     <?php if ($type != 'event' || $context->hasRole('ambassador')) : ?>
   <li class="nav-item">
-    <a class="nav-link" href="<?php echo $this->url('flowAccount/fill', ['type' => $type]) ?>" class="text-secondary mr-3"><i class="fa fa-plus mr-1"></i><?php echo $context->localize($navItem['labels'], $locale) ?></a>
+    <a class="nav-link" href="<?php echo $this->url('flowAccount/fill', ['type' => $type]) ?>" class="text-secondary mr-3"><i class="fa fa-plus mr-1"></i><?php echo $context->localize($navItem['labels']) ?></a>
   </li>
     <?php endif;?>
   <?php endif;?>
@@ -171,7 +171,7 @@
           <<?php echo $paragraph['type']?> <?php if (array_key_exists('class', $paragraph)) echo 'class="'.$paragraph['class'].'"' ?>>
     <?php endif;?>
     <?php if (array_key_exists('text', $paragraph)) : ?>
-      <?php echo $context->localize($paragraph['text'], $locale) ?>
+      <?php echo $context->localize($paragraph['text']) ?>
     <?php endif;?>
     <?php if (array_key_exists('a', $paragraph)) : ?>
           </a>

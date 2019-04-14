@@ -28,18 +28,18 @@ var keywords = null;
           xhttp.onload = function () {
             if (xhttp.readyState == 4) {
               if (xhttp.status == 200) {
-                var format = '<?php echo $context->localize($index['signOut']['identifier']['message']['ok'], $locale) ?>';
+                var format = '<?php echo $context->localize($index['signOut']['identifier']['message']['ok']) ?>';
                 var pos = format.search('%s');
                 var message = format.substr(0, pos) + xhttp.responseText + format.substr(pos + 2);
                 toastr.success('<h4 class="text-center">' + message + '</h4>');
                 showDashboard();
               }
               else if (xhttp.status == 400 && xhttp.statusText == 'Unknown') {
-                toastr.error('<h4 class="text-center"><?php echo $context->localize($index['signOut']['identifier']['message']['unknown'], $locale) ?></h4>');
+                toastr.error('<h4 class="text-center"><?php echo $context->localize($index['signOut']['identifier']['message']['unknown']) ?></h4>');
                 showDashboard();
               }
               else if (xhttp.status == 401 && xhttp.statusText == 'Duplicate') {
-                toastr.error('<h4 class="text-center"><?php echo $context->localize($index['signOut']['identifier']['message']['duplicate'], $locale) ?></h4>');
+                toastr.error('<h4 class="text-center"><?php echo $context->localize($index['signOut']['identifier']['message']['duplicate']) ?></h4>');
                 showDashboard();
               }
               else technicalError();
@@ -117,7 +117,7 @@ var homeSearch_<?php echo $propertyId ?> = {
     if (!$first) echo ',';
     $first = false;
     ?>
-  "<?php echo $entryId ?>": "<?php echo $context->localize($entry['labels'], $locale) ?>"
+  "<?php echo $entryId ?>": "<?php echo $context->localize($entry['labels']) ?>"
   <?php endforeach;?>
 };
 
@@ -204,7 +204,7 @@ $('.aDetailAction').click(function () {
   xhttp.open('GET', '<?php echo $this->url('flowAccount/detail', ['type' => $type]) ?>/' + account_id, true);
   xhttp.onload = function () {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
-      $('#modalAccountDetailTitle').html('<?php echo $this->translate('Account detail', 'ppit-core', $locale) ?>');
+      $('#modalAccountDetailTitle').html('<?php echo $this->translate('Account detail', 'ppit-core', $context->getLocale()) ?>');
       $('#modalAccountDetailContent').html(xhttp.responseText);
       $('#modalAccountDetailForm').modal('show');
     }
@@ -227,12 +227,12 @@ function encodeDate(value) {
 function public<?php echo $action_id ?>Action(account_id) {
     var xhttp = new XMLHttpRequest();
 
-    $('#modalAccountActionTitle').html('<?php echo $context->localize($action['labels'], $locale) ?>');
+    $('#modalAccountActionTitle').html('<?php echo $context->localize($action['labels']) ?>');
     xhttp.open('GET', '<?php echo $this->url('flowAccount/detail', ['type' => $type]) ?>/' + account_id, true);
     xhttp.onload = function () {
       if (xhttp.readyState == 4 && xhttp.status == 200) {
         $('#modalAccountActionContent').html(xhttp.responseText);
-        $('#buttonAccountAction').html('<?php echo $context->localize($action['labels'], $locale) ?>');
+        $('#buttonAccountAction').html('<?php echo $context->localize($action['labels']) ?>');
         $('#buttonAccountAction').unbind();
         $('#buttonAccountAction').click(function () {
           var xhttp = new XMLHttpRequest();
@@ -272,7 +272,7 @@ function public<?php echo $action_id ?>Action(account_id) {
 function showLeads() {
   
   var xhttp = new XMLHttpRequest();
-  var route = '<?php echo $this->url('flowAccount/list', ['type' => $type]) ?>?mode=' + mode + '&status=new';
+  var route = '<?php echo $this->url('flowAccount/list', ['type' => $type]) ?>?mode=' + mode + '&status=new&locale=<?php echo $context->getLocale() ?>';
   var value;
 
   xhttp.open('GET', route, true);
@@ -347,7 +347,7 @@ function showList() {
           xhttp.open('GET', '<?php echo $this->url('flowAccount/detail', ['type' => $type]) ?>/' + account_id, true);
           xhttp.onload = function () {
             if (xhttp.readyState == 4 /*&& xhttp.status == 200*/) {
-              $('#modalAccountDetailTitle').html('<?php echo $context->localize($detail['title']['detail'], $locale) ?>');
+              $('#modalAccountDetailTitle').html('<?php echo $context->localize($detail['title']['detail']) ?>');
               $('#modalAccountDetailContent').html(xhttp.responseText);
               $('#modalAccountDetailForm').modal('show');
             }
@@ -360,7 +360,7 @@ function showList() {
 
       $('.aOwnerAction-<?php echo $action_id ?>').click(function () {
         var account_id = $(this).attr('id').split('-')[2];
-        $('#modalShowProfileTitle').html('<?php echo $context->localize($action['labels'], $locale) ?>');
+        $('#modalShowProfileTitle').html('<?php echo $context->localize($action['labels']) ?>');
         xhttp.open('GET', '<?php echo $this->url('flowAccount/consultFeedback', ['type' => $type]) ?>/' + account_id, true);
         xhttp.onload = function () {
           if (xhttp.readyState == 4 && xhttp.status == 200) {
@@ -376,12 +376,12 @@ function showList() {
       $('.aOwnerAction-<?php echo $action_id ?>').click(function () {
         var action = $(this).attr('id').split('-')[1];
         var account_id = $(this).attr('id').split('-')[2];
-        $('#modalAccountActionTitle').html('<?php echo $context->localize($action['labels'], $locale) ?>');
+        $('#modalAccountActionTitle').html('<?php echo $context->localize($action['labels']) ?>');
         xhttp.open('GET', '<?php echo $this->url('flowAccount/detail', ['type' => $type]) ?>/' + account_id, true);
         xhttp.onload = function () {
           if (xhttp.readyState == 4 && xhttp.status == 200) {
             $('#modalAccountActionContent').html(xhttp.responseText);
-            $('#buttonAccountAction').html('<?php echo $context->localize($action['labels'], $locale) ?>');
+            $('#buttonAccountAction').html('<?php echo $context->localize($action['labels']) ?>');
             $('#buttonAccountAction').unbind();
             $('#buttonAccountAction').click(function () {
               var xhttp = new XMLHttpRequest();
@@ -419,7 +419,7 @@ function showList() {
         xhttp.open('GET', '<?php echo $this->url('profile/detail') ?>/' + account_id + '/' + account_id, true);
         xhttp.onload = function () {
           if (xhttp.readyState == 4 && xhttp.status == 200) {
-            $('#modalShowProfileTitle').html('<?php echo $this->translate('Profile', 'ppit-flow', $locale) ?>');
+            $('#modalShowProfileTitle').html('<?php echo $this->translate('Profile', 'ppit-flow', $context->getLocale()) ?>');
             $('#modalShowProfileContent').html(xhttp.responseText);
             $('.dataProtected').hide();
             $('#modalShowProfileForm').modal('show');
@@ -434,7 +434,7 @@ function showList() {
         xhttp.open('GET', '<?php echo $this->url('profile/list') ?>/' + id, true);
         xhttp.onload = function () {
           if (xhttp.readyState == 4 && xhttp.status == 200) {
-            $('#modalShowProfileTitle').html('<?php echo $this->translate('Profile', 'ppit-flow', $locale) ?>');
+            $('#modalShowProfileTitle').html('<?php echo $this->translate('Profile', 'ppit-flow', $context->getLocale()) ?>');
             $('#modalShowProfileContent').html(xhttp.responseText);
             $('.dataProtected').hide();
             $('.buttonContact').click(function () {
@@ -514,7 +514,7 @@ $('[data-toggle="tooltip"]').tooltip()
 $('<?php echo $itemId ?>').attr('data-toggle', 'tooltip');
 $('<?php echo $itemId ?>').addClass('red-tooltip');
 $('<?php echo $itemId ?>').attr('data-placement', '<?php echo (array_key_exists('data-placement', $tooltip)) ? $tooltip['data-placement'] : 'right' ?>');
-$('<?php echo $itemId ?>').attr('title', '<?php echo $context->localize($tooltip['title'], $locale) ?>');
+$('<?php echo $itemId ?>').attr('title', '<?php echo $context->localize($tooltip['title']) ?>');
 <?php endforeach;?>
 
 function technicalError() {

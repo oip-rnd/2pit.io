@@ -59,7 +59,7 @@ body.modal-open {
                           alt="<?php echo $header['logo2']['alt'] ?>"
                         />
   <?php if (array_key_exists('labels', $header['logo2'])) : ?>
-                        <span class="clearfix d-none d-sm-inline-block"><?php echo $context->localize($header['logo2']['labels'], $locale)?></span>
+                        <span class="clearfix d-none d-sm-inline-block"><?php echo $context->localize($header['logo2']['labels'])?></span>
   <?php endif;?>
                       </a>
                     </li>
@@ -68,7 +68,7 @@ body.modal-open {
 <?php if (array_key_exists('locales', $header)) : ?>
   <?php foreach ($header['locales'] as $language => $localeSpecification) : ?>
                     <li class="nav-item">
-                      <a class="nav-link" href="<?php echo $this->url('landing/template2').'?locale='.$language ?>"><img src="<?php echo $this->basePath($localeSpecification['img']) ?>" width="20" alt="<?php echo $this->basePath($localeSpecification['alt']) ?>" /></a>
+                      <a class="nav-link" href="<?php echo $this->url('landing/template2') ?>"><img src="<?php echo $this->basePath($localeSpecification['img']) ?>" width="20" alt="<?php echo $this->basePath($localeSpecification['alt']) ?>" /></a>
                     </li>
   <?php endforeach;?>
 <?php endif;?>
@@ -81,29 +81,29 @@ body.modal-open {
                     </li>
     <?php else : ?>
                     <li class="nav-item active">
-                      <a class="nav-link" <?php if (array_key_exists('anchorStyle', $header['navbar'])) echo 'style="'.$header['navbar']['anchorStyle'].'"' ?> data-toggle="modal" data-target="#modalProfileForm"><i class="fa fa-user ml-1"></i> <?php echo $this->translate('My profile', 'ppit-core', $locale)?></a>
+                      <a class="nav-link" <?php if (array_key_exists('anchorStyle', $header['navbar'])) echo 'style="'.$header['navbar']['anchorStyle'].'"' ?> data-toggle="modal" data-target="#modalProfileForm"><i class="fa fa-user ml-1"></i> <?php echo $this->translate('My profile', 'ppit-core', $context->getLocale())?></a>
                     </li>
     <?php endif;?>
                     <li class="nav-item">
-                      <a class="nav-link" <?php if (array_key_exists('anchorStyle', $header['navbar'])) echo 'style="'.$header['navbar']['anchorStyle'].'"' ?> data-toggle="modal" data-target="#modalLogoutForm"><i class="fa fa-sign-out-alt ml-1"></i> <?php echo $this->translate('Log Out', 'ppit-flow', $locale)?></a>
+                      <a class="nav-link" <?php if (array_key_exists('anchorStyle', $header['navbar'])) echo 'style="'.$header['navbar']['anchorStyle'].'"' ?> data-toggle="modal" data-target="#modalLogoutForm"><i class="fa fa-sign-out-alt ml-1"></i> <?php echo $this->translate('Log Out', 'ppit-flow', $context->getLocale())?></a>
                     </li>
   <?php endif;?>
 <?php else : ?>
                     <li class="nav-item">
   <?php if (array_key_exists('contact', $header)) : ?>
     <?php if (array_key_exists('href', $header['contact'])) : ?>
-                      <a class="nav-link" <?php if (array_key_exists('anchorStyle', $header['navbar'])) echo 'style="'.$header['navbar']['anchorStyle'].'"' ?> <?php if (array_key_exists('style', $header['contact'])) echo 'style="'.$header['contact']['style'].'"' ?> href="<?php echo $header['contact']['href']?>"> <i class="fa fa-envelope ml-1"></i> <span class="clearfix d-none d-sm-inline-block"><?php echo $this->translate('Contact us', 'ppit-flow', $locale)?></span></a>
+                      <a class="nav-link" <?php if (array_key_exists('anchorStyle', $header['navbar'])) echo 'style="'.$header['navbar']['anchorStyle'].'"' ?> <?php if (array_key_exists('style', $header['contact'])) echo 'style="'.$header['contact']['style'].'"' ?> href="<?php echo $header['contact']['href']?>"> <i class="fa fa-envelope ml-1"></i> <span class="clearfix d-none d-sm-inline-block"><?php echo $this->translate('Contact us', 'ppit-flow', $context->getLocale())?></span></a>
     <?php endif;?>
   <?php else :?>
-                      <a class="nav-link" <?php if (array_key_exists('anchorStyle', $header['navbar'])) echo 'style="'.$header['navbar']['anchorStyle'].'"' ?> href="#contactForm"> <i class="fa fa-envelope ml-1"></i> <span class="clearfix d-none d-sm-inline-block"><?php echo $this->translate('Contact us', 'ppit-flow', $locale)?></span></a>
+                      <a class="nav-link" <?php if (array_key_exists('anchorStyle', $header['navbar'])) echo 'style="'.$header['navbar']['anchorStyle'].'"' ?> href="#contactForm"> <i class="fa fa-envelope ml-1"></i> <span class="clearfix d-none d-sm-inline-block"><?php echo $this->translate('Contact us', 'ppit-flow', $context->getLocale())?></span></a>
   <?php endif;?>
                     </li>
   <?php if ($navbarAccount) : ?>
                     <li class="nav-item active">
-                      <a class="nav-link" <?php if (array_key_exists('anchorStyle', $header['navbar'])) echo 'style="'.$header['navbar']['anchorStyle'].'"' ?> data-toggle="modal" data-target="#modalRegisterForm"><i class="fa fa-user ml-1"></i> <?php echo $this->translate('Sign Up', 'ppit-flow', $locale)?></a>
+                      <a class="nav-link" <?php if (array_key_exists('anchorStyle', $header['navbar'])) echo 'style="'.$header['navbar']['anchorStyle'].'"' ?> data-toggle="modal" data-target="#modalRegisterForm"><i class="fa fa-user ml-1"></i> <?php echo $this->translate('Sign Up', 'ppit-flow', $context->getLocale())?></a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" <?php if (array_key_exists('anchorStyle', $header['navbar'])) echo 'style="'.$header['navbar']['anchorStyle'].'"' ?> data-toggle="modal" id="login-anchor" data-target="#modalLoginForm"><i class="fa fa-sign-in-alt ml-1"></i> <?php echo $this->translate('Log In', 'ppit-flow', $locale)?></a>
+                      <a class="nav-link" <?php if (array_key_exists('anchorStyle', $header['navbar'])) echo 'style="'.$header['navbar']['anchorStyle'].'"' ?> data-toggle="modal" id="login-anchor" data-target="#modalLoginForm"><i class="fa fa-sign-in-alt ml-1"></i> <?php echo $this->translate('Log In', 'ppit-flow', $context->getLocale())?></a>
                     </li>
   <?php endif;?>
 <?php endif;?>
@@ -133,7 +133,7 @@ body.modal-open {
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header text-center">
-                <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('Lost password', 'ppit-core', $locale) ?></h4>
+                <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('Lost password', 'ppit-core', $context->getLocale()) ?></h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -144,12 +144,12 @@ body.modal-open {
                   <div class="md-form mb-5">
                       <i class="fa fa-envelope prefix grey-text"></i>
                       <input type="text" id="lost_password-identity" class="form-control validate modal_input" required="required">
-                      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="lost_password-identity"><?php echo $this->translate('Email', 'ppit-core', $locale) ?></label>
+                      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" for="lost_password-identity"><?php echo $this->translate('Email', 'ppit-core', $context->getLocale()) ?></label>
                   </div>
   
               </div>
               <div class="modal-footer d-flex justify-content-center">
-                <button type="submit" class="btn btn-primary"><?php echo $this->translate('Send', 'ppit-core', $locale) ?></button>
+                <button type="submit" class="btn btn-primary"><?php echo $this->translate('Send', 'ppit-core', $context->getLocale()) ?></button>
               </div>
           </form>
         </div>
@@ -160,7 +160,7 @@ body.modal-open {
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header text-center">
-                <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('New password', 'ppit-core', $locale) ?></h4>
+                <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('New password', 'ppit-core', $context->getLocale()) ?></h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -169,21 +169,21 @@ body.modal-open {
               <div class="modal-body mx-3">
                   <div class="md-form mb-5">
                       <input type="email" id="init_password-identity" class="form-control validate modal_input" required="required">
-                      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="init_password-identity">* <?php echo $this->translate('Email', 'ppit-core', $locale) ?></label>
+                      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" for="init_password-identity">* <?php echo $this->translate('Email', 'ppit-core', $context->getLocale()) ?></label>
                   </div>
                     
                   <div class="md-form mb-4">
                       <input type="password" id="init_password-password" class="form-control validate modal_input" required="required">
-                      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="lost_password-password">* <?php echo $this->translate('Choose a password', 'ppit-core', $locale) ?></label>
+                      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" for="lost_password-password">* <?php echo $this->translate('Choose a password', 'ppit-core', $context->getLocale()) ?></label>
                   </div>
   
                   <div class="md-form mb-4">
                       <input type="password" id="init_password-password2" class="form-control validate modal_input" required="required">
-                      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="lost_password-password2">* <?php echo $this->translate('Confirm the password', 'ppit-core', $locale) ?></label>
+                      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" for="lost_password-password2">* <?php echo $this->translate('Confirm the password', 'ppit-core', $context->getLocale()) ?></label>
                   </div>
               </div>
               <div class="modal-footer d-flex justify-content-center">
-                  <button type="submit" class="btn btn-primary"><?php echo $this->translate('Submit', 'ppit-core', $locale) ?></button>
+                  <button type="submit" class="btn btn-primary"><?php echo $this->translate('Submit', 'ppit-core', $context->getLocale()) ?></button>
               </div>
             </form>
         </div>
@@ -200,7 +200,7 @@ body.modal-open {
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header text-center">
-                <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('Subscribe to the charter', 'ppit-core', $locale) ?></h4>
+                <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('Subscribe to the charter', 'ppit-core', $context->getLocale()) ?></h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -210,11 +210,11 @@ body.modal-open {
                   <div id="charter_content"></div>
                   <div class="md-form mb-5">
                       <input class="form-check-input" type="checkbox" id="charter_checked" class="form-control modal_input">
-                      <label for="charter_checked"><?php echo $this->translate('I subscribe to the charter', 'ppit-core', $locale) ?></label>
+                      <label for="charter_checked"><?php echo $this->translate('I subscribe to the charter', 'ppit-core', $context->getLocale()) ?></label>
                   </div>
               </div>
               <div class="modal-footer d-flex justify-content-center">
-                <button type="submit" class="btn btn-primary" id="validate-charter-button"><?php echo $this->translate('Validate', 'ppit-core', $locale) ?></button>
+                <button type="submit" class="btn btn-primary" id="validate-charter-button"><?php echo $this->translate('Validate', 'ppit-core', $context->getLocale()) ?></button>
               </div>
           </form>
         </div>
@@ -225,7 +225,7 @@ body.modal-open {
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header text-center">
-                <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('Validate the General Terms Of Use', 'ppit-core', $locale) ?></h4>
+                <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('Validate the General Terms Of Use', 'ppit-core', $context->getLocale()) ?></h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -235,11 +235,11 @@ body.modal-open {
                   <div id="gtou_content"></div>
                   <div class="md-form mb-5">
                       <input class="form-check-input" type="checkbox" id="gtou_checked" class="form-control modal_input">
-                      <label for="gtou_checked"><?php echo $this->translate('I accept the General Terms Of Use', 'ppit-core', $locale) ?></label>
+                      <label for="gtou_checked"><?php echo $this->translate('I accept the General Terms Of Use', 'ppit-core', $context->getLocale()) ?></label>
                   </div>
               </div>
               <div class="modal-footer d-flex justify-content-center">
-                <button type="submit" class="btn btn-primary" id="validate-gtou-button"><?php echo $this->translate('Validate', 'ppit-core', $locale) ?></button>
+                <button type="submit" class="btn btn-primary" id="validate-gtou-button"><?php echo $this->translate('Validate', 'ppit-core', $context->getLocale()) ?></button>
               </div>
           </form>
         </div>
@@ -251,13 +251,13 @@ body.modal-open {
         <div class="modal-content">
           <form id="logout-form">
               <div class="modal-header text-center">
-                  <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('Log Out', 'ppit-flow', $locale) ?></h4>
+                  <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('Log Out', 'ppit-flow', $context->getLocale()) ?></h4>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                   </button>
               </div>
               <div class="modal-footer d-flex justify-content-center">
-                  <button class="btn btn-warning" id="logout-button"><?php echo $this->translate('Confirm Log Out', 'ppit-flow', $locale) ?></button>
+                  <button class="btn btn-warning" id="logout-button"><?php echo $this->translate('Confirm Log Out', 'ppit-flow', $context->getLocale()) ?></button>
               </div>
       </form>
         </div>
@@ -269,14 +269,14 @@ body.modal-open {
     <div class="modal-content">
       <form id="profileForm">
         <div class="modal-header text-center">
-          <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('Manage my profile', 'ppit-flow', $locale) ?></h4>
+          <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('Manage my profile', 'ppit-flow', $context->getLocale()) ?></h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div id="modalProfileInputs"></div>
         <div class="modal-footer d-flex justify-content-center">
-          <button type="submit" class="btn btn-success btn-rounded"><?php echo $this->translate('Save', 'ppit-core', $locale) ?></button>
+          <button type="submit" class="btn btn-success btn-rounded"><?php echo $this->translate('Save', 'ppit-core', $context->getLocale()) ?></button>
         </div>
       </form>
     </div>

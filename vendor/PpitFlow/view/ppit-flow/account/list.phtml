@@ -1,8 +1,7 @@
   
   <div class="media d-block d-md-flex my-3">
-
       <div class="progress md-progress" style="height: 15px">
-        <div class="progress-bar <?php echo $content['status'][$status]['color'] ?>" role="progressbar" style="width: <?php echo $content['status'][$status]['value'] ?>%; height: 15px" aria-valuenow="<?php echo $content['status'][$status]['value'] ?>" aria-valuemin="0" aria-valuemax="100"><?php echo $context->localize($content['status'][$status]['labels'], $locale) ?></div>
+        <div class="progress-bar <?php echo $content['status'][$status]['color'] ?>" role="progressbar" style="width: <?php echo $content['status'][$status]['value'] ?>%; height: 15px" aria-valuenow="<?php echo $content['status'][$status]['value'] ?>" aria-valuemin="0" aria-valuemax="100"><?php echo $context->localize($content['status'][$status]['labels']) ?></div>
       </div>
   </div>
 
@@ -35,7 +34,7 @@
     <?php endif;?>
         </span>
 
-        &nbsp;&nbsp;<a class="text-secondary aDetailAction" id="aDetailAction-<?php echo $accountId ?>"><i class="fa fa-search mr-1"></i><?php echo $this->translate('Details', 'ppit-core', $locale) ?></a>
+        &nbsp;&nbsp;<a class="text-secondary aDetailAction" id="aDetailAction-<?php echo $accountId ?>"><i class="fa fa-search mr-1"></i><?php echo $this->translate('Details', 'ppit-core', $context->getLocale()) ?></a>
 
       </div>
       
@@ -52,7 +51,7 @@
     <?php if (array_key_exists('icon', $action)) : ?>
           <i class="far fa-<?php echo $action['icon'] ?> mr-1"></i>
     <?php endif;?>
-          <?php echo $context->localize($action['labels'], $locale) ?>
+          <?php echo $context->localize($action['labels']) ?>
         </a>
   <?php endif;?>
   
@@ -66,7 +65,7 @@
     <?php if (array_key_exists('icon', $action)) : ?>
           <i class="far fa-<?php echo $action['icon'] ?> mr-1"></i>
     <?php endif;?>
-          <?php echo $context->localize($action['labels'], $locale) ?>
+          <?php echo $context->localize($action['labels']) ?>
         </a>
 
   <?php endforeach;?>
@@ -80,7 +79,7 @@
   <?php foreach ($content['card']['properties'] as $inputId => $property) : ?>
       <?php 
       if (in_array($property['type'], ['select', 'textarea'])) {
-        $arguments[] = $context->localize($property['modalities'][$account[$inputId]], $locale);
+        $arguments[] = $context->localize($property['modalities'][$account[$inputId]]);
       }
       elseif (in_array($property['type'], ['email'])) {
         $arguments[] = '<a class="text-secondary" href="mailto:'.$account['email'].'?subject=probono corpo - '.$account['caption'].'"><i class="far fa-envelope"></i></a>';
@@ -116,11 +115,11 @@
     <?php if ($account[$inputId]) : ?>
 
       <?php if ($property['type'] == 'select') : ?>
-      <strong><?php echo $context->localize($property['labels'], $locale) ?>:</strong>
-      <?php echo $context->localize($property['modalities'][$account[$inputId]], $locale) ?>
+      <strong><?php echo $context->localize($property['labels']) ?>:</strong>
+      <?php echo $context->localize($property['modalities'][$account[$inputId]]) ?>
 
       <?php elseif ($property['type'] == 'textarea') : ?>
-      <strong><?php echo $context->localize($property['labels'], $locale) ?>:</strong>
+      <strong><?php echo $context->localize($property['labels']) ?>:</strong>
       <?php echo $account[$inputId] ?>
 
       <?php elseif ($property['type'] == 'email') : ?>
@@ -130,15 +129,15 @@
       <a class="text-secondary" href="tel:<?php echo $account['tel_work'] ?>"><i class="fa fa-mobile-alt"></i></a>
 
       <?php elseif ($property['type'] == 'date') : ?>
-      <strong><?php echo $context->localize($property['labels'], $locale) ?>:</strong>
+      <strong><?php echo $context->localize($property['labels']) ?>:</strong>
       <?php echo date_format(date_create_from_format('Y-m-d', $account[$inputId]), $context->localize($property['format'])) ?>
 
       <?php elseif ($property['type'] == 'time') : ?>
-      <strong><?php echo $context->localize($property['labels'], $locale) ?>:</strong>
+      <strong><?php echo $context->localize($property['labels']) ?>:</strong>
       <?php echo date_format(date_create_from_format('H:i:s', $account[$inputId]), $context->localize($property['format'])) ?>
 
       <?php elseif ($property['type'] == 'input') : ?>
-      <strong><?php echo $context->localize($property['labels'], $locale) ?>:</strong>
+      <strong><?php echo $context->localize($property['labels']) ?>:</strong>
       <?php echo $account[$inputId] ?>
 
       <?php endif;?>
@@ -156,7 +155,7 @@
     <?php foreach ($currentSkills as $entryId) : ?>
       <?php $entry = $property['repository'][$entryId] ?>
       <span class="chip <?php echo $entry['color'] ?> white-text">
-        <?php echo $context->localize($entry['labels'], $locale) ?>
+        <?php echo $context->localize($entry['labels']) ?>
       </span>
     <?php endforeach;?>
     </div>
@@ -167,7 +166,7 @@
 <?php if ($mode == 'Owner') : ?>
       <div>&nbsp;</div>
 	  <div class="card-header border-0 font-weight-bold font-small d-flex justify-content-between py-1">
-	    <p class="mr-4 mb-0"><?php echo $this->translate('Commitments', 'ppit-commitment', $locale) ?></p>
+	    <p class="mr-4 mb-0"><?php echo $this->translate('Commitments', 'ppit-commitment', $context->getLocale()) ?></p>
 	    <ul class="list-unstyled list-inline mb-0">
 	      <li class="list-inline-item"><a class="text-secondary mr-3 aMatchingSearchAction" id="aMatchingSearchAction-<?php echo $accountId ?>"><i class="fa fa-plus mr-1"></i><?php echo $this->translate('Search for profiles', 'ppit-flow', $context->getLocale()) ?></a>
 	    </ul>

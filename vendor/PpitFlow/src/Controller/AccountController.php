@@ -1,7 +1,6 @@
 <?php
 namespace PpitFlow\Controller;
 
-use PpitContact\Model\ContactMessage;
 use PpitCore\Form\CsrfForm;
 use PpitCore\Model\Account;
 use PpitCore\Model\Config;
@@ -87,12 +86,9 @@ class AccountController extends AbstractActionController
 		$action = $this->params()->fromQuery('action'); // For detail mode
 		$id = $this->params()->fromQuery('id'); // For detail mode
 		$description = Account::getDescription($type);
-		$instance_caption = $context->getInstance()->caption;
 		$place = Place::get($context->getPlaceId());
 		$place_identifier = $place->identifier;
 		$profile = Account::get($context->getContactId(), 'contact_1_id');
-		$locale = $this->params()->fromQuery('locale');
-		if (!$locale) if ($profile) $locale = $profile->locale; else $locale = $context->getLocale();
 
 		$charter_status = $gtou_status = null;
 		if ($profile) $gtou_status = $profile->getGtouStatus();
@@ -173,7 +169,6 @@ class AccountController extends AbstractActionController
 			'detail' => $content['detail'],
 			'footer' => $content['footer'],
 			'tooltips' => $content['tooltips'],
-			'locale' => $locale,
 			'photo_link_id' => ($profile && $profile->photo_link_id != 'no-photo.png') ? $profile->photo_link_id : null,
 			'profileForm' => $profileForm,
 			'charter_status' => $charter_status,
@@ -188,7 +183,6 @@ class AccountController extends AbstractActionController
 		$view = new ViewModel(array(
 			'context' => $context,
 			'type' => $type,
-			'locale' => $locale,
 			'place_identifier' => $place_identifier,
 			'profile' => ($profile) ? $profile->properties : [],
 			'content' => $content,

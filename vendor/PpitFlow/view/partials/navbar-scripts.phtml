@@ -1,6 +1,3 @@
-
-<script src="https://www.paypalobjects.com/api/checkout.js" async></script>
-
 <script>
 <?php
 if (array_key_exists('navbar', $header)) {
@@ -469,7 +466,7 @@ $('#gtou_checked').click(function() {
 
 $('#modalValidateGtouForm').on('show.bs.modal', function () { 
     var xhttp = new XMLHttpRequest();
-    xhttp.open('GET', '<?php echo $this->url('instance/generalTermsOfUse') ?>?locale=<?php echo $locale ?>', true);
+    xhttp.open('GET', '<?php echo $this->url('instance/generalTermsOfUse') ?>', true);
     xhttp.onload = function () {
       if (xhttp.readyState == 4 && xhttp.status == 200) {
           if (xhttp.readyState == 4 && xhttp.status == 200) {
@@ -493,7 +490,7 @@ $('#modalValidateGtouForm').on('hide.bs.modal', function () {
 function validateGtou() {
   var xhttp = new XMLHttpRequest(), formData = new FormData();
   formData.append('gtou_checked', $('#gtou_checked').val());
-  xhttp.open('POST', '<?php echo $this->url('instance/validateGeneralTermsOfUse') ?>?locale=<?php echo $locale ?>', true);
+  xhttp.open('POST', '<?php echo $this->url('instance/validateGeneralTermsOfUse') ?>', true);
   xhttp.onload = function () {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
       toastr.success("<?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?>");

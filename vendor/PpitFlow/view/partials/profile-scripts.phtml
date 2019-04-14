@@ -38,7 +38,7 @@ function manageChips () {
       if (!$first) echo ',';
       $first = false;
       ?>
-    "<?php echo $entryId ?>": "<?php echo $context->localize($entry['labels'], $locale) ?>"
+    "<?php echo $entryId ?>": "<?php echo $context->localize($entry['labels']) ?>"
     <?php endforeach;?>
   };
 

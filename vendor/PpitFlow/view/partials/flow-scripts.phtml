@@ -1,0 +1,73 @@
+<?php 
+$mdbCss = $context->getConfig('mdbCss');
+if (!$mdbCss) $mdbCss = 'MDB-Pro';
+?>
+      
+<!-- SCRIPTS -->
+<!-- Font Awesome -->
+<!-- JQuery -->
+<script type="text/javascript" src="<?php echo $this->basePath('js/jquery-3.3.1.min.js') ?>"></script>
+<!-- Bootstrap tooltips -->
+<script type="text/javascript" src="<?php echo $this->basePath($mdbCss . '/js/popper.min.js') ?>"></script>
+<!-- Bootstrap core JavaScript -->
+<!-- <script type="text/javascript" src="<?php echo $this->basePath($mdbCss . '/js/bootstrap.min.js') ?>"></script> -->
+<script src="<?php echo $this->basePath('/bootstrap-4-2/js/bootstrap.min.js') ?>"></script>
+<!-- MDB core JavaScript -->
+<script type="text/javascript" src="<?php echo $this->basePath($mdbCss . '/js/mdb.min.js') ?>"></script>
+<!-- toastr -->
+<script type="text/javascript" src="<?php echo $this->basePath('js/toastr.js') ?>"></script>
+
+<script type="text/javascript">
+// Material Select Initialization
+new WOW().init();
+$(document).ready(function() {
+   $('.mdb-select').material_select();
+});
+
+// MDB Carousel
+$('.carousel').carousel({
+    interval: false
+})
+//MDB Lightbox Init
+$(function () {
+  $("#mdb-lightbox-ui").load("<?php echo $this->basePath($mdbCss . '/mdb-addons/mdb-lightbox-ui.html') ?>");
+});
+
+$('#a_survey').click(function () {
+<?php if (array_key_exists('analytics-id', $header)) : ?>
+  ga('send', 'event', '<?php echo $header['campaign'] ?>', 'click', 'landing_template2#survey', 1);
+<?php endif;?>
+  $(location).attr('href', '#descr');
+});
+</script>
+
+<script src="https://www.paypalobjects.com/api/checkout.js" async></script>
+
+<!-- Navbar -->
+<?php echo $this->partial('/partials/navbar-scripts.phtml'); ?>
+
+<!-- Profile -->
+<?php if ($context->isAuthenticated()) : ?>
+<?php echo $this->partial('/partials/profile-scripts.phtml'); ?>
+<?php endif;?>
+
+<script>
+
+<?php if (array_key_exists('links', $footer)) : ?>
+  <?php $first = true; foreach ($footer['links'] as $column) : ?>
+    <?php foreach ($column['list'] as $linkId => $link) : ?>
+      <?php if ($link['target'] == 'modal') : ?>
+    $('#<?php echo $link['data-target'] ?>').on('show.bs.modal', function () { 
+    var xhttp = new XMLHttpRequest();
+    xhttp.open('GET', '<?php echo $this->url($link['href']['route']) ?>', true);
+    xhttp.onload = function () {
+      if (xhttp.readyState == 4 && xhttp.status == 200) $('#<?php echo $link['content_id'] ?>').html(xhttp.responseText);
+      else toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+    };
+    xhttp.send();
+});
+      <?php endif;?>
+    <?php endforeach;?>
+  <?php endforeach;?>
+<?php endif;?>
+</script>
