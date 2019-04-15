@@ -134,9 +134,9 @@ class PdfInvoiceViewHelper
     	$pdf->SetFont('', '', 8);
     	$pdf->SetTextColor(255);
     	$pdf->Cell(110, 7, 'Libellé', 1, 0, 'C', 1);
-    	$pdf->Cell(25, 7, 'PU ('.$invoice['currency_symbol'].(($taxRegime) ? ' '.$taxComputing : '').')', 1, 0, 'C', 1);
+    	$pdf->Cell(25, 7, 'Prix unit.'.$invoice['currency_symbol'].(($taxRegime) ? ' ('.$taxComputing . ')' : ''), 1, 0, 'C', 1);
     	$pdf->Cell(20, 7, 'Quantité', 1, 0, 'C', 1);
-    	$pdf->Cell(25, 7, 'Montant ('.$invoice['currency_symbol'].(($taxRegime) ? ' '.$taxComputing : '').')', 1, 0, 'R', 1);
+    	$pdf->Cell(25, 7, 'Montant'.$invoice['currency_symbol'].(($taxRegime) ? ' ('.$taxComputing . ')' : ''), 1, 0, 'R', 1);
     	// Color and font restoration
     	$pdf->SetFillColor(239, 239, 239);
     	$pdf->SetTextColor(0);
@@ -191,7 +191,7 @@ class PdfInvoiceViewHelper
     	$pdf->Cell(25, 6, $context->formatFloat($invoice['tax_inclusive'], 2).' '.$invoice['currency_symbol'], 'LR', 0, 'R', false);
 
     	// Terms
-    	if (array_key_exists('terms', $invoice)) {
+    	if (array_key_exists('terms', $invoice) && $invoice['terms']) {
 		    $pdf->Ln();
 		    $text = '<strong>Echéancier de règlement</strong>';
 		    $pdf->writeHTML($text, true, 0, true, 0);
@@ -248,7 +248,10 @@ class PdfInvoiceViewHelper
 	    	$pdf->Ln();
 	    	$pdf->writeHTML('<div style="text-align: center">'.$invoice['tax_mention'].'</div>', true, 0, true, 0);
     	}
-
+    	
+    	$pdf->Ln();
+    	$pdf->Cell(180, 0, '', 'T');
+    	 
     	if (array_key_exists('bank_details', $invoice)) {
 	    	$pdf->SetFont('', '', 8);
 	    	$pdf->Ln();
@@ -257,21 +260,21 @@ class PdfInvoiceViewHelper
     	}
 
     	if (array_key_exists('footer_mention_1', $invoice)) {
-	    	$pdf->SetFont('', '', 10);
+	    	$pdf->SetFont('', 'B', 10);
 	    	$pdf->Ln();
-	    	$pdf->writeHTML($invoice['footer_mention_1'], true, 0, true, 0);
+	    	$pdf->writeHTML('<div style="text-align: center">'.$invoice['footer_mention_1'].'</div>', true, 0, true, 0);
     	}
 
     	if (array_key_exists('footer_mention_2', $invoice)) {
-    		$pdf->SetFont('', '', 10);
+    		$pdf->SetFont('', 'B', 10);
     		$pdf->Ln();
-    		$pdf->writeHTML($invoice['footer_mention_2'], true, 0, true, 0);
+    		$pdf->writeHTML('<div style="text-align: center">'.$invoice['footer_mention_2'].'</div>', true, 0, true, 0);
     	}
 
     	if (array_key_exists('footer_mention_3', $invoice)) {
-    		$pdf->SetFont('', '', 10);
+    		$pdf->SetFont('', 'B', 10);
     		$pdf->Ln();
-    		$pdf->writeHTML($invoice['footer_mention_3'], true, 0, true, 0);
+    		$pdf->writeHTML('<div style="text-align: center">'.$invoice['footer_mention_3'].'</div>', true, 0, true, 0);
     	}
     	 
     	// Close and output PDF document
