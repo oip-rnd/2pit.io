@@ -21,22 +21,22 @@
 				<th align="center">
 	<?php $label = $context->localize($property['labels']) ?>
 	<?php if ($label) : ?>
-					<button type="button" class="btn btn-default btn-xs ppit-sort-account-anchor" id="<?php echo $propertyId ?>-account-anchor">
 						<span><?php echo $label ?></span>
 <?php if ($major == $propertyId) : ?>
 						<span class="glyphicon glyphicon-triangle-account-<?php echo ($dir == 'ASC') ? 'top' : 'bottom' ?>"></span>
 <?php endif ?>
-					</button>
 	<?php endif;?>
 				</th>
 <?php endforeach;?>
+
+                <th style="text-align: center"><?php echo $this->translate('Planned', 'ppit-learning', $context->getLocale()) ?></th>
 			</tr>
 		
 			<input type="hidden" id="account-number" value="<?php echo count($accounts) ?>" />
 
 <?php 
-$colors = ['Silver', 'Gray', 'Aqua', 'Blue', 'Maroon', 'Yellow', 'Olive', 'Lime', 'Green', 'Black', 'Teal', 'Red', 'Navy', 'Fuchsia', 'Purple'];
-$textColors = ['Black', 'White', 'Black', 'White', 'White', 'Black', 'White', 'Black', 'White', 'White', 'White', 'White', 'White', 'White', 'White'];
+$colors = ['Silver', 'Gray', 'Aqua', 'lightBlue', 'lightgreen', 'Silver', 'Gray', 'Aqua', 'lightBlue', 'lightgreen', 'Silver', 'Gray', 'Aqua', 'lightBlue', 'lightgreen'];
+$textColors = ['Black', 'White', 'Black', 'Black', 'Black', 'Black', 'White', 'Black', 'Black', 'Black', 'Black', 'White', 'Black', 'Black', 'Black', ];
 ?>
 	
 <?php $i = 0; foreach ($accounts as $account) : ?>
@@ -49,9 +49,9 @@ $textColors = ['Black', 'White', 'Black', 'White', 'White', 'Black', 'White', 'B
             <input type="hidden"  id="color_<?php echo $account->id ?>" value="<?php echo $color ?>" />
             <input type="hidden"  id="textColor_<?php echo $account->id ?>" value="<?php echo $textColor ?>" />
 		
-			<tr class="account" style="color: <?php echo $textColor ?>; background-color: <?php echo $color ?>">
+			<tr class="" style="background-color: <?php echo $color ?>">
 				<td>
-					<input type="checkbox" class="account-checkbox" id="account-checkbox_<?php echo $i ?>"></input>
+					<input type="checkbox" class="account-checkbox" style="color: <?php echo $textColor ?>"  id="account-checkbox_<?php echo $i ?>"></input>
 				</td>
 
 	<?php foreach ($eventAccountListPage['properties'] as $propertyId => $options) : ?>
@@ -66,10 +66,10 @@ $textColors = ['Black', 'White', 'Black', 'White', 'White', 'Black', 'White', 'B
 	?>
 			
 		<?php if ($propertyId == 'place_id') : ?>
-				<td><?php if ($account->properties[$propertyId]) echo $places[$account->properties[$propertyId]]->caption ?></td>
+				<td style="color: <?php echo $textColor ?>"><?php if ($account->properties[$propertyId]) echo $places[$account->properties[$propertyId]]->caption ?></td>
 	
 		<?php elseif ($property['type'] == 'text') : ?>
-				<td><?php echo $account->properties[$propertyId] ?></td>
+				<td style="color: <?php echo $textColor ?>"><?php echo $account->properties[$propertyId] ?></td>
 	
 		<?php elseif ($property['type'] == 'select') : ?>
 			<?php if (array_key_exists('rendering', $options) && $options['rendering'] == 'image') : ?>
@@ -82,13 +82,13 @@ $textColors = ['Black', 'White', 'Black', 'White', 'White', 'Black', 'White', 'B
 			<?php endif;?>
 	
 		<?php elseif ($property['type'] == 'date') : ?>
-				<td><?php echo $context->decodeDate($account->properties[$propertyId]) ?></td>
+				<td style="color: <?php echo $textColor ?>"><?php echo $context->decodeDate($account->properties[$propertyId]) ?></td>
 	
 		<?php elseif ($property['type'] == 'datetime') : ?>
-				<td><?php echo $context->decodeDate(substr($account->properties[$propertyId], 0, 10)).' '.substr($account->properties[$propertyId], 11, 8) ?></td>
+				<td style="color: <?php echo $textColor ?>"><?php echo $context->decodeDate(substr($account->properties[$propertyId], 0, 10)).' '.substr($account->properties[$propertyId], 11, 8) ?></td>
 	
 		<?php elseif ($property['type'] == 'photo') : ?>
-				<td>
+				<td style="color: <?php echo $textColor ?>">
 					<span class="info">
 						<img height="40" src="<?php echo $this->basePath('photos/'.(($account->photo_link_id) ? $account->photo_link_id :  $account->contact_1_id.'.jpg')) ?>"/>
 						<span><img height="150" src="<?php echo $this->basePath('photos/'.(($account->photo_link_id) ? $account->photo_link_id :  $account->contact_1_id.'.jpg')) ?>"/></span>
@@ -98,17 +98,20 @@ $textColors = ['Black', 'White', 'Black', 'White', 'White', 'Black', 'White', 'B
 		<?php else : ?>
 
 			<?php if (array_key_exists('rendering', $options) && $options['rendering'] == 'phone') : ?>
-				<td>
+				<td style="color: <?php echo $textColor ?>">
 					<a href="tel:<?php echo $account->properties[$propertyId] ?>"><?php echo $account->properties[$propertyId] ?></a>
 				</td>
 
 			<?php else : ?>
-				<td><?php echo $account->properties[$propertyId] ?></td>
+				<td style="color: <?php echo $textColor ?>"><?php echo $account->properties[$propertyId] ?></td>
 			<?php endif;?>
 		
 		<?php endif;?>
 		
 	<?php endforeach;?>
+
+                <td style="text-align: center; color: <?php echo $textColor ?>"><?php echo $account->properties['planned'] ?></td>
+  
 			</tr>
 <?php $i++; endforeach; ?>
 

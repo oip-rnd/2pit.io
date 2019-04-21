@@ -562,10 +562,19 @@ return array(
 							),
 						),
 					),
+					'mapPlanning' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/map-planning[/:type]',
+							'defaults' => array(
+								'action' => 'mapPlanning',
+							),
+						),
+					),
 					'planning' => array(
 						'type' => 'segment',
 						'options' => array(
-							'route' => '/planning[/:type]',
+							'route' => '/planning[/:type][/:category]',
 							'defaults' => array(
 								'action' => 'planning',
 							),
@@ -1723,6 +1732,7 @@ return array(
 				array('route' => 'event/listAlt', 'roles' => array('user')),
 				array('route' => 'event/listV2', 'roles' => array('user')),
 				array('route' => 'event/distribute', 'roles' => array('user')),
+				array('route' => 'event/mapPlanning', 'roles' => array('user')),
 				array('route' => 'event/planning', 'roles' => array('user')),
 				array('route' => 'event/export', 'roles' => array('user')),
 				array('route' => 'event/synchronize', 'roles' => array('user')),
@@ -4407,8 +4417,8 @@ table.note-report td {
 		'definition' => 'inline',
 		'type' => 'date',
 		'labels' => array(
-				'en_US' => 'Date',
-				'fr_FR' => 'Date',
+				'en_US' => 'Begin date',
+				'fr_FR' => 'Date début',
 		),
 	),
 	
@@ -5114,6 +5124,14 @@ table.note-report td {
 		'displayAudit' => true,
 	),
 	
+	'event/format/generic' => [
+		'mask' => '%s (%s)',
+		'params' => [
+			'caption' => [],
+			'location' => [],
+		],
+	],
+	
 	'event/update/generic' => array(
 		'status' => ['mandatory' => true],
 		'type' => ['mandatory' => true],
@@ -5204,6 +5222,26 @@ table.note-report td {
 	
 	// Planning
 
+	'planningMap/types' => ['generic'],
+	
+	'planningMap/generic' => [
+		'periods' => [
+			[
+				'begin' => '2018-09-15',
+				'end' => '2019-06-30',
+				'exceptions' => [['begin_date' => '2018-12-20', 'end_date' => '2019-01-06']],
+				'slots' => [
+					1 => [['begin_time' => '09:00', 'end' => '13:00'], ['begin_time' => '14:00', 'end' => '18:00']],
+					2 => [['begin_time' => '09:00', 'end' => '13:00'], ['begin_time' => '14:00', 'end' => '18:00']],
+					3 => [['begin_time' => '09:00', 'end' => '13:00'], ['begin_time' => '14:00', 'end' => '17:00']],
+					4 => [['begin_time' => '09:00', 'end' => '13:00'], ['begin_time' => '14:00', 'end' => '18:00']],
+					5 => [['begin_time' => '09:00', 'end' => '13:00'], ['begin_time' => '14:00', 'end' => '16:00']],
+				],
+			],
+		],
+		'labels' => ['default' => 'Generic', 'fr_FR' => 'Générique'],
+	],
+
 	'event/planning/property/category' => array(
 		'definition' => 'inline',
 		'type' => 'select',
@@ -5224,6 +5262,15 @@ table.note-report td {
 		'labels' => array(
 			'en_US' => 'Responsible',
 			'fr_FR' => 'Responsable',
+		),
+	),
+
+	'event/planning/property/begin_date' => array(
+		'definition' => 'inline',
+		'type' => 'date',
+		'labels' => array(
+			'en_US' => 'Date',
+			'fr_FR' => 'Date',
 		),
 	),
 	
@@ -5306,6 +5353,56 @@ table.note-report td {
 		'location' => 'J',
 	),
 
+	// Planification (event typed "calendar")
+
+	'event/calendar/property/account_id' => array(
+		'definition' => 'inline',
+		'type' => 'select',
+		'account_type' => 'teacher',
+		'labels' => array(
+			'en_US' => 'Coach',
+			'fr_FR' => 'Animateur',
+		),
+	),
+	
+	'event/calendar' => array(
+		'statuses' => array(),
+		'dimensions' => array(),
+		'indicators' => array(),
+		'properties' => array(
+			'status', 'type', 'place_id', 'place_caption', 'account_id', 'category', 'subcategory', 'identifier', 'caption', 'description',
+			'begin_date', 'end_date', 'day_of_week', 'day_of_month', 'exception_1', 'exception_2', 'exception_3', 'exception_4', 'begin_time', 'end_time', 'time_zone', 'location', 'latitude', 'longitude',
+			'value', 'comments',
+			'update_time',
+		),
+		'options' => ['calendar' => true, 'account_type' => 'teacher'],
+	),
+
+	'event/format/calendar' => array(
+		'mask' => '%s%s - %s (%s)',
+		'params' => [
+			'caption' => [],
+			'property_3' => [],
+			'n_fn' => [],
+			'location' => [],
+		],
+	),
+	
+	'event/update/calendar' => array(
+		'status' => ['mandatory' => true],
+		'place_id' => [],
+		'account_id' => [],
+		'caption' => [],
+		'description' => [],
+		'day_of_week' => array('mandatory' => false),
+		'begin_date' => array('mandatory' => false),
+		'end_date' => array('mandatory' => false),
+		'begin_time' => array('mandatory' => false),
+		'end_time' => array('mandatory' => false),
+		'location' => array('mandatory' => false),
+	),
+	
+	
 	// Emails
 	
 	'event/email/property/description' => array(

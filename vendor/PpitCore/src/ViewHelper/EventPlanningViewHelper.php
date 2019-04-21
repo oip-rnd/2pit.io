@@ -76,6 +76,18 @@ class EventPlanningViewHelper
     			foreach ($days as $date => $dayOfWeek) {
     				if (!in_array($date, $event->exception_dates) && $event->begin_date <= $date && $event->end_date >= $date) {
 	    				if ($event->begin_date == $date || $event->day_of_week == $dayOfWeek || $event->day_of_month == substr($date, 5, 2)) {
+	    					$captionFormat = $context->getConfig('event/format/' . $event->type);
+	    					if (!$captionFormat) $captionFormat = $context->getConfig('event/format/generic');
+							$arguments = array();
+							foreach ($captionFormat['params'] as $parameterId => $options) {
+								$parameter = $description['properties'][$parameterId];
+								if ($parameter['type'] == 'select' && $event->properties[$parameterId]) {
+									$value = $context->localize($parameter['modalities'][$event->properties[$parameterId]]);
+								}
+								else $value = $event->properties[$parameterId];
+								$arguments[] = $value;
+							}
+							$formatted = vsprintf($captionFormat['mask'], $arguments);
 	    					$content[] = array(
 	    						'id' => $event->id,
 	    						'begin_date' => $date,
@@ -84,6 +96,7 @@ class EventPlanningViewHelper
 	    						'end_time' => $event->end_time,
 	    						'caption' => $event->caption,
 	    						'location' => $event->location,
+	    						'formatted' => $formatted,
 	    						'account_id' => $event->account_id,
 	    					);
 	    				}
@@ -92,7 +105,9 @@ class EventPlanningViewHelper
     		}
 
     		foreach($description['properties'] as $propertyId => $property) {
-    			if ($property['type'] == 'select' && $event->properties[$propertyId] && array_key_exists('modalities', $property)) $event->properties[$propertyId] = $context->localize($property['modalities'][$event->properties[$propertyId]]);
+    			if ($property['type'] == 'select' && $event->properties[$propertyId] && array_key_exists($event->properties[$propertyId], $property['modalities'])) {
+    				$event->properties[$propertyId] = $context->localize($property['modalities'][$event->properties[$propertyId]]);
+    			}
     		}
 		}
     	return $content;
@@ -118,7 +133,7 @@ class EventPlanningViewHelper
 						$day['color']['evening'] = 'red';
 					}
 				}
-				if ($account['availability_begin'] <= $day['date'] && (!$account['availability_end'] || $account['availability_end'] >= $day['date'])) {
+				if ($account['availability_begin'] <= $day['date'] && (!$account['availability_end'] || $account['availability_end'] >= $day['date']) && array_key_exists(0, $account['availability_constraints'])) {
 					$constraints = $account['availability_constraints'][0];
 					if (array_key_exists($dayOfWeek, $constraints)) {
 						if ($constraints[$dayOfWeek] == 'morning' || $constraints[$dayOfWeek] == 'day') {
@@ -140,6 +155,47 @@ class EventPlanningViewHelper
 				}
 			}
 			$days[] = $day;
+    	}
+    	return $days;
+    }
+
+    public static function displayMap($type, $viewBeginDate, $viewEndDate)
+    {
+    	$context = Context::getCurrent();
+		$dayOfWeeks = [0 => 'sunday', 1 => 'monday', 2 => 'tuesday', 3 => 'wednesday', 4 => 'thursday', 5 => 'friday', 6 => 'saturday'];
+		$days = array();
+    	$planningMap = $context->getConfig('planningMap/' . $type);
+    	if (!$planningMap) $planningMap = $context->getConfig('planningMap/generic');
+    	foreach ($planningMap['periods'] as $period) {
+			$mapBegin = $period['begin'];
+			$mapEnd = $period['end'];
+			$mapExceptions = $period['exceptions'];
+			$mapSlots = $period['slots'];
+		
+			for($date = new \DateTime($viewBeginDate); $date <= new \DateTime($viewEndDate); $date->modify('+1 day')){
+				$dayNumber = $date->format('w');
+				$dayOfWeek = $dayOfWeeks[$dayNumber];
+				$day = array(
+					'date' => $date->format('Y-m-d'),
+					'dayOfWeek' => $dayOfWeek,
+					'slots' => [],
+				);
+				$ignore = false;
+				foreach ($mapExceptions as $exception) {
+					if (!array_key_exists('end_date', $exception)) $exception['end_date'] = $exception['begin_date'];
+					if ($exception['begin_date'] <= $day['date'] && $exception['end_date'] >= $day['date']) {
+						$ignore = true;
+					}
+				}
+				if (!$ignore) {
+					if ($mapBegin <= $day['date'] && (!$mapEnd || $mapEnd >= $day['date'])) {
+						if (array_key_exists($dayNumber, $mapSlots)) {
+							foreach ($mapSlots[$dayNumber] as $slot) $day['slots'][] = $slot;
+						}
+					}
+				}
+				$days[] = $day;
+			}
     	}
     	return $days;
     }

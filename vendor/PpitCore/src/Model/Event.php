@@ -1285,15 +1285,15 @@ class Event
 		if (!$this->end_date) $this->end_date = $this->begin_date;
 		
 		// Set the value property to the total number of scheduled hours for a planning event
-		$config = $context->getConfig('event/'.$this->type);
-		if (array_key_exists('calendar', $config['options']) && $config['options']['calendar'] && $this->begin_date && $this->end_date) {
+//		$config = $context->getConfig('event/'.$this->type);
+		if (/*array_key_exists('calendar', $config['options']) && $config['options']['calendar'] && */$this->type == 'calendar' && $this->begin_date && $this->end_date) {
 			$this->value = 0;
 
 			// Days is a table of all the date of the visible period (ie month, week or single day) associated with the day of week
 			$days = array();
 			for($date = new \DateTime($this->begin_date); $date <= new \DateTime($this->end_date); $date->modify('+1 day')) {
     			if (!in_array($date->format('Y-m-d'), $this->exception_dates)) {
-	    			if ($this->day_of_week == $date->format('w') || $this->day_of_month == $date->format('m')) {
+	    			if ($this->begin_date == $this->end_date || $this->day_of_week == $date->format('w') || $this->day_of_month == $date->format('m')) {
 	    				$interval = substr($this->end_time, 0, 2)*60 + substr($this->end_time, 3, 2) - substr($this->begin_time, 0, 2)*60 - substr($this->begin_time, 3, 2);
 	    				$this->value += round($interval/60, 2);
 	    			}

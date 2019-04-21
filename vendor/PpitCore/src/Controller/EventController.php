@@ -88,6 +88,9 @@ class EventController extends AbstractActionController
 
     	$description = Event::getDescription($type);
     	if (array_key_exists('options', $description) && array_key_exists('internal_identifier', $description['options'])) $internalIdentifier = $description['options']['internal_identifier'];
+
+    	$planningMap = $context->getConfig('planningMap/' . $type);
+    	if (!$planningMap) $planningMap = $context->getConfig('planningMap/generic');
     	 
     	$view = new ViewModel(array(
     		'context' => $context,
@@ -98,6 +101,7 @@ class EventController extends AbstractActionController
     		'applicationName' => $applicationName,
     		'category' => $category,
 			'content_description' => $description,
+    		'planningMap' => $planningMap,
     	));
     	$view->setTerminal(true);
     	return $view;
@@ -109,7 +113,9 @@ class EventController extends AbstractActionController
     	
     	// Retrieve the query parameters
     	$filters = array();
-
+    	$category = $params->fromRoute('category');
+		if ($category) $filters['category'] = $category;
+    	
     	foreach ($description['search']['properties'] as $propertyId => $unused) {
     		$property = ($params()->fromQuery($propertyId, null));
     		if ($property) $filters[$propertyId] = $property;
@@ -275,7 +281,20 @@ class EventController extends AbstractActionController
     {
     	return $this->getList();
     }
-    
+
+    /**
+     * Action for providing availability for a list of accounts from date to date, with weekly constraints and exception dates
+     * The result is in JSON form ans can be used to populate a JS calendar
+     */
+    public function mapPlanningAction()
+    {
+    	$context = Context::getCurrent();
+    	$type = $this->params()->fromRoute('type');
+    	$begin = $this->params()->fromQuery('begin');
+    	$end = $this->params()->fromQuery('end');
+    	return new JsonModel(EventPlanningViewHelper::displayMap($type, $begin, $end));
+    }
+       
     public function planningAction()
     {
     	$type = $this->params()->fromRoute('type');
@@ -390,6 +409,7 @@ class EventController extends AbstractActionController
     	$context = Context::getCurrent();
 
     	$type = $this->params()->fromRoute('type', null);
+    	$category = $this->params()->fromQuery('category');
     	$description = Event::getDescription($type);
     	if (array_key_exists('options', $description) && array_key_exists('internal_identifier', $description['options'])) $internalIdentifier = $description['options']['internal_identifier'];
     	else $internalIdentifier = false;
@@ -401,6 +421,7 @@ class EventController extends AbstractActionController
     	}
     	else {
     		$event = Event::instanciate($type);
+    		$event->category = $category;
     	}
 
     	// Instanciate the csrf form

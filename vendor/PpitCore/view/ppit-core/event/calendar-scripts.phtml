@@ -26,38 +26,41 @@ function getAvailability() {
 	var route = '<?php echo $this->url('account/getAvailability') ?>' + '?accounts=' + accounts;
     route += '&begin=' + begin;
     route += '&end=' + end;
-	xhttp = new XMLHttpRequest();
+	var xhttp = new XMLHttpRequest();
 	xhttp.open("GET", route, true);
 	xhttp.onreadystatechange = function() {
 		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
 		if (xhttp.readyState == 4 && xhttp.status == 200) {
-			obj = jQuery.parseJSON(xhttp.responseText);
+			let obj = jQuery.parseJSON(xhttp.responseText);
 			jQuery.each(obj, function (name, value) {
 				if (value.color) {
 					if (value.color.morning) {
 						var event={
 							id: value.date,
+                            allDay: true,
 							title: '08:00 - Matinée',
 							color: value.color.morning,
-							start:  $.fullCalendar.moment(value.date)
+							start: moment(value.date, 'YYYY-MM-DD')
 						};
 						$('#calendar').fullCalendar('renderEvent', event, true);
 					}
 					if (value.color.afternoon) {
 						var event={
 							id: value.date,
+                            allDay: true,
 							title: '14:00 - Après-midi',
 							color: value.color.afternoon,
-							start:  $.fullCalendar.moment(value.date)
+							start: moment(value.date, 'YYYY-MM-DD')
 						};
 						$('#calendar').fullCalendar('renderEvent', event, true);
 					}
 					if (value.color.evening) {
 						var event={
 							id: value.date,
+                            allDay: true,
 							title: '19:00 - Soir',
 							color: value.color.evening,
-							start:  $.fullCalendar.moment(value.date)
+							start: moment(value.date, 'YYYY-MM-DD')
 						};
 						$('#calendar').fullCalendar('renderEvent', event, true);
 					}
@@ -76,27 +79,32 @@ function getPlanning() {
     begin = begin.toISOString().substring(0, 10);
     end = new Date($('#calendar').fullCalendar('getView').intervalEnd);
     end = end.toISOString().substring(0, 10);
-	route = '<?php echo $this->url('event/planning', ['type' => $type]) ?>?';
+	route = '<?php echo $this->url('event/planning', ['type' => $type, 'category' => $category]) ?>?';
     route += '&begin=' + begin;
     route += '&end=' + end;
-	xhttp = new XMLHttpRequest();
+	var xhttp = new XMLHttpRequest();
 	xhttp.open("GET", route, true);
 	xhttp.onreadystatechange = function() {
 		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
 		if (xhttp.readyState == 4 && xhttp.status == 200) {
-		    $('#calendar').fullCalendar({
+/*		    $('#calendar').fullCalendar({
 		    	lang: '<?php echo substr($context->getLocale(), 0, 2) ?>',
 		        defaultView: 'agendaWeek',
 		        minTime: '08:00:00'
-		    });
+		    });*/
 			$('#calendar').fullCalendar('removeEvents');
-			obj = jQuery.parseJSON(xhttp.responseText);
+			let obj = jQuery.parseJSON(xhttp.responseText);
+
+<?php if ($type == 'calendar') : ?>
+            mapPlanning();
+<?php endif;?>
 
 			jQuery.each(obj, function (name, value) {
 				var color = 'lightBlue', textColor = 'black';			
 	            var event={
 	              id: value.id,
-	              title: value.caption + ' (' + value.location + ')',
+                  allDay: false,
+	              title: value.formatted,
 	              color: $('#color_' + value.account_id).val(),
                   textColor: $('#textColor_' + value.account_id).val(),
 			      start:  $.fullCalendar.moment(value.begin_date + ' ' + value.begin_time), 
@@ -109,6 +117,36 @@ function getPlanning() {
 		}
 	}
 	xhttp.send();
+}
+
+function mapPlanning() {
+  var begin = new Date($('#calendar').fullCalendar('getView').intervalStart);
+  begin = begin.toISOString().substring(0, 10);
+  var end = new Date($('#calendar').fullCalendar('getView').intervalEnd);
+  end = end.toISOString().substring(0, 10);
+  var route = '<?php echo $this->url('event/mapPlanning') ?>';
+    route += '?begin=' + begin;
+    route += '&end=' + end;
+  var xhttp = new XMLHttpRequest();
+  xhttp.open("GET", route, true);
+  xhttp.onreadystatechange = function() {
+    if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      let obj = jQuery.parseJSON(xhttp.responseText);
+      jQuery.each(obj, function (name, value) {
+        value.slots.forEach(function (slot) {
+	      var event={
+	        id: value.date,
+	        color: '#F1F1F1',
+		    start:  $.fullCalendar.moment(value.date + ' ' + slot.begin_time), 
+			end:  $.fullCalendar.moment(value.date + ' ' + slot.end_time)
+	      };
+	      $('#calendar').fullCalendar('renderEvent', event, true);
+        });
+      });
+    }
+  }
+  xhttp.send();
 }
 
 function connectAuditPanel()
@@ -202,7 +240,7 @@ function postForm(id, action)
 
     var xhttp = new XMLHttpRequest();
     var route;
-    route = '<?php echo $this->url('event/updateAlt') ?>/' + id + '/<?php echo $type ?>' + '?act=' + action;
+    route = '<?php echo $this->url('event/updateAlt') ?>/' + id + '/<?php echo $type ?>' + '?category=' + '<?php echo $category ?>' + '&act=' + action;
     xhttp.open('POST', route, true);
     // Set up a handler for when the request finishes.
     xhttp.onload = function () {
@@ -217,6 +255,8 @@ function postForm(id, action)
           $('.update_selectpicker').selectpicker();
 
           if (action == 'update') connectDetail(id, '');
+        
+          getAccountList('?', 'n_fn', 'ASC');
         }
         else {
           console.log(xhttp.status + ' ' + xhttp.statusText);
@@ -232,8 +272,8 @@ function postForm(id, action)
 function getUpdate(id, action) {
 
   var xhttp = new XMLHttpRequest();
-  var route = '<?php echo $this->url('event/updateAlt') ?>/' + id + '/<?php echo $type ?>';
-  if (action) route += '?act=' + action;
+  var route = '<?php echo $this->url('event/updateAlt') ?>/' + id + '/<?php echo $type ?>' + '?category=' + '<?php echo $category ?>';
+  if (action) route += '&act=' + action;
 
   xhttp.open('GET', route, true);
   xhttp.onreadystatechange = function() {
@@ -242,7 +282,13 @@ function getUpdate(id, action) {
       if (xhttp.status == 200) {
         $('#event-update-panel').html(xhttp.responseText);
 
+<?php if (array_key_exists('goto', $planningMap)) : ?> 
+        var begin_date = moment('<?php echo $planningMap['goto'] ?>', 'YYYY-MM-DD');
+        $('.update_date').datepicker({ minDate: begin_date.format('DD/MM/YYYY').substr(0, 10) });
+<?php else : ?>
         $('.update_date').datepicker();
+<?php endif;?>
+
         $('.update_time').timepicker({ 'timeFormat':'H:i:s', 'step': 15, 'scrollDefault': 'now' });
         $('.update_selectpicker').selectpicker();
 
@@ -286,7 +332,8 @@ function getDetail(id) {
 function createCalendar(print) {
 	var minTime = (print) ? '08:00:00' : '00:00:00';
     $('#calendar').fullCalendar({
-    	locale: '<?php echo substr($context->getLocale(), 0, 2) ?>',
+    	lang: '<?php echo substr($context->getLocale(), 0, 2) ?>',
+        locale: '<?php echo substr($context->getLocale(), 0, 2) ?>',
     	height: 650,
         defaultView: 'agendaWeek',
         scrollTime: '08:00:00',
@@ -321,7 +368,12 @@ function createCalendar(print) {
 			right: 'month,agendaWeek,agendaDay'
 		}
     });
- 
+
+<?php if (array_key_exists('goto', $planningMap)) : ?> 
+  date = moment('<?php echo $planningMap['goto'] ?>', 'YYYY-MM-DD');
+  $("#calendar").fullCalendar('gotoDate', date );
+<?php endif;?>
+
 	$('.fc-prev-button').click(function(){
 		var moment = $('#calendar').fullCalendar('getDate');
 		viewBeginDate = moment.format().slice(0, 10);
@@ -341,7 +393,7 @@ function createCalendar(print) {
 function getAccountList(params, major, dir) {		
 
 	// Execute the ajax request
-	route = '<?php echo $this->url('account/eventAccountList', array('entry' => 'account', 'type' => $content_description['options']['account_type'])) ?>' + params + '&major=' + major + ((dir =='ASC') ? '&dir=ASC' : '&dir=DESC');
+	route = '<?php echo $this->url('account/eventAccountList', array('entry' => 'account', 'type' => $content_description['options']['account_type'])) ?>' + params + '&event_category=' + '<?php echo $category ?>' + '&major=' + major + ((dir =='ASC') ? '&dir=ASC' : '&dir=DESC');
 	var xhttp = new XMLHttpRequest();
 	xhttp.open("GET", route, true);
 	xhttp.onreadystatechange = function() {

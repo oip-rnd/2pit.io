@@ -357,7 +357,18 @@ class AccountController extends AbstractActionController
 	 */
 	public function eventAccountListAction()
 	{
-		return $this->getList();
+		$view = $this->getList();
+		
+		// Retrieve the per account planned hours 
+		$accounts = $view->accounts;
+		foreach ($accounts as $account) $account->properties['planned'] = 0;
+		$event_category = $this->params()->fromQuery('event_category');
+		$events = Event::getList('calendar', ['category' => $event_category], '-update_time', null);
+		foreach ($events as $event) {
+			if (array_key_exists($event->account_id, $accounts)) $accounts[$event->account_id]->properties['planned'] += $event->value;
+		}
+		
+		return $view;
 	}
 	
 	/**

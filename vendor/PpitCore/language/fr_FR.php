@@ -84,6 +84,7 @@
 			'Fields preceded by * are mandatory' => 'Les champs précédés de * sont obligatoires',
 			'Full list' => 'Liste complète',
 			'Generate the test' => 'Générer le test',
+			'Group' => 'Groupe',
 			'Grouped actions' => 'Actions groupées',
 			'Grouped update' => 'Modification groupée',
 			'Historical' => 'Historique',
