@@ -262,19 +262,19 @@ class PdfInvoiceViewHelper
     	if (array_key_exists('footer_mention_1', $invoice)) {
 	    	$pdf->SetFont('', '', 10);
 	    	$pdf->Ln();
-	    	$pdf->writeHTML('<div style="text-align: center">'.$invoice['footer_mention_1'].'</div>', true, 0, true, 0);
+	    	$pdf->writeHTML($invoice['footer_mention_1'], true, 0, true, 0);
     	}
 
     	if (array_key_exists('footer_mention_2', $invoice)) {
     		$pdf->SetFont('', '', 10);
     		$pdf->Ln();
-    		$pdf->writeHTML('<div style="text-align: center">'.$invoice['footer_mention_2'].'</div>', true, 0, true, 0);
+    		$pdf->writeHTML($invoice['footer_mention_2'], true, 0, true, 0);
     	}
 
     	if (array_key_exists('footer_mention_3', $invoice)) {
     		$pdf->SetFont('', '', 10);
     		$pdf->Ln();
-    		$pdf->writeHTML('<div style="text-align: center">'.$invoice['footer_mention_3'].'</div>', true, 0, true, 0);
+    		$pdf->writeHTML($invoice['footer_mention_3'], true, 0, true, 0);
     	}
     	 
     	// Close and output PDF document
