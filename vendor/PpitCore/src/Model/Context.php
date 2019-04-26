@@ -505,7 +505,7 @@ class Context
     		
     		// Retrieve the place data
     		Context::$place_id = Context::$instance->default_place_id;
-    		Context::$place = Place::get($place_id);
+    		Context::$place = Place::get(Context::$place_id);
     	}
     }
     
