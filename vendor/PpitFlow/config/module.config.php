@@ -11,6 +11,7 @@ return array (
 	'controllers' => array(
 		'invokables' => array(
 			'PpitFlow\Controller\Account' => 'PpitFlow\Controller\AccountController',
+			'PpitFlow\Controller\Catalogue' => 'PpitFlow\Controller\CatalogueController',
 			'PpitFlow\Controller\Contact' => 'PpitFlow\Controller\ContactController',
 			'PpitFlow\Controller\Emailing' => 'PpitFlow\Controller\EmailingController',
 			'PpitFlow\Controller\Event' => 'PpitFlow\Controller\EventController',
@@ -194,6 +195,74 @@ return array (
 						'options' => array(
 							'route' => '/repair',
 							'defaults' => array('action' => 'repair'),
+						),
+					),
+				),
+			),
+			'catalogue' => array(
+				'type'    => 'literal',
+				'options' => array(
+					'route'    => '/catalogue',
+					'constraints' => ['id' => '[0-9]*'],
+					'defaults' => array(
+						'controller' => 'PpitFlow\Controller\Catalogue',
+						'action'     => 'index',
+					),
+				),
+				'may_terminate' => true,
+				'child_routes' => array(
+					'index' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/index[/:type]',
+							'defaults' => array(
+								'action' => 'index',
+							),
+						),
+					),
+					'subscribe' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/subscribe[/:type]',
+							'defaults' => array(
+								'action' => 'subscribe',
+							),
+						),
+					),
+					'calculate' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/calculate',
+							'defaults' => array(
+								'action' => 'calculate',
+							),
+						),
+					),
+					'cart' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/cart',
+							'defaults' => array(
+								'action' => 'cart',
+							),
+						),
+					),
+					'complete' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/complete[/:commitment_id]',
+							'defaults' => array(
+								'action' => 'complete',
+							),
+						),
+					),
+					'invoiceList' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/invoice-list[/:account_id]',
+							'defaults' => array(
+								'action' => 'invoiceList',
+							),
 						),
 					),
 				),
@@ -657,6 +726,14 @@ return array (
 				array('route' => 'flowAccount/cancel', 'roles' => array('user')),
 				array('route' => 'flowAccount/signOut', 'roles' => array('user')),
 				array('route' => 'flowAccount/repair', 'roles' => array('admin')),
+
+				array('route' => 'catalogue', 'roles' => array('guest')),
+				array('route' => 'catalogue/index', 'roles' => array('guest')),
+				array('route' => 'catalogue/subscribe', 'roles' => array('guest')),
+				array('route' => 'catalogue/calculate', 'roles' => array('guest')),
+				array('route' => 'catalogue/cart', 'roles' => array('guest')),
+				array('route' => 'catalogue/complete', 'roles' => array('user')),
+				array('route' => 'catalogue/invoiceList', 'roles' => array('guest')),
 				
 				array('route' => 'emailing/requestList', 'roles' => array('guest')),
 				array('route' => 'emailing/generate', 'roles' => array('operational_management')),
@@ -1881,6 +1958,207 @@ table.note-report td {
 		),
 	),
 
+	// Default catalogue
+
+	'catalogue/product/rates' => [
+		'products' => [
+			'tennis_mini_kids' => ['caption' => ['default' => 'Mini Kids, 1 semaine'], 'unit_price' => 99],
+			'tennis_progress_l15' => ['caption' => ['default' => 'Progress -15ans (obsolète), 1 semaine'], 'unit_price' => 195],
+			'tennis_progress_g15' => ['caption' => ['default' => 'Progress, 1 semaine'], 'unit_price' => 210],
+			'tennis_performance_sans_l15' => ['caption' => ['default' => 'Performance -15ans (obsolète), 1 semaine'], 'unit_price' => 290],
+			'tennis_performance_sans_g15' => ['caption' => ['default' => 'Performance sans hébergement, 1 semaine'], 'unit_price' => 350],
+			'tennis_performance_avec_1s' => ['caption' => ['default' => 'Performance avec hébergement, 1 semaine'], 'unit_price' => 795],
+			'tennis_performance_avec_2s' => ['caption' => ['default' => 'Performance avec hébergement, 2 semaines'], 'unit_price' => 1495],
+			'tennis_tmc_sans' => ['caption' => ['default' => 'Tennis + TMC sans hébergement, 1 semaine'], 'unit_price' => 350],
+			'tennis_tmc_avec' => ['caption' => ['default' => 'Tennis + TMC avec hébergement - 1 semaine'], 'unit_price' => 690],
+			'tennis_tmc_aout' => ['caption' => ['default' => 'Tennis + TMC avec hébergement Août - 1 semaine'], 'unit_price' => 1790],
+			'tennis_tournois_sans_l15' => ['caption' => ['default' => 'Tennis + tournois -15ans (obsolète) - 1 semaine'], 'unit_price' => 470],
+			'tennis_tournois_sans_g15' => ['caption' => ['default' => 'Tennis + tournois sans hébergement - 1 semaine'], 'unit_price' => 495],
+			'tennis_tournois_avec_1s' => ['caption' => ['default' => 'Tennis + tournois avec hébergement - 1 semaine'], 'unit_price' => 990],
+			'tennis_tournois_avec_2s' => ['caption' => ['default' => 'Tennis + tournois avec hébergement - 1 semaines'], 'unit_price' => 1790],
+		],
+		'options' => [
+			'prise_en_charge' => ['caption' => ['default' => 'Prise en charge'], 'unit_price' => 125],
+		],
+		'discounts' => [
+			'multiple_subscription' => ['caption' => ['default' => 'Réduction souscriptions multiples'], 'progressiveness' => [0, 0.05, 0.1, 0.2]],
+		],
+	],
+	
+	'catalogue/generic' => array(
+		'header' => array(
+			'title' => ['default' => '2pit.io - Catalogue', 'fr_FR' => '2pit.io - Catalogue'],
+			'description' => ['default' => 'Subscribe online to the 2pit.io products', 'fr_FR' => 'Souscrivez en ligne au produits 2pit.io'],
+			'style' => array(
+				'navbar' => 'background-color: transparent;',
+				'topNavCollapse' => 'background-color: #ffffff;',
+			),
+			'navbar' => array(
+				'class' => 'navbar navbar-expand-lg fixed-top scrolling-navbar navbar-black',
+				'account' => true,
+				'collapse' => false,
+			),
+			'logo' => array(
+				'href' => 'home',
+				'params' => [],
+				'src' => '/logos/2pit.io/carre80.png',
+				'height' => 40,
+				'alt' => '2pit.io logo',
+			),
+			'intro_height' => '65%',
+			'background_image' => array(
+				'mask' => null,
+				'src' => ['default' => '/img/2pit.io/notes-coul.png'],
+				'class' => 'img-fluid',
+				'alt' => 'A coffee and the bill',
+			),
+		),
+	
+		'card' => [
+			'properties' => [
+				'logo' => ['definition' => 'inline', 'type' => 'img', 'labels' => ['default' => '']],
+				'description' => ['definition' => 'inline', 'type' => 'html', 'labels' => ['default' => 'Module', 'fr_FR' => 'Module']],
+				'condition' => ['definition' => 'inline', 'type' => 'html', 'labels' => ['default' => 'Conditions', 'fr_FR' => 'Conditions']],
+				'space' => ['type' => 'space', 'labels' => ['default' => '']],
+				'freemium' => ['definition' => 'inline', 'type' => 'number', 'labels' => ['default' => 'Autodiagnostic', 'fr_FR' => 'Autodiagnostic'], 'format' => ['default' => '%s €']],
+				'premium' => ['definition' => 'inline', 'type' => 'number', 'labels' => ['default' => 'Assisted diagnostic', 'fr_FR' => 'Diagnostic accompagné'], 'format' => ['default' => '%s €']],
+			],
+		],
+		
+		'products' => [
+			'mini_kids' =>[
+				'card' => [
+					'logo' => ['src' => ['default' => '/img/tennis-etudes.com/stages-tennis-mini_kids.png'], 'alt' => ['default' => 'Image Mini-Kids'], 'class' => 'img-fluid z-depth-0'],
+					'description' => ['default' => '
+<h5 class="mt-3">
+	<strong>Mini-Kids</strong>
+</h5>
+<p class="text-muted">
+	À̀ partir d’1 semaine<br>
+	1h30 d’entraînement Tennis par jour<br>
+	Chaque Matin
+</p>
+					'],
+					'condition' => ['default' => '4 à 7 ans<br>Tous niveaux'],
+					'freemium' => 0,
+					'premium' => 2250,
+				],
+		
+				'form' => [
+					'introduction' => ['default' => '
+<p class="text-center">Des réductions s’appliquent automatiquement au moment du paiement en fonction du nombre de stagiaires.</p>
+					'],
+					'inputs' => [
+						'sans_hebergement_mention' => ['definition' => 'inline', 'type' => 'mention', 'labels' => ['default' => 'Du lundi au vendredi']],
+						'date' => ['definition' => 'inline', 'type' => 'date', 'labels' => ['default' => 'Date souhaitée']],
+						'subscribeProduct-tennis_mini_kids' => ['definition' => 'inline', 'type' => 'number', 'labels' => ['default' => 'Stagiaires : %s €']],
+					],
+					'rows' => [
+						[
+							'class' => 'row mb-3',
+							'cols' => [
+								['class' => 'col-md-4', 'inputId' => 'date'],
+								['class' => 'col-md-8 md-form', 'inputId' => 'sans_hebergement_mention'],
+							],
+						],
+						[
+							'class' => 'row mb-3',
+							'cols' => [
+								['class' => 'col-md-6', 'inputId' => 'subscribeProduct-tennis_mini_kids'],
+							],
+						],
+					],
+				]
+			],
+			'performance' =>[
+				'card' => [
+					'logo' => ['src' => ['default' => '/img/tennis-etudes.com/stages-tennis-performance.png'], 'alt' => ['default' => 'Image Performance'], 'class' => 'img-fluid z-depth-0'],
+					'description' => ['default' => '
+<h5 class="mt-3">
+	<strong>Performance</strong>
+</h5>
+<p class="text-muted">
+	À̀ partir d’1 semaine<br>
+	20h hebdomadaires d’entraînements sportifs :<br>
+	Chaque matin : 2h d’entraînement Tennis (technique)<br>
+	Chaque après-midi : 2h d’entraînement variant Tennis (tactique),<br>
+	Préparation physique et développement personnel<br>
+	prise en charge journée pour les moins de 15 ans
+</p>
+					'],
+					'condition' => ['default' => '
+	8 ans pour les jeunes adultes<br>
+	Tous niveaux
+					'],
+					'freemium' => 350,
+					'premium' => 795,
+				],
+		
+				'form' => [
+					'introduction' => ['default' => '
+<p class="text-center">Des réductions s’appliquent automatiquement au moment du paiement en fonction du nombre de stagiaires.</p>
+					'],
+					'inputs' => [
+						'sans_hebergement' => ['definition' => 'inline', 'type' => 'radio', 'propertyId' => 'hebergement', 'value' => 0, 'attributes' => 'checked', 'labels' => ['default' => 'Sans hébergement']],
+						'avec_hebergement' => ['definition' => 'inline', 'type' => 'radio', 'propertyId' => 'hebergement', 'value' => 1, 'labels' => ['default' => 'Avec hébergement']],
+						'sans_hebergement_mention' => ['definition' => 'inline', 'type' => 'mention', 'labels' => ['default' => 'Du lundi au vendredi']],
+						'avec_hebergement_mention' => ['definition' => 'inline', 'type' => 'mention', 'labels' => ['default' => 'Du dimanche 17h au samedi avant 14h']],
+						'date' => ['definition' => 'inline', 'type' => 'date', 'labels' => ['default' => 'Date souhaitée']],
+						'subscribeProduct-tennis_performance_sans_g15' => ['definition' => 'inline', 'type' => 'number', 'labels' => ['default' => 'Stagiaires sans hébergement : %s €']],
+						'subscribeOption-performance-prise_en_charge' => ['definition' => 'inline', 'type' => 'number', 'labels' => ['default' => 'Option prise en charge journée de 8h30 à 18h00 avec déjeuner et goûter: %s €']],
+						'subscribeProduct-tennis_performance_avec_1s' => ['definition' => 'inline', 'type' => 'number', 'labels' => ['default' => 'Stagiaires avec hébergement 1 semaine : %s €']],
+						'subscribeProduct-tennis_performance_avec_2s' => ['definition' => 'inline', 'type' => 'number', 'labels' => ['default' => 'Stagiaires avec hébergement 2 semaines : %s €']],
+					],
+					'rows' => [
+						[
+							'class' => 'row',
+							'cols' => [
+								['class' => 'col-md-6', 'inputId' => 'sans_hebergement'],
+								['class' => 'col-md-6', 'inputId' => 'avec_hebergement'],
+							],
+						],
+						[
+							'class' => 'row mb-3',
+							'cols' => [
+								['class' => 'col-md-4', 'inputId' => 'date'],
+								['class' => 'col-md-8 sans_hebergement', 'inputId' => 'sans_hebergement_mention'],
+								['class' => 'col-md-8 avec_hebergement', 'inputId' => 'avec_hebergement_mention', 'attributes' => 'hidden'],
+							],
+						],
+						[
+							'class' => 'row mb-3 sans_hebergement',
+							'cols' => [
+								['class' => 'col-md-4', 'inputId' => 'subscribeProduct-tennis_performance_sans_g15'],
+								['class' => 'col-md-8', 'inputId' => 'subscribeOption-performance-prise_en_charge'],
+							],
+						],
+						[
+							'class' => 'row mb-3 avec_hebergement',
+							'cols' => [
+								['class' => 'col-md-6', 'inputId' => 'subscribeProduct-tennis_performance_avec_1s'],
+							],
+							'attributes' => 'hidden',
+						],
+						[
+							'class' => 'row mb-3 avec_hebergement',
+							'cols' => [
+								['class' => 'col-md-6', 'inputId' => 'subscribeProduct-tennis_performance_avec_2s'],
+							],
+							'attributes' => 'hidden',
+						],
+					],
+				]
+			],
+		],
+		[
+			'invoice' => [
+				'discounts' => [
+					'multiple_subscription' => ['labels' => ['default' => 'Réduction souscriptions multiples']],
+				],
+			],
+		],
+	),
+	
 	// FLow Account
 	
 	'account/generic' => array(

@@ -1,0 +1,643 @@
+<script>
+
+var cart = {
+  products: new Object(),  
+  options: new Object(),  
+}
+
+$('#cartLink').hide();
+
+// Subscribe
+
+moment.locale('fr');
+
+function calculate(product, content) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.open('POST', '<?php echo $this->url('catalogue/calculate') ?>', true);
+  xhttp.setRequestHeader("Content-Type", "application/json");
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      content = JSON.parse(xhttp.responseText);
+      $('#' + product + '-subscribe-amount').html(content['including_options_amount'] + ' €');
+    }
+    else toastr.error("<?php echo $this->translate('A technical error has occured. Please try again later', 'ppit-core', $context->getLocale()) ?>");
+  }
+  xhttp.send(JSON.stringify(content));
+}
+
+function subscribe(content) {
+
+  // Save subscribed products
+  Object.keys(content.products).forEach(function(key) {
+    var product = content.products[key];
+    var cartProduct = cart.products[key];
+    if (cartProduct) cartProduct.quantity += parseInt(product.quantity);
+    else cart.products[key] = { "quantity": parseInt(product.quantity), "start": product.start, "end": product.end, "description": product.description };
+  });
+
+  // Save subscribed options
+  Object.keys(content.options).forEach(function(key) {
+    var option = content.options[key];
+    var cartOption = cart.options[key];
+    if (cartOption) cartOption.quantity += parseInt(option.quantity);
+    else cart.options[key] = { "quantity": parseInt(option.quantity) };
+  });
+
+  // Update cart link
+  var numberProduct = Object.keys(cart.products).length;
+  if (numberProduct > 0) {
+    $('#cartLink').show();
+    $('#cartNumberProduct').text(numberProduct);
+    $('#cartLink').removeClass('disabled');
+  }
+  else {
+    $('#cartLink').hide();
+    $('#cartNumberProduct').text('');
+    $('#cartLink').addClass('disabled');
+  }
+}
+
+function showSubscribe(product) {
+  var content = {
+    products: new Object(), 
+    options: new Object()
+  };
+  var xhttp = new XMLHttpRequest();
+  xhttp.open('GET', '<?php echo $this->url('catalogue/subscribe') ?>?product=' + product, true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4) {
+      if (xhttp.status == 200) {
+        $('#modal-' + product + '-Content').html(xhttp.responseText);
+        $('.datepicker').pickadate({
+          monthsFull: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre',
+                       'Novembre', 'Décembre'],
+          monthsShort: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'],
+          weekdaysFull: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+          weekdaysShort: ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'],
+          today: 'aujourd\'hui',
+          clear: 'effacer',
+          close: 'Fermer',
+//          format: 'd mmmm yyyy',
+          format: 'yyyy-mm-dd',
+          formatSubmit: 'yyyy-mm-dd'
+        });
+
+        $('.datepicker').change(function () {
+            var subscriptionDate = moment.max($(this).val(), moment(new Date()).add(7,'days'));
+            $(this).val(subscriptionDate);
+            content['subscription_date'] = subscriptionDate;
+        });
+        
+        $('.avec_hebergement').hide();
+        content.hebergement = false;
+
+        $('#subscribeOption-' + product + '-sans_hebergement').change(function() { 
+          $('.sans_hebergement').show();
+          $('.avec_hebergement').hide();
+          $('#' + product + '-hebergement_mention').text('Du lundi au vendredi');
+          content.hebergement = false;
+        });
+
+        $('#subscribeOption-' + product + '-avec_hebergement').change(function() { 
+          $('.sans_hebergement').hide();
+          $('.avec_hebergement').show();
+          $('#' + product + '-hebergement_mention').text('Du dimanche 17h au samedi avant 14h');
+          content.hebergement = true;
+        });
+
+  <?php foreach ($rates['products'] as $product_id => $unused) : ?>
+        $('#subscribeProduct-<?php echo $product_id ?>').change(function () {
+          if ($('#subscribeProduct-<?php echo $product_id ?>').val() < 0) {
+        	$('#subscribeProduct-<?php echo $product_id ?>').val(0);
+          }
+          else {
+            content.products.<?php echo $product_id ?> = { quantity: $('#subscribeProduct-<?php echo $product_id ?>').val() };
+  
+            // Compute the price
+            calculate(product, content);
+
+            // Compute the week
+            var subscriptionStart, subscriptionEnd, weekDay = moment(content['subscription_date']).isoWeekday();
+            if (weekDay == 7) weekDay = 0;
+            if (!content.hebergement) {
+              subscriptionStart = moment(content['subscription_date']).subtract(weekDay - 1, 'days');
+              subscriptionEnd = moment(content['subscription_date']).add(5 - weekDay, 'days');
+            }
+            else {
+              subscriptionStart = moment(content['subscription_date']).subtract(weekDay, 'days');
+              subscriptionEnd = moment(content['subscription_date']).add(6 - weekDay, 'days');
+            }
+            content.products.<?php echo $product_id ?>.description = 'Du ' + moment(subscriptionStart).format('dddd D MMMM') + ' au ' + moment(subscriptionEnd).format('dddd D MMMM');
+            content.products.<?php echo $product_id ?>.start = moment(subscriptionStart).format('YYYY-MM-DD');
+            content.products.<?php echo $product_id ?>.end = moment(subscriptionEnd).format('YYYY-MM-DD');
+            $('#' + product + '-hebergement_mention').html(content.products.<?php echo $product_id ?>.description);
+          }
+        });
+  <?php endforeach;?>
+
+        $('#subscribeOption-' + product + '-prise_en_charge').change(function () { 
+          if ($('#subscribeOption-' + product + '-prise_en_charge').val() < 0) {
+            $('#subscribeOption-' + product + '-prise_en_charge').val(0);
+          }
+          else {
+	        content.options.prise_en_charge = { quantity: $('#subscribeOption-' + product + '-prise_en_charge').val() };
+	        calculate(product, content);
+          }
+        });
+        
+        $('.mdb-select').material_select();
+
+        $('#' + product + '-addToCartLink').click(function () {
+          subscribe(content);
+          $('#modal-' + product + '-Form').modal('hide');
+        });
+      }
+      else toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+    }
+  }
+  xhttp.send();
+}
+
+$('#modal-mini_kids-Form').on('show.bs.modal', function () { showSubscribe('mini_kids') });
+$('#modal-progress-Form').on('show.bs.modal', function () { showSubscribe('progress') });
+$('#modal-performance-Form').on('show.bs.modal', function () { showSubscribe('performance') });
+$('#modal-tmc-Form').on('show.bs.modal', function () { showSubscribe('tmc') });
+$('#modal-tournois-Form').on('show.bs.modal', function () { showSubscribe('tournois') });
+
+// Cart
+
+function processCart() {
+  
+  var xhttp = new XMLHttpRequest(), formData = new FormData();
+  formData.append('csrf', $('#csrf').val());
+  formData.append('complete', 1);
+  formData.append('n_first', $('#register-n_first').val());
+  formData.append('n_last', $('#register-n_last').val());
+  formData.append('email', $('#register-email').val());
+  formData.append('tel_cell', $('#register-tel_cell').val());
+  formData.append('adr_street', $('#register-adr_street').val());
+  formData.append('adr_extended', $('#register-adr_extended').val());
+  formData.append('adr_zip', $('#register-adr_zip').val());
+  formData.append('adr_city', $('#register-adr_city').val());
+  formData.append('cart', JSON.stringify(cart));
+  xhttp.open('POST', '<?php echo $this->url('catalogue/cart') ?>', true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      $('#modalCartContent').html(xhttp.responseText);
+      showPayzen($('#register-commitment_id').val());
+    }
+  };
+  xhttp.send(formData);
+}
+
+function showCart() {
+console.log(cart.products);
+  var xhttp = new XMLHttpRequest(), formData = new FormData();
+  xhttp.open('POST', '<?php echo $this->url('catalogue/calculate') ?>', true);
+  xhttp.setRequestHeader("Content-Type", "application/json");
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      cart = JSON.parse(xhttp.responseText);
+      xhttp = new XMLHttpRequest();
+      formData.append('complete', 0);
+      formData.append('cart', JSON.stringify(cart));
+      xhttp.open('POST', '<?php echo $this->url('catalogue/cart') ?>', true);
+      xhttp.onload = function () {
+        if (xhttp.readyState == 4) {
+          if (xhttp.status == 200) {
+            $('#modalCartContent').html(xhttp.responseText);
+
+            // Tooltips Initialization
+            $(function () {
+              $('[data-toggle="tooltip"]').tooltip()
+            })
+
+            $('.cart_remove').click(function () {
+                var id = $(this).attr('id').split('-')[1];
+                if (cart.products[id].quantity > 0) cart.products[id].quantity--;
+                showCart();
+            });
+            
+            var form = document.getElementById('cartForm');
+            form.onsubmit = function(event) {
+              event.preventDefault();
+              processCart();
+            }
+          }
+          else toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+        }
+      }
+      xhttp.send(formData);
+    }
+    else toastr.error("<?php echo $this->translate('A technical error has occured. Please try again later', 'ppit-core', $context->getLocale()) ?>");
+  }
+  xhttp.send(JSON.stringify(cart));
+}
+
+$('#modalCartForm').on('show.bs.modal', showCart);
+
+// Payzen
+
+function showPayzen(id) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.open('GET', '<?php echo $this->url('funnel/payzen') ?>/' + id, true);
+//  xhttp.setRequestHeader("Content-Type", "application/json");
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4) {
+      if (xhttp.status == 200) {
+        $('#modalCartContent').html(xhttp.responseText);
+        document.forms['payzen'].submit();
+	  }
+	  else toastr.error("<?php echo $this->translate('A technical error has occured. Please try again later', 'ppit-core', $context->getLocale()) ?>");
+    }
+  }
+  xhttp.send();
+}
+
+$('#modalCartForm').on('show.bs.modal', showCart);
+
+<?php if ($profile) : ?>
+
+// Invoice list
+
+function showInvoiceList(id) {
+var xhttp = new XMLHttpRequest();
+xhttp.open('GET', '<?php echo $this->url('catalogue/invoiceList', ['account_id' => $profile->id]) ?>', true);
+xhttp.onload = function () {
+ if (xhttp.readyState == 4) {
+   if (xhttp.status == 200) {
+     $('#modalInvoiceContent').html(xhttp.responseText);
+    }
+    else toastr.error("<?php echo $this->translate('A technical error has occured. Please try again later', 'ppit-core', $context->getLocale()) ?>");
+ }
+}
+xhttp.send();
+}
+
+$('#modalInvoiceForm').on('show.bs.modal', showInvoiceList);
+
+<?php endif;?>
+
+<?php if ($commitment_id) : ?>
+
+// Completion of subscription
+
+function complete() {
+  
+  var xhttp = new XMLHttpRequest(), formData = new FormData();
+  formData.append('csrf', $('#csrf').val());
+
+<?php $first = true; foreach ($commitment->options as $option) : ?>
+  <?php if (array_key_exists($option['identifier'], $context->getConfig('catalogue/product/rates')['products'])) : ?>
+    <?php for ($i = 0; $i < $option['quantity']; $i++) : ?>
+
+  formData.append('complete-n_last-<?php echo $option['identifier'] . '-' . $i ?>', $('#complete-n_last-<?php echo $option['identifier'] . '-' . $i ?>').val());
+  formData.append('complete-n_first-<?php echo $option['identifier'] . '-' . $i ?>', $('#complete-n_first-<?php echo $option['identifier'] . '-' . $i ?>').val());
+  formData.append('complete-birth_date-<?php echo $option['identifier'] . '-' . $i ?>', $('#complete-birth_date-<?php echo $option['identifier'] . '-' . $i ?>').val());
+  formData.append('complete-email-<?php echo $option['identifier'] . '-' . $i ?>', $('#complete-email-<?php echo $option['identifier'] . '-' . $i ?>').val());
+  formData.append('complete-tel_cell-<?php echo $option['identifier'] . '-' . $i ?>', $('#complete-tel_cell-<?php echo $option['identifier'] . '-' . $i ?>').val());
+  formData.append('complete-property_11-<?php echo $option['identifier'] . '-' . $i ?>', $('#complete-property_11-<?php echo $option['identifier'] . '-' . $i ?>').val());
+  
+    <?php endfor;?>
+  <?php endif;?>
+<?php endforeach;?>
+
+  xhttp.open('POST', '<?php echo $this->url('catalogue/complete', ['commitment_id' => $commitment_id]) ?>', true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      $('#modalCompleteContent').html(xhttp.responseText);
+    }
+  };
+  xhttp.send(formData);
+}
+
+function showComplete(id) {
+var xhttp = new XMLHttpRequest();
+xhttp.open('GET', '<?php echo $this->url('catalogue/complete', ['commitment_id' => $commitment_id]) ?>', true);
+xhttp.onload = function () {
+ if (xhttp.readyState == 4) {
+   if (xhttp.status == 200) {
+     $('#modalCompleteContent').html(xhttp.responseText);
+     $('.datepicker').pickadate({
+       monthsFull: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre',
+                      'Novembre', 'Décembre'],
+       monthsShort: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'],
+       weekdaysFull: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+       weekdaysShort: ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'],
+       today: 'aujourd\'hui',
+       clear: 'effacer',
+       close: 'Fermer',
+       format: 'yyyy-mm-dd',
+       formatSubmit: 'yyyy-mm-dd'
+     });
+
+     $('#complete-download').click(function () {
+       $('#complete-submit').removeClass('disabled');
+     });
+     
+     var form = document.getElementById('completeForm');
+     form.onsubmit = function(event) {
+       event.preventDefault();
+       complete();
+     }
+   }
+   else toastr.error("<?php echo $this->translate('A technical error has occured. Please try again later', 'ppit-core', $context->getLocale()) ?>");
+ }
+}
+xhttp.send();
+}
+
+$('#modalCompleteForm').on('show.bs.modal', showComplete);
+
+<?php endif;?>
+
+<?php if ($message == 'Already activated') : ?>
+toastr.success('<?php echo $this->translate('This account has already been activated, you can log in now.', 'ppit-core', $context->getLocale()) ?>');
+$('#modalLoginForm').modal('show');
+showLogin();
+
+<?php elseif ($error == 'Authentication') : ?>
+toastr.error('<?php echo $this->translate('Invalid authentication', 'ppit-core', $context->getLocale()) ?>');
+<?php endif; ?>
+
+// Register
+
+function register() {
+  var xhttp = new XMLHttpRequest(), formData = new FormData(), route = '<?php echo $this->url('profile/register') ?>';
+  formData.append('csrf', $('#csrf').val());
+  formData.append('email', $('#register-email').val());
+  formData.append('n_first', $('#register-n_first').val());
+  formData.append('n_last', $('#register-n_last').val());
+  formData.append('password', $('#register-password').val());
+  formData.append('origine', $('#register-origine').val());
+  formData.append('locale', '<?php echo $context->getLocale() ?>');
+  xhttp.open('POST', route, true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4) {
+      $('#modalRegisterContent').html(xhttp.responseText);
+    }
+  };
+  xhttp.send(formData);
+}
+
+function showRegister() {
+var xhttp = new XMLHttpRequest(), route = '<?php echo $this->url('profile/register') ?>?';
+
+<?php if ($profile) : ?>
+route += 'email=<?php echo $profile->email ?>&n_first=<?php echo $profile->n_first ?>&n_last=<?php echo $profile->n_last ?>';
+<?php endif;?>
+
+xhttp.open('GET', route, true);
+xhttp.onload = function () {
+ if (xhttp.readyState == 4) {
+   if (xhttp.status == 200) {
+     $('#modalRegisterContent').html(xhttp.responseText);
+     $('.mdb-select').material_select();
+
+     var form = document.getElementById('registerForm');
+     form.onsubmit = function(event) {
+       event.preventDefault();
+       register();
+     }
+   }
+   else toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+ }
+};
+xhttp.send();
+}
+
+$('#modalRegisterForm').on('show.bs.modal', showRegister);
+
+// Login
+
+function login() {
+  var xhttp = new XMLHttpRequest(), formData = new FormData(), route = '<?php echo $this->url('profile/login') ?>';
+<?php if ($redirect) : ?>
+  route += '?redirect=<?php echo $redirect ?>';
+<?php endif;?>
+  formData.append('identity', $('#login-identity').val());
+  formData.append('credential', $('#login-credential').val());
+  xhttp.open('POST', route, true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4) {
+      if (xhttp.status == 200) {
+        document.location.href = '<?php echo $this->url($redirect) ?>';
+      }
+      else if (xhttp.status == 401 && xhttp.statusText == 'Activation') {
+        $('#modalLoginForm').modal('hide');
+        showRequestActivation($('#login-identity').val());
+      }
+      else if (xhttp.status == 401) {
+          $('#modalLoginContent').html(xhttp.responseText);
+
+          var form = document.getElementById('loginForm');
+          form.onsubmit = function(event) {
+            event.preventDefault();
+            login();
+          }
+      }
+      else toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+    }
+  };
+  xhttp.send(formData);
+}
+
+function showLogin() {
+  var xhttp = new XMLHttpRequest(), route = '<?php echo $this->url('profile/login') ?>';
+<?php if ($email) : ?>
+  route += '?identity=<?php echo $email ?>';
+<?php endif;?> 
+  xhttp.open('GET', route, true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4) {
+      if (xhttp.status == 200) {
+        $('#modalLoginContent').html(xhttp.responseText);
+
+	     // Lost password
+	
+	     $('#lost_password_anchor').click(function () {
+	         $('#modalLoginForm').modal('hide');
+	         $('#modalLostPasswordForm').modal('show');
+	     });
+
+        var form = document.getElementById('loginForm');
+        form.onsubmit = function(event) {
+          event.preventDefault();
+          login();
+        }
+      }
+      else toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+    }
+  };
+  xhttp.send();
+}
+
+$('#modalLoginForm').on('show.bs.modal', showLogin);
+
+$('#modalLostPasswordForm').on('hide.bs.modal', function () { 
+ $('.modal_input').val('');
+});
+
+function lostPassword() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.open('GET', '<?php echo $this->url('user/v1') ?>?request=lost-password&identity=' + $('#lost_password-identity').val(), true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4) {
+       if (xhttp.status == 200) {
+         toastr.success("<?php echo $this->translate('Your request has been registered. Please check you emails with a link to follow in order to set your new password.', 'ppit-core', $context->getLocale()) ?>");
+         $('#modalLostPasswordForm').modal('hide');
+       }
+       else {
+         toastr.error("<?php echo $this->translate('This account is not registered. Please register before login.', 'ppit-core', $context->getLocale()) ?>");
+         $('#modalRequestActivationForm').modal('hide');
+         $('#modalRegisterForm').modal('show');
+       }
+    }
+  };
+  xhttp.send();
+}
+
+var form = document.getElementById('lost-password-form');
+form.onsubmit = function(event) {
+  event.preventDefault();
+  lostPassword();
+}
+
+<?php if ($token) : ?>
+
+// Init password
+
+$('#modalInitPasswordForm').on('hide.bs.modal', function () { 
+  $('.modal_input').val('');
+});
+
+function initPassword() {
+  if ($('#init_password-password').val() != $('#init_password-password2').val()) {
+    toastr.error('<?php echo $this->translate('Both new passwords should be identical', 'ppit-core', $context->getLocale()) ?>');
+  }
+  else {
+    var xhttp = new XMLHttpRequest(), formData = new FormData();
+    formData.append('identity', $('#init_password-identity').val());
+    formData.append('password', $('#init_password-password').val());
+    xhttp.open('POST', '<?php echo $this->url('user/v1') ?>?request=init-password&hash=<?php echo $token ?>', true);
+    xhttp.onload = function () {
+      if (xhttp.readyState == 4) {
+        if (xhttp.status == 200) {
+          toastr.success("<?php echo $this->translate('Your password has been changed', 'ppit-core', $context->getLocale()) ?>");
+        }
+        else if (xhttp.status == 401) {
+          if (xhttp.statusText == 'Expiry') {
+            location.href = '<?php echo $this->url('landing/template2') ?>?message=expired';
+          }
+          else {
+            toastr.error('<?php echo $this->translate('Invalid authentication', 'ppit-core', $context->getLocale()) ?>');
+          }
+        }
+        else {
+          toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+        }
+        $('#modalInitPasswordForm').modal('hide');
+      }
+    }
+  };
+  xhttp.send(formData);
+}
+
+var form = document.getElementById('init-password-form');
+form.onsubmit = function(event) {
+  event.preventDefault();
+  initPassword();
+}
+
+<?php endif; ?>
+
+<?php if ($message == 'expired') : ?>
+toastr.error('<?php echo $this->translate('The link expired, please renew the request', 'ppit-core', $context->getLocale()) ?>');
+<?php endif;?>
+
+// Activated
+
+<?php if (!$context->isAuthenticated() && $message == 'activated') : ?>
+toastr.success('<?php echo $this->translate('Your account has been activated. Please login', 'ppit-core', $context->getLocale()) ?>');
+$('#modalLoginForm').modal('show');
+<?php endif; ?>  
+
+// Request activation
+
+function requestActivation() {
+  var xhttp = new XMLHttpRequest(), formData = new FormData(), route = '<?php echo $this->url('profile/requestActivation') ?>';
+  formData.append('csrf', $('#csrf').val());
+  formData.append('email', $('#request_activation-email').val());
+  xhttp.open('POST', route, true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4) {
+      $('#modalRequestActivationContent').html(xhttp.responseText);
+    }
+  };
+  xhttp.send(formData);
+}
+
+function showRequestActivation(email) {
+  var xhttp = new XMLHttpRequest(), route = '<?php echo $this->url('profile/requestActivation') ?>?email=' + email;
+  xhttp.open('GET', route, true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4) {
+      if (xhttp.status == 200) {
+        $('#modalRequestActivationContent').html(xhttp.responseText);
+        $('#modalRequestActivationForm').modal('show');
+        var form = document.getElementById('requestActivationForm');
+        form.onsubmit = function(event) {
+          event.preventDefault();
+          requestActivation();
+        }
+      }
+      else toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+    }
+  };
+  xhttp.send();
+}
+
+
+$('#modalShowCharterForm').on('show.bs.modal', function () { 
+  var xhttp = new XMLHttpRequest();
+  xhttp.open('GET', '<?php echo $this->url('instance/charter') . '?locale=' . $context->getLocale() ?>', true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4 && xhttp.status == 200) $('#show_charter_content').html(xhttp.responseText);
+    else toastr.error("Une erreur technique est survenue. Veuillez essayer ultérieurement.");
+  };
+  xhttp.send();
+});
+
+$('#modalShowGtouForm').on('show.bs.modal', function () { 
+  var xhttp = new XMLHttpRequest();
+  xhttp.open('GET', '<?php echo $this->url('instance/generalTermsOfUse') . '?locale=' . $context->getLocale() ?>', true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4 && xhttp.status == 200) $('#show_gtou_content').html(xhttp.responseText);
+    else toastr.error("Une erreur technique est survenue. Veuillez essayer ultérieurement.");
+  };
+  xhttp.send();
+});
+
+function logout() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.open('GET', '<?php echo $this->url('user/v1') ?>?request=logout', true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      document.location.href = '<?php echo $this->url('home') ?>';
+    }
+  };
+  xhttp.send();
+}
+
+var form = document.getElementById('logout-form');
+form.onsubmit = function(event) {
+  console.log('In logout form.onsubmit');
+  event.preventDefault();
+  logout();
+}
+    
+<?php if ($panel) : ?>
+  $('#<?php echo $panel ?>').modal('show');
+<?php endif;?>
+
+</script>

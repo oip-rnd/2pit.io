@@ -1,0 +1,115 @@
+<form id="completeForm">
+  <!--Header-->
+  <div class="modal-header text-center">
+
+    <h4 class="modal-title font-weight-bold dark-grey-text" id="myModalLabel">Terminer l’inscription</h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body mx-3">
+
+<!--  CSRF protection -->
+<?php $element = $csrfForm->get('csrf') ?>
+    <div class="form-group">
+      <?php echo $this->formElement($element) ?>
+<?php if ($this->formElementErrors($element)) : ?>
+      <div class="alert alert-danger" style="text-align: center">
+        <strong><?php echo $this->translate('The form has expired, please input again', 'ppit-core', $locale) ?></strong>
+      </div>
+<?php endif;?>
+    </div>
+
+<?php if ($actionStatus[0] == '500') : ?>
+    <div class="alert alert-danger" style="text-align: center">
+      <strong><?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $locale) ?></strong>
+    </div>
+
+<?php endif;?>
+
+<?php if ($commitment->status == 'new') $isDisabled = false; else $isDisabled = true ?>
+
+    <!--Body-->
+    <div class="modal-body">
+
+<?php if ($isDisabled) : ?>
+
+      <div class="alert alert-success" style="text-align: center">
+        <strong><?php echo $this->translate('Your request has been registered', 'ppit-core', $locale) ?></strong>
+      </div>
+
+<?php else : ?>      
+
+      <table class="table table-hover">
+        <thead>
+          <tr class="text-center">
+            <th class="font-weight-bold">Nom</th>
+            <th class="font-weight-bold">Prénom</th>
+            <th class="font-weight-bold">Date de naissance</th>
+            <th class="font-weight-bold">Email</th>
+            <th class="font-weight-bold">Téléphone</th>
+            <th class="font-weight-bold">Niveau ou Classement<br>N° licence</th>
+          </tr>
+        </thead>
+        <tbody>
+
+  <?php $first = true; foreach ($commitment->options as $option) : ?>
+    <?php if (array_key_exists($option['identifier'], $context->getConfig('tennisEtudes/product/rates')['products'])) : ?>
+      <?php for ($i = 0; $i < $option['quantity']; $i++) : ?>
+
+          <tr>
+            <th colspan="6"><?php echo $option['caption'] ?></th>
+          </tr>
+
+          <tr>
+            <th>
+              <div class="md-form my-0 py-0">
+                <input type="text" id="complete-n_last-<?php echo $option['identifier'] . '-' . $i ?>" class="form-control validate modal_input <?php if ($first) echo 'focus' ?>" required="required" value="" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
+              </div>
+            </th>
+            <th>
+              <div class="md-form my-0 py-0">
+                <input type="text" id="complete-n_first-<?php echo $option['identifier'] . '-' . $i ?>" class="form-control validate modal_input" required="required" value="" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
+              </div>
+            </th>
+            <th>
+              <div class="md-form my-0 py-0">
+                <input type="text" id="complete-birth_date-<?php echo $option['identifier'] . '-' . $i ?>" class="form-control validate modal_input datepicker" required="required" value="" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
+              </div>
+            </th>
+            <th>
+              <div class="md-form my-0 py-0">
+                <input type="email" id="complete-email-<?php echo $option['identifier'] . '-' . $i?>" class="form-control validate modal_input" required="required" value="" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
+              </div>
+            </th>
+            <th>
+              <div class="md-form my-0 py-0">
+                <input type="text" id="complete-tel_cell-<?php echo $option['identifier'] . '-' . $i?>" class="form-control validate modal_input" required="required" value="" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
+              </div>
+            </th>
+            <th>
+              <div class="md-form my-0 py-0">
+                <input type="text" id="complete-property_11-<?php echo $option['identifier'] . '-' . $i?>" class="form-control validate modal_input" required="required" value="" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
+              </div>
+            </th>
+          </tr>
+
+      <?php endfor?>
+    <?php endif;?>
+  <?php endforeach;?>
+
+            </tbody>
+          </table>
+
+          <div><a class="" href="<?php echo $this->basePath('/img/' . $context->getInstance()->caption . '/FICHE_SANITAIRE_DE_LIAISON.pdf')?>" target="_blank" id="complete-download">Télécharger la fiche sanitaire</a></div>
+          <div><button type="submit" class="btn btn-primary btn-rounded btn-sm disabled" id="complete-submit">Terminer l’inscription</button></div>
+
+<?php endif;?>
+
+        </div>
+        <!--Footer-->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-grey btn-rounded btn-sm" data-dismiss="modal">Fermer</button>
+        </div>
+  </div>
+</form>

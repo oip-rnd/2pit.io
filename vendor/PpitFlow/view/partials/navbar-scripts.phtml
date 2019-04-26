@@ -1,12 +1,11 @@
-<script>
 <?php
-if (array_key_exists('navbar', $header)) {
-	$navbarAccount = $header['navbar']['account']; 
-}
-else {
-	$navbarAccount = true; 
-}
+if (array_key_exists('navbar', $header)) $navbarAccount = $header['navbar']['account']; 
+else $navbarAccount = true; 
+
+$profile = $context->getProfile();
 ?>
+
+<script>
 
 <?php if (!$context->isAuthenticated()) : ?>
 
@@ -36,7 +35,7 @@ function register() {
   formData.append('n_last', $('#register-n_last').val());
   formData.append('password', $('#register-password').val());
   formData.append('origine', $('#register-origine').val());
-  formData.append('locale', '<?php echo $locale ?>');
+  formData.append('locale', '<?php echo $context->getLocale() ?>');
   xhttp.open('POST', route, true);
   xhttp.onload = function () {
     if (xhttp.readyState == 4) {
@@ -291,28 +290,6 @@ xhttp.send();
 
 $('#modalRequestActivationForm').on('show.bs.modal', showRequestActivation);
 
-// Profile
-	<?php if ($account_id) : ?>
-$('#modalProfileForm').on('hide.bs.modal', function () { 
-  $('#modalProfileInputs').html('');
-});
-
-$('#modalProfileForm').on('show.bs.modal', function () { 
-  var xhttp = new XMLHttpRequest();
-  xhttp.open('GET', '<?php echo $this->url('profile/update', ['account_id' => $account_id]) ?>', true);
-  xhttp.onload = function () {
-    if (xhttp.readyState == 4) {
-      if (xhttp.status == 200) {
-        $('#modalProfileInputs').html(xhttp.responseText);
-        connectProfileForm();
-      }
-      else toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
-    }
-  };
-  xhttp.send();
-});
-	<?php endif;?>
-
 	<?php if (isset ($payPal) && $payPal) : ?>
 
 <!-- PayPal -->
@@ -407,6 +384,28 @@ $('#modalPaymentForm').modal('show');
 	<?php endif;?>
 
 <?php else : ?>
+
+//Profile
+  <?php if ($profile) : ?>
+$('#modalProfileForm').on('hide.bs.modal', function () { 
+$('#modalProfileInputs').html('');
+});
+
+$('#modalProfileForm').on('show.bs.modal', function () { 
+var xhttp = new XMLHttpRequest();
+xhttp.open('GET', '<?php echo $this->url('profile/update', ['account_id' => $profile->id]) ?>', true);
+xhttp.onload = function () {
+ if (xhttp.readyState == 4) {
+   if (xhttp.status == 200) {
+     $('#modalProfileInputs').html(xhttp.responseText);
+     connectProfileForm();
+   }
+   else toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+ }
+};
+xhttp.send();
+});
+  <?php endif;?>
 
 // Validate charter
 

@@ -1,0 +1,92 @@
+<?php 
+$header = $content['header'];
+$productContent = $content['products'][$product]['card'];
+$form = $content['products'][$product]['form'];
+$introduction = (array_key_exists('introduction', $form)) ? $form['introduction'] : null;
+$inputs = $form['inputs'];
+?>
+
+<div id="subscribeForm">
+  <div class="modal-header text-center">
+    <h4 class="modal-title w-100 font-weight-bold"><img src="<?php echo $this->basePath($context->localize($productContent['logo']['src'])) ?>" height="80" alt="<?php echo $context->localize($productContent['logo']['alt']) ?>" class="z-depth-0"></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div id="modalRegisterInputs"></div>
+  <div class="modal-body mx-3">
+
+<?php if ($actionStatus[0] == '200') : ?>
+    <div class="alert alert-success" style="text-align: center">
+	   <strong><?php echo $this->translate('Your request has been registered.', 'ppit-core', $context->getLocale()) ?></strong>
+    </div>
+
+<?php elseif ($actionStatus[0] == '500') : ?>
+    <div class="alert alert-danger" style="text-align: center">
+      <strong><?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?></strong>
+    </div>
+
+<?php endif;?>
+
+<?php if ($actionStatus) $isDisabled = true; else $isDisabled = false ?>
+
+<?php if ($introduction) echo $context->localize($introduction) ?>
+
+<?php foreach ($form['rows'] as $row) : ?>
+
+  <div class="<?php echo $row['class']?>">
+  
+  <?php foreach ($row['cols'] as $column) : ?>
+    <?php 
+    $inputId = $column['inputId'];
+    $input = $inputs[$inputId];
+    $attributes = (array_key_exists('attributes', $input)) ? $input['attributes'] : null;
+    ?>
+    
+    <div class="<?php echo $column['class']?>">
+    
+    <?php if ($input['type'] == 'radio') : ?>
+      <div class="form-check">
+        <input type="radio" class="form-check-input subscribeOption" id="subscribeOption-<?php echo $product ?>-<?php echo $inputId ?>" name="subscribeOption-<?php echo $input['propertyId']?>" value="<?php echo $input['value']?>" <?php if ($attributes) echo $attributes ?> />
+        <label for="subscribeOption-<?php echo $product ?>-<?php echo $inputId ?>" class="form-check-label"><?php echo $context->localize($input['labels']) ?></label>
+      </div>
+    
+    <?php elseif ($input['type'] == 'date') : ?>
+      <div class="md-form">
+        <input type="text" id="subscribe-<?php echo $inputId ?>" class="form-control datepicker" <?php if ($attributes) echo $attributes ?> />
+        <label for="subscribe-<?php echo $inputId ?>"><?php echo $context->localize($input['labels']) ?></label>
+      </div>
+    
+    <?php elseif ($input['type'] == 'mention') : ?>
+      <div class="md-form"><strong id="<?php echo $product ?>-<?php echo $inputId ?>"><?php echo $context->localize($input['labels']) ?></strong></div>
+    
+    <?php elseif ($input['type'] == 'number') : ?>
+      <div class="md-form">
+        <input type="number" id="<?php echo $inputId ?>" value="0" />
+        <label for="<?php echo $inputId ?>" class="active"><?php echo $context->localize($input['labels']) ?></label>
+      </div>
+
+    <?php endif;?>
+
+    </div>
+
+  <?php endforeach;?>
+
+  </div>
+  
+<?php endforeach;?>
+
+   <div class="md-form">
+    <h4 class="mt-2 text-right">
+      <strong id="<?php echo $product?>-subscribe-amount"></strong>
+    </h4>
+  </div>
+
+  </div>
+  <div class="modal-footer d-flex justify-content-center">
+<?php if (!$isDisabled) : ?>
+    <button class="btn btn-primary btn-rounded" id="<?php echo $product?>-addToCartLink">Ajouter au panier</button>
+<?php endif;?>
+  </div>
+</div>
+    

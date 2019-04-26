@@ -1,3 +1,7 @@
+<?php
+$profile = $context->getProfile();
+?>
+
 <script>
 
 // Profile form
@@ -15,7 +19,7 @@ function uploadAvatar() {
 
     var xhttp = new XMLHttpRequest();
     xhttp = new XMLHttpRequest();
-    xhttp.open("POST", '<?php echo $this->url('profile/photoUpload', ['id' => $account_id]) ?>', true);
+    xhttp.open("POST", '<?php echo $this->url('profile/photoUpload', ['id' => $profile->id]) ?>', true);
     xhttp.onreadystatechange = function() {
       if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
       if (xhttp.readyState == 4 && xhttp.status == 200) {
@@ -89,7 +93,7 @@ function updateProfile() {
     <?php endforeach;?>
   <?php endif; ?>
 <?php endforeach;?>
-    xhttp.open('POST', '<?php echo $this->url('profile/update', ['account_id' => $account_id]) ?>', true);
+    xhttp.open('POST', '<?php echo $this->url('profile/update', ['account_id' => $profile->id]) ?>', true);
     xhttp.onload = function () {
       if (xhttp.readyState == 4 && xhttp.status == 200) {
         toastr.success("<?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?>");

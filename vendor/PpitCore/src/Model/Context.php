@@ -45,15 +45,17 @@ class Context
 	/** @var \Model\Context */ protected static $exemplary;
     /** @var int */ public static $static_user_id;
 	/** @var \Model\Instance */ public static $instance;
-    /** @var \Model\App */ //public static $static_app;
     /** @var array */ protected static $static_applications;
 	/** @var int */ protected static $place_id;
+	/** @var \Model\Place */ public static $place;
 	/** @var string */ protected static $static_formated_name;
 	/** @var int */ protected static $static_community_id;
 	/** @var int */ protected static $static_vcard_id;
+	/** @var \Model\Vcard */ public static $vcard;
 	/** @var array */ protected static $static_roles;
 	/** @var array */ protected static $static_perimeters;
 	/** @var string */ protected static $static_locale;
+	/** @var \Model\Account */ public static $profile;
 	/** @var boolean */ protected static $static_is_demo_mode_active;
 
 	/** @var array */ private static $config;
@@ -170,13 +172,31 @@ class Context
      * @return int|NULL
      */
     public function getContactId() { return Context::$static_vcard_id; }
+
+    /**
+     * The getContact() method returns the current contact (\Model\Vcard).
+     * @return \Model\Vcard|NULL
+     */
+    public function getContact() { return Context::$contact; }
     
+    /**
+     * The getProfile() method returns the current profile (\Model\Account) for the current connected user.
+     * @return \Model\Account|NULL
+     */
+    public function getProfile() { return Context::$profile; }
+       
     /**
      * Returns the id (primary key on \Model\Place) of the place for the current connected user
      * @return int|NULL
      */
     public function getPlaceId() { return Context::$place_id; }
 
+    /**
+     * The getPlace() method returns the current place (\Model\Place).
+     * @return \Model\Place|NULL
+     */
+    public function getPlace() { return Context::$place; }
+    
     /**
      * Returns the roles for which the current connected user is authorized.
      * Each session, connected user or not has the 'guest' role.
@@ -458,11 +478,11 @@ class Context
     	$user = User::getTable()->transGet($user_id);
     	if ($user) {
     		$contact = Vcard::getTable()->transget($user->vcard_id);
-    		Context::$static_vcard_id = $contact->id;
-    		 
+    		Context::$vcard = $contact;
+    		
     		// Retrieve the instance data
     		Context::$instance = Instance::get($contact->instance_id);
-    		 
+    		
 //    		$user->community = Community::get($contact->community_id);
     		Context::$static_applications = array();
     		foreach ($contact->applications as $applicationId => $default) {
@@ -479,9 +499,13 @@ class Context
     		Context::$static_roles['user'] = 'user';
     		Context::$static_perimeters = $contact->perimeters;
     		if (!Context::$static_locale) Context::$static_locale = $contact->locale;
-    	
+
+    		// Retrieve the profile of the logged user
+    		Context::$profile = Account::get($contact->id, 'contact_1_id');
+    		
     		// Retrieve the place data
     		Context::$place_id = Context::$instance->default_place_id;
+    		Context::$place = Place::get($place_id);
     	}
     }
     
@@ -504,6 +528,7 @@ class Context
 
     	$request = $sm->get('Request');
 
+    	// Retrieve the locale from the query
     	$query = $request->getUri()->getQuery();
     	$pos = strpos($query, 'locale');
     	if ($pos !== false) $locale = substr($query, $pos + 7);
@@ -524,6 +549,7 @@ class Context
     		else {
 	    		Context::$static_applications = array();
 	    		Context::$place_id = Context::$instance->default_place_id;
+	    		Context::$place = Place::get(Context::$place_id);
 	    		Context::$static_community_id = 0;
 	    		Context::$static_vcard_id = 0;
 	    		Context::$static_formated_name = 'Guest';

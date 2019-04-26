@@ -1,0 +1,585 @@
+<?php 
+$header = $content['header'];
+$card = $content['card'];
+$products = $content['products'];
+?>
+
+<?php
+if (array_key_exists('navbar', $header)) {
+  $navbarStyle = $header['style']['navbar']; 
+  $topNavCollapseStyle = $header['style']['topNavCollapse'];
+  $navbarClass = $header['navbar']['class']; 
+  $navbarAccount = $header['navbar']['account']; 
+  $navbarCollapse = $header['navbar']['collapse'];
+}
+else {
+  $navbarStyle = 'background-color: transparent;';
+  $topNavCollapseStyle = 'background-color: #4285F4;';
+  $navbarClass = 'navbar navbar-expand-lg fixed-top scrolling-navbar';
+  $navbarAccount = false; 
+  $navbarCollapse = false;
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <title><?php echo $context->localize($header['title']) ?></title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="description" content="<?php echo $context->localize($header['description']) ?>">
+  <meta name="robots" content="index, follow">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <!-- Favicon -->      
+  <link rel="shortcut icon" href="<?php echo $this->basePath('/img/favicon.ico') ?>">
+
+  <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <!-- Bootstrap core CSS -->
+    <link href="<?php echo $this->basePath('/bootstrap-4-2/css/bootstrap.min.css') ?>" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="<?php echo $this->basePath('MDB-Pro/css/mdb.min.css') ?>" rel="stylesheet">
+
+  <!-- Custom style cart-v1-->
+   <style>
+  html,
+  body,
+  header,
+ 
+    #intro {
+      height: <?php echo $header['intro_height'] ?>;
+      max-width: 100%;
+    }
+  
+  #intro {
+      background: url("<?php echo $this->basePath($context->localize($content['header']['background_image']['src'])) ?>") no-repeat center center;
+      -webkit-background-size: contain;
+      -moz-background-size: contain;
+      -o-background-size: contain;
+      background-size: <?php echo array_key_exists('background-size', $header) ? $header['background-size'] : 'contain' ?>;
+      background-color: <?php echo array_key_exists('background-color', $header) ? $header['background-color'] : '' ?>;
+  }
+   
+    @media only screen and (max-width: 768px) {
+
+/* Force table to not be like tables anymore */
+table,
+thead,
+tbody,
+th,
+td,
+tr {
+  display: block;
+  text-align: center;
+}
+table.table td {
+  padding-top: 1.5rem;
+  padding-bottom: .4rem;
+
+}
+img {}
+/* Hide table headers (but not display: none;, for accessibility) */
+thead tr {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+}
+
+img {
+  display: block;
+  margin: 0 auto;
+}
+td {
+  /* Behave  like a "row" */
+  border: none;
+  position: relative;
+  padding-left: 50%;
+
+}
+
+td:before {
+  /* Now like a table header */
+  position: absolute;
+  /* Top/left values mimic padding */
+  top: 6px;
+  left: 6px;
+  white-space: nowrap;
+}
+
+td:nth-of-type(1):before {
+  content: "Stage";
+  font-weight: 400;
+  left: 50%;
+  transform: translate(-50%);
+}
+td:nth-of-type(2):before {
+  content: "Conditions";
+  font-weight: 400;
+  left: 50%;
+  transform: translate(-50%);
+}
+td:nth-of-type(3) {
+  position: absolute;
+  border: none !important;
+}
+td:nth-of-type(4):before {
+  content: "Sans hébergement";
+  left: 50%;
+  transform: translate(-50%);
+  font-weight: 400;
+}
+td:nth-of-type(5):before {
+  content: "Avec hébergement";
+  left: 50%;
+  transform: translate(-50%);
+  font-weight: 400;
+}
+td:nth-of-type(5) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding-top: 1.9rem !important;
+}
+td:nth-of-type(6):before {
+  content: "";
+  left: 50%;
+  transform: translate(-50%);
+  font-weight: 400;
+}
+td:nth-of-type(7):before {
+  content: "Remove item";
+  left: 50%;
+  transform: translate(-50%);
+  font-weight: 400;
+}
+.btn-group {
+  margin-left: 0 !important;
+}
+tr:nth-child(4) td:nth-of-type(4):before,
+tr:nth-child(4) td:nth-of-type(1):before,
+tr:nth-child(4) td:nth-of-type(2):before {
+  content: '';
+}
+tr:nth-child(4) td:nth-of-type(1) {
+  position: absolute;
+  border: none !important;
+}
+tr:nth-child(4) td:nth-of-type(3) {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+tr:nth-child(4) td:nth-of-type(4) {
+  border-top: none !important;
+  display: flex;
+  justify-content: center;
+  border-bottom : 1px solid #dee2e6;
+}
+
+}
+    </style>
+   
+    <style>
+        .navbar { background-color: transparent; }
+        .top-nav-collapse { background-color: #ffffff; }
+body.modal-open {
+    overflow: hidden;
+    position: fixed;
+}
+        </style>
+<body class="cart-v1 hidden-sn animated">
+
+    <!--Main Navigation-->
+    <header>
+    
+      <!--Navbar-->
+
+        <nav class="<?php echo $navbarClass ?>">
+
+                <!-- Navbar brand -->
+                <a href="<?php echo $this->url($header['logo']['href'], $header['logo']['params']) ?>" class="navbar-brand">
+                  <img 
+                  src="<?php echo $this->basePath($header['logo']['src']) ?>"
+                  <?php if (array_key_exists('height', $header['logo'])) echo 'height="'.$header['logo']['height'].'"' ?>
+                  <?php if (array_key_exists('width', $header['logo'])) echo 'width="'.$header['logo']['width'].'"' ?>
+                  alt="<?php echo $header['logo']['alt'] ?>"
+                />
+                </a>
+
+<?php if ($navbarCollapse) :?>
+                <!-- Collapse button -->
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav" aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+                </button>
+                  <div class="collapse navbar-collapse" id="basicExampleNav">
+<?php endif;?>
+    
+                  <!-- Collapsible content -->
+                  <!-- Links -->
+                  <ul class="nav navbar-nav nav-flex-icons ml-auto">
+                    <li class="nav-item">
+                      <a class="nav-link dark-grey-text font-weight-bold disabled" id="cartLink" href="#" data-toggle="modal" data-target="#modalCartForm">
+                        <span class="badge danger-color" id="cartNumberProduct"></span>
+                        <i class="fa fa-shopping-bag blue-text" aria-hidden="true"></i>
+                        <span class="clearfix d-none d-sm-inline-block">Panier</span>
+                      </a>
+                    </li>
+                    
+<?php if ($commitments) : ?>
+                    <li class="nav-item">
+                      <a class="nav-link dark-grey-text font-weight-bold" id="invoiceLink" href="#" data-toggle="modal" data-target="#modalInvoiceForm">
+                        <span class="badge danger-color" id="invoiceNumber"><?php echo count($commitments) ?></span>
+                        <i class="fa fa-receipt blue-text" aria-hidden="true"></i>
+                        <span class="clearfix d-none d-sm-inline-block">Factures</span>
+                      </a>
+                    </li>
+<?php endif;?>
+                  
+<?php if ($context->isAuthenticated()) : ?>
+                    <li class="nav-item">
+                      <a class="nav-link dark-grey-text font-weight-bold" id="login-anchor" data-toggle="modal" data-target="#modalLogoutForm">
+                        <i class="fa fa-sign-out-alt blue-text" aria-hidden="true"></i>
+                        <span class="clearfix d-none d-sm-inline-block">Se déconnecter</span>
+                      </a>
+                    </li>
+
+<?php else : ?>
+                    <li class="nav-item">
+                      <a class="nav-link dark-grey-text font-weight-bold" id="register-anchor" data-toggle="modal" data-target="#modalRegisterForm">
+                        <i class="fa fa-user blue-text" aria-hidden="true"></i>
+                        <span class="clearfix d-none d-sm-inline-block">Créer un compte</span>
+                      </a>
+                    </li>
+
+                    <li class="nav-item">
+                      <a class="nav-link dark-grey-text font-weight-bold" id="login-anchor" data-toggle="modal" data-target="#modalLoginForm">
+                        <i class="fa fa-sign-in-alt blue-text" aria-hidden="true"></i>
+                        <span class="clearfix d-none d-sm-inline-block">Se connecter</span>
+                      </a>
+                    </li>
+
+<?php endif;?>
+
+                    <li class="nav-item">
+                      <a class="nav-link dark-grey-text font-weight-bold" href="mailto:contact@tennis-etudes.com"> <i class="fa fa-envelope ml-1"></i> <span class="clearfix d-none d-sm-inline-block">Nous contacter</span></a>
+                    </li>
+                  </ul>
+                  <!-- Links -->
+
+
+        </nav>
+        <!--/.Navbar-->    
+ 
+    <!-- Mask -->
+    <div id="intro" class="view h-100"> 
+      <div class="d-block h-100 w-lg-100 rgba-alpha">
+        <div class="full-bg-img flex-center">
+          <div class="col-md-8 justify-content-center text-center">
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--/Mask-->
+
+    </header>
+    <!--Main Navigation-->
+
+  <!--Main Layout-->
+  <main style="padding-top: 0.5rem">
+
+    <!-- Main Container -->
+    <div class="container">
+
+      <section class="section pb-5">
+
+        <!-- Shopping Cart table -->
+        <div class="table-responsive">
+
+          <table class="table product-table">
+
+            <!-- Table head -->
+            <thead>
+              <tr>
+<?php foreach ($card['properties'] as $propertyId => $property) : ?>
+                <th class="font-weight-bold">
+                  <strong>
+  <?php echo $context->localize($property['labels']) ?>
+                  </strong>
+                </th>
+<?php endforeach;?>
+                <th></th>
+              </tr>
+            </thead>
+            <!-- /.Table head -->
+
+            <!-- Table body -->
+            <tbody>
+
+<?php foreach ($products as $productId => $product) : ?>
+              <tr>
+  <?php foreach ($card['properties'] as $propertyId => $property) : ?>
+    <?php 
+    if (array_key_exists($propertyId, $product['card'])) $value = $product['card'][$propertyId];
+    ?>
+    <?php if ($property['type'] == 'space') : ?>
+                <td></td>
+    <?php elseif ($property['type'] == 'img') : ?>
+                <th scope="row">
+                  <img src="<?php echo $this->basePath($context->localize($value['src'])) ?>" alt="<?php echo $this->basePath($context->localize($value['alt'])) ?>" class="img-fluid z-depth-0" />
+                </th>
+    <?php elseif ($property['type'] == 'number') : ?>
+                <td>
+                  <?php echo sprintf($context->localize($property['format']), $value) ?>
+                </td>
+    <?php elseif ($property['type'] == 'html') : ?>
+                <td>
+                  <?php echo $context->localize($value) ?>
+                </td>
+    <?php endif;?>
+  <?php endforeach;?>
+                <td>
+                  <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-<?php echo $productId ?>-Form" title="Remove item">Sélectionner</button>
+                </td>
+              </tr>
+<?php endforeach;?>
+
+            </tbody>
+            <!-- /.Table body -->
+
+          </table>
+
+        </div>
+        <!-- Shopping Cart table -->
+
+      </section>
+
+    </div>
+    <!-- /Main Container -->
+
+  </main>
+  <!--Main Layout-->
+
+<?php foreach ($products as $productId => $product) : ?>
+  <div class="modal fade" id="modal-<?php echo $productId ?>-Form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content" id="modal-<?php echo $productId ?>-Content"></div>
+    </div>
+  </div>
+<?php endforeach;?>
+
+  <!-- Cart Modal -->
+
+  <div class="modal fade cart-modal" id="modalCartForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content" id="modalCartContent"></div>
+    </div>
+  </div>
+
+  <!-- /.Cart Modal -->
+
+  <!-- Complete Modal -->
+
+  <div class="modal fade complete-modal" id="modalCompleteForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content" id="modalCompleteContent"></div>
+    </div>
+  </div>
+
+  <!-- /.Complete Modal -->
+
+  <!-- Invoice Modal -->
+
+  <div class="modal fade invoice-modal" id="modalInvoiceForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content" id="modalInvoiceContent"></div>
+    </div>
+  </div>
+
+  <!-- /.Invoice Modal -->
+  
+<div class="modal fade" id="modalRegisterForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content" id="modalRegisterContent"></div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalLoginForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modalLoginContent"></div>
+    </div>
+</div>
+  
+<div class="modal fade" id="modalLostPasswordForm" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('Lost password', 'ppit-core', $context->getLocale()) ?></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="lost-password-form">
+              <span id="login-csrf"></span>
+              <div class="modal-body mx-3">
+                  <div class="md-form mb-5">
+                      <i class="fa fa-envelope prefix grey-text"></i>
+                      <input type="text" id="lost_password-identity" class="form-control validate modal_input" required="required">
+                      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" for="lost_password-identity"><?php echo $this->translate('Email', 'ppit-core', $context->getLocale()) ?></label>
+                  </div>
+  
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary"><?php echo $this->translate('Send', 'ppit-core', $context->getLocale()) ?></button>
+              </div>
+          </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalInitPasswordForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('New password', 'ppit-core', $context->getLocale()) ?></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="init-password-form">
+              <div class="modal-body mx-3">
+                  <div class="md-form mb-5">
+                      <input type="email" id="init_password-identity" class="form-control validate modal_input" required="required">
+                      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" for="init_password-identity">* <?php echo $this->translate('Email', 'ppit-core', $context->getLocale()) ?></label>
+                  </div>
+                    
+                  <div class="md-form mb-4">
+                      <input type="password" id="init_password-password" class="form-control validate modal_input" required="required">
+                      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" for="lost_password-password">* <?php echo $this->translate('Choose a password', 'ppit-core', $context->getLocale()) ?></label>
+                  </div>
+  
+                  <div class="md-form mb-4">
+                      <input type="password" id="init_password-password2" class="form-control validate modal_input" required="required">
+                      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" for="lost_password-password2">* <?php echo $this->translate('Confirm the password', 'ppit-core', $context->getLocale()) ?></label>
+                  </div>
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+                  <button type="submit" class="btn btn-primary"><?php echo $this->translate('Submit', 'ppit-core', $context->getLocale()) ?></button>
+              </div>
+            </form>
+        </div>
+    </div>
+</div>
+  
+<div class="modal fade" id="modalRequestActivationForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" id="modalRequestActivationContent"></div>
+  </div>
+</div>
+  
+<div class="modal fade" id="modalLogoutForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form id="logout-form">
+              <div class="modal-header text-center">
+                  <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('Log Out', 'ppit-flow', $context->getLocale()) ?></h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+                  <button class="btn btn-primary btn-rounded btn-sm" id="logout-button">Confirmer la déconnexion</button>
+              </div>
+      </form>
+        </div>
+    </div>
+</div>
+
+    <!--Footer-->
+    <footer class="page-footer stylish-color pt-4 mt-4 text-center text-md-left">
+
+      <!--Footer Links-->
+      <div class="container">
+        <div class="row">
+
+          <!--First column-->
+          <div class="col-md-3">
+            <h5 class="title"><?php echo $context->localize(['default' => 'Resources', 'fr_FR' => 'Ressources']) ?></h5>
+            <ul class="list-unstyled">
+
+          <hr class="w-100 clearfix d-md-none">
+
+              <li>
+             <a data-toggle="modal" data-target="#modalShowCharterForm"><?php echo $context->localize(['default' => 'Charter', 'fr_FR' => 'Charte']) ?></a>
+
+              </li>
+            </ul>
+          </div>
+          <!--/First column-->
+
+        </div>
+      </div>
+
+      <!--Copyright-->
+      <div class="footer-copyright py-3 text-center container-fluid">
+        <?php echo $context->localize(['default' => '© 2018 Copyright: <a href="https://github.com/2pit-io/PpitCore/blob/master/license.txt">2pit.io</a>']) ?>
+      </div>
+      <!--/Copyright-->
+ 
+    </footer>
+    <!--/ Footer -->
+
+    <!-- SCRIPTS -->
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="<?php echo $this->basePath('MDB-Pro/js/jquery-3.3.1.min.js') ?>"></script>
+
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="<?php echo $this->basePath('MDB-Pro/js/popper.min.js') ?>"></script>
+
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="<?php echo $this->basePath('/bootstrap-4-2/js/bootstrap.min.js') ?>"></script>
+
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="<?php echo $this->basePath('MDB-Pro/js/mdb.min.js') ?>"></script>
+
+    <script src="<?php echo $this->basePath('/js/moment-with-locales.min.js') ?>"></script>
+
+    <script>
+        //Animation init
+        new WOW().init();
+
+        // MDB Lightbox Init
+        $(function () {
+          $("#mdb-lightbox-ui").load("mdb-addons/mdb-lightbox-ui.html");
+        });
+
+        //Modal
+        $('#myModal').on('shown.bs.modal', function () {
+            $('#myInput').focus()
+        })
+
+        // Material Select Initialization
+        $(document).ready(function () {
+            $('.mdb-select').material_select();
+        });
+
+        // Tooltips Initialization
+        $(function () {
+          $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+
+<?php echo $this->partial($viewController) ?>
+
+</body>
+
+</html>

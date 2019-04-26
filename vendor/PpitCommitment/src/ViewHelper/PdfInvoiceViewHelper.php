@@ -260,19 +260,19 @@ class PdfInvoiceViewHelper
     	}
 
     	if (array_key_exists('footer_mention_1', $invoice)) {
-	    	$pdf->SetFont('', 'B', 10);
+	    	$pdf->SetFont('', '', 10);
 	    	$pdf->Ln();
 	    	$pdf->writeHTML('<div style="text-align: center">'.$invoice['footer_mention_1'].'</div>', true, 0, true, 0);
     	}
 
     	if (array_key_exists('footer_mention_2', $invoice)) {
-    		$pdf->SetFont('', 'B', 10);
+    		$pdf->SetFont('', '', 10);
     		$pdf->Ln();
     		$pdf->writeHTML('<div style="text-align: center">'.$invoice['footer_mention_2'].'</div>', true, 0, true, 0);
     	}
 
     	if (array_key_exists('footer_mention_3', $invoice)) {
-    		$pdf->SetFont('', 'B', 10);
+    		$pdf->SetFont('', '', 10);
     		$pdf->Ln();
     		$pdf->writeHTML('<div style="text-align: center">'.$invoice['footer_mention_3'].'</div>', true, 0, true, 0);
     	}

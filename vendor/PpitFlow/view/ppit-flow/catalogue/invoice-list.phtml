@@ -1,0 +1,39 @@
+  <!--Header-->
+  <div class="modal-header">
+
+    <h4 class="modal-title font-weight-bold dark-grey-text" id="myModalLabel">Vos factures</h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body mx-3">
+
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Libellé</th>
+                <th>Montant (€)</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+
+  <?php foreach ($commitments as $commitment) : ?>
+
+              <tr>
+                <th scope="row"><?php echo $commitment->caption ?></td>
+                <td><?php echo $context->formatFloat($commitment->tax_inclusive, 2) ?></td>
+                <td><a href="<?php echo $this->url('commitment/downloadInvoice', ['type' => 'p-pit-studies', 'id' => $commitment->id]) ?>" target="_blank">Télécharger la facture</a></td>
+              </tr>
+
+  <?php endforeach;?>
+
+            </tbody>
+          </table>
+
+        </div>
+        <!--Footer-->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-grey btn-rounded btn-sm" data-dismiss="modal">Fermer</button>
+        </div>
+  </div>
