@@ -43,18 +43,15 @@
       <table class="table table-hover">
         <thead>
           <tr class="text-center">
-            <th class="font-weight-bold">Nom</th>
-            <th class="font-weight-bold">Prénom</th>
-            <th class="font-weight-bold">Date de naissance</th>
-            <th class="font-weight-bold">Email</th>
-            <th class="font-weight-bold">Téléphone</th>
-            <th class="font-weight-bold">Niveau ou Classement<br>N° licence</th>
+  <?php foreach ($content['complete']['recipient_properties'] as $propertyId => $property) : ?>
+            <th class="font-weight-bold"><?php echo $context->localize($property['labels']) ?></th>
+  <?php endforeach;?>
           </tr>
         </thead>
         <tbody>
 
   <?php $first = true; foreach ($commitment->options as $option) : ?>
-    <?php if (array_key_exists($option['identifier'], $context->getConfig('tennisEtudes/product/rates')['products'])) : ?>
+    <?php if (array_key_exists($option['identifier'], $context->getConfig('catalogue/product/rates')['products'])) : ?>
       <?php for ($i = 0; $i < $option['quantity']; $i++) : ?>
 
           <tr>
@@ -62,36 +59,13 @@
           </tr>
 
           <tr>
+        <?php foreach ($content['complete']['recipient_properties'] as $propertyId => $property) : ?>
             <th>
               <div class="md-form my-0 py-0">
-                <input type="text" id="complete-n_last-<?php echo $option['identifier'] . '-' . $i ?>" class="form-control validate modal_input <?php if ($first) echo 'focus' ?>" required="required" value="" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
+                <input type="text" id="complete-<?php echo $propertyId ?>-<?php echo $option['identifier'] . '-' . $i ?>" class="form-control validate modal_input <?php if ($first) echo 'focus' ?>" required="required" value="" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
               </div>
             </th>
-            <th>
-              <div class="md-form my-0 py-0">
-                <input type="text" id="complete-n_first-<?php echo $option['identifier'] . '-' . $i ?>" class="form-control validate modal_input" required="required" value="" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
-              </div>
-            </th>
-            <th>
-              <div class="md-form my-0 py-0">
-                <input type="text" id="complete-birth_date-<?php echo $option['identifier'] . '-' . $i ?>" class="form-control validate modal_input datepicker" required="required" value="" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
-              </div>
-            </th>
-            <th>
-              <div class="md-form my-0 py-0">
-                <input type="email" id="complete-email-<?php echo $option['identifier'] . '-' . $i?>" class="form-control validate modal_input" required="required" value="" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
-              </div>
-            </th>
-            <th>
-              <div class="md-form my-0 py-0">
-                <input type="text" id="complete-tel_cell-<?php echo $option['identifier'] . '-' . $i?>" class="form-control validate modal_input" required="required" value="" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
-              </div>
-            </th>
-            <th>
-              <div class="md-form my-0 py-0">
-                <input type="text" id="complete-property_11-<?php echo $option['identifier'] . '-' . $i?>" class="form-control validate modal_input" required="required" value="" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
-              </div>
-            </th>
+        <?php endforeach;?>
           </tr>
 
       <?php endfor?>
@@ -101,15 +75,17 @@
             </tbody>
           </table>
 
-          <div><a class="" href="<?php echo $this->basePath('/img/' . $context->getInstance()->caption . '/FICHE_SANITAIRE_DE_LIAISON.pdf')?>" target="_blank" id="complete-download">Télécharger la fiche sanitaire</a></div>
-          <div><button type="submit" class="btn btn-primary btn-rounded btn-sm disabled" id="complete-submit">Terminer l’inscription</button></div>
+  <?php foreach ($content['complete']['documents'] as $document) : ?>
+          <div><a class="complete-document" href="<?php echo $this->basePath($context->getInstance()->caption . $context->localize($document['src'])) ?>" target="_blank"><?php echo $context->localize($document['labels']) ?></a></div>
+  <?php endforeach;?>
+          <div><button type="submit" class="btn btn-primary btn-rounded btn-sm disabled" id="complete-submit"><?php echo $context->localize($content['complete']['navigation']['submit']['labels']) ?></button></div>
 
 <?php endif;?>
 
         </div>
         <!--Footer-->
         <div class="modal-footer">
-          <button type="button" class="btn btn-grey btn-rounded btn-sm" data-dismiss="modal">Fermer</button>
+          <button type="button" class="btn btn-grey btn-rounded btn-sm" data-dismiss="modal"><?php echo $context->localize($content['complete']['navigation']['return']['labels']) ?></button>
         </div>
   </div>
 </form>

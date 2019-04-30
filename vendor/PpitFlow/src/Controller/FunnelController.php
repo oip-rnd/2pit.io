@@ -11,6 +11,7 @@ use PpitCore\Model\Csrf;
 use PpitCore\Model\Event;
 use PpitCore\Model\Place;
 use PpitCore\Model\Vcard;
+use Zend\Http\Client;
 use Zend\Http\Headers;
 use Zend\Http\Request;
 use Zend\Http\Response\Stream;
@@ -135,6 +136,40 @@ class FunnelController extends AbstractActionController
 		$view->setTerminal(true);
 		return $view;
 	}*/
+
+	public function stripeAction()
+	{
+    	// Context and config
+    	$context = Context::getCurrent();
+		$credentials = $context->getConfig()['ppitUserSettings']['safe'][$context->getInstance()->caption]['stripe'];
+
+		// Term id
+		$commitment_id = $this->params()->fromRoute('commitment_id');
+		$commitment = Commitment::get($commitment_id);
+		
+		$client = new Client(
+			'https://api.stripe.com/v1/checkout/sessions',
+			['adapter' => 'Zend\Http\Client\Adapter\Curl', 'maxredirects' => 0, 'timeout' => 30]
+		);
+		$client->setAuth($credentials['private'], '', 'basic');
+//		$client->setEncType('application/json');
+		$client->setParameterPost(array(
+			'success_url' => $this->url()->fromRoute($context->getConfig('defaultRoute'), [], ['force_canonical' => true, 'query' => ['email' => $commitment->email]]),
+			'cancel_url' => $this->url()->fromRoute($context->getConfig('defaultRoute')),
+			'payment_method_types[]' => 'card',
+			'line_items[][name]' => $commitment->caption,
+			'line_items[][description]' => $commitment->description,
+//			'line_items[][images][]',
+			'line_items[][amount]' => $commitment->tax_inclusive * 100,
+			'line_items[][currency]' => 'eur',
+			'line_items[][quantity]' => 1,
+		));
+		$client->setMethod('POST');
+		$response = $client->send();
+		if ($response->getStatusCode() == 200) $this->getResponse()->setContent($response->getContent());
+		$this->getResponse()->setStatusCode($response->getStatusCode());
+		return $this->response;
+	}
 	
 	public function payzenAction()
     {

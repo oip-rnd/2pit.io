@@ -99,42 +99,13 @@ class AccountController extends AbstractActionController
     			foreach ($currentState['sections'] as $sectionId => $section) {
     				foreach ($section['fields'] as $fieldId => $field) {
     					if ($field['type'] == 'repository') $field = $context->getConfig($field['definition']);
-    
-    					// Structured field
-/*    					if ($field['type'] == 'structured') {
-    						$fieldData = array();
-    						foreach ($field['properties'] as $itemId => $item) {
-    							if ($item['type'] == 'repeater') {
-    								$repeater = array();
-    								for ($i = 0; $i < 20; $i++) {
-    									$line = array();
-    									foreach ($item['properties'] as $propertyId => $property) {
-    										if ($property['type'] == 'repository') $property = $context->getConfig($property['definition']);
-    										$label = $property['labels'][$context->getLocale()];
-    										$value = $request->getPost(($i == 0) ? $propertyId : $propertyId.$i);
-    										if ($value) {
-    											if ($property['type'] == 'select') $value = $property['modalities'][$value][$context->getLocale()];
-    											$line[$label] = $value;
-    										}
-    									}
-    									if ($line) $repeater[] = $line;
-    								}
-    								$fieldData[] = $repeater;
-    							}
-    							else {
-    								if ($item['type'] == 'repository') $item = $context->getConfig($item['definition']);
-    								$value = $request->getPost($itemId);
-    								if ($item['type'] == 'select') $value = $item['modalities'][$value][$context->getLocale()];
-    								$fieldData[$itemId] = $value;
-    							}
-    						}
-    						$data[$fieldId] = $fieldData;
-    					}
-    					else {*/
-    						$value = $request->getPost($fieldId);
-    						$data[$fieldId] = $value;
-//    					}
+    					$value = $request->getPost($fieldId);
+    					$data[$fieldId] = $value;
     				}
+    			}
+
+    			if ($account->id && in_array($account->status, ['reminder', 'answer', 'conversion', 'active', 'retention'])) {
+    				return $this->redirect()->toRoute('commitmentAccount/contactForm', array('type' => $type, 'place_identifier' => $place_identifier, 'action_id' => $action_id, 'state_id' => $currentState['next-step']['state_id'], 'id' => $id));
     			}
 
     			if ($contact->loadData($data) == 'OK') {

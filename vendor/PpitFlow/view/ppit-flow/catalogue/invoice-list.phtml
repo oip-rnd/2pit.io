@@ -1,7 +1,7 @@
   <!--Header-->
   <div class="modal-header">
 
-    <h4 class="modal-title font-weight-bold dark-grey-text" id="myModalLabel">Vos factures</h4>
+    <h4 class="modal-title font-weight-bold dark-grey-text" id="myModalLabel"><?php echo $context->localize($content['invoiceList']['title']) ?></h4>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -21,9 +21,9 @@
   <?php foreach ($commitments as $commitment) : ?>
 
               <tr>
-                <th scope="row"><?php echo $commitment->caption ?></td>
+                <th scope="row"><?php echo $commitment->caption ?></th>
                 <td><?php echo $context->formatFloat($commitment->tax_inclusive, 2) ?></td>
-                <td><a href="<?php echo $this->url('commitment/downloadInvoice', ['type' => 'p-pit-studies', 'id' => $commitment->id]) ?>" target="_blank">Télécharger la facture</a></td>
+                <td><a href="<?php echo $this->url('commitment/downloadInvoice', ['type' => $account->type, 'id' => $commitment->id]) ?>" target="_blank"><?php echo $context->localize($content['invoiceList']['navigation']['download']['labels']) ?></a></td>
               </tr>
 
   <?php endforeach;?>
@@ -31,9 +31,8 @@
             </tbody>
           </table>
 
-        </div>
         <!--Footer-->
         <div class="modal-footer">
-          <button type="button" class="btn btn-grey btn-rounded btn-sm" data-dismiss="modal">Fermer</button>
+          <button type="button" class="btn btn-grey btn-rounded btn-sm" data-dismiss="modal"><?php echo $context->localize($content['invoiceList']['navigation']['return']['labels']) ?></button>
         </div>
   </div>

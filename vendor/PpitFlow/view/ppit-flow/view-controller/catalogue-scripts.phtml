@@ -1,3 +1,5 @@
+<script src="https://js.stripe.com/v3/"></script>
+
 <script>
 
 var cart = {
@@ -83,35 +85,39 @@ function showSubscribe(product) {
         });
 
         $('.datepicker').change(function () {
-            var subscriptionDate = moment.max($(this).val(), moment(new Date()).add(7,'days'));
+            var subscriptionDate = moment.max($(this).val(), moment(new Date()).add(7, 'days'));
             $(this).val(subscriptionDate);
             content['subscription_date'] = subscriptionDate;
         });
-        
-        $('.avec_hebergement').hide();
-        content.hebergement = false;
 
-        $('#subscribeOption-' + product + '-sans_hebergement').change(function() { 
-          $('.sans_hebergement').show();
-          $('.avec_hebergement').hide();
-          $('#' + product + '-hebergement_mention').text('Du lundi au vendredi');
-          content.hebergement = false;
+        // Hide or show the form parts associated with a radio buttons according to their checked or unchecked status
+<?php foreach ($content['inputs'] as $inputId => $input) : ?>
+  <?php if ($input['type'] == 'radio') : ?>
+    <?php if (array_key_exists('attributes', $input) && in_array('checked', explode(',', $input['attributes']))) : ?>
+        content.<?php echo $input['propertyId'] ?> = false;
+    <?php else : ?>
+        $('.<?php echo $inputId ?>').hide();
+
+        $('#subscribeOption-' + product + '-<?php echo $inputId ?>').change(function() {
+          $('.<?php echo $input['propertyId'] ?>').hide();
+          $('.<?php echo $inputId ?>').show();
+      <?php if ($input['value'] == 1) : ?>
+          content.<?php echo $input['propertyId'] ?> = true;
+      <?php else : ?>
+          content.<?php echo $input['propertyId'] ?> = false;
+      <?php endif; ?>
         });
+    <?php endif;?>
+  <?php endif;?>
+<?php endforeach;?>
 
-        $('#subscribeOption-' + product + '-avec_hebergement').change(function() { 
-          $('.sans_hebergement').hide();
-          $('.avec_hebergement').show();
-          $('#' + product + '-hebergement_mention').text('Du dimanche 17h au samedi avant 14h');
-          content.hebergement = true;
-        });
-
-  <?php foreach ($rates['products'] as $product_id => $unused) : ?>
-        $('#subscribeProduct-<?php echo $product_id ?>').change(function () {
-          if ($('#subscribeProduct-<?php echo $product_id ?>').val() < 0) {
-        	$('#subscribeProduct-<?php echo $product_id ?>').val(0);
+  <?php foreach ($rates['products'] as $productId => $unused) : ?>
+        $('#subscribeProduct-<?php echo $productId ?>').change(function () {
+          if ($('#subscribeProduct-<?php echo $productId ?>').val() < 0) {
+        	$('#subscribeProduct-<?php echo $productId ?>').val(0);
           }
           else {
-            content.products.<?php echo $product_id ?> = { quantity: $('#subscribeProduct-<?php echo $product_id ?>').val() };
+            content.products.<?php echo $productId ?> = { quantity: $('#subscribeProduct-<?php echo $productId ?>').val() };
   
             // Compute the price
             calculate(product, content);
@@ -127,23 +133,25 @@ function showSubscribe(product) {
               subscriptionStart = moment(content['subscription_date']).subtract(weekDay, 'days');
               subscriptionEnd = moment(content['subscription_date']).add(6 - weekDay, 'days');
             }
-            content.products.<?php echo $product_id ?>.description = 'Du ' + moment(subscriptionStart).format('dddd D MMMM') + ' au ' + moment(subscriptionEnd).format('dddd D MMMM');
-            content.products.<?php echo $product_id ?>.start = moment(subscriptionStart).format('YYYY-MM-DD');
-            content.products.<?php echo $product_id ?>.end = moment(subscriptionEnd).format('YYYY-MM-DD');
-            $('#' + product + '-hebergement_mention').html(content.products.<?php echo $product_id ?>.description);
+            content.products.<?php echo $productId ?>.description = 'Du ' + moment(subscriptionStart).format('dddd D MMMM') + ' au ' + moment(subscriptionEnd).format('dddd D MMMM');
+            content.products.<?php echo $productId ?>.start = moment(subscriptionStart).format('YYYY-MM-DD');
+            content.products.<?php echo $productId ?>.end = moment(subscriptionEnd).format('YYYY-MM-DD');
+            $('#' + product + '-hebergement_mention').html(content.products.<?php echo $productId ?>.description);
           }
         });
   <?php endforeach;?>
 
-        $('#subscribeOption-' + product + '-prise_en_charge').change(function () { 
-          if ($('#subscribeOption-' + product + '-prise_en_charge').val() < 0) {
-            $('#subscribeOption-' + product + '-prise_en_charge').val(0);
+  <?php foreach ($rates['options'] as $optionId => $unused) : ?>
+        $('#subscribeOption-' + product + '-<?php echo $optionId ?>').change(function () { 
+          if ($('#subscribeOption-' + product + '-<?php echo $optionId ?>').val() < 0) {
+            $('#subscribeOption-' + product + '-<?php echo $optionId ?>').val(0);
           }
           else {
-	        content.options.prise_en_charge = { quantity: $('#subscribeOption-' + product + '-prise_en_charge').val() };
+	        content.options.prise_en_charge = { quantity: $('#subscribeOption-' + product + '-<?php echo $optionId ?>').val() };
 	        calculate(product, content);
           }
         });
+  <?php endforeach;?>
         
         $('.mdb-select').material_select();
 
@@ -158,16 +166,14 @@ function showSubscribe(product) {
   xhttp.send();
 }
 
-$('#modal-mini_kids-Form').on('show.bs.modal', function () { showSubscribe('mini_kids') });
-$('#modal-progress-Form').on('show.bs.modal', function () { showSubscribe('progress') });
-$('#modal-performance-Form').on('show.bs.modal', function () { showSubscribe('performance') });
-$('#modal-tmc-Form').on('show.bs.modal', function () { showSubscribe('tmc') });
-$('#modal-tournois-Form').on('show.bs.modal', function () { showSubscribe('tournois') });
+<?php foreach ($content['products'] as $productId => $unused) : ?>
+$('#modal-<?php echo $productId ?>-Form').on('show.bs.modal', function () { showSubscribe('<?php echo $productId ?>') });
+<?php endforeach;?>
 
 // Cart
 
 function processCart() {
-  
+console.log(JSON.stringify(cart));  
   var xhttp = new XMLHttpRequest(), formData = new FormData();
   formData.append('csrf', $('#csrf').val());
   formData.append('complete', 1);
@@ -180,18 +186,21 @@ function processCart() {
   formData.append('adr_zip', $('#register-adr_zip').val());
   formData.append('adr_city', $('#register-adr_city').val());
   formData.append('cart', JSON.stringify(cart));
-  xhttp.open('POST', '<?php echo $this->url('catalogue/cart') ?>', true);
+  xhttp.open('POST', '<?php echo $this->url('catalogue/cart', ['type' => $type]) ?>', true);
   xhttp.onload = function () {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
       $('#modalCartContent').html(xhttp.responseText);
+<?php if ($content['cart']['navigation']['paymentSystem'] == 'Stripe') : ?>
+      showStripe($('#register-commitment_id').val());
+<?php elseif ($content['cart']['navigation']['paymentSystem'] == 'PayZen') : ?>
       showPayzen($('#register-commitment_id').val());
+<?php endif;?>
     }
   };
   xhttp.send(formData);
 }
 
 function showCart() {
-console.log(cart.products);
   var xhttp = new XMLHttpRequest(), formData = new FormData();
   xhttp.open('POST', '<?php echo $this->url('catalogue/calculate') ?>', true);
   xhttp.setRequestHeader("Content-Type", "application/json");
@@ -201,7 +210,7 @@ console.log(cart.products);
       xhttp = new XMLHttpRequest();
       formData.append('complete', 0);
       formData.append('cart', JSON.stringify(cart));
-      xhttp.open('POST', '<?php echo $this->url('catalogue/cart') ?>', true);
+      xhttp.open('POST', '<?php echo $this->url('catalogue/cart', ['type' => $type]) ?>', true);
       xhttp.onload = function () {
         if (xhttp.readyState == 4) {
           if (xhttp.status == 200) {
@@ -236,6 +245,28 @@ console.log(cart.products);
 
 $('#modalCartForm').on('show.bs.modal', showCart);
 
+// stripe
+
+function showStripe(id) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.open('GET', '<?php echo $this->url('funnel/stripe') ?>/' + id, true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4) {
+      if (xhttp.status == 200) {
+        let result = JSON.parse(xhttp.responseText);
+        var stripe = Stripe('<?php echo $context->getConfig()['ppitUserSettings']['safe'][$context->getInstance()->caption]['stripe']['public'] ?>');
+        stripe.redirectToCheckout({
+            sessionId: result.id,
+        }).then(function (result) {
+          toastr.error("<?php echo $this->translate('A technical error has occured. Please try again later', 'ppit-core', $context->getLocale()) ?>");
+        });
+      }
+      else toastr.error("<?php echo $this->translate('A technical error has occured. Please try again later', 'ppit-core', $context->getLocale()) ?>");
+    }
+  }
+  xhttp.send();
+}
+  
 // Payzen
 
 function showPayzen(id) {
@@ -290,14 +321,9 @@ function complete() {
 <?php $first = true; foreach ($commitment->options as $option) : ?>
   <?php if (array_key_exists($option['identifier'], $context->getConfig('catalogue/product/rates')['products'])) : ?>
     <?php for ($i = 0; $i < $option['quantity']; $i++) : ?>
-
-  formData.append('complete-n_last-<?php echo $option['identifier'] . '-' . $i ?>', $('#complete-n_last-<?php echo $option['identifier'] . '-' . $i ?>').val());
-  formData.append('complete-n_first-<?php echo $option['identifier'] . '-' . $i ?>', $('#complete-n_first-<?php echo $option['identifier'] . '-' . $i ?>').val());
-  formData.append('complete-birth_date-<?php echo $option['identifier'] . '-' . $i ?>', $('#complete-birth_date-<?php echo $option['identifier'] . '-' . $i ?>').val());
-  formData.append('complete-email-<?php echo $option['identifier'] . '-' . $i ?>', $('#complete-email-<?php echo $option['identifier'] . '-' . $i ?>').val());
-  formData.append('complete-tel_cell-<?php echo $option['identifier'] . '-' . $i ?>', $('#complete-tel_cell-<?php echo $option['identifier'] . '-' . $i ?>').val());
-  formData.append('complete-property_11-<?php echo $option['identifier'] . '-' . $i ?>', $('#complete-property_11-<?php echo $option['identifier'] . '-' . $i ?>').val());
-  
+      <?php foreach ($content['complete']['recipient_properties'] as $propertyId => $property) : ?>
+  formData.append('complete-<?php echo $propertyId ?>-<?php echo $option['identifier'] . '-' . $i ?>', $('#complete-<?php echo $propertyId ?>-<?php echo $option['identifier'] . '-' . $i ?>').val());
+      <?php endforeach;?>
     <?php endfor;?>
   <?php endif;?>
 <?php endforeach;?>
@@ -331,7 +357,7 @@ xhttp.onload = function () {
        formatSubmit: 'yyyy-mm-dd'
      });
 
-     $('#complete-download').click(function () {
+     $('.complete-document').click(function () {
        $('#complete-submit').removeClass('disabled');
      });
      

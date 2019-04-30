@@ -170,7 +170,11 @@ class LandingController extends AbstractActionController
 					else $data[$propertyId] = $viewData[$inputId];
 //				}
 			}
-			$data['contact_history'] = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2).', from '.$_SERVER['HTTP_REFERER'].', with '.$_SERVER['HTTP_USER_AGENT'].' filled landing page\'s form';
+			$data['contact_history'] = '';
+			if (array_key_exists('HTTP_ACCEPT_LANGUAGE', $_SERVER)) $data['contact_history'] .= substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+			if (array_key_exists('HTTP_REFERER', $_SERVER)) $data['contact_history'] .= ', from '.$_SERVER['HTTP_REFERER'];
+			if (array_key_exists('HTTP_USER_AGENT', $_SERVER)) $data['contact_history'] .= ', with '.$_SERVER['HTTP_USER_AGENT'];
+			$data['contact_history'] .= ' filled landing page\'s form';
 
 			$data['origine'] = 'subscription';
 			$rc = $account->loadAndAdd($data, Account::getConfig($accountType));

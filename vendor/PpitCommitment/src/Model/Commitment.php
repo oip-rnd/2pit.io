@@ -1428,16 +1428,14 @@ class Commitment
     		foreach($data['options'] as $entry) {
 				$entry['identifier'] = trim(strip_tags($entry['identifier']));
     			$productOption = ProductOption::get($entry['identifier'], 'reference');
-    			if ($productOption) {
-    				$option = array();
-    				$option['identifier'] = $entry['identifier'];
-					$option['caption'] = $entry['caption'];
-    				$option['unit_price'] = $entry['unit_price'];
-    				$option['quantity'] = $entry['quantity'];
-    				$option['amount'] = $option['unit_price'] * $option['quantity']; // Redundancy to solve
-					$option['vat_id'] = $productOption->vat_id; // Redundancy to solve
-					$this->options[] = $option;
-    			}
+				$option = array();
+				$option['identifier'] = $entry['identifier'];
+				$option['caption'] = $entry['caption'];
+				$option['unit_price'] = $entry['unit_price'];
+				$option['quantity'] = $entry['quantity'];
+				$option['amount'] = $option['unit_price'] * $option['quantity']; // Redundancy to solve
+				$option['vat_id'] = ($productOption) ? $productOption->vat_id : 1; // Redundancy to solve
+				$this->options[] = $option;
     		}
 		}
 		

@@ -241,7 +241,7 @@ return array (
 					'cart' => array(
 						'type' => 'segment',
 						'options' => array(
-							'route' => '/cart',
+							'route' => '/cart[/:type]',
 							'defaults' => array(
 								'action' => 'cart',
 							),
@@ -539,6 +539,15 @@ return array (
 				),
 				'may_terminate' => true,
 				'child_routes' => array(
+					'stripe' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/stripe[/:commitment_id]',
+							'defaults' => array(
+								'action' => 'stripe',
+							),
+						),
+					),
 					'payzen' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -768,7 +777,8 @@ return array (
 				array('route' => 'flowEvent/repair', 'roles' => array('admin')),
 
 				array('route' => 'funnel', 'roles' => array('guest')),
-            	array('route' => 'funnel/payzen', 'roles' => array('guest')),
+            	array('route' => 'funnel/stripe', 'roles' => array('guest')),
+				array('route' => 'funnel/payzen', 'roles' => array('guest')),
             	array('route' => 'funnel/payzenReturn', 'roles' => array('guest')),
 				array('route' => 'funnel/paypal', 'roles' => array('user')),
 				
@@ -2025,8 +2035,21 @@ table.note-report td {
 			],
 		],
 		
+		'inputs' => [
+			'sans_hebergement' => ['definition' => 'inline', 'type' => 'radio', 'propertyId' => 'hebergement', 'value' => 0, 'attributes' => 'checked', 'labels' => ['default' => 'Sans hébergement']],
+			'avec_hebergement' => ['definition' => 'inline', 'type' => 'radio', 'propertyId' => 'hebergement', 'value' => 1, 'labels' => ['default' => 'Avec hébergement']],
+			'sans_hebergement_mention' => ['definition' => 'inline', 'type' => 'mention', 'labels' => ['default' => 'Du lundi au vendredi']],
+			'avec_hebergement_mention' => ['definition' => 'inline', 'type' => 'mention', 'labels' => ['default' => 'Du dimanche 17h au samedi avant 14h']],
+			'date' => ['definition' => 'inline', 'type' => 'date', 'labels' => ['default' => 'Date souhaitée']],
+			'subscribeProduct-tennis_mini_kids' => ['definition' => 'inline', 'type' => 'number', 'labels' => ['default' => 'Stagiaires : %s €']],
+			'subscribeProduct-tennis_performance_sans_g15' => ['definition' => 'inline', 'type' => 'number', 'labels' => ['default' => 'Stagiaires sans hébergement : %s €']],
+			'subscribeOption-performance-prise_en_charge' => ['definition' => 'inline', 'type' => 'number', 'labels' => ['default' => 'Option prise en charge journée de 8h30 à 18h00 avec déjeuner et goûter: %s €']],
+			'subscribeProduct-tennis_performance_avec_1s' => ['definition' => 'inline', 'type' => 'number', 'labels' => ['default' => 'Stagiaires avec hébergement 1 semaine : %s €']],
+			'subscribeProduct-tennis_performance_avec_2s' => ['definition' => 'inline', 'type' => 'number', 'labels' => ['default' => 'Stagiaires avec hébergement 2 semaines : %s €']],
+		],
+		
 		'products' => [
-			'mini_kids' =>[
+			'tennis_mini_kids' =>[
 				'card' => [
 					'logo' => ['src' => ['default' => '/img/tennis-etudes.com/stages-tennis-mini_kids.png'], 'alt' => ['default' => 'Image Mini-Kids'], 'class' => 'img-fluid z-depth-0'],
 					'description' => ['default' => '
@@ -2048,11 +2071,6 @@ table.note-report td {
 					'introduction' => ['default' => '
 <p class="text-center">Des réductions s’appliquent automatiquement au moment du paiement en fonction du nombre de stagiaires.</p>
 					'],
-					'inputs' => [
-						'sans_hebergement_mention' => ['definition' => 'inline', 'type' => 'mention', 'labels' => ['default' => 'Du lundi au vendredi']],
-						'date' => ['definition' => 'inline', 'type' => 'date', 'labels' => ['default' => 'Date souhaitée']],
-						'subscribeProduct-tennis_mini_kids' => ['definition' => 'inline', 'type' => 'number', 'labels' => ['default' => 'Stagiaires : %s €']],
-					],
 					'rows' => [
 						[
 							'class' => 'row mb-3',
@@ -2070,7 +2088,7 @@ table.note-report td {
 					],
 				]
 			],
-			'performance' =>[
+			'tennis_performance' =>[
 				'card' => [
 					'logo' => ['src' => ['default' => '/img/tennis-etudes.com/stages-tennis-performance.png'], 'alt' => ['default' => 'Image Performance'], 'class' => 'img-fluid z-depth-0'],
 					'description' => ['default' => '
@@ -2098,17 +2116,6 @@ table.note-report td {
 					'introduction' => ['default' => '
 <p class="text-center">Des réductions s’appliquent automatiquement au moment du paiement en fonction du nombre de stagiaires.</p>
 					'],
-					'inputs' => [
-						'sans_hebergement' => ['definition' => 'inline', 'type' => 'radio', 'propertyId' => 'hebergement', 'value' => 0, 'attributes' => 'checked', 'labels' => ['default' => 'Sans hébergement']],
-						'avec_hebergement' => ['definition' => 'inline', 'type' => 'radio', 'propertyId' => 'hebergement', 'value' => 1, 'labels' => ['default' => 'Avec hébergement']],
-						'sans_hebergement_mention' => ['definition' => 'inline', 'type' => 'mention', 'labels' => ['default' => 'Du lundi au vendredi']],
-						'avec_hebergement_mention' => ['definition' => 'inline', 'type' => 'mention', 'labels' => ['default' => 'Du dimanche 17h au samedi avant 14h']],
-						'date' => ['definition' => 'inline', 'type' => 'date', 'labels' => ['default' => 'Date souhaitée']],
-						'subscribeProduct-tennis_performance_sans_g15' => ['definition' => 'inline', 'type' => 'number', 'labels' => ['default' => 'Stagiaires sans hébergement : %s €']],
-						'subscribeOption-performance-prise_en_charge' => ['definition' => 'inline', 'type' => 'number', 'labels' => ['default' => 'Option prise en charge journée de 8h30 à 18h00 avec déjeuner et goûter: %s €']],
-						'subscribeProduct-tennis_performance_avec_1s' => ['definition' => 'inline', 'type' => 'number', 'labels' => ['default' => 'Stagiaires avec hébergement 1 semaine : %s €']],
-						'subscribeProduct-tennis_performance_avec_2s' => ['definition' => 'inline', 'type' => 'number', 'labels' => ['default' => 'Stagiaires avec hébergement 2 semaines : %s €']],
-					],
 					'rows' => [
 						[
 							'class' => 'row',
@@ -2121,26 +2128,26 @@ table.note-report td {
 							'class' => 'row mb-3',
 							'cols' => [
 								['class' => 'col-md-4', 'inputId' => 'date'],
-								['class' => 'col-md-8 sans_hebergement', 'inputId' => 'sans_hebergement_mention'],
-								['class' => 'col-md-8 avec_hebergement', 'inputId' => 'avec_hebergement_mention', 'attributes' => 'hidden'],
+								['class' => 'col-md-8 hebergement sans_hebergement', 'inputId' => 'sans_hebergement_mention'],
+								['class' => 'col-md-8 hebergement avec_hebergement', 'inputId' => 'avec_hebergement_mention', 'attributes' => 'hidden'],
 							],
 						],
 						[
-							'class' => 'row mb-3 sans_hebergement',
+							'class' => 'row mb-3 hebergement sans_hebergement',
 							'cols' => [
 								['class' => 'col-md-4', 'inputId' => 'subscribeProduct-tennis_performance_sans_g15'],
 								['class' => 'col-md-8', 'inputId' => 'subscribeOption-performance-prise_en_charge'],
 							],
 						],
 						[
-							'class' => 'row mb-3 avec_hebergement',
+							'class' => 'row mb-3 hebergement avec_hebergement',
 							'cols' => [
 								['class' => 'col-md-6', 'inputId' => 'subscribeProduct-tennis_performance_avec_1s'],
 							],
 							'attributes' => 'hidden',
 						],
 						[
-							'class' => 'row mb-3 avec_hebergement',
+							'class' => 'row mb-3 hebergement avec_hebergement',
 							'cols' => [
 								['class' => 'col-md-6', 'inputId' => 'subscribeProduct-tennis_performance_avec_2s'],
 							],
@@ -2150,13 +2157,54 @@ table.note-report td {
 				]
 			],
 		],
-		[
-			'invoice' => [
-				'discounts' => [
-					'multiple_subscription' => ['labels' => ['default' => 'Réduction souscriptions multiples']],
+		
+		'cart' => [
+			'title' => ['labels' => ['default' => 'Votre panier']],
+			'including_options_amount' => ['labels' => ['default' => 'Total souscrit']],
+			'total_amount' => ['labels' => ['default' => 'Total à payer']],
+			'navigation' => [
+				'submit' => ['labels' => ['default' => 'Terminer la commande']],
+				'paymentSystem' => 'Stripe', // To be defined
+				'return' => ['labels' => ['default' => 'Revenir au catalogue']],
+			],
+		],
+
+		'complete' => [
+			'recipient_properties' => [
+				'n_last' => ['definition' => 'core_account/generic/property/n_last'],
+				'n_first' => ['definition' => 'core_account/generic/property/n_first'],
+				'birth_date' => ['definition' => 'core_account/generic/property/birth_date', 'mask' => ['default' => 'né(e) le %s']],
+				'email' => ['definition' => 'core_account/generic/property/email'],
+				'tel_cell' => ['definition' => 'core_account/generic/property/tel_cell'],
+				'licence' => ['definition' => 'inline', 'type' => 'input', 'labels' => ['default' => 'Niveau ou Classement<br>N° licence'], 'mask' => ['default' => 'Niveau/license: %s']],
+			],
+			'documents' => [
+				['src' => ['default' => ''], 'labels' => ['default' => 'Télécharger la fiche sanitaire']]
+			],
+			'navigation' => [
+				'submit' => ['labels' => ['default' => 'Terminer l’inscription']],
+				'return' => ['labels' => ['default' => 'Annuler et revenir au catalogue']],
+			],
+		],
+		
+		'commitment' => [
+			'caption' => ['labels' => ['default' => 'Votre souscription en ligne du %s']],
+			'terms' => [
+				'whole' => ['caption' => ['default' => 'Paiement comptant']],
+				'scheduled' => [
+					'1st' => ['type' => 'deposit', 'caption' => ['default' => 'Accompte 25%'], 'share' => 0.25],
+					'2nd' => ['type' => 'start', 'share' => 0.75, 'days' => -15],
 				],
 			],
 		],
+		
+		'invoiceList' => [
+			'title' => ['default' => 'Vos factures'],
+			'navigation' => [
+				'download' => ['labels' => ['default' => 'Télécharger la facture']],
+				'return' => ['labels' => ['default' => 'Fermer']],
+			],
+		]
 	),
 	
 	// FLow Account

@@ -2,7 +2,7 @@
   <!--Header-->
   <div class="modal-header text-center">
 
-    <h4 class="modal-title font-weight-bold dark-grey-text" id="myModalLabel">Votre panier</h4>
+    <h4 class="modal-title font-weight-bold dark-grey-text" id="myModalLabel"><?php echo $context->localize($content['cart']['title']['labels']) ?></h4>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -15,14 +15,14 @@
       <?php echo $this->formElement($element) ?>
 <?php if ($this->formElementErrors($element)) : ?>
       <div class="alert alert-danger" style="text-align: center">
-        <strong><?php echo $this->translate('The form has expired, please input again', 'ppit-core', $locale) ?></strong>
+        <strong><?php echo $this->translate('The form has expired, please input again', 'ppit-core', $context->getLlocale()) ?></strong>
       </div>
 <?php endif;?>
     </div>
 
 <?php if ($actionStatus[0] == '500') : ?>
     <div class="alert alert-danger" style="text-align: center">
-      <strong><?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $locale) ?></strong>
+      <strong><?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?></strong>
     </div>
 
 <?php endif;?>
@@ -30,21 +30,20 @@
 <?php if ($account->id) $isDisabled = true; else $isDisabled = false ?>
         <!--Body-->
         <div class="modal-body">
-
           <input type="hidden" id="register-commitment_id" value="<?php echo $commitment_id ?>" />
-            
+
 <div class="row">
   <div class="col-md-6">
     <div class="md-form my-0 py-0">
       <input type="text" id="register-n_first" class="form-control validate modal_input" required="required" value="<?php echo $account->n_first ?>" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
-      <label <?php if ($isDisabled) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="register-n_first">* <?php echo $this->translate('First name', 'ppit-core', $locale) ?></label>
+      <label <?php if ($isDisabled) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" for="register-n_first">* <?php echo $this->translate('First name', 'ppit-core', $context->getLocale()) ?></label>
     </div>
   </div>
   
   <div class="col-md-6">
     <div class="md-form my-0 py-0">
       <input type="text" id="register-n_last" class="form-control validate modal_input" required="required" value="<?php echo $account->n_last ?>" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
-      <label <?php if ($isDisabled) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="register-n_last">* <?php echo $this->translate('Last name', 'ppit-core', $locale) ?></label>
+      <label <?php if ($isDisabled) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" for="register-n_last">* <?php echo $this->translate('Last name', 'ppit-core', $context->getLocale()) ?></label>
     </div>
   </div>
 </div>
@@ -53,14 +52,14 @@
   <div class="col-md-6">
     <div class="md-form my-0 py-0">
       <input type="email" id="register-email" class="form-control validate modal_input" required="required" value="<?php echo $account->email ?>" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
-      <label <?php if ($isDisabled) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="register-email">* <?php echo $this->translate('Email', 'ppit-core', $locale) ?></label>
+      <label <?php if ($isDisabled) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" for="register-email">* <?php echo $this->translate('Email', 'ppit-core', $context->getLocale()) ?></label>
     </div>
   </div>
 
   <div class="col-md-6">
     <div class="md-form my-0 py-0">
       <input type="text" id="register-tel_cell" class="form-control validate modal_input" required="required" value="<?php echo $account->tel_cell ?>" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
-      <label <?php if ($isDisabled) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="register-n_last">* <?php echo $this->translate('Phone', 'ppit-core', $locale) ?></label>
+      <label <?php if ($isDisabled) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" for="register-n_last">* <?php echo $this->translate('Phone', 'ppit-core', $context->getLocale()) ?></label>
     </div>
   </div>
 </div>
@@ -69,14 +68,14 @@
   <div class="col-md-6">
     <div class="md-form my-0 py-0">
       <input type="text" id="register-adr_street" class="form-control validate modal_input" required="required" value="<?php echo $account->adr_street ?>" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
-      <label <?php if ($isDisabled) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="register-adr_street">* Adresse - Rue</label>
+      <label <?php if ($isDisabled) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" for="register-adr_street">* Adresse - Rue</label>
     </div>
   </div>
   
   <div class="col-md-6">
     <div class="md-form my-0 py-0">
       <input type="text" id="register-adr_extended" class="form-control validate modal_input" value="<?php echo $account->adr_extended ?>" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
-      <label <?php if ($isDisabled) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="register-adr_extended">Adresse - Complément</label>
+      <label <?php if ($isDisabled) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" for="register-adr_extended">Adresse - Complément</label>
     </div>
   </div>
 </div>
@@ -85,14 +84,14 @@
   <div class="col-md-6">
     <div class="md-form my-0 py-0">
       <input type="text" id="register-adr_zip" class="form-control validate modal_input" required="required" value="<?php echo $account->adr_zip ?>" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
-      <label <?php if ($isDisabled) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="register-adr_zip">* Adresse - Code postal</label>
+      <label <?php if ($isDisabled) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" for="register-adr_zip">* Adresse - Code postal</label>
     </div>
   </div>
   
   <div class="col-md-6">
     <div class="md-form my-0 py-0">
       <input type="text" id="register-adr_city" class="form-control validate modal_input" required="required" value="<?php echo $account->adr_city ?>" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
-      <label <?php if ($isDisabled) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $locale) ?>" for="register-adr_city">* Adresse - Ville</label>
+      <label <?php if ($isDisabled) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" for="register-adr_city">* Adresse - Ville</label>
     </div>
   </div>
 </div>
@@ -127,7 +126,7 @@
   <?php foreach ($cart['options'] as $option_id => $option) : ?>
 
               <tr>
-                <th scope="row"><?php echo $context->localize($option['caption']) ?></td>
+                <th scope="row"><?php echo $context->localize($option['caption']) ?></th>
                 <td><?php echo $option['quantity'] ?></td>
                 <td><?php echo $context->formatFloat($option['unit_price'], 2) ?></td>
                 <td><?php echo $context->formatFloat($option['amount'], 2) ?></td>
@@ -140,15 +139,15 @@
   <?php endforeach;?>
 
               <tr>
-                <th scope="row" colspan="3" style="text-align: right">Total souscrit</td>
-                <th scope="row"><?php echo $context->formatFloat($cart['including_options_amount'], 2) ?></td>
+                <th scope="row" colspan="3" style="text-align: right"><?php echo $context->localize($content['cart']['including_options_amount']['labels']) ?></th>
+                <th scope="row"><?php echo $context->formatFloat($cart['including_options_amount'], 2) ?></th>
                 <th>&nbsp;</th>
               </tr>
 
   <?php foreach ($cart['discounts'] as $discount) : ?>
 
               <tr>
-                <th scope="row" colspan="3" style="text-align: right"><?php echo $context->localize($discount['caption']) ?></td>
+                <th scope="row" colspan="3" style="text-align: right"><?php echo $context->localize($discount['caption']) ?></th>
                 <td><?php echo $context->formatFloat($discount['amount'], 2) ?></td>
                 <th>&nbsp;</th>
               </tr>
@@ -156,20 +155,20 @@
   <?php endforeach;?>
 
               <tr>
-                <th scope="row" colspan="3" style="text-align: right">Total à payer</td>
-                <th scope="row"><?php echo $context->formatFloat($cart['total_amount'], 2) ?></td>
+                <th scope="row" colspan="3" style="text-align: right"><?php echo $context->localize($content['cart']['total_amount']['labels']) ?></th>
+                <th scope="row"><?php echo $context->formatFloat($cart['total_amount'], 2) ?></th>
                 <th>&nbsp;</th>
               </tr>
 
             </tbody>
           </table>
 
-          <button class="btn btn-primary btn-rounded btn-sm" id="cart-complete">Terminer la commande</button>
+          <button class="btn btn-primary btn-rounded btn-sm" id="cart-submit"><?php echo $context->localize($content['cart']['navigation']['submit']['labels']) ?></button>
 
         </div>
         <!--Footer-->
         <div class="modal-footer">
-          <button type="button" class="btn btn-grey btn-rounded btn-sm" data-dismiss="modal">Revenir au catalogue</button>
+          <button type="button" class="btn btn-grey btn-rounded btn-sm" data-dismiss="modal"><?php echo $context->localize($content['cart']['navigation']['return']['labels']) ?></button>
         </div>
   </div>
 </form>

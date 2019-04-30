@@ -35,6 +35,12 @@ class CatalogueController extends AbstractActionController
 			if (!$content) $content = $context->getConfig('catalogue/generic');
 		}
 		
+		foreach ($content['complete']['recipient_properties'] as $propertyId => &$property) {
+			if ($property['definition'] != 'inline') {
+				$definition = $context->getConfig($property['definition']);
+				foreach ($definition as $itemId => $item) $property[$itemId] = $item;
+			}
+		}
 		return $content;
 	}
 	
@@ -43,7 +49,7 @@ class CatalogueController extends AbstractActionController
 		// Retrieve context and parameters
 		$context = Context::getCurrent();
 		$type = $this->params()->fromRoute('type', 'generic');
-		$rates = $context->getConfig('tennisEtudes/product/rates');
+		$rates = $context->getConfig('catalogue/product/rates');
 		$content = CatalogueController::getContent();
 
 		// Account and commitments
@@ -211,10 +217,11 @@ class CatalogueController extends AbstractActionController
 	{
 		// Retrieve the context and the parameters
 		$context = Context::getCurrent();
-		$locale = $this->params()->fromQuery('locale');
-		$account = null;
-		if ($context->isAuthenticated()) $account = Account::get($context->getContactId(), 'contact_1_id');
-		if (!$account) $account = Account::instanciate('p-pit-studies');
+		$type = $this->params()->fromRoute('type', 'generic');
+		$rates = $context->getConfig('catalogue/product/rates');
+		$content = CatalogueController::getContent();
+		$account = $context->getProfile();
+		if (!$account) $account = Account::instanciate($type);
 		$commitment_id = null;
 
 		// Retrieve the request content
@@ -250,13 +257,13 @@ class CatalogueController extends AbstractActionController
 						$data['adr_extended'] = $this->request->getPost('adr_extended');
 						$data['adr_zip'] = $this->request->getPost('adr_zip');
 						$data['adr_city'] = $this->request->getPost('adr_city');
-						$data['property_1'] = 'tennis';
+//						$data['property_1'] = 'tennis';
 						$actionStatus = $account->loadAndAdd($data);
 						if ($actionStatus[0] == '206') $account = Account::get($actionStatus[1]);
 					}
 					
 					// Generate a commitment
-					$commitment = Commitment::instanciate('p-pit-studies');
+					$commitment = Commitment::instanciate($type);
 					$options = array();
 					$start = '9999-12-31';
 					foreach ($cart['products'] as $productId => $row) {
@@ -282,7 +289,7 @@ class CatalogueController extends AbstractActionController
 						foreach ($cart['discounts'] as $row) {
 							$options[] = array(
 								'identifier' => 'multiple_subscription_discount',
-								'caption' => 'Remise souscription multiple',
+								'caption' => $context->localize($rates['discounts']['multiple_subscription']['caption']),
 								'unit_price' => - $row['basis'],
 								'quantity' => $row['rate'],
 								'amount' => - $row['amount'],
@@ -292,7 +299,7 @@ class CatalogueController extends AbstractActionController
 					$data = array(
 						'account_id' => $account->id,
 						'year' => date('Y'),
-						'caption' => $context->getConfig('student/property/school_year/default'),
+						'caption' => sprintf($context->localize($content['commitment']['caption']['labels']), $context->decodeDate(date('Y-m-d'))),
 						'options' => $options,
 					);
 					$actionStatus = $commitment->loadAndAdd($data, Commitment::getConfig('generic'));
@@ -304,9 +311,9 @@ class CatalogueController extends AbstractActionController
 						if ($startDate < date('Y-m-d')) {
 
 							// One global term if the course start date - 15 days is before current date
-							$term = Term::instanciate('p-pit-studies', $commitment->id);
+							$term = Term::instanciate($type, $commitment->id);
 							$data = array(
-								'caption' => 'Accompte 25%',
+								'caption' => $context->localize($content['commitment']['terms']['whole']['caption']),
 								'due_date' => date('Y-m-d'),
 								'amount' => $commitment->tax_inclusive,
 								'means_of_payment' => 'bank_card',
@@ -315,25 +322,20 @@ class CatalogueController extends AbstractActionController
 						}
 						else {
 
-							// 25% at the order date and the rest 15 days before the course start date
-							$firstTermAmount = round($commitment->tax_inclusive * 0.25, 2);
-							$term = Term::instanciate('p-pit-studies', $commitment->id);
-							$data = array(
-								'caption' => 'Accompte 25%',
-								'due_date' => date('Y-m-d'),
-								'amount' => $firstTermAmount,
-								'means_of_payment' => 'bank_card',
-							);
-							$actionStatus = $term->loadAndAdd($data);
+							foreach ($content['commitment']['terms']['scheduled'] as $termDescription) {
 	
-							$term = Term::instanciate('p-pit-studies', $commitment->id);
-							$data = array(
-								'caption' => 'Solde',
-								'due_date' => max($startDate, date('Y-m-d')),
-								'amount' => $commitment->tax_inclusive - $firstTermAmount,
-								'means_of_payment' => 'bank_card',
-							);
-							$actionStatus = $term->loadAndAdd($data);
+								$termAmount = round($commitment->tax_inclusive * $termDescription['share'], 2);
+								if ($termDescription['type'] == 'deposit') $termDate = date('Y-m-d');
+								else $termDate = max($startDate, date('Y-m-d', strtotime($start . $termDescription['days'] . ' days')));
+								$term = Term::instanciate($type, $commitment->id);
+								$data = array(
+									'caption' => $context->localize($termDescription['caption']),
+									'due_date' => $termDate,
+									'amount' => $termAmount,
+									'means_of_payment' => 'bank_card',
+								);
+								$actionStatus = $term->loadAndAdd($data);
+							}
 						}
 						if ($actionStatus[0] == '200') {
 							$account->shopping_cart = $commitment->id;
@@ -357,7 +359,7 @@ class CatalogueController extends AbstractActionController
 		// Return the view
 		$view = new ViewModel(array(
 			'context' => $context,
-			'locale' => $locale,
+			'content' => $content,
 			'account' => $account,
 			'cart' => $cart,
 			'commitment_id' => $commitment_id,
@@ -373,6 +375,7 @@ class CatalogueController extends AbstractActionController
 		// Retrieve the context and the parameters
 		$context = Context::getCurrent();
 		$locale = $this->params()->fromQuery('locale');
+		$content = CatalogueController::getContent();
 		$account = Account::get($context->getContactId(), 'contact_1_id');
 		$commitment_id = $this->params()->fromRoute('commitment_id');
 		$commitment = Commitment::get($commitment_id);
@@ -404,16 +407,16 @@ class CatalogueController extends AbstractActionController
 
 				$first = true; 
 				foreach ($commitment->options as &$option) {
-				    if (array_key_exists($option['identifier'], $context->getConfig('tennisEtudes/product/rates')['products'])) {
+				    if (array_key_exists($option['identifier'], $context->getConfig('catalogue/product/rates')['products'])) {
 						for ($i = 0; $i < $option['quantity']; $i++) {
 	
-							$commitment->description .= $this->request->getPost('complete-n_last-' . $option['identifier'] . '-' . $i) . ', ';
-							$commitment->description .= $this->request->getPost('complete-n_first-' . $option['identifier'] . '-' . $i) . ' - ';
-							$birth_date = $this->request->getPost('complete-birth_date-' . $option['identifier'] . '-' . $i);
-							$commitment->description .= 'né(e) le ' . substr($birth_date, 8, 2) . '/' . substr($birth_date, 5, 2) . '/' . substr($birth_date, 0, 4) . ' - ';
-							$commitment->description .= $this->request->getPost('complete-email-' . $option['identifier'] . '-' . $i) . ' - ';
-							$commitment->description .= $this->request->getPost('complete-tel_cell-' . $option['identifier'] . '-' . $i) . ' - ';
-							$commitment->description .= 'Niveau/licence: ' . $this->request->getPost('complete-property_11-' . $option['identifier'] . '-' . $i) . "\n";
+							foreach ($content['complete']['recipient_properties'] as $property_id => $property) {
+								
+								$value = $this->request->getPost('complete-' . $property_id . '-' . $option['identifier'] . '-' . $i);
+								if ($property['type'] == 'date') $value = $context->decodeDate($value);
+								if (array_key_exists('mask', $property)) $value = sprintf($property['mask'], $value);
+								$commitment->description .= $value . ', ';
+							}
 						}
 				    }
 				}
@@ -431,6 +434,7 @@ class CatalogueController extends AbstractActionController
 		// Return the view
 		$view = new ViewModel(array(
 			'context' => $context,
+			'content' => $content,
 			'locale' => $locale,
 			'account' => $account,
 			'commitment' => $commitment,
@@ -445,17 +449,17 @@ class CatalogueController extends AbstractActionController
 	{
 		// Retrieve context and parameters
 		$context = Context::getCurrent();
-		$locale = $this->params()->fromQuery('locale', 'default');
+		$content = CatalogueController::getContent();
 		$account_id = $this->params()->fromRoute('account_id');
 
 		// Account and commitments
 		$account = Account::get($account_id);
-		if ($account) $commitments = Commitment::getList('p-pit-studies', ['account_id' => $account->id], 'id', 'desc', 'search');		
+		if ($account) $commitments = Commitment::getList($account->type, ['account_id' => $account->id], 'id', 'desc', 'search');		
 		else $commitments = [];
 		
 		$view = new ViewModel(array(
 			'context' => $context,
-			'locale' => $locale,
+			'content' => $content,
 			'account' => $account,
 			'commitments' => $commitments,
 		));
