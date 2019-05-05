@@ -19,6 +19,11 @@ use Symfony\Component\Validator\Constraints\IsNull;
 
 class Account
 {
+	/**
+	 * This section constitutes the target code to remain in 2pit2 version. It is more functional oriented than the historical
+	 * code and has unit-testing associated.
+	 */
+	
 	public static $model = array(
 		'entities' => array(
 			'core_account' => 	['table' => 'core_account'],
@@ -187,120 +192,217 @@ class Account
 			'authentication_token' => 		['entity' => 'core_account', 'column' => 'authentication_token'],
 		),
 	);
-	
+
+	/**
+	 * Returns a dictionary of each property associated with its description contextual to the current instance config for the given account type.
+	 */
 	public static function getConfig($type) {
+	
+		// Retrieve the context
 		$context = Context::getCurrent();
-		$properties = array();
+	
+		// Retrieve the properties description defined in the current instance config for the given account type
 		$description = $context->getConfig('core_account/'.$type);
+	
+		// If no description is found for the given type retrieve the properties description for the generic type
 		if (!$description) $description = $context->getConfig('core_account/generic');
-		$description['type'] = $type;
+	
+		// Construct the resulting dictionary for each defined property
+		$properties = array();
 		foreach($description['properties'] as $propertyId) {
+	
+			// Retrieve the property description according to the given type, defaulting to the generic type
 			$property = $context->getConfig('core_account/'.$type.'/property/'.$propertyId);
 			if (!$property) $property = $context->getConfig('core_account/generic/property/'.$propertyId);
+	
+			// Overwrite the description with the referred description for non-inline property definition
 			if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
+
 			if (!array_key_exists('private', $property)) $property['private'] = false;
-			if (!$property['private'] || $context->hasRole('dpo')) {
-				if ($propertyId == 'place_id') {
-					$property['modalities'] = array();
-					foreach (Place::getList(array()) as $place) $property['modalities'][$place->id] = $place->caption;
-				}
-				elseif (in_array($property['type'], ['select', 'multiselect']) && array_key_exists('definition', $property['modalities']) && $property['modalities']['definition'] != 'inline') {
-					$definition = $context->getConfig($property['modalities']['definition']);
-					$property['modalities'] = array();
-					foreach ($definition as $modalityId => $modality) {
-						$property['modalities'][$modalityId] = $modality['labels'];
-					}
-				}
-				$properties[$propertyId] = $property;
+			
+			// Cache the place list retrieved from the database for the current instance in the place_id property description
+			if ($propertyId == 'place_id') {
+				$property['modalities'] = array();
+				foreach (Place::getList(array()) as $place) $property['modalities'][$place->id] = $place->caption;
 			}
+				
+			// Cache the referred modalities definition for modalities not defined inline
+			elseif (in_array($property['type'], ['select', 'multiselect']) && array_key_exists('definition', $property['modalities']) && $property['modalities']['definition'] != 'inline') {
+				$definition = $context->getConfig($property['modalities']['definition']);
+				$property['modalities'] = array();
+				foreach ($definition as $modalityId => $modality) {
+					$property['modalities'][$modalityId] = $modality['labels'];
+				}
+			}
+				
+			$properties[$propertyId] = $property;
 		}
+	
+		// Return the dictionary
 		return $properties;
 	}
 
+	/**
+	 * Returns the restricted dictionary, expected by the search engine, of the properties for the given account type
+	 */
 	public static function getConfigSearch($type, $configProperties)
 	{
+		// Retrieve the context
 		$context = Context::getCurrent();
+	
+		// Retrieve the search properties defined in the current instance config for the given account type
 		$configSearch = $context->getConfig('core_account/search/'.$type);
+	
+		// If no search description is found for the given type retrieve the search properties for the generic type
 		if (!$configSearch) $configSearch = $context->getConfig('core_account/search/generic');
+	
+		// Construct the resulting dictionary for each search property
 		$properties = array();
 		foreach ($configSearch['properties'] as $propertyId => $options) {
+	
+			// Retrieve the property description from the whole properties dictionary and merge it with the search options for this property
 			$property = $configProperties[$propertyId];
 			$properties[$propertyId] = $property;
 			$properties[$propertyId]['options'] = $options;
 		}
+	
 		$configSearch['properties'] = $properties;
+	
+		// Return the search restricted dictionary
 		return $configSearch;
 	}
-
+	
+	/**
+	 * Returns the restricted dictionary, to display on a list view, of the properties for the given account type
+	 */
 	public static function getConfigList($type, $configProperties)
 	{
+		// Retrieve the context
 		$context = Context::getCurrent();
+	
+		// Retrieve the list properties defined in the current instance config for the given account type
 		$configList = $context->getConfig('core_account/list/'.$type);
+	
+		// If no list description is found for the given type retrieve the list properties for the generic type
 		if (!$configList) $configList = $context->getConfig('core_account/list/generic');
+	
+		// Construct the resulting dictionary for each list property
 		$properties = array();
 		foreach ($configList['properties'] as $propertyId => $options) {
+	
+			// Retrieve the property description from the whole properties dictionary and merge it with the list options for this property
 			$property = $configProperties[$propertyId];
 			$properties[$propertyId] = $property;
 			$properties[$propertyId]['options'] = $options;
 		}
 		$configList['properties'] = $properties;
+	
+		// Return the search restricted dictionary
 		return $configList;
 	}
-
+	
+	/**
+	 * Returns the restricted dictionary of the properties that can be updated for the given account type
+	 */
 	public static function getConfigUpdate($type, $configProperties)
 	{
+		// Retrieve the context
 		$context = Context::getCurrent();
+	
+		// Retrieve the updatable properties defined in the current instance config for the given account type
 		$configUpdate = $context->getConfig('core_account/update/'.$type);
+	
+		// If no update description is found for the given type retrieve the updatable properties for the generic type
 		if (!$configUpdate) $configUpdate = $context->getConfig('core_account/update/generic');
+	
+		// Construct the resulting dictionary for each updatable property
 		$properties = array();
 		foreach ($configUpdate as $propertyId => $options) {
 			if (array_key_exists($propertyId, $configProperties)) {
+	
+				// Retrieve the property description from the whole properties dictionary and merge it with the update options for this property
 				$property = $configProperties[$propertyId];
 				$property['options'] = $options;
 				$properties[$propertyId] = $property;
 			}
 		}
+	
+		// Return the updatable restricted dictionary
 		return $properties;
 	}
-
+	
+	/**
+	 * Returns the restricted dictionary of the properties that can be updated in group for the given account type
+	 */
 	public static function getConfigGroupUpdate($type, $configProperties)
 	{
+		// Retrieve the context
 		$context = Context::getCurrent();
+	
+		// Retrieve the group-updatable properties defined in the current instance config for the given account type
 		$configUpdate = $context->getConfig('core_account/groupUpdate/'.$type);
+	
+		// If no update description is found for the given type retrieve the group-updatable properties for the generic type
 		if (!$configUpdate) $configUpdate = $context->getConfig('core_account/groupUpdate/generic');
+	
+		// Construct the resulting dictionary for each group-updatable property
 		$properties = array();
 		foreach ($configUpdate as $propertyId => $options) {
 			if (array_key_exists($propertyId, $configProperties)) {
+	
+				// Retrieve the property description from the whole properties dictionary and merge it with the group-update options for this property
 				$property = $configProperties[$propertyId];
 				$property['options'] = $options;
 				$properties[$propertyId] = $property;
 			}
 		}
+	
+		// Return the group-updatable restricted dictionary
 		return $properties;
 	}
-
+	
+	/**
+	 * Returns the restricted dictionary of the properties that can be exported for the given account type
+	 */
 	public static function getConfigExport($type, $configProperties)
 	{
+		// Retrieve the context
 		$context = Context::getCurrent();
+	
+		// Retrieve the exportable properties defined in the current instance config for the given account type
 		$configExport = $context->getConfig('core_account/export/'.$type);
+	
+		// If no export description is found for the given type retrieve the exportable properties for the generic type
 		if (!$configExport) $configExport = $context->getConfig('core_account/export/generic');
+	
+		// Construct the resulting dictionary for each exportable property
 		$properties = array();
 		foreach ($configExport as $propertyId => $options) {
 			if (array_key_exists($propertyId, $configProperties)) {
+	
+				// Retrieve the property description from the whole properties dictionary and merge it with the export options for this property
 				$property = $configProperties[$propertyId];
 				$properties[$propertyId] = $property;
 				$properties[$propertyId]['options'] = $options;
 			}
 		}
+	
+		// Return the exportable restricted dictionary
 		return $properties;
 	}
 
+	/**
+	 * Returns the dictionary of the properties for the given account type along with global options for this type and
+	 * along with the restricted dictionary for search, list, detail and update options, group-update and export
+	 */
 	public static function getDescription($type)
 	{
+		// Retrieve the context
 		$context = Context::getCurrent();
 		$config = $context->getConfig('core_account/'.$type);
 		if (!$config) $config = $context->getConfig('core_account/generic');
 	
+		// Construct the whole description by aggregating all the dictionnaries and options
 		$description = array();
 		$description['type'] = $type;
 		$description['options'] = (array_key_exists('options', $config)) ? $config['options'] : array();
@@ -310,8 +412,381 @@ class Account
 		$description['update'] = Account::getConfigUpdate($type, $description['properties']);
 		$description['groupUpdate'] = Account::getConfigGroupUpdate($type, $description['properties']);
 		$description['export'] = Account::getConfigEXport($type, $description['properties']);
+	
+		// Return the whole description
 		return $description;
 	}
+
+	/**
+	 * Constructs a Zend SQL Select object based on:
+	 * - columns as a list of properties defined in the account model
+	 * - filters as a dictionary of property => predicate
+	 * - order as an array of properties prefixed by + (ascending) or - (descending)
+	 * - limit as an int being null if no limitation is expected in the number of rows to be retrieved from the database
+	 *
+	 * The predicates in filters have the form of an array which first element is an operator compliant with a REST API filter followed by one or several values depending on the operator
+	 * The operator is one of 'eq', 'ne', 'gt', 'ge', 'lt', 'le', 'in', 'between', 'like', 'null' and 'not_null'
+	 *
+	 * @param string $type
+	 * @param array $columns
+	 * @param array $filters
+	 * @param string $order
+	 * @param int $limit
+	 * @return \Zend\Db\Sql\Select
+	 */
+	public static function getSelect($type, $columns = null, $filters = [], $order = ['+name'], $limit = null)
+	{
+		// Retrieve the context and the account description for the given type
+		$context = Context::getCurrent();
+		$config = Account::getConfig($type);
+	
+		// Construct the select object and define the joins
+		$select = Account::getTable()->getSelect()
+		->join('core_place', 'core_account.place_id = core_place.id', array('place_caption' => 'caption', 'place_identifier' => 'identifier'), 'left')
+		->join('core_vcard', 'core_account.contact_1_id = core_vcard.id', array('n_title', 'n_first', 'n_last', 'n_fn', 'email', 'birth_date', 'tel_work', 'tel_cell', 'photo_link_id', 'adr_street', 'adr_extended', 'adr_post_office_box', 'adr_zip', 'adr_city', 'adr_state', 'adr_country', 'gender', 'nationality', 'profile_tiny_1' => 'tiny_1', 'profile_tiny_2' => 'tiny_2', 'profile_tiny_3' => 'tiny_3', 'profile_tiny_4' => 'tiny_4', 'profile_tiny_5' => 'tiny_5', 'profile_tiny_6' => 'tiny_6', 'profile_tiny_7' => 'tiny_7', 'profile_tiny_8' => 'tiny_8', 'profile_tiny_9' => 'tiny_9', 'profile_tiny_10' => 'tiny_10', 'locale'), 'left')
+		->join(array('contact_2' => 'core_vcard'), 'core_account.contact_2_id = contact_2.id', array('n_title_2' =>'n_title', 'n_first_2' => 'n_first', 'n_last_2' => 'n_last', 'n_fn_2' => 'n_fn', 'email_2' => 'email', 'birth_date_2' => 'birth_date', 'tel_work_2' => 'tel_work', 'tel_cell_2' => 'tel_cell', 'adr_street_2' => 'adr_street', 'adr_extended_2' => 'adr_extended', 'adr_post_office_box_2' => 'adr_post_office_box', 'adr_zip_2' => 'adr_zip', 'adr_city_2' => 'adr_city', 'adr_state_2' => 'adr_state', 'adr_country_2' => 'adr_country'), 'left')
+		->join(array('contact_3' => 'core_vcard'), 'core_account.contact_3_id = contact_3.id', array('n_title_3' =>'n_title', 'n_first_3' => 'n_first', 'n_last_3' => 'n_last', 'n_fn_3' => 'n_fn', 'email_3' => 'email', 'birth_date_3' => 'birth_date', 'tel_work_3' => 'tel_work', 'tel_cell_3' => 'tel_cell', 'adr_street_3' => 'adr_street', 'adr_extended_3' => 'adr_extended', 'adr_post_office_box_3' => 'adr_post_office_box', 'adr_zip_3' => 'adr_zip', 'adr_city_3' => 'adr_city', 'adr_state_3' => 'adr_state', 'adr_country_3' => 'adr_country'), 'left')
+		->join(array('contact_4' => 'core_vcard'), 'core_account.contact_4_id = contact_4.id', array('n_title_4' =>'n_title', 'n_first_4' => 'n_first', 'n_last_4' => 'n_last', 'n_fn_4' => 'n_fn', 'email_4' => 'email', 'birth_date_4' => 'birth_date', 'tel_work_4' => 'tel_work', 'tel_cell_4' => 'tel_cell', 'adr_street_4' => 'adr_street', 'adr_extended_4' => 'adr_extended', 'adr_post_office_box_4' => 'adr_post_office_box', 'adr_zip_4' => 'adr_zip', 'adr_city_4' => 'adr_city', 'adr_state_4' => 'adr_state', 'adr_country_4' => 'adr_country'), 'left')
+		->join(array('contact_5' => 'core_vcard'), 'core_account.contact_5_id = contact_5.id', array('n_title_5' =>'n_title', 'n_first_5' => 'n_first', 'n_last_5' => 'n_last', 'n_fn_5' => 'n_fn', 'email_5' => 'email', 'birth_date_5' => 'birth_date', 'tel_work_5' => 'tel_work', 'tel_cell_5' => 'tel_cell', 'adr_street_5' => 'adr_street', 'adr_extended_5' => 'adr_extended', 'adr_post_office_box_5' => 'adr_post_office_box', 'adr_zip_5' => 'adr_zip', 'adr_city_5' => 'adr_city', 'adr_state_5' => 'adr_state', 'adr_country_5' => 'adr_country'), 'left');
+	
+		// Specify the columns to retrieve (* if none)
+		if ($columns) $select->columns($columns);
+	
+		// Normalize the order by replacing the preceding '+' or '-' by trailing 'ASC' or 'DESC' and specify the order clause
+		foreach ($order as &$criterion) $criterion = substr($criterion, 1).' '.((substr($criterion, 0, 1) == '-') ? 'DESC' : 'ASC');
+		$select->order($order);
+	
+		// Set the fiters
+		$where = new Where;
+		if ($type) $where->equalTo('type', $type);
+		foreach ($filters as $propertyId => $predicate) {
+			$operator = $predicate[0];
+			$value = $predicate[1];
+			$property = $config[$propertyId];
+			$entity = Account::$model['properties'][$propertyId]['entity'];
+			$column = Account::$model['properties'][$propertyId]['column'];
+	
+			if ($property['type'] == 'select') {
+				if (array_key_exists('multiple', $property) && $property['multiple']) $where->like($entity . '.' . $column, '%' . $value . '%');
+				else $where->equalTo($entity.'.'.$column, $value);
+			}
+			elseif ($property['type'] == 'table') $where->equalTo($entity . '.' . $column, $value);
+			elseif ($property['type'] == 'multiselect') $where->like($entity . '.' . $column, '%' . $value . '%');
+			elseif (in_array($property['type'], ['date', 'datetime']) && !$value) $where->isNull($entity . '.' . $propertyId);
+			elseif ($value == 'eq') $where->equalTo($entity . '.' . $column, $value);
+			elseif ($value == 'ne') $where->notEqualTo($entity . '.' . $column, $value);
+			elseif ($operator == 'gt') $where->greaterThan($entity . '.' . $propertyId, $value);
+			elseif ($operator == 'ge') $where->greaterThanOrEqualTo($entity . '.' . $propertyId, $value);
+			elseif ($operator == 'lt') $where->lessThan($entity . '.' . $propertyId, $value);
+			elseif ($operator == 'le') $where->lessThanOrEqualTo($entity . '.' . $propertyId, $value);
+			elseif ($operator = 'in') {
+				$values = array_slice($predicate, 1);
+				$where->in($entity . '.' . $column, $values);
+			}
+			elseif ($operator = 'between') {
+				$value = $predicate[2];
+				$where->between($entity . '.' . $column, $value, $value2);
+			}
+			elseif ($operator == 'like') $where->like($entity . '.' . $column, '%' . $value . '%');
+			elseif ($operator == 'null') $where->isNull($entity . '.' . $column);
+			elseif ($operator == 'not_null') $where->isNotNull($entity . '.' . $column);
+		}
+	
+		// Filter on authorized perimeter
+		if (array_key_exists('p-pit-admin', $context->getPerimeters())) {
+			foreach ($context->getPerimeters()['p-pit-admin'] as $propertyId => $values) {
+				$entity = Account::$model['properties'][$propertyId]['entity'];
+				$column = Account::$model['properties'][$propertyId]['column'];
+				$where->in($entity . '.' . $column, $values);
+			}
+		}
+		if (array_key_exists($type, $context->getPerimeters())) {
+			foreach ($context->getPerimeters()[$type] as $propertyId => $values) {
+				$entity = Account::$model['properties'][$propertyId]['entity'];
+				$column = Account::$model['properties'][$propertyId]['column'];
+				$where->in($entity . '.' . $column, $values);
+			}
+		}
+	
+		$select->where($where);
+	
+		// Set the limit or no-limit
+		if ($limit) $select->limit($limit);
+	
+		// Return the SQL select
+		return $select;
+	}
+
+	/**
+	 * Dispatch the input account dictionary of property => value as to obtain dictionaries per table in the physical model:
+	 * (core_account, core_vcard, contact_2 as core_vcard, contact_3 as core_vcard, contact_4 as core_vcard, contact_5 as core_vcard)
+	 *
+	 * @param string $type
+	 * @param [] $data
+	 * @return []
+	 */
+	public static function dispatch($type, $data)
+	{
+		$accountData = [];
+		$vcardData = [];
+		$contact2Data = [];
+		$contact3Data = [];
+		$contact4Data = [];
+		$contact5Data = [];
+		$properties = Account::$model['properties'];
+		foreach($data as $key => $value) {
+			if (array_key_exists($key, $properties)) {
+				if ($key != 'result') {
+					$propertyId = $properties[$key]['column'];
+					if ($properties[$key]['entity'] == 'core_account') $accountData[$propertyId] = $value;
+					elseif ($properties[$key]['entity'] == 'core_vcard') $vcardData[$propertyId] = $value;
+					elseif ($properties[$key]['entity'] == 'contact_2') $contact2Data[$propertyId] = $value;
+					elseif ($properties[$key]['entity'] == 'contact_3') $contact3Data[$propertyId] = $value;
+					elseif ($properties[$key]['entity'] == 'contact_4') $contact4Data[$propertyId] = $value;
+					elseif ($properties[$key]['entity'] == 'contact_5') $contact5Data[$propertyId] = $value;
+				}
+			}
+		}
+	
+		$result = ['core_account' => $accountData, 'core_vcard' => $vcardData];
+		$result['contact_2'] = $contact2Data;
+		$result['contact_3'] = $contact3Data;
+		$result['contact_4'] = $contact4Data;
+		$result['contact_5'] = $contact5Data;
+	
+		return $result;
+	}
+	
+	/**
+	 * Check the validity of the given time
+	 *
+	 * @param string $time
+	 * @return boolean
+	 */
+	public static function checktime($time) {
+		if ((int)substr($time, 0, 2) < 0) return false;
+		if ((int)substr($time, 0, 2) > 23) return false;
+		if (substr($time, 2, 1) != ':') return false;
+		if ((int)substr($time, 3, 2) < 0) return false;
+		if ((int)substr($time, 3, 2) > 59) return false;
+		if (substr($time, 5, 1) != ':') return false;
+		if ((int)substr($time, 6, 2) < 0) return false;
+		if ((int)substr($time, 6, 2) > 59) return false;
+		return true;
+	}
+
+	/**
+	 * Check the validity of the given property => value dictionary as an input for inserting or updating the core_account table of the model
+	 *
+	 * @param string $type
+	 * @param [] $data
+	 * @return []
+	 */
+	public static function validate($type, $data)
+	{
+		$context = Context::getCurrent();
+		$result = [];
+		$errors = [];
+	
+		// Retrieve the properties description for the given account type
+		$configProperties = Account::getConfig($type);
+	
+		// Iterates on the given pairs of property => value
+		foreach ($data as $propertyId => $value) {
+	
+			// Check that this property is managed for the given type
+			if (!array_key_exists($propertyId, $configProperties)) $errors[$propertyId] = 'The accounts of type $type does not manage the property ' . $propertyId;
+			else {
+	
+				// Retrieve the property description for the given type
+				$property = $configProperties[$propertyId];
+	
+				// Suppress white spaces and tags in the string values
+				if (in_array($property['type'], ['array', 'key_value', 'structure'])) $value = $data[$propertyId];
+				else $value = trim(strip_tags($data[$propertyId]));
+	
+				// Check for maximum sizes
+				if (in_array($property['type'], ['input', 'select', 'multiselect'])) {
+					if (strlen($value) > 255) $errors[$propertyId] = "$propertyId should not be longer than 255 characters";
+				}
+				elseif (in_array($property['type'], ['textarea', 'log'])) {
+					$maxLength = (array_key_exists('max_length', $property)) ? $property['max_length'] : 2047;
+					if (strlen($value) > $maxLength) $errors[$propertyId] = "$propertyId should not be longer than $maxLength characters";
+				}
+	
+				// Check for date validity
+				elseif (in_array($property['type'], ['date'])) {
+					if ($value && (strlen($value) < 10 || !checkdate(substr($value, 5, 2), substr($value, 8, 2), substr($value, 0, 4)))) $errors[$propertyId] = "$propertyId should be a valid date according to the format yyyy-mm-dd";
+				}
+	
+				// Check for time validity
+				elseif (in_array($property['type'], ['time'])) {
+					if ($value && !Account::checktime($value)) $errors[$propertyId] = "$propertyId should be a valid time according to the format hh:mm:ss";
+				}
+				elseif (in_array($property['type'], ['datetime'])) {
+					if ($value && (!checkdate(substr($value, 5, 2), substr($value, 8, 2), substr($value, 0, 4)) || !Account::checktime(substr($value, 11, 8)))) $errors[$propertyId] = "$propertyId should be a valid date & time according to the format yyyy-mm-dd hh:mm:ss";
+				}
+	
+				elseif ($property['type'] == 'id') $value = (int) $value;
+	
+				// Cast number to int or float depending on the precision defined for this property
+				elseif ($property['type'] == 'number') {
+					if (array_key_exists('precision', $property) && $property['precision'] > 0) $value = (float) $value;
+					else $value = (int) $value;
+				}
+	
+				// Private data protection
+				if ($property['private'] && $value) {
+					$value = $context->getSecurityAgent()->protectPrivateDataV2($value);
+				}
+	
+				// Log the comment in the contact history
+				if ($propertyId == 'contact_history' && $data['contact_history']) {
+					$result['contact_history'] = array(
+						'time' => Date('Y-m-d G:i:s'),
+						'n_fn' => $context->getFormatedName(),
+						'comment' => $value,
+					);
+				}
+	
+				else $result[$propertyId] = $value;
+			}
+		}
+	
+		// Return either the errors or the resulting data if no error
+		return ($errors) ? ['errors' => $errors] : ['data' => $result];
+	}
+	
+	/**
+	 * Update account dates according to other property changes
+	 *
+	 * @param string $type
+	 * @param [] $data
+	 * @return []
+	 */
+	public static function actualize($type, $data, $current)
+	{
+		$context = Context::getCurrent();
+		$result = array();
+	
+		// Retrieve the properties description for the given account type
+		$configProperties = Account::getConfig($type);
+
+		// Update dates depending on given properties for the given type
+		if (!$current['date_1'] && array_key_exists('date_1', $configProperties)) {
+			$date1Description = $configProperties['date_1'];
+			if (	$date1Description
+				&& 	array_key_exists('dependency', $date1Description)
+				&& 	array_key_exists($date1Description['dependency']['property'], $data)
+				&&	in_array($data[$date1Description['dependency']['property']], $date1Description['dependency']['values'])) {
+				$result['date_1'] = date('Y-m-d');
+			}
+		}
+	
+		if (!$current['date_2'] && array_key_exists('date_2', $configProperties)) {
+			$date2Description = $configProperties['date_2'];
+			if (	$date2Description
+				&& 	array_key_exists('dependency', $date2Description)
+				&& 	array_key_exists($date2Description['dependency']['property'], $data)
+				&&	in_array($data[$date2Description['dependency']['property']], $date2Description['dependency']['values'])) {
+				$result['date_2'] = date('Y-m-d');
+			}
+		}
+	
+		if (!$current['date_3'] && array_key_exists('date_3', $configProperties)) {
+			$date3Description = $configProperties['date_3'];
+			if (	$date3Description
+				&& 	array_key_exists('dependency', $date3Description)
+				&& 	array_key_exists($date3Description['dependency']['property'], $data)
+				&&	in_array($data[$date3Description['dependency']['property']], $date3Description['dependency']['values'])) {
+				$result['date_3'] = date('Y-m-d');
+			}
+		}
+	
+		if (!$current['date_4'] && array_key_exists('date_4', $configProperties)) {
+			$date4Description = $configProperties['date_4'];
+			if (	$date4Description
+				&& 	array_key_exists('dependency', $date4Description)
+				&& 	array_key_exists($date4Description['dependency']['property'], $data)
+				&&	in_array($data[$date4Description['dependency']['property']], $date4Description['dependency']['values'])) {
+				$result['date_4'] = date('Y-m-d');
+			}
+		}
+	
+		if (!$current['date_5'] && array_key_exists('date_5', $configProperties)) {
+			$date5Description = $configProperties['date_5'];
+			if (	$date5Description
+				&& 	array_key_exists('dependency', $date5Description)
+				&& 	array_key_exists($date5Description['dependency']['property'], $data)
+				&&	in_array($data[$date5Description['dependency']['property']], $date5Description['dependency']['values'])) {
+				$result['date_5'] = date('Y-m-d');
+			}
+		}
+		 
+		return $result;
+	}
+	
+	public static function labelToSelectValue($config, $data)
+	{
+		$context = Context::getCurrent();
+		$result = [];
+	
+		// Normalize the data
+		foreach($data as $propertyId => $value) {
+			if (array_key_exists($propertyId, $config)) {
+				$property = $config[$propertyId];
+				if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
+				if ($property['type'] == 'select') {
+					$valueKey = null;
+					foreach ($property['modalities'] as $modalityId => $modality) if ($context->localize($modality) == $value) $valueKey = $modalityId;
+					if ($valueKey) $value = $valueKey;
+				}
+				$result[$propertyId] = $value;
+			}
+		}
+	
+		return $result;
+	}
+	
+	public static function formatNotification($email, $n_fn, $admins, $url)
+	{
+		$context = Context::getCurrent();
+	
+		$notification = $context->getConfig('core_account/notification');
+		if ($notification['definition'] != 'inline') $notification = $context->getConfig($notification['definition']);
+		$template = $notification['template'];
+		if ($template['definition'] != 'inline') $template = $context->getConfig($template['definition']);
+	
+		$text = sprintf($template['body'][$context->getLocale()], $context->getInstance()->fqdn, $url);
+		$signature = $context->getConfig('core_account/sendMessage')['signature'];
+		if ($signature['definition'] != 'inline') $signature = $context->getConfig($signature['definition']);
+		$text .= $signature['body'][$context->getLocale()];
+	
+		$part = new MimePart($text);
+		$part->type = "text/html";
+	
+		$body = new MimeMessage();
+		$body->setParts(array($part));
+	
+		$message = new Mail\Message();
+		$message->setEncoding("UTF-8");
+		$message->setBody($body);
+		$from_mail = $context->getConfig('core_account/notification')['from_mail'];
+		$from_name = $context->getConfig('core_account/notification')['from_name'];
+		$message->setFrom($from_mail, $from_name);
+		$message->setSubject($template['subject'][$context->getLocale()]);
+	
+		$message->addTo($email, $n_fn);
+		$message->addBcc('support@p-pit.fr', 'support@p-pit.fr');
+		foreach ($admins as $adminEmail => $contact) $message->addBcc($adminEmail, $adminEmail);
+	
+		return $message;
+	}
+	
+	/**
+	 * This section is intended to be progressively deprecated in 2pit2 while the whole framework is to be simplified and
+	 * less and less dependant of the Zend historical foundation
+	 */
 	
 	public $id;
     public $instance_id;
@@ -1128,6 +1603,7 @@ class Account
     	else $description = null;
     	
     	$order = explode(',', $order);
+
     	foreach ($order as &$criterion) $criterion = substr($criterion, 1).' '.((substr($criterion, 0, 1) == '-') ? 'DESC' : 'ASC');
     	$select = Account::getTable()->getSelect()
 			->join('core_place', 'core_account.place_id = core_place.id', array('place_caption' => 'caption', 'place_identifier' => 'identifier'), 'left')
@@ -1392,18 +1868,6 @@ class Account
 		return $account;
     }
 
-    public static function checktime($time) {
-    	if ((int)substr($time, 0, 2) < 0) return false;
-    	if ((int)substr($time, 0, 2) > 23) return false;
-    	if (substr($time, 2, 1) != ':') return false;
-    	if ((int)substr($time, 3, 2) < 0) return false;
-    	if ((int)substr($time, 3, 2) > 59) return false;
-    	if (substr($time, 5, 1) != ':') return false;
-    	if ((int)substr($time, 6, 2) < 0) return false;
-    	if ((int)substr($time, 6, 2) > 59) return false;
-    	return true;
-    }
-
 	public function loadData($type, $data)
 	{
 		$context = Context::getCurrent();
@@ -1414,172 +1878,103 @@ class Account
     			'n_fn' => $context->getFormatedName(),
     	);
 		$configProperties = Account::getConfig($type);
-			
-		// Automatic values
-		if (!$this->date_1 && array_key_exists('date_1', $configProperties)) {
-			$date1Description = $configProperties['date_1'];
-			if (	$date1Description
-				&& 	array_key_exists('dependency', $date1Description)
-				&& 	array_key_exists($date1Description['dependency']['property'], $data)
-				&&	in_array($data[$date1Description['dependency']['property']], $date1Description['dependency']['values'])) {
-					$data['date_1'] = date('Y-m-d');
-			}
+		
+		$current = ['date_1' => $this->date_1, 'date_2' => $this->date_2, 'date_3' => $this->date_3, 'date_4' => $this->date_4, 'date_5' => $this->date_5];
+
+		// Actualize the account dates depending on status changes
+		foreach (Account::actualize($type, $data, $current) as $property_id => $value) {
+			$data[$property_id] = $value;
 		}
 
-		if (!$this->date_2 && array_key_exists('date_2', $configProperties)) {
-			$date2Description = $configProperties['date_2'];
-			if (	$date2Description
-				&& 	array_key_exists('dependency', $date2Description)
-				&& 	array_key_exists($date2Description['dependency']['property'], $data)
-				&&	in_array($data[$date2Description['dependency']['property']], $date2Description['dependency']['values'])) {
-					$data['date_2'] = date('Y-m-d');
-			}
+		$validation = Account::validate($type, $data);
+		foreach ($validation as $resultType => $result) {
+			if ($resultType == 'errors') return 'Integrity';
+			if ($resultType == 'data') $data = $result;
 		}
-
-		if (!$this->date_3 && array_key_exists('date_3', $configProperties)) {
-			$date3Description = $configProperties['date_3'];
-			if (	$date3Description
-				&& 	array_key_exists('dependency', $date3Description)
-				&& 	array_key_exists($date3Description['dependency']['property'], $data)
-				&&	in_array($data[$date3Description['dependency']['property']], $date3Description['dependency']['values'])) {
-					$data['date_3'] = date('Y-m-d');
-			}
-		}
-
-		if (!$this->date_4 && array_key_exists('date_4', $configProperties)) {
-			$date4Description = $configProperties['date_4'];
-			if (	$date4Description
-				&& 	array_key_exists('dependency', $date4Description)
-				&& 	array_key_exists($date4Description['dependency']['property'], $data)
-				&&	in_array($data[$date4Description['dependency']['property']], $date4Description['dependency']['values'])) {
-					$data['date_4'] = date('Y-m-d');
-			}
-		}
-
-		if (!$this->date_5 && array_key_exists('date_5', $configProperties)) {
-			$date5Description = $configProperties['date_5'];
-			if (	$date5Description
-				&& 	array_key_exists('dependency', $date5Description)
-				&& 	array_key_exists($date5Description['dependency']['property'], $data)
-				&&	in_array($data[$date5Description['dependency']['property']], $date5Description['dependency']['values'])) {
-					$data['date_5'] = date('Y-m-d');
-			}
-		}
-
+		
 		foreach ($data as $propertyId => $value) {
-			if (!array_key_exists($propertyId, $configProperties)) $errors[$propertyId] = "The accounts of type $type does not manage the property $propertyId";
-			else {
-				$property = $configProperties[$propertyId];
-				if (in_array($property['type'], ['array', 'key_value', 'structure'])) $value = $data[$propertyId];
-				else $value = trim(strip_tags($data[$propertyId]));
-				
-				if (in_array($property['type'], ['input', 'select', 'multiselect'])) {
-					if (strlen($value) > 255) $errors[$propertyId] = "$propertyId should not be longer than 255 characters";
-				}
-				elseif (in_array($property['type'], ['textarea', 'log'])) {
-					$maxLength = (array_key_exists('max_length', $property)) ? $property['max_length'] : 2047;
-					if (strlen($value) > $maxLength) $errors[$propertyId] = "$propertyId should not be longer than $maxLength characters";
-				}
-				elseif (in_array($property['type'], ['date'])) {
-			    	if ($value && (strlen($value) < 10 || !checkdate(substr($value, 5, 2), substr($value, 8, 2), substr($value, 0, 4)))) $errors[$propertyId] = "$propertyId should be a valid date according to the format yyyy-mm-dd";
-				}
-				elseif (in_array($property['type'], ['time'])) {
-			    	if ($value && !Account::checktime($value)) $errors[$propertyId] = "$propertyId should be a valid time according to the format hh:mm:ss";
-				}
-				elseif (in_array($property['type'], ['datetime'])) {
-			    	if ($value && (!checkdate(substr($value, 5, 2), substr($value, 8, 2), substr($value, 0, 4)) || !Account::checktime(substr($value, 11, 8)))) $errors[$propertyId] = "$propertyId should be a valid date & time according to the format yyyy-mm-dd hh:mm:ss";
-				}
-				elseif ($property['type'] == 'id') $value = (int) $value;
-				elseif ($property['type'] == 'number') {
-					if (array_key_exists('precision', $property) && $property['precision'] > 0) $value = (float) $value;
-					else $value = (int) $value;
-				}
 
-				// Private data protection
-				if ($property['private'] && $value) {
-					$value = $context->getSecurityAgent()->protectPrivateDataV2($value);
-				}
+			// Retrieve the property description for the given type
+			$property = $configProperties[$propertyId];
 
-				if ($propertyId == 'status') $this->status = $value;
-	    		elseif ($propertyId == 'type') $this->type = $value;
-	    		elseif ($propertyId == 'place_id') $this->place_id = $value;
-	        	elseif ($propertyId == 'identifier') $this->identifier = $value;
-	    		elseif ($propertyId == 'name') $this->name = $value;
-	    		elseif ($propertyId == 'basket') $this->basket = $value;
-	    		elseif ($propertyId == 'contact_1_id') $this->contact_1_id = $value;
-	    		elseif ($propertyId == 'contact_1_status') $this->contact_1_status = $value;
-	        	elseif ($propertyId == 'contact_2_id') $this->contact_2_id = $value;
-	    		elseif ($propertyId == 'contact_2_status') $this->contact_2_status = $value;
-	        	elseif ($propertyId == 'contact_3_id') $this->contact_3_id = $value;
-	    		elseif ($propertyId == 'contact_3_status') $this->contact_3_status = $value;
-	        	elseif ($propertyId == 'contact_4_id') $this->contact_4_id = $value;
-	    		elseif ($propertyId == 'contact_4_status') $this->contact_4_status = $value;
-	        	elseif ($propertyId == 'contact_5_id') $this->contact_5_id = $value;
-	    		elseif ($propertyId == 'contact_5_status') $this->contact_5_status = $value;
-				elseif ($propertyId == 'opening_date') $this->opening_date = $value;
-				elseif ($propertyId == 'closing_date') $this->closing_date = $value;
-	    		elseif ($propertyId == 'callback_date') $this->callback_date = $value;
-	    		elseif ($propertyId == 'first_activation_date') $this->first_activation_date = $value;
-	    		elseif ($propertyId == 'date_1') $this->date_1 = $value;
-	    		elseif ($propertyId == 'date_2') $this->date_2 = $value;
-	    		elseif ($propertyId == 'date_3') $this->date_3 = $value;
-	    		elseif ($propertyId == 'date_4') $this->date_4 = $value;
-	    		elseif ($propertyId == 'date_5') $this->date_5 = $value;
-	    		elseif ($propertyId == 'priority') $this->priority = $value;
-				elseif ($propertyId == 'origine') $this->origine = $value;
-	    		elseif ($propertyId == 'next_meeting_date') $this->next_meeting_date = $value;
-				elseif ($propertyId == 'next_meeting_confirmed') $this->next_meeting_confirmed = $value;
-				elseif ($propertyId == 'contact_history' && $data['contact_history']) {
-							$this->contact_history[] = array(
-							'time' => Date('Y-m-d G:i:s'),
-							'n_fn' => $context->getFormatedName(),
-							'comment' => $value,
-					);
-				}
-	        	elseif ($propertyId == 'notification_time') $this->notification_time = $value;
-	        	elseif ($propertyId == 'terms_of_use_validation_time') $this->terms_of_use_validation_time = $value;
-	        	elseif ($propertyId == 'charter_validation_time') $this->charter_validation_time = $value;
-	        	elseif ($propertyId == 'opt_out_time') $this->opt_out_time = $value;
-	        	elseif ($propertyId == 'availability_begin') $this->availability_begin = $value;
-				elseif ($propertyId == 'availability_end') $this->availability_end = $value;
-				elseif ($propertyId == 'availability_exceptions') $this->availability_exceptions = $value;
-				elseif ($propertyId == 'availability_constraints') $this->availability_constraints = $value;
-				elseif ($propertyId == 'credits') $this->credits = $value;
-				elseif ($propertyId == 'shopping_cart') $this->shopping_cart = $value;
-				elseif ($propertyId == 'default_means_of_payment') $this->default_means_of_payment = $value;
-				elseif ($propertyId == 'transfer_order_id') $this->transfer_order_id = $value;
-				elseif ($propertyId == 'transfer_order_date') $this->transfer_order_date = $value;
-				elseif ($propertyId == 'bank_identifier') $this->bank_identifier = $value;
-				elseif ($propertyId == 'property_1') $this->property_1 = $value;
-				elseif ($propertyId == 'property_2') $this->property_2 = $value;
-				elseif ($propertyId == 'property_3') $this->property_3 = $value;
-				elseif ($propertyId == 'property_4') $this->property_4 = $value;
-				elseif ($propertyId == 'property_5') $this->property_5 = $value;
-				elseif ($propertyId == 'property_6') $this->property_6 = $value;
-				elseif ($propertyId == 'property_7') $this->property_7 = $value;
-				elseif ($propertyId == 'property_8') $this->property_8 = $value;
-				elseif ($propertyId == 'property_9') $this->property_9 = $value;
-				elseif ($propertyId == 'property_10') $this->property_10 = $value;
-	    		elseif ($propertyId == 'property_11') $this->property_11 = $value;
-	    		elseif ($propertyId == 'property_12') $this->property_12 = $value;
-	    		elseif ($propertyId == 'property_13') $this->property_13 = $value;
-	    		elseif ($propertyId == 'property_14') $this->property_14 = $value;
-	    		elseif ($propertyId == 'property_15') $this->property_15 = $value;
-	    		elseif ($propertyId == 'property_16') $this->property_16 = $value;
-	    		elseif ($propertyId == 'json_property_1') $this->json_property_1 = $value;
-	        	elseif ($propertyId == 'json_property_2') $this->json_property_2 = $value;
-	            elseif ($propertyId == 'json_property_3') $this->json_property_3 = $value;
-	            elseif ($propertyId == 'json_property_4') $this->json_property_4 = $value;
-	            elseif ($propertyId == 'json_property_5') $this->json_property_5 = $value;
-				elseif ($propertyId == 'comment_1') $this->comment_1 = $value;
-	        	elseif ($propertyId == 'comment_2') $this->comment_2 = $value;
-	        	elseif ($propertyId == 'comment_3') $this->comment_3 = $value;
-	        	elseif ($propertyId == 'comment_4') $this->comment_4 = $value;
-
-				if ($propertyId && !in_array($propertyId, ['contact_history', 'json_property_1', 'json_property_2', 'json_property_3', 'json_property_4']) && $this->properties[$propertyId] != $value) $auditRow[$propertyId] = $value;
+			// Private data protection
+			if ($property['private'] && $value) {
+				$value = $context->getSecurityAgent()->protectPrivateDataV2($value);
 			}
+
+			if ($propertyId == 'status') $this->status = $value;
+    		elseif ($propertyId == 'type') $this->type = $value;
+    		elseif ($propertyId == 'place_id') $this->place_id = $value;
+        	elseif ($propertyId == 'identifier') $this->identifier = $value;
+    		elseif ($propertyId == 'name') $this->name = $value;
+    		elseif ($propertyId == 'basket') $this->basket = $value;
+    		elseif ($propertyId == 'contact_1_id') $this->contact_1_id = $value;
+    		elseif ($propertyId == 'contact_1_status') $this->contact_1_status = $value;
+        	elseif ($propertyId == 'contact_2_id') $this->contact_2_id = $value;
+    		elseif ($propertyId == 'contact_2_status') $this->contact_2_status = $value;
+        	elseif ($propertyId == 'contact_3_id') $this->contact_3_id = $value;
+    		elseif ($propertyId == 'contact_3_status') $this->contact_3_status = $value;
+        	elseif ($propertyId == 'contact_4_id') $this->contact_4_id = $value;
+    		elseif ($propertyId == 'contact_4_status') $this->contact_4_status = $value;
+        	elseif ($propertyId == 'contact_5_id') $this->contact_5_id = $value;
+    		elseif ($propertyId == 'contact_5_status') $this->contact_5_status = $value;
+			elseif ($propertyId == 'opening_date') $this->opening_date = $value;
+			elseif ($propertyId == 'closing_date') $this->closing_date = $value;
+    		elseif ($propertyId == 'callback_date') $this->callback_date = $value;
+    		elseif ($propertyId == 'first_activation_date') $this->first_activation_date = $value;
+    		elseif ($propertyId == 'date_1') $this->date_1 = $value;
+    		elseif ($propertyId == 'date_2') $this->date_2 = $value;
+    		elseif ($propertyId == 'date_3') $this->date_3 = $value;
+    		elseif ($propertyId == 'date_4') $this->date_4 = $value;
+    		elseif ($propertyId == 'date_5') $this->date_5 = $value;
+    		elseif ($propertyId == 'priority') $this->priority = $value;
+			elseif ($propertyId == 'origine') $this->origine = $value;
+    		elseif ($propertyId == 'next_meeting_date') $this->next_meeting_date = $value;
+			elseif ($propertyId == 'next_meeting_confirmed') $this->next_meeting_confirmed = $value;
+			elseif ($propertyId == 'contact_history') $this->contact_history[] = $value;
+        	elseif ($propertyId == 'notification_time') $this->notification_time = $value;
+        	elseif ($propertyId == 'terms_of_use_validation_time') $this->terms_of_use_validation_time = $value;
+        	elseif ($propertyId == 'charter_validation_time') $this->charter_validation_time = $value;
+        	elseif ($propertyId == 'opt_out_time') $this->opt_out_time = $value;
+        	elseif ($propertyId == 'availability_begin') $this->availability_begin = $value;
+			elseif ($propertyId == 'availability_end') $this->availability_end = $value;
+			elseif ($propertyId == 'availability_exceptions') $this->availability_exceptions = $value;
+			elseif ($propertyId == 'availability_constraints') $this->availability_constraints = $value;
+			elseif ($propertyId == 'credits') $this->credits = $value;
+			elseif ($propertyId == 'shopping_cart') $this->shopping_cart = $value;
+			elseif ($propertyId == 'default_means_of_payment') $this->default_means_of_payment = $value;
+			elseif ($propertyId == 'transfer_order_id') $this->transfer_order_id = $value;
+			elseif ($propertyId == 'transfer_order_date') $this->transfer_order_date = $value;
+			elseif ($propertyId == 'bank_identifier') $this->bank_identifier = $value;
+			elseif ($propertyId == 'property_1') $this->property_1 = $value;
+			elseif ($propertyId == 'property_2') $this->property_2 = $value;
+			elseif ($propertyId == 'property_3') $this->property_3 = $value;
+			elseif ($propertyId == 'property_4') $this->property_4 = $value;
+			elseif ($propertyId == 'property_5') $this->property_5 = $value;
+			elseif ($propertyId == 'property_6') $this->property_6 = $value;
+			elseif ($propertyId == 'property_7') $this->property_7 = $value;
+			elseif ($propertyId == 'property_8') $this->property_8 = $value;
+			elseif ($propertyId == 'property_9') $this->property_9 = $value;
+			elseif ($propertyId == 'property_10') $this->property_10 = $value;
+    		elseif ($propertyId == 'property_11') $this->property_11 = $value;
+    		elseif ($propertyId == 'property_12') $this->property_12 = $value;
+    		elseif ($propertyId == 'property_13') $this->property_13 = $value;
+    		elseif ($propertyId == 'property_14') $this->property_14 = $value;
+    		elseif ($propertyId == 'property_15') $this->property_15 = $value;
+    		elseif ($propertyId == 'property_16') $this->property_16 = $value;
+    		elseif ($propertyId == 'json_property_1') $this->json_property_1 = $value;
+        	elseif ($propertyId == 'json_property_2') $this->json_property_2 = $value;
+            elseif ($propertyId == 'json_property_3') $this->json_property_3 = $value;
+            elseif ($propertyId == 'json_property_4') $this->json_property_4 = $value;
+            elseif ($propertyId == 'json_property_5') $this->json_property_5 = $value;
+			elseif ($propertyId == 'comment_1') $this->comment_1 = $value;
+        	elseif ($propertyId == 'comment_2') $this->comment_2 = $value;
+        	elseif ($propertyId == 'comment_3') $this->comment_3 = $value;
+        	elseif ($propertyId == 'comment_4') $this->comment_4 = $value;
+
+			if ($propertyId && !in_array($propertyId, ['contact_history', 'json_property_1', 'json_property_2', 'json_property_3', 'json_property_4']) && $this->properties[$propertyId] != $value) $auditRow[$propertyId] = $value;
 		}
-		if ($errors) return 'Integrity';
+
 		$this->audit[] = $auditRow;
     	return 'OK';
     }
@@ -1755,45 +2150,14 @@ class Account
     	$description = Account::getDescription('core_account/'.$type);
     	
     	if (!array_key_exists('status', $data)) $data['status'] = 'new';
-/*    	foreach ($description['properties'] as $propertyId) {
-			$property = $context->getConfig('core_account/'.$type.'/property/'.$propertyId);
-    		if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
-    		if (array_key_exists($propertyId, $data)) {
-	    		if ($property['type'] == 'select' && $propertyId != 'place_id' && !array_key_exists($data[$propertyId], $property['modalities'])) {
-	    			return ['400', 'The modality '.$data[$propertyId].' does not exist in '.$propertyId];
-	    		}
-	    		elseif ($property['type'] == 'date' && (strlen($data[$propertyId] < 10) || !checkdate(substr($data[$propertyId], 5, 2), substr($data[$propertyId], 8, 2), substr($data[$propertyId], 0, 4)))) {
-	    			return ['400', $data[$propertyId].' is not a valid date for '.$propertyId];
-	    		}
-    		}
-    	}*/
-
-    	$accountData = array();
-    	$vcardData = array();
-    	$contact2Data = array();
-    	$contact3Data = array();
-    	$contact4Data = array();
-    	$contact5Data = array();
-    	$entities = Account::$model['entities'];
-    	$properties = Account::$model['properties'];
-    	foreach($data as $key => $value) {
-			if (array_key_exists($key, $description['properties'])) {
-    			$value = $data[$key];
-    			$keep = true;
-	    		if ($key == 'result') $keep = false;
-	
-				$property = $description['properties'][$key];
-	
-				if ($keep = true) {
-					if ($properties[$key]['entity'] == 'core_account') $accountData[$properties[$key]['column']] = $value;
-					elseif ($properties[$key]['entity'] == 'core_vcard') $vcardData[$properties[$key]['column']] = $value;
-					elseif ($properties[$key]['entity'] == 'contact_2') $contact2Data[$properties[$key]['column']] = $value;
-					elseif ($properties[$key]['entity'] == 'contact_3') $contact3Data[$properties[$key]['column']] = $value;
-					elseif ($properties[$key]['entity'] == 'contact_4') $contact4Data[$properties[$key]['column']] = $value;
-					elseif ($properties[$key]['entity'] == 'contact_5') $contact5Data[$properties[$key]['column']] = $value;
-				}
-    		}
-    	}
+		
+    	$dispatch = Account::dispatch($type, $data);
+    	$accountData = $dispatch['core_account'];
+    	$vcardData = $dispatch['core_vcard'];
+    	$contact2Data = $dispatch['contact_2'];
+    	$contact3Data = $dispatch['contact_3'];
+    	$contact4Data = $dispatch['contact_4'];
+    	$contact5Data = $dispatch['contact_5'];
 
     	// Determine the place to link the account with
     	$place = null;
@@ -1914,25 +2278,13 @@ class Account
 		$context = Context::getCurrent();
 		$type = $this->type;
 
-    	$accountData = array();
-    	$vcardData = array();
-    	$contact2Data = array();
-    	$contact3Data = array();
-    	$contact4Data = array();
-    	$contact5Data = array();
-    	$entities = Account::$model['entities'];
-    	$properties = Account::$model['properties'];
-    	foreach ($data as $key => $value) {
-    		if (array_key_exists($key, $properties)) {
-				$propertyId = $properties[$key]['column'];
-    			if ($properties[$key]['entity'] == 'core_account') $accountData[$propertyId] = $value;
-    			elseif ($properties[$key]['entity'] == 'core_vcard') $vcardData[$propertyId] = $value;
-    			elseif ($properties[$key]['entity'] == 'contact_2') $contact2Data[$propertyId] = $value;
-    			elseif ($properties[$key]['entity'] == 'contact_3') $contact3Data[$propertyId] = $value;
-    			elseif ($properties[$key]['entity'] == 'contact_4') $contact4Data[$propertyId] = $value;
-    			elseif ($properties[$key]['entity'] == 'contact_5') $contact5Data[$propertyId] = $value;
-    		}
-    	}
+		$dispatch = Account::dispatch($type, $data);
+		$accountData = $dispatch['core_account'];
+		$vcardData = $dispatch['core_vcard'];
+		$contact2Data = $dispatch['contact_2'];
+		$contact3Data = $dispatch['contact_3'];
+		$contact4Data = $dispatch['contact_4'];
+		$contact5Data = $dispatch['contact_5'];
 
 		// Load the data
 		$this->contact_1 = Vcard::get($this->contact_1_id);

@@ -46,16 +46,16 @@ class Context
     /** @var int */ public static $static_user_id;
 	/** @var \Model\Instance */ public static $instance;
     /** @var array */ protected static $static_applications;
-	/** @var int */ protected static $place_id;
-	/** @var \Model\Place */ public static $place;
-	/** @var string */ protected static $static_formated_name;
-	/** @var int */ protected static $static_community_id;
-	/** @var int */ protected static $static_vcard_id;
-	/** @var \Model\Vcard */ public static $vcard;
-	/** @var array */ protected static $static_roles;
-	/** @var array */ protected static $static_perimeters;
-	/** @var string */ protected static $static_locale;
-	/** @var \Model\Account */ public static $profile;
+	/** @var int */ static $place_id;
+	/** @var \Model\Place */ static $place;
+	/** @var string */ static $static_formated_name;
+	/** @var int */ static $static_community_id;
+	/** @var int */ static $static_vcard_id;
+	/** @var \Model\Vcard */ static $vcard;
+	/** @var array */ static $static_roles;
+	/** @var array */ static $static_perimeters;
+	/** @var string */ static $static_locale;
+	/** @var \Model\Account */ static $profile;
 	/** @var boolean */ protected static $static_is_demo_mode_active;
 
 	/** @var array */ private static $config;

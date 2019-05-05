@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.11.2 - 2019-02-19
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- [#180](https://github.com/zendframework/zend-view/pull/180) alters the behavior of the `HeadMeta` helper to honor the value of the
+  `autoEscape` flag when rendering values. Previously, it would ignore the
+  setting and always escape the values.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 2.11.1 - 2018-12-10
 
 ### Added

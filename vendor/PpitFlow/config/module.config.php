@@ -18,11 +18,37 @@ return array (
 			'PpitFlow\Controller\Landing' => 'PpitFlow\Controller\LandingController',
 			'PpitFlow\Controller\Funnel' => 'PpitFlow\Controller\FunnelController',
 			'PpitFlow\Controller\Profile' => 'PpitFlow\Controller\ProfileController',
+			
+			// Tests
+			'PpitFlow\Test\AccountTest' => 'PpitFlow\Test\AccountTest',
 		),
 	),
 	
 	'router' => array(
 		'routes' => array(
+			'accountTest' => array(
+				'type'    => 'literal',
+				'options' => array(
+					'route'    => '/account-test',
+					'constraints' => ['id' => '[0-9]*'],
+					'defaults' => array(
+						'controller' => 'PpitFlow\Test\AccountTest',
+						'action'     => 'launch',
+					),
+				),
+				'may_terminate' => true,
+				'child_routes' => array(
+					'launch' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/launch',
+							'defaults' => array(
+								'action' => 'launch',
+							),
+						),
+					),
+				),
+			),
 			'flowAccount' => array(
 				'type'    => 'literal',
 				'options' => array(
@@ -798,6 +824,9 @@ return array (
 				array('route' => 'profile/removeContact', 'roles' => array('user')),
 				array('route' => 'profile/dashboard', 'roles' => array('user')),
 				array('route' => 'profile/photoUpload', 'roles' => array('user')),
+
+				array('route' => 'accountTest', 'roles' => array('guest')),
+				array('route' => 'accountTest/launch', 'roles' => array('guest')),
 			),
 		),
 	),

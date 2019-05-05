@@ -2325,17 +2325,17 @@
     },
     {
         "name": "zendframework/zend-uri",
-        "version": "2.6.1",
-        "version_normalized": "2.6.1.0",
+        "version": "2.7.0",
+        "version_normalized": "2.7.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/zendframework/zend-uri.git",
-            "reference": "3b6463645c6766f78ce537c70cb4fdabee1e725f"
+            "reference": "b2785cd38fe379a784645449db86f21b7739b1ee"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/zendframework/zend-uri/zipball/3b6463645c6766f78ce537c70cb4fdabee1e725f",
-            "reference": "3b6463645c6766f78ce537c70cb4fdabee1e725f",
+            "url": "https://api.github.com/repos/zendframework/zend-uri/zipball/b2785cd38fe379a784645449db86f21b7739b1ee",
+            "reference": "b2785cd38fe379a784645449db86f21b7739b1ee",
             "shasum": ""
         },
         "require": {
@@ -2347,12 +2347,12 @@
             "phpunit/phpunit": "^5.7.27 || ^6.5.8 || ^7.1.4",
             "zendframework/zend-coding-standard": "~1.0.0"
         },
-        "time": "2018-04-30T13:40:08+00:00",
+        "time": "2019-02-27T21:39:04+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "2.6.x-dev",
-                "dev-develop": "2.7.x-dev"
+                "dev-master": "2.7.x-dev",
+                "dev-develop": "2.8.x-dev"
             }
         },
         "installation-source": "dist",
@@ -2449,17 +2449,17 @@
     },
     {
         "name": "zendframework/zend-view",
-        "version": "2.11.1",
-        "version_normalized": "2.11.1.0",
+        "version": "2.11.2",
+        "version_normalized": "2.11.2.0",
         "source": {
             "type": "git",
             "url": "https://github.com/zendframework/zend-view.git",
-            "reference": "0428d6b2a67c7058451394921c90c5576ac5b373"
+            "reference": "4f5cb653ed4c64bb8d9bf05b294300feb00c67f2"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/zendframework/zend-view/zipball/0428d6b2a67c7058451394921c90c5576ac5b373",
-            "reference": "0428d6b2a67c7058451394921c90c5576ac5b373",
+            "url": "https://api.github.com/repos/zendframework/zend-view/zipball/4f5cb653ed4c64bb8d9bf05b294300feb00c67f2",
+            "reference": "4f5cb653ed4c64bb8d9bf05b294300feb00c67f2",
             "shasum": ""
         },
         "require": {
@@ -2508,7 +2508,7 @@
             "zendframework/zend-servicemanager": "Zend\\ServiceManager component",
             "zendframework/zend-uri": "Zend\\Uri component"
         },
-        "time": "2018-12-10T16:37:55+00:00",
+        "time": "2019-02-19T17:40:15+00:00",
         "bin": [
             "bin/templatemap_generator.php"
         ],

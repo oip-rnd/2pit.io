@@ -133,7 +133,7 @@ class EventPlanningViewHelper
 						$day['color']['evening'] = 'red';
 					}
 				}
-				if ($account['availability_begin'] <= $day['date'] && (!$account['availability_end'] || $account['availability_end'] >= $day['date']) && array_key_exists($key, $array)) {
+				if ($account['availability_begin'] <= $day['date'] && (!$account['availability_end'] || $account['availability_end'] >= $day['date'])) {
 					$constraints = $account['availability_constraints'][0];
 					if (array_key_exists($dayOfWeek, $constraints)) {
 						if ($constraints[$dayOfWeek] == 'morning' || $constraints[$dayOfWeek] == 'day') {
