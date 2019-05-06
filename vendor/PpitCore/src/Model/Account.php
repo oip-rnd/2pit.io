@@ -641,12 +641,14 @@ class Account
 				}
 	
 				// Log the comment in the contact history
-				if ($propertyId == 'contact_history' && $data['contact_history']) {
-					$result['contact_history'] = array(
-						'time' => Date('Y-m-d G:i:s'),
-						'n_fn' => $context->getFormatedName(),
-						'comment' => $value,
-					);
+				if ($propertyId == 'contact_history') {
+					if ($data['contact_history']) {
+						$result['contact_history'] = array(
+							'time' => Date('Y-m-d G:i:s'),
+							'n_fn' => $context->getFormatedName(),
+							'comment' => $value,
+						);
+					}
 				}
 	
 				else $result[$propertyId] = $value;
@@ -1891,16 +1893,11 @@ class Account
 			if ($resultType == 'errors') return 'Integrity';
 			if ($resultType == 'data') $data = $result;
 		}
-		
+
 		foreach ($data as $propertyId => $value) {
 
 			// Retrieve the property description for the given type
 			$property = $configProperties[$propertyId];
-
-			// Private data protection
-			if ($property['private'] && $value) {
-				$value = $context->getSecurityAgent()->protectPrivateDataV2($value);
-			}
 
 			if ($propertyId == 'status') $this->status = $value;
     		elseif ($propertyId == 'type') $this->type = $value;
