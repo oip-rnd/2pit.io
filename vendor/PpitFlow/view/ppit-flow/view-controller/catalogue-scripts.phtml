@@ -111,7 +111,7 @@ function showSubscribe(product) {
   <?php endif;?>
 <?php endforeach;?>
 
-  <?php foreach ($rates['products'] as $productId => $unused) : ?>
+  <?php foreach ($rates['variants'] as $productId => $unused) : ?>
         $('#subscribeProduct-<?php echo $productId ?>').change(function () {
           if ($('#subscribeProduct-<?php echo $productId ?>').val() < 0) {
         	$('#subscribeProduct-<?php echo $productId ?>').val(0);
@@ -245,6 +245,8 @@ function showCart() {
 
 $('#modalCartForm').on('show.bs.modal', showCart);
 
+<?php if ($content['cart']['navigation']['paymentSystem'] == 'Stripe') : ?>
+	
 // stripe
 
 function showStripe(id) {
@@ -266,7 +268,9 @@ function showStripe(id) {
   }
   xhttp.send();
 }
-  
+
+<?php elseif ($content['cart']['navigation']['paymentSystem'] == 'Payzen') : ?>
+
 // Payzen
 
 function showPayzen(id) {
@@ -284,6 +288,8 @@ function showPayzen(id) {
   }
   xhttp.send();
 }
+
+<?php endif; ?>
 
 $('#modalCartForm').on('show.bs.modal', showCart);
 
@@ -319,7 +325,7 @@ function complete() {
   formData.append('csrf', $('#csrf').val());
 
 <?php $first = true; foreach ($commitment->options as $option) : ?>
-  <?php if (array_key_exists($option['identifier'], $context->getConfig('catalogue/product/rates')['products'])) : ?>
+  <?php if (array_key_exists($option['identifier'], $context->getConfig('catalogue/product/rates')['variants'])) : ?>
     <?php for ($i = 0; $i < $option['quantity']; $i++) : ?>
       <?php foreach ($content['complete']['recipient_properties'] as $propertyId => $property) : ?>
   formData.append('complete-<?php echo $propertyId ?>-<?php echo $option['identifier'] . '-' . $i ?>', $('#complete-<?php echo $propertyId ?>-<?php echo $option['identifier'] . '-' . $i ?>').val());

@@ -60,7 +60,7 @@ $inputs = $content['inputs'];
     <?php elseif ($input['type'] == 'mention') : ?>
       <div class="md-form"><strong id="<?php echo $product ?>-<?php echo $inputId ?>"><?php echo $context->localize($input['labels']) ?></strong></div>
     
-    <?php elseif ($input['type'] == 'number') : ?>
+    <?php elseif ($input['type'] == 'product') : ?>
       <div class="md-form">
         <input type="number" id="<?php echo $inputId ?>" value="0" />
         <label for="<?php echo $inputId ?>" class="active"><?php echo $context->localize($input['labels']) ?></label>

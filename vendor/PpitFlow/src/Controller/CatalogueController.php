@@ -48,6 +48,7 @@ class CatalogueController extends AbstractActionController
 	{
 		// Retrieve context and parameters
 		$context = Context::getCurrent();
+
 		$type = $this->params()->fromRoute('type', 'generic');
 		$rates = $context->getConfig('catalogue/product/rates');
 		$content = CatalogueController::getContent();
@@ -159,7 +160,7 @@ class CatalogueController extends AbstractActionController
 		// Retrieve the quantities of subscribed products, compute the products amount and log the subscriptions
 		foreach ($content['products'] as $productId => &$row) {
 			$quantity = $row['quantity'];
-			$product = $rates['products'][$productId];
+			$product = $rates['variants'][$productId];
 			$unit_price = $product['unit_price'];
 			$amount = 0;
 			for ($j = 0; $j < $quantity; $j++) {
@@ -407,7 +408,7 @@ class CatalogueController extends AbstractActionController
 
 				$first = true; 
 				foreach ($commitment->options as &$option) {
-				    if (array_key_exists($option['identifier'], $context->getConfig('catalogue/product/rates')['products'])) {
+				    if (array_key_exists($option['identifier'], $context->getConfig('catalogue/product/rates')['variants'])) {
 						for ($i = 0; $i < $option['quantity']; $i++) {
 	
 							foreach ($content['complete']['recipient_properties'] as $property_id => $property) {
