@@ -69,7 +69,7 @@ class AccountController extends AbstractActionController
 		// Define the initial status depending on the perspective
 		if ($entry == 'contact') $status = 'new'; 
 		else $status = 'active';
-
+		
     	return new ViewModel(array(
     			'context' => $context,
 				'configProperties' => $configProperties,
@@ -148,14 +148,17 @@ class AccountController extends AbstractActionController
 		$type = $this->params()->fromRoute('type', null);
 		$configProperties = Account::getConfig($type);
 		$searchPage = Account::getConfigSearch($type, $configProperties);
-
+		$eventAccountSearchPage = $context->getConfig('core_account/event_account_search/'.$type);
+		if (!$eventAccountSearchPage) $eventAccountSearchPage = $context->getConfig('core_account/event_account_search/generic');
+		
 		$view = new ViewModel(array(
-				'context' => $context,
-				'configProperties' => $configProperties,
-				'places' => Place::getList(array()),
-				'entry' => $entry,
-				'type' => $type,
-				'searchPage' => $searchPage,
+			'context' => $context,
+			'configProperties' => $configProperties,
+			'places' => Place::getList(array()),
+			'entry' => $entry,
+			'type' => $type,
+			'searchPage' => $searchPage,
+			'eventAccountSearchPage' => $eventAccountSearchPage,
 		));
 		$view->setTerminal(true);
 		return $view;
@@ -350,6 +353,14 @@ class AccountController extends AbstractActionController
 			print_r("\n");
 		}
 		return $this->response;
+	}
+
+	/**
+	 * To be moved to EventController after moving the model logic to the model layer
+	 */
+	public function eventAccountSearchAction()
+	{
+		return $this->searchAction();
 	}
 	
 	/**

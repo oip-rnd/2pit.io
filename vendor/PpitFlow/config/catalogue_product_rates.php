@@ -32,6 +32,11 @@ define('CATALOGUE_PRODUCT_RATES', [
 			'product_id' => 'p_pit_turnkey',
 			'unit_price' => 600
 		],
+		'p_pit_turnkey_annual' => [
+			'caption' => ['default' => 'P-Pit Turnkey - Annual', 'fr_FR' => 'P-Pit Clé en main - Annual'],
+			'product_id' => 'p_pit_turnkey',
+			'unit_price' => 600
+		],
 		'p_pit_turnkey_monthly' => [
 			'caption' => ['default' => 'P-Pit Turnkey - Monthly', 'fr_FR' => 'P-Pit Clé en main - Mensuel'],
 			'product_id' => 'p_pit_turnkey',

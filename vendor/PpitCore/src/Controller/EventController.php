@@ -9,6 +9,7 @@
 
 namespace PpitCore\Controller;
 
+use PpitCore\Model\Account;
 use PpitCore\Model\Community;
 use PpitCore\Model\Generic;
 use PpitCore\Model\Event;
@@ -80,7 +81,7 @@ class EventController extends AbstractActionController
     	 
     	// Retrieve parameters
     	$type = $this->params()->fromRoute('type', $context->getConfig('event/type')['default']);
-    	$category = $this->params()->fromRoute('category', 'generic');
+    	$category = $this->params()->fromRoute('category');
     	$app = $this->params()->fromRoute('app');
     
     	$applicationId = ($app) ? $app : 'synapps';
@@ -91,6 +92,9 @@ class EventController extends AbstractActionController
 
     	$planningMap = $context->getConfig('planningMap/' . $type);
     	if (!$planningMap) $planningMap = $context->getConfig('planningMap/generic');
+
+    	$eventAccountSearchPage = $context->getConfig('core_account/event_account_search/'.$type);
+    	if (!$eventAccountSearchPage) $eventAccountSearchPage = $context->getConfig('core_account/event_account_search/generic');
     	 
     	$view = new ViewModel(array(
     		'context' => $context,
@@ -102,6 +106,8 @@ class EventController extends AbstractActionController
     		'category' => $category,
 			'content_description' => $description,
     		'planningMap' => $planningMap,
+			'configProperties' => Account::getConfig('teacher'),
+    		'eventAccountSearchPage' => $eventAccountSearchPage,
     	));
     	$view->setTerminal(true);
     	return $view;
@@ -303,6 +309,22 @@ class EventController extends AbstractActionController
     	$end = $this->params()->fromQuery('end');
     	if ($begin && $end) return new JsonModel(EventPlanningViewHelper::displayPlanning($description, $this->getList()->events, $begin, $end));
     	else return new JsonModel(EventPlanningViewHelper::format($description, $this->getList()->events));
+    }
+
+    public function concurrenciesAction()
+    {
+    	$type = $this->params()->fromRoute('type');
+    	$description = Event::getDescription($type);
+    	$category = $this->params()->fromRoute('category');
+    	$accountIds = explode(',', $this->params()->fromQuery('accounts'));
+        $begin = $this->params()->fromQuery('begin');
+    	$end = $this->params()->fromQuery('end');
+    	$accounts = array();
+    	foreach ($accountIds as $account_id) {
+    		if ($account_id) $accounts[$account_id] = Account::get($account_id)->getProperties();
+    	}
+		$events = Event::getList($type, [], '-update_time', null, null);
+    	return new JsonModel(EventPlanningViewHelper::displayConcurrencies($description, $category, $accounts, $events, $begin, $end));
     }
     
     public function exportAction()

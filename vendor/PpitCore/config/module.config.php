@@ -102,6 +102,15 @@ return array(
 							),
 						),
 					),
+					'eventAccountSearch' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/event-account-search[/:entry][/:type]',
+							'defaults' => array(
+								'action' => 'eventAccountSearch',
+							),
+						),
+					),
 					'list' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -577,6 +586,15 @@ return array(
 							'route' => '/planning[/:type][/:category]',
 							'defaults' => array(
 								'action' => 'planning',
+							),
+						),
+					),
+					'concurrencies' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/concurrencies[/:type][/:category]',
+							'defaults' => array(
+								'action' => 'concurrencies',
 							),
 						),
 					),
@@ -1690,9 +1708,10 @@ return array(
 				array('route' => 'account/detail', 'roles' => array('operational_management', 'sales_manager', 'manager')),
 				array('route' => 'account/detailAlt', 'roles' => array('operational_management', 'sales_manager', 'manager')),
 				array('route' => 'account/getAvailability', 'roles' => array('operational_management', 'sales_manager', 'manager')),
+				array('route' => 'account/eventAccountList', 'roles' => array('operational_management', 'sales_manager', 'manager')),
+				array('route' => 'account/eventAccountSearch', 'roles' => array('operational_management', 'sales_manager', 'manager')),
 				array('route' => 'account/export', 'roles' => array('operational_management', 'sales_manager', 'manager')),
 				array('route' => 'account/exportCsv', 'roles' => array('operational_management', 'sales_manager', 'manager')),
-				array('route' => 'account/eventAccountList', 'roles' => array('operational_management', 'sales_manager', 'manager')),
 				array('route' => 'account/list', 'roles' => array('operational_management', 'sales_manager', 'manager')),
 				array('route' => 'account/listAlt', 'roles' => array('operational_management', 'sales_manager', 'manager')),
 				array('route' => 'account/update', 'roles' => array('operational_management', 'sales_manager', 'manager')),
@@ -1734,6 +1753,7 @@ return array(
 				array('route' => 'event/distribute', 'roles' => array('user')),
 				array('route' => 'event/mapPlanning', 'roles' => array('user')),
 				array('route' => 'event/planning', 'roles' => array('user')),
+				array('route' => 'event/concurrencies', 'roles' => array('user')),
 				array('route' => 'event/export', 'roles' => array('user')),
 				array('route' => 'event/synchronize', 'roles' => array('user')),
 				array('route' => 'event/detail', 'roles' => array('user')),
@@ -3580,6 +3600,12 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 					'property_1' => [],
 			),
 	),
+
+	'core_account/event_account_search/generic' => array(
+		'properties' => array(
+			'n_fn' => [],
+		),
+	),
 	
 	'core_account/list/generic' => array(
 			'properties' => array(
@@ -3607,7 +3633,7 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 
 	'core_account/event_account_list/generic' => array(
 		'properties' => array(
-			'name' => [],
+			'n_fn' => [],
 		),
 	),
 	

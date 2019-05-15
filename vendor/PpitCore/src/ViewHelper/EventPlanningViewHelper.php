@@ -65,7 +65,7 @@ class EventPlanningViewHelper
     {
     	$context = Context::getCurrent();
 
-    	// Days is a table of all the date ofthe visible period (ie month, week or single day) associated with the day of week
+    	// Days is a table of all the date of the visible period (ie month, week or single day) associated with the day of week
     	$days = array();
     	for($date = new \DateTime($viewBeginDate); $date <= new \DateTime($viewEndDate); $date->modify('+1 day')) {
     		$days[$date->format('Y-m-d')] = $date->format('w');
@@ -131,6 +131,7 @@ class EventPlanningViewHelper
 						$day['color']['morning'] = 'red';
 						$day['color']['afternoon'] = 'red';
 						$day['color']['evening'] = 'red';
+						$day['n_fn'] = $account['n_fn'];
 					}
 				}
 				if ($account['availability_begin'] <= $day['date'] && (!$account['availability_end'] || $account['availability_end'] >= $day['date'])) {
@@ -139,16 +140,19 @@ class EventPlanningViewHelper
 						if ($constraints[$dayOfWeek] == 'morning' || $constraints[$dayOfWeek] == 'day') {
 							if (!array_key_exists('color', $day) || !array_key_exists('morning', $day['color'])) {
 								$day['color']['morning'] = 'Green';
+								$day['n_fn'] = $account['n_fn'];
 							}
 						}
 						if ($constraints[$dayOfWeek] == 'afternoon' || $constraints[$dayOfWeek] == 'day') {
 							if (!array_key_exists('color', $day) || !array_key_exists('afternoon', $day['color'])) {
 								$day['color']['afternoon'] = 'Green';
+								$day['n_fn'] = $account['n_fn'];
 							}
 						}
 						if ($constraints[$dayOfWeek] == 'evening') {
 							if (!array_key_exists('color', $day) || !array_key_exists('evening', $day['color'])) {
 								$day['color']['evening'] = 'Green';
+								$day['n_fn'] = $account['n_fn'];
 							}
 						}
 					}
@@ -198,5 +202,55 @@ class EventPlanningViewHelper
 			}
     	}
     	return $days;
+    }
+
+    public static function displayConcurrencies($description, $category, $accounts, $events, $viewBeginDate, $viewEndDate)
+    {
+    	$context = Context::getCurrent();
+    
+    	// Days is a table of all the date of the visible period (ie month, week or single day) associated with the day of week
+    	$days = array();
+    	for($date = new \DateTime($viewBeginDate); $date <= new \DateTime($viewEndDate); $date->modify('+1 day')) {
+    		$days[$date->format('Y-m-d')] = $date->format('w');
+    	}
+    	$content = [];
+
+    	foreach ($events as $event) {
+    		if (array_key_exists($event->account_id, $accounts) && $event->category != $category) {
+				if ($event->begin_date <= ($viewEndDate) && ($event->end_date >= $viewBeginDate)) {
+	    			foreach ($days as $date => $dayOfWeek) {
+	    				if (!in_array($date, $event->exception_dates) && $event->begin_date <= $date && $event->end_date >= $date) {
+		    				if ($event->begin_date == $date || $event->day_of_week == $dayOfWeek || $event->day_of_month == substr($date, 5, 2)) {
+		    					$captionFormat = $context->getConfig('event/format/' . $event->type);
+		    					if (!$captionFormat) $captionFormat = $context->getConfig('event/format/generic');
+								$arguments = array();
+								foreach ($captionFormat['params'] as $parameterId => $options) {
+									$parameter = $description['properties'][$parameterId];
+									if ($parameter['type'] == 'select' && $event->properties[$parameterId]) {
+										$value = $context->localize($parameter['modalities'][$event->properties[$parameterId]]);
+									}
+									else $value = $event->properties[$parameterId];
+									$arguments[] = $value;
+								}
+								$formatted = vsprintf($captionFormat['mask'], $arguments);
+		    					$content[] = array(
+		    						'id' => $event->id,
+		    						'begin_date' => $date,
+		    						'end_date' => $date,
+		    						'begin_time' => $event->begin_time,
+		    						'end_time' => $event->end_time,
+		    						'caption' => $event->caption,
+		    						'location' => $event->location,
+		    						'n_fn' => $event->n_fn,
+		    						'account_id' => $event->account_id,
+		    					);
+		    				}
+	    				}
+	    			}
+	    		}
+    		}
+    	}
+    	 
+		return $content;
     }
 }
