@@ -36,7 +36,7 @@ table.structured-data tr.period {
 }
 </style>
 <h4 style="text-align: center">
-	<strong><?php echo $detailPage['title'][$context->getLocale()] ?></strong>
+	<strong><?php echo $context->localize($detailPage['title']) ?></strong>
 </h4>
 
 <?php if ($account->id) : ?>
@@ -112,13 +112,13 @@ if ($account->id && $action != 'update' || $message == 'OK') $isDisabled = true;
 	?>
 	<?php if ($property['type'] == 'title') : ?>
 		<hr>
-		<h5 style="text-align: center"><?php echo $property['labels'][$context->getLocale()] ?></h5>
+		<h5 style="text-align: center"><?php echo $context->localize($property['labels']) ?></h5>
 		<div>&nbsp;</div>
 		<?php elseif ($property['type'] != 'structure') : ?>
 		  <?php if (!array_key_exists('readonly', $property['options']) || !$property['options']['readonly'] || $account->properties[$propertyId]) : ?>
 		<div class="form-group" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_' : '').$propertyId ?>_group">
 			<?php if (in_array($property['type'], array('key_value', 'array'))) : ?>
-			<label class="col-sm-5 control-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $property['labels'][$context->getLocale()] ?></label>
+			<label class="col-sm-5 control-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels']) ?></label>
 			<div class="col-sm-12">
 			<?php else : ?>
 			<label class="col-sm-5 control-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels']) ?></label>
@@ -341,7 +341,7 @@ if ($account->id && $action != 'update' || $message == 'OK') $isDisabled = true;
 				<div class="row">
 					<div class="col-md-12">
 						<strong><?php echo $context->decodeDate(substr($comment['time'], 0, 10)).substr($comment['time'], 10) ?>:</strong>&nbsp;
-						<?php if (array_key_exists('status', $comment)) echo $context->getconfig('core_account/'.$type.'/property/'.'statuses')[$comment['status']]['labels'][$context->getLocale()] ?>&nbsp;
+						<?php if (array_key_exists('status', $comment)) echo $context->localize($context->getconfig('core_account/'.$type.'/property/'.'statuses')[$comment['status']]['labels']) ?>&nbsp;
 						(<?php echo $comment['n_fn'] ?>)
 					</div>
 				</div>
@@ -397,7 +397,7 @@ if ($account->id && $action != 'update' || $message == 'OK') $isDisabled = true;
 				<select class="form-control" id="<?php echo $id ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
 	    			<option />
 					<?php foreach ($field['modalities'] as $key => $labels) : ?>
-	    			<option value="<?php echo $key ?>" <?php if ($value == $key) echo 'selected="selected"' ?>><?php echo $labels[$context->getLocale()] ?></option>
+	    			<option value="<?php echo $key ?>" <?php if ($value == $key) echo 'selected="selected"' ?>><?php echo $context->localize($labels) ?></option>
 					<?php endforeach;?>
 				</select>
 						

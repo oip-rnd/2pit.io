@@ -1491,6 +1491,30 @@ return array(
 			'fr_FR' => 'Champs libre 4',
 		),
 	),
+
+	'core_account/business/property/property_6' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'default' => 'Available field 5',
+		),
+	),
+
+	'core_account/business/property/property_7' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'default' => 'Available field 6',
+		),
+	),
+
+	'core_account/business/property/property_8' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'default' => 'Available field 7',
+		),
+	),
 	
 	'core_account/business/property/property_13' => array(
 		'definition' => 'inline',
@@ -1533,7 +1557,7 @@ return array(
 			'n_title_2', 'n_first_2', 'n_last_2', 'email_2', 'tel_work_2', 'tel_cell_2', 'address_2', 
 			'place_id'/*, 'place_caption'*/, 'opening_date', 'closing_date', 'callback_date', 'origine', 'contact_history',
 			'default_means_of_payment', 'transfer_order_id', 'transfer_order_date', 'bank_identifier',
-			'property_1', 'property_2', 'property_3', 'property_4', 'property_5', 'property_13',
+			'property_1', 'property_2', 'property_3', 'property_4', 'property_5', 'property_6', 'property_7', 'property_8', 'property_13',
 			'comment_1', 'comment_2'),
 		'order' => 'name',
 		'options' => ['internal_identifier' => true],
@@ -1624,10 +1648,10 @@ return array(
 			'property_3' => array('mandatory' => false),
 			'property_4' => array('mandatory' => false),
 			'property_5' => array('mandatory' => false),
-			'default_means_of_payment' => array('mandatory' => false),
+/*			'default_means_of_payment' => array('mandatory' => false),
 			'transfer_order_id' => array('mandatory' => false), 
 			'transfer_order_date' => array('mandatory' => false), 
-			'bank_identifier' => array('mandatory' => false),
+			'bank_identifier' => array('mandatory' => false),*/
 			'title_3' => null,
 			'comment_1' => array('mandatory' => false),
 			'comment_2' => array('mandatory' => false),
@@ -1694,10 +1718,10 @@ return array(
 			'email_2' => [],
 			'address_2' => [],
 
-			'default_means_of_payment' => [],
+/*			'default_means_of_payment' => [],
 			'transfer_order_id' => [],
 			'transfer_order_date' => [],
-			'bank_identifier' => [],
+			'bank_identifier' => [],*/
 		
 			'comment_1' => [],
 			'comment_2' => [],
