@@ -1,0 +1,1326 @@
+<script>
+
+function getSearchParams(prefix) {
+
+  let params = '?', todo = true;
+
+  $('.search_input_select').each(function () {
+    let propertyId = $(this).attr('id').split('-')[1];
+    let checked = $('#' + prefix + 'search_check_value-' + propertyId).val();
+    let value = $('#' + prefix + 'search-' + propertyId).val();
+    if (checked == '1') { params += '&' + propertyId + '=' + value; }
+  });
+
+  $('.search_input_text').each(function () {
+    let propertyId = $(this).attr('id').split('-')[1];
+    let checked = $('#' + prefix + 'search_check_value-' + propertyId).val();
+    let value = $('#' + prefix + 'search-' + propertyId).val();
+    if (checked == '1') { params += '&' + propertyId + '=' + value; }
+  });
+
+  $('.search_input_min').each(function () {
+    let propertyId = $(this).attr('id').split('-')[1];
+    let checked = $('#' + prefix + 'search_check_value-' + propertyId).val();
+    let value = $('#' + prefix + 'search_min-' + propertyId).val();
+    if (value.length >= 2 || checked == '1') { params += '&min_' + propertyId + '=' + value; }
+  });
+
+  $('.search_input_max').each(function () {
+    let propertyId = $(this).attr('id').split('-')[1];
+    let checked = $('#' + prefix + 'search_check_value-' + propertyId).val();
+    let value = $('#' + prefix + 'search_max-' + propertyId).val();
+    if (value.length >= 2 || checked == '1') { params += '&max_' + propertyId + '=' + value; }
+  });
+
+  $('.search_input_date_min').each(function () {
+    let propertyId = $(this).attr('id').split('-')[1];
+    let checked = $('#' + prefix + 'search_check_value-' + propertyId).val();
+    let value = $('#' + prefix + 'search_min-' + propertyId).val();
+    if (value) value = encodeDate(value);
+    if (value.length >= 2 || checked == '1') { params += '&min_' + propertyId + '=' + value; }
+  });
+
+  $('.search_input_date_max').each(function () {
+    let propertyId = $(this).attr('id').split('-')[1];
+    let checked = $('#' + prefix + 'search_check_value-' + propertyId).val();
+    let value = $('#' + prefix + 'search_max-' + propertyId).val();
+    if (value) value = encodeDate(value);
+    if (value.length >= 2 || checked == '1') { params += '&max_' + propertyId + '=' + value; }
+  });
+
+  return params;
+}
+
+// Export the list
+function exportCommitmentList() {
+
+	var params = getSearchParams('');
+	document.location.href = '<?php echo $this->url('commitment/export', array('type' => $type)) ?>' + params;
+}
+
+function sortCommitmentList(criterion) {
+
+	var dir;
+	ascCriterion = $('.glyphicon-triangle-top').first().parent().attr('id');
+	descCriterion = $('.glyphicon-triangle-bottom').first().parent().attr('id');
+	if (criterion + '-anchor' == ascCriterion) dir = 'DESC'; else dir = 'ASC';
+	getCommitmentList(getSearchParams(''), criterion, dir);
+}
+
+function filterCommitmentList() {
+
+	ascCriterion = $('.glyphicon-triangle-top').first().parent().attr('id');
+	descCriterion = $('.glyphicon-triangle-bottom').first().parent().attr('id');
+	if (ascCriterion) {
+		criterion = ascCriterion.split('-')[0];
+		dir = 'ASC';
+	}
+	else if (descCriterion) {
+		criterion = descCriterion.split('-')[0];
+		dir = 'DESC';
+	}
+	else {
+		criterion = 'update_time';
+		dir = 'DESC';
+	}
+	getCommitmentList(getSearchParams(''), criterion, dir);
+}
+
+// Load the list
+function getCommitmentList(params, major, dir) {		
+	// Execute the ajax request
+	route = '<?php echo $this->url('commitment/listV2', array('type' => $type)) ?>' + params + '&major=' + major + ((dir =='ASC') ? '&dir=ASC' : '&dir=DESC');
+	xhttp = new XMLHttpRequest();
+	xhttp.open("GET", route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4 && xhttp.status == 200) {
+			document.getElementById('commitment-list-panel').innerHTML = xhttp.responseText;
+
+			$('.detail-row').hide();
+			$('.invisible').hide();
+
+			$('#export-button').click(function () { exportCommitmentList(); });
+			
+			$(function () {
+			    $('.tip').tooltip({
+			        content: function () {
+			            return $(this).prop('title');
+			        }
+			    });
+			});
+
+			$('.to-mask').hide();
+			
+			// Connect the sort anchors
+			$('.ppit-sort-anchor').each(function () {
+				$(this).click(function () {
+					sortCommitmentList($(this).attr('id').split('-')[0]);
+				});
+			});
+
+			// Able the group action button
+			$('.commitment-checkbox').click(function () {
+				$('.group-anchor').removeAttr('disabled');
+			});
+
+			// Connect the check all checkbox
+			$('#commitment-checkbox').click(function () {
+				var current = document.getElementById('commitment-checkbox').checked;
+				var commitmentNumber = $('#commitment-number').val();
+				document.getElementById('down-commitment-checkbox').checked = (current) ? true : false;
+				for (i = 0; i < commitmentNumber; i++) {
+					document.getElementById('commitment-checkbox_' + i).checked = (current) ? true : false;
+				}
+			});
+			$('#down-commitment-checkbox').click(function () {
+				var current = document.getElementById('down-commitment-checkbox').checked;
+				var commitmentNumber = $('#commitment-number').val();
+				document.getElementById('commitment-checkbox').checked = (current) ? true : false;
+				for (i = 0; i < commitmentNumber; i++) {
+					document.getElementById('commitment-checkbox_' + i).checked = (current) ? true : false;
+				}
+			});
+			
+			// Connect the grouped actions anchors
+			$('.group-anchor').each(function () {
+				$(this).click(function () {
+					getGroup();
+				});
+			});
+			
+			// Connect the detail anchors
+			$('.commitment-detail-anchor').each(function () {
+				$(this).click(function () {
+					getCommitmentDetail($(this).attr('id').split('_')[1]);
+				});
+			});
+			
+			// Connect the distribution anchor
+			$('.distribution').hide();
+			var distributionValue = $('#select-distribution').val();
+			$('#distribution_' + distributionValue).show();
+			$('#select-distribution').change(function () {
+				$('.distribution').hide();
+				var distributionValue = $('#select-distribution').val();
+				$('#distribution_' + distributionValue).show();
+			});
+		}
+	}
+	xhttp.send();
+}
+
+function connectAuditPanel()
+{
+	$('#audit-panel').hide();
+	$('#audit-label').click(function () {
+		if ($('#audit-label').text() == '<?php echo $this->translate('Show', 'ppit-core', $context->getLocale()) ?>') {
+			$('#audit-panel').show();
+			$('#audit-label').text('<?php echo $this->translate('Mask', 'ppit-core', $context->getLocale()) ?>');
+		}
+		else {
+			$('#audit-panel').hide();
+			$('#audit-label').text('<?php echo $this->translate('Show', 'ppit-core', $context->getLocale()) ?>');
+		}
+	});
+}
+
+function connectCgvPanel()
+{
+	$('#cgv-panel').hide();
+	$('#cgv-label').click(function () {
+		if ($('#cgv-label').text() == '<?php echo $this->translate('Show', 'ppit-core', $context->getLocale()) ?>') {
+			$('#cgv-panel').show();
+			$('#cgv-label').text('<?php echo $this->translate('Mask', 'ppit-core', $context->getLocale()) ?>');
+		}
+		else {
+			$('#cgv-panel').hide();
+			$('#cgv-label').text('<?php echo $this->translate('Show', 'ppit-core', $context->getLocale()) ?>');
+		}
+	});
+}
+
+function connectCommitmentInvoiceForm(id)
+{			
+		$('#commitment-invoice-anchor').removeClass('btn-default').addClass('btn-warning');
+
+		// Create a new FormData object.
+		var formData = new FormData();
+		formData.append('update_time', $('#update_time').val());
+
+		var xhttp = new XMLHttpRequest();
+		var route, target;
+		route = '<?php echo $this->url('commitment/invoice') ?>/' + id;
+		xhttp.open('POST', route, true);
+		xhttp.onload = function () {
+			if (xhttp.readyState == 4 && xhttp.status == 200) {
+				getCommitmentDetail(id);
+			}
+		};
+		xhttp.send(formData);
+}
+
+function getCommitmentInvoiceForm(id) {
+	$('#commitment-invoice-anchor').removeClass('btn-default').addClass('btn-danger');
+	$('#commitment-invoice-alert').show();
+	$('#commitment-invoice-anchor').click(function () { connectCommitmentInvoiceForm(id); });
+}
+
+/////////////////////////////
+// Commitment update panel //
+/////////////////////////////
+
+function connectCommitmentUpdateForm(id, action)
+{
+	if (action == 'update') $('#commitment-update-anchor').removeClass('btn-default').addClass('btn-primary');
+	if (action == 'delete') $('#commitment-delete-anchor').removeClass('btn-default').addClass('btn-primary');
+
+    $('.update_input_date').datepicker();
+
+	var form = document.getElementById('commitment-form');
+	form.onsubmit = function(event) {
+		
+		event.preventDefault();
+		
+		// Create a new FormData object.
+		let formData = new FormData();
+
+        $('.update_check').each(function () {
+          let propertyId = $(this).attr('id').split('-')[1];
+          formData.append(propertyId, (document.getElementById(propertyId).checked) ? 1 : 0);
+        });
+
+        $('.update_input').each(function () {
+          let propertyId = $(this).attr('id').split('-')[1];
+          formData.append(propertyId, ('#' + propertyId).val());
+        });
+
+			var xhttp = new XMLHttpRequest();
+			var route, target;
+			route = '<?php echo $this->url('commitment/updateV2', array('type' => ($type) ? $type : 'generic')) ?>/' + id;
+			if (action) route += '/' + action;
+			target = 'commitment-update-panel';
+			xhttp.open('POST', route, true);
+			// Set up a handler for when the request finishes.
+			xhttp.onload = function () {
+				if (xhttp.readyState == 4 && xhttp.status == 200) {
+					document.getElementById(target).innerHTML = xhttp.responseText;
+				}
+			};
+			xhttp.send(formData);
+	}
+}
+
+function getCommitmentUpdate(id, action) {
+	var xhttp = new XMLHttpRequest();
+	var route = '<?php echo $this->url('commitment/updateV2', array('type' => ($type) ? $type : 'generic')) ?>/' + id;
+	if (action) route += '/' + action;
+
+	xhttp.open('GET', route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.readyState == 4 && xhttp.status == 200) {
+
+			document.getElementById('commitment-update-panel').innerHTML = xhttp.responseText;
+			
+			$(function () {
+			    $('.tip').tooltip({
+			        content: function () {
+			            return $(this).prop('title');
+			        }
+			    });
+			});
+
+			$('#commitment-update-anchor').click(function () { getCommitmentUpdate(id, 'update'); });
+			$('#commitment-delete-anchor').click(function () { getCommitmentUpdate(id, 'delete'); });
+			$('#commitment-invoice-anchor').click(function () { getCommitmentInvoiceForm(id); });
+			$('#commitment-invoice-alert').hide();
+			
+			connectCommitmentUpdateForm(id, action);
+		}
+	}
+	xhttp.send();
+}
+
+function fillRowPrice() {
+<?php foreach ($products as $product) : ?>
+	<?php if (array_key_exists(0, $product->variants)) : ?>
+	if ($('#product_identifier').val() == "<?php echo $product->identifier ?>") {
+		$('#input_unit_price').val('<?php echo $product->variants[0]['price'] ?>');
+		$('#product_brand').val("<?php echo $product->brand ?>");
+		$('#product_caption').val("<?php echo $product->caption ?>");
+	}
+	<?php endif;?>
+<?php endforeach;?>
+}
+
+function fillOptionPrice(i) {
+<?php foreach ($options as $option) : ?>
+	<?php if (array_key_exists(0, $option->variants)) : ?>
+	if ($('#option_identifier-' + i).val() == "<?php echo $option->reference ?>") {
+		$('#input_option_unit_price-' + i).val('<?php echo $option->variants[0]['price'] ?>');
+		$('#option_caption-' + i).val("<?php echo $option->caption ?>");
+	}
+	<?php endif;?>
+<?php endforeach;?>
+}
+
+function fillAddOptionPrice() {
+<?php foreach ($options as $option) : ?>
+	<?php if (array_key_exists(0, $option->variants)) : ?>
+	if ($('#option_identifier').val() == "<?php echo $option->reference ?>") $('#input_option_unit_price').val('<?php echo $option->variants[0]['price'] ?>');
+	<?php endif;?>
+<?php endforeach;?>
+}
+
+function connectCommitmentUpdateProductForm(id)
+{
+		var validity = true, error, number, val;
+		$('#rows-error').text('');
+		$('#rows-error').hide();
+		
+// Product identifier
+		val = $('#product_identifier').val();
+		if (!val) {
+			$('#rows-error').text('<?php echo $this->translate('Please input a value', 'ppit-core', $context->getLocale()) ?>');
+			$('#rows-error').show();
+			document.getElementById('product_identifier').focus();
+			validity = false;
+		}
+		else {
+		    if (val.length > 255) {
+				$('#rows-error').text('<?php echo $this->translate('The input is too long', 'ppit-core', $context->getLocale()) ?>');
+				$('#rows-error').show();
+				document.getElementById('product_identifier').focus();
+				validity = false;
+			}
+		}
+		
+// Product caption
+		val = $('#product_caption').val();
+	    if (val.length > 255) {
+			$('#rows-error').text('<?php echo $this->translate('The input is too long', 'ppit-core', $context->getLocale()) ?>');
+			$('#rows-error').show();
+			document.getElementById('product_caption').focus();
+			validity = false;
+		}
+		
+// Quantity
+		number = $('#input_quantity').val();
+		error = checkNumber(number, 0, 999999);
+		if (error) {
+			$('#rows-error').text(error);
+			$('#rows-error').show();
+			document.getElementById('input_quantity').focus();
+			validity = false;
+		}
+	    else { 
+			number = getNumber(number, 4);
+			$('#quantity').val(number);
+		}
+		
+// Unit price
+		number = $('#input_unit_price').val();
+		error = checkNumber(number, -999999, 999999);
+		if (error) {
+			$('#rows-error').text(error);
+			$('#rows-error').show();
+			document.getElementById('input_unit_price').focus();
+			validity = false;
+		}
+	    else { 
+			number = getNumber(number, 2);
+			$('#unit_price').val(number);
+		}
+	
+		if (validity) {
+			
+			// Create a new FormData object.
+			var formData = new FormData();
+			formData.append('product_identifier', $('#product_identifier').val());
+			formData.append('product_brand', $('#product_brand').val());
+			formData.append('product_caption', $('#product_caption').val());
+			formData.append('quantity', $('#quantity').val());
+			formData.append('unit_price', $('#unit_price').val());
+			formData.append('update_time', $('#update_time').val());
+	
+			var xhttp = new XMLHttpRequest();
+			var route, target;
+			route = '<?php echo $this->url('commitment/updateProduct') ?>/' + id;
+			xhttp.open('POST', route, true);
+			xhttp.onload = function () {
+				if (xhttp.readyState == 4 && xhttp.status == 200) {
+					getCommitmentDetail(id);
+				}
+			};
+			xhttp.send(formData);
+		}
+}
+
+function connectCommitmentUpdateOptionForm(id)
+{
+	var count, validity = true, error, number, val, i;
+	$('#rows-error').text('');
+	$('#rows-error').hide();
+
+	count = $('#optionCount').val();
+	for (i = 0; i < count; i++) {
+		
+// Option identifier
+		val = $('#option_identifier-' + i).val();
+	    if (val.length > 255) {
+			$('#rows-error').text('<?php echo $this->translate('The input is too long', 'ppit-core', $context->getLocale()) ?>');
+			$('#rows-error').show();
+			document.getElementById('option_identifier-' + i).focus();
+			validity = false;
+		}
+		
+// Option caption
+		val = $('#option_caption-' + i).val();
+	    if (val.length > 255) {
+			$('#rows-error').text('<?php echo $this->translate('The input is too long', 'ppit-core', $context->getLocale()) ?>');
+			$('#rows-error').show();
+			document.getElementById('option_caption-' + i).focus();
+			validity = false;
+		}
+		
+// Quantity
+		number = $('#input_option_quantity-' + i).val();
+		error = checkNumber(number, 0, 999999);
+		if (error) {
+			$('#rows-error').text(error);
+			$('#rows-error').show();
+			document.getElementById('input_option_quantity-' + i).focus();
+			validity = false;
+		}
+	    else { 
+			number = getNumber(number, 2);
+			$('#option_quantity-' + i).val(number);
+		}
+		
+// Unit price
+		number = $('#input_option_unit_price-' + i).val();
+		error = checkNumber(number, -999999, 999999);
+		if (error) {
+			$('#rows-error').text(error);
+			$('#rows-error').show();
+			document.getElementById('input_option_unit_price-' + i).focus();
+			validity = false;
+		}
+	    else { 
+			number = getNumber(number, 2);
+			$('#option_unit_price-' + i).val(number);
+		}
+	}
+
+	if (validity) {
+
+		// Create a new FormData object.
+		var formData = new FormData();
+		for (i = 0; i < count; i++) {
+			formData.append('option_identifier-' + i, $('#option_identifier-' + i).val());
+			formData.append('option_caption-' + i, $('#option_caption-' + i).val());
+			formData.append('option_quantity-' + i, $('#option_quantity-' + i).val());
+			formData.append('option_unit_price-' + i, $('#option_unit_price-' + i).val());
+			formData.append('update_time', $('#update_time').val());
+		}
+	
+		var xhttp = new XMLHttpRequest();
+		var route, target;
+		route = '<?php echo $this->url('commitment/updateOption') ?>/' + id + '/' + count;
+		xhttp.open('POST', route, true);
+		xhttp.onload = function () {
+			if (xhttp.readyState == 4 && xhttp.status == 200) {
+				getCommitmentDetail(id);
+			}
+		};
+		xhttp.send(formData);
+	}
+}
+
+function connectCommitmentGenerateTermForm(id)
+{
+    $('#term_input_date').datepicker();
+
+	var form = document.getElementById('generate-term-form');
+	form.onsubmit = function(event) {
+		
+		event.preventDefault();
+			
+	// Number of terms
+		var numberOfTerms = $('#number_of_terms').val();
+		error = checkNumber(numberOfTerms, 0, 99);
+		if (error) {
+			$('#number_of_terms-error').text(error);
+			$('#number_of_terms-error').show();
+			document.getElementById('number_of_terms').focus();
+			validity = false;
+		}
+	
+	// First term date	
+	 	first_term_date = $('#input_first_term_date').val();
+		if (first_term_date == "") {
+			$('#input_first_term_date-error').text('<?php echo $this->translate('Please input a value', 'ppit-core', $context->getLocale()) ?>');
+			$('#input_first_term_date-error').show();
+			document.getElementById('input_first_term_date').focus();
+			validity = false;
+		}
+	 	else {
+			error = checkDate(first_term_date);
+			if (error) {
+				$('#input_first_term_date-error').text(error);
+				$('#input_first_term_date-error').show();
+				document.getElementById('input_first_term_date').focus();
+				validity = false;
+			}
+			else {
+				first_term_date = encodeDate(first_term_date);
+				$('#first_term_date').val(first_term_date);
+			}
+		}
+      
+    // Quantity to divide
+    var quantityToDivide = $('#quantity_to_divide').val();
+    error = checkNumber(quantityToDivide, 0, 1000000);
+    if (error) {
+      $('#quantity_to_divide-error').text(error);
+      $('#quantity_to_divide-error').show();
+      document.getElementById('quantity_to_divide').focus();
+      validity = false;
+    }
+      
+    // Unit price
+    var unitPrice = $('#term-unit_price').val();
+    error = checkNumber(unitPrice, 0, 1000000);
+    if (error) {
+      $('#term-unit_price-error').text(error);
+      $('#term-unit_price-error').show();
+      document.getElementById('term-unit_price').focus();
+      validity = false;
+    }
+      
+    // Amount to divide
+    var amountToDivide = $('#amount_to_divide').val();
+    error = checkNumber(amountToDivide, 0, 1000000);
+    if (error) {
+      $('#amount_to_divide-error').text(error);
+      $('#amount_to_divide-error').show();
+      document.getElementById('amount_to_divide').focus();
+      validity = false;
+    }
+			
+	// Means of payment
+		val = $('#means_of_payment').val();
+		if (!val) {
+			$('#means_of_payment-error').text('<?php echo $this->translate('Please input a value', 'ppit-core', $context->getLocale()) ?>');
+			$('#means_of_payment-error').show();
+			document.getElementById('means_of_payment').focus();
+			validity = false;
+		}
+		else {
+		    if (val.length > 255) {
+				$('#means_of_payment-error').text('<?php echo $this->translate('The input is too long', 'ppit-core', $context->getLocale()) ?>');
+				$('#means_of_payment-error').show();
+				document.getElementById('means_of_payment').focus();
+				validity = false;
+			}
+		}
+			
+	// Periodicity
+		var periodicity = $('#periodicity').val();
+		error = checkNumber(periodicity, 0, 99);
+		if (error) {
+			$('#periodicity-error').text(error);
+			$('#periodicity-error').show();
+			document.getElementById('periodicity').focus();
+			validity = false;
+		}
+      
+    // Same day of month option
+      var same_day_of_month = $('#same_day_of_month').val();
+	
+		if (validity) {
+	
+			// Create a new FormData object.
+			var formData = new FormData();
+/*            formData.append('term-invoice_account_id', $('#term-invoice_account_id').val());
+			formData.append('number_of_terms', $('#number_of_terms').val());
+			formData.append('first_term_date', $('#first_term_date').val());
+            formData.append('term-status', $('#term-status').val());
+            formData.append('quantityToDivide', $('#quantityToDivide').val());
+            formData.append('term-unit_price', $('#term-unit_price').val());
+            formData.append('amountToDivide', $('#amountToDivide').val());
+			formData.append('means_of_payment', $('#means_of_payment').val());
+			formData.append('periodicity', $('#periodicity').val());
+            formData.append('same_day_of_month', (document.getElementById('same_day_of_month').checked) ? 1 : 0);*/
+
+            $('.term_update_check').each(function () {
+              let propertyId = $(this).attr('id').split('-')[1];
+              formData.append(propertyId, (document.getElementById(propertyId).checked) ? 1 : 0);
+            });
+
+            $('.term_update_input').each(function () {
+              let propertyId = $(this).attr('id').split('-')[1];
+              formData.append(propertyId, ('#' + propertyId).val());
+            });
+		
+			var xhttp = new XMLHttpRequest();
+			var route, target;
+			route = '<?php echo $this->url('commitmentTerm/generate', ['type' => $type]) ?>/' + id;
+			xhttp.open('POST', route, true);
+			xhttp.onload = function () {
+				if (xhttp.readyState == 4 && xhttp.status == 200) {
+					getCommitmentDetail(id);
+				}
+			};
+			xhttp.send(formData);
+		}
+		else return false;
+	}
+}
+
+function getCommitmentGenerateTerm(id)
+{
+	var xhttp = new XMLHttpRequest();
+	var route, target;
+	route = '<?php echo $this->url('commitmentTerm/generate', ['type' => $type]) ?>/' + id;
+	xhttp.open('GET', route, true);
+	xhttp.onload = function () {
+		if (xhttp.readyState == 4 && xhttp.status == 200) {
+			document.getElementById('term-generate-panel').innerHTML = xhttp.responseText;
+			$('#input_first_term_date').datepicker();
+			$('#quantityToDivide').change(function() { $('#amountToDivide').val(''); });
+            $('#amountToDivide').change(function() { $('#quantityToDivide').val(''); $('#term-unit_price').val(''); });
+			connectCommitmentGenerateTermForm(id);
+		}
+	};
+	xhttp.send();
+}
+
+function connectCommitmentUpdateTermForm(id)
+{
+	var count, validity = true, error, number, val, i;
+	$('#terms-error').text('');
+	$('#terms-error').hide();
+
+	count = $('#termCount').val();
+	for (i = 0; i < count; i++) {
+		
+// Caption
+		caption = $('#term_caption-' + i).val();
+	    if (caption.length > 255) {
+			$('#terms_caption-' + i + '-error').text('<?php echo $this->translate('The input is too long', 'ppit-core', $context->getLocale()) ?>');
+			$('#terms_caption-' + i + '-error').show();
+			document.getElementById('term_caption-' + i).focus();
+			validity = false;
+		}
+
+// Due date	
+ 		term_due_date = $('#input_term_due_date-' + i).val();
+		if (caption) {
+			if (term_due_date == "") {
+				$('#input_term_due_date-' + i + '-error').text('<?php echo $this->translate('Please input a value', 'ppit-core', $context->getLocale()) ?>');
+				$('#input_term_due_date-' + i + '-error').show();
+				document.getElementById('input_term_due_date-' + i).focus();
+				validity = false;
+			}
+		 	else {
+				error = checkDate(term_due_date);
+				if (error) {
+					$('#input_term_due_date-' + i + '-error').text(error);
+					$('#input_term_due_date-' + i + '-error').show();
+					document.getElementById('input_term_due_date-' + i).focus();
+					validity = false;
+				}
+				else {
+					term_due_date = encodeDate(term_due_date);
+					$('#term_due_date-' + i).val(term_due_date);
+				}
+			}
+		}
+
+// Settlement date	
+ 		term_settlement_date = $('#input_term_settlement_date-' + i).val();
+		if (caption) {
+			if (term_settlement_date == "") {
+				$('#input_term_settlement_date-' + i + '-error').text('<?php echo $this->translate('Please input a value', 'ppit-core', $context->getLocale()) ?>');
+				$('#input_term_settlement_date-' + i + '-error').show();
+				document.getElementById('input_term_settlement_date-' + i).focus();
+				validity = false;
+			}
+		 	else {
+				error = checkDate(term_settlement_date);
+				if (error) {
+					$('#input_term_settlement_date-' + i + '-error').text(error);
+					$('#input_term_settlement_date-' + i + '-error').show();
+					document.getElementById('input_term_settlement_date-' + i).focus();
+					validity = false;
+				}
+				else {
+					term_settlement_date = encodeDate(term_settlement_date);
+					$('#term_settlement_date-' + i).val(term_settlement_date);
+				}
+			}
+		}
+
+// Collection date	
+ 		term_collection_date = $('#input_term_collection_date-' + i).val();
+		if (caption) {
+			if (term_collection_date == "") {
+				$('#input_term_collection_date-' + i + '-error').text('<?php echo $this->translate('Please input a value', 'ppit-core', $context->getLocale()) ?>');
+				$('#input_term_collection_date-' + i + '-error').show();
+				document.getElementById('input_term_collection_date-' + i).focus();
+				validity = false;
+			}
+		 	else {
+				error = checkDate(term_collection_date);
+				if (error) {
+					$('#input_term_collection_date-' + i + '-error').text(error);
+					$('#input_term_collection_date-' + i + '-error').show();
+					document.getElementById('input_term_collection_date-' + i).focus();
+					validity = false;
+				}
+				else {
+					term_collection_date = encodeDate(term_collection_date);
+					$('#term_collection_date-' + i).val(term_collection_date);
+				}
+			}
+		}
+		
+// Means of payment
+		val = $('#term_means_of_payment-' + i).val();
+		if (caption && !val) {
+			$('#term_means_of_payment-' + i + '-error').text('<?php echo $this->translate('Please input a value', 'ppit-core', $context->getLocale()) ?>');
+			$('#term_means_of_payment-' + i + '-error').show();
+			document.getElementById('term_means_of_payment-' + i).focus();
+			validity = false;
+		}
+		else {
+		    if (val.length > 255) {
+				$('#term_means_of_payment-' + i + '-error').text('<?php echo $this->translate('The input is too long', 'ppit-core', $context->getLocale()) ?>');
+				$('#term_means_of_payment-' + i + '-error').show();
+				document.getElementById('term_means_of_payment-' + i).focus();
+				validity = false;
+			}
+		}
+		
+// Status
+		val = $('#term_status-' + i).val();
+		if (caption && !val) {
+			$('#term_status-' + i + '-error').text('<?php echo $this->translate('Please input a value', 'ppit-core', $context->getLocale()) ?>');
+			$('#term_status-' + i + '-error').show();
+			document.getElementById('term_status-' + i).focus();
+			validity = false;
+		}
+		else {
+		    if (val.length > 255) {
+				$('#term_status-' + i + '-error').text('<?php echo $this->translate('The input is too long', 'ppit-core', $context->getLocale()) ?>');
+				$('#term_status-' + i + '-error').show();
+				document.getElementById('term_status-' + i).focus();
+				validity = false;
+			}
+		}
+		
+// Amount
+		number = $('#input_term_amount-' + i).val();
+		error = checkNumber(number, 0, 999999);
+		if (error) {
+			$('#term_status-' + i + '-error').text(error);
+			$('#term_status-' + i + '-error').show();
+			document.getElementById('input_term_amount-' + i).focus();
+			validity = false;
+		}
+	    else { 
+			number = getNumber(number, 2);
+			$('#term_amount-' + i).val(number);
+		}
+	}
+
+	if (validity) {
+
+		// Create a new FormData object.
+		var formData = new FormData();
+		for (i = 0; i < count; i++) {
+			formData.append('term_caption-' + i, $('#term_caption-' + i).val());
+			formData.append('term_due_date-' + i, $('#term_due_date-' + i).val());
+			formData.append('term_settlement_date-' + i, $('#term_settlement_date-' + i).val());
+			formData.append('term_collection_date-' + i, $('#term_collection_date-' + i).val());
+			formData.append('term_means_of_payment-' + i, $('#term_means_of_payment-' + i).val());
+			formData.append('term_status-' + i, $('#term_status-' + i).val());
+			formData.append('term_amount-' + i, $('#term_amount-' + i).val());
+			formData.append('term_document-' + i, $('#term_document-' + i).val());
+		}
+	
+		var xhttp = new XMLHttpRequest();
+		var route, target;
+		route = '<?php echo $this->url('commitment/updateTerm') ?>/' + id + '/' + count;
+		xhttp.open('POST', route, true);
+		xhttp.onload = function () {
+			if (xhttp.readyState == 4 && xhttp.status == 200) {
+				getCommitmentDetail(id);
+			}
+		};
+		xhttp.send(formData);
+	}
+}
+
+// Load the detail panel
+function getCommitmentDetail(id) {
+
+	// Ensure the target is displayed
+	$('#detail-row_' + id).show();
+
+	// Anchor to the new panel
+	$(location).attr('hash', 'detail-row_' + id);
+
+	var route = '<?php echo $this->url('commitment/detailV2', array('type' => ($type) ? $type : 'generic')) ?>/' + id;
+
+	// Execute the ajax request
+	xhttp = new XMLHttpRequest();
+	xhttp.open("GET", route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4 && xhttp.status == 200) {
+			document.getElementById('detail-div_' + id).innerHTML = xhttp.responseText;
+
+			connectAuditPanel();
+			connectCgvPanel();
+
+			$('#remove-anchor').click(function () {
+				$('.detail-row').hide();
+				filterCommitmentList();
+			});
+
+			getCommitmentUpdate(id, '');
+			
+			$('.detail-remove-anchor').click(function () { getCommitmentDetail(id); });
+
+			$('#row-anchor').click(function () {
+				$('.row-anchor').removeClass('btn-warning').addClass('btn-default');
+				$('.row-update-anchor').removeClass('btn-warning').addClass('btn-default');
+				$('.row-delete-anchor').removeClass('btn-warning').addClass('btn-default');
+				$('.row-add-anchor').removeClass('btn-warning').addClass('btn-default');
+				$(this).removeClass('btn-default').addClass('btn-warning');
+				$('.row-tr').hide();
+				$('#row-tr').show();
+			});
+
+			$('.row-update-anchor').click(function () {
+				$('.row-anchor').removeClass('btn-warning').addClass('btn-default');
+				$('.row-update-anchor').removeClass('btn-warning').addClass('btn-default');
+				$('.row-delete-anchor').removeClass('btn-warning').addClass('btn-default');
+				$('.row-add-anchor').removeClass('btn-warning').addClass('btn-default');
+				$(this).removeClass('btn-default').addClass('btn-warning');
+				$('.row-tr').hide();
+				i = $(this).attr('id').split('_')[1]
+				$('#row-tr_' + i).show();
+			});
+
+			$('#row-add-anchor').click(function () {
+				$('.row-anchor').removeClass('btn-warning').addClass('btn-default');
+				$('.row-update-anchor').removeClass('btn-warning').addClass('btn-default');
+				$('.row-delete-anchor').removeClass('btn-warning').addClass('btn-default');
+				$('.row-add-anchor').removeClass('btn-warning').addClass('btn-default');
+				$(this).removeClass('btn-default').addClass('btn-warning');
+				$('.row-tr').hide();
+				$('#row-tr-add').show();
+			});
+
+			$('.row-delete-anchor').click(function () {
+				$('.row-anchor').removeClass('btn-warning').addClass('btn-default');
+				$('.row-update-anchor').removeClass('btn-warning').addClass('btn-default');
+				$('.row-delete-anchor').removeClass('btn-warning').addClass('btn-default');
+				$('.row-add-anchor').removeClass('btn-warning').addClass('btn-default');
+				$(this).removeClass('btn-default').addClass('btn-warning');
+				$('.row-tr').hide();
+				i = $(this).attr('id').split('_')[1]
+				$('#option_identifier-' + i).val('');
+				$('#input_option_quantity-' + i).val('');
+				$('#input_option_unit_price-' + i).val('');
+				$('#row-tr_' + i).show();
+			});
+
+			$('.term-update-anchor').click(function () {
+				$('.term-tr').hide();
+				i = $(this).attr('id').split('_')[1]
+				$('#term-tr_' + i).show();
+				getTermUpdate($('#term_commitment_id').val(), $('#term_id-' + i).val(), '', 'term-update-panel_' + i);
+			});
+
+			$('#term-generate-anchor').click(function () {
+				$('.term-tr').hide();
+				$('#term-tr').show();
+				getCommitmentGenerateTerm($('#term_commitment_id').val());
+			});
+
+			$('#product_identifier').change(fillRowPrice);
+
+			$('.option_identifier').each(function () {
+				$(this).change(function () {
+					fillOptionPrice($(this).attr('id').split('-')[1]);
+				});
+			});
+
+			$('#row-action').click(function() {
+				connectCommitmentUpdateProductForm(id);
+			});
+
+			$('.option-action').click(function() {
+				connectCommitmentUpdateOptionForm(id);
+			});
+
+			$('.term-action').click(function() {
+				connectCommitmentUpdateTermForm(id);
+			});
+
+			$('.part-button').hide();
+		}
+	}
+	xhttp.send();
+
+	// Highlight the clicked button (and only it in its class)
+	$('.index-btn').removeClass("btn-primary").addClass("btn-default");
+	$('.index-btn').attr('disabled', 'disabled');
+	$('#commitment-detail-anchor_' + id).removeClass("btn-default").addClass("btn-primary");
+}
+
+function getSearch()
+{
+	// Hide the other panels
+	$('.ppit-panel').hide();
+	$('#index_panel').show();
+	// Anchor to the main panel
+	$(location).attr('hash', '#');
+	var xhttp = new XMLHttpRequest();
+	xhttp.open("GET", '<?php echo $this->url('commitment/searchV2', array('type' => $type)) ?>', false);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4 && xhttp.status == 200) {
+				document.getElementById('index_panel').innerHTML = xhttp.responseText;
+				<?php
+				$todoTitle = $this->translate('todo list', 'ppit-core', $context->getLocale());
+				?>
+				$('#mode-text').text('<?php echo $todoTitle ?>');
+          
+            // Connect the erase button that reset all the search engine inputs and checks and refresh the list
+            $('#erase-button').click(function() {
+              $('.search_input').val('');
+              $('.search_selectpicker').selectpicker('refresh');
+              $('.search_check_value').val('0');
+              $('.search_check').removeClass('btn-secondary').addClass('btn-default').removeClass('active');
+              $('#erase-button').removeClass('btn-success').addClass('btn-default');
+              $('#erase-button').attr('disabled', 'disabled');
+              getCommitmentList(getSearchParams(''), 'update_time', 'DESC');
+            });
+       
+            $('.search_selectpicker').selectpicker('refresh');
+            
+            // Connect the date picker on date inputs
+            $('.search_input_date').datepicker();
+       
+            // Trigger the change event on date inputs and refresh the list
+            $('.search_input_date').change(function () {
+              var propertyId = $(this).attr('id').split('-')[1];
+              $('#erase-button').removeClass('btn-default').addClass('btn-success');
+              $('#erase-button').attr('disabled', false);
+              $('#search_check-' + propertyId).removeClass('btn-default').addClass('btn-secondary').addClass('active');
+              $('#search_check_value-' + propertyId).val('1');
+              getCommitmentList(getSearchParams(''), 'update_time', 'DESC');
+            }); 
+       
+            // Trigger the change event on select inputs and refresh the list
+            $('.search_input_select').change(function () {
+              var propertyId = $(this).attr('id').split('-')[1];
+              $('#erase-button').removeClass('btn-default').addClass('btn-success');
+              $('#erase-button').attr('disabled', false);
+              $('#search_check-' + propertyId).removeClass('btn-default').addClass('btn-secondary').addClass('active');
+              $('#search_check_value-' + propertyId).val('1');
+              getCommitmentList(getSearchParams(''), 'update_time', 'DESC');
+            }); 
+
+            // Trigger the keyup event on text inputs and refresh the list
+            $('.search_input_text').keyup(function () {
+              if ($(this).val().length > 2) {
+                var propertyId = $(this).attr('id').split('-')[1];
+                $('#erase-button').removeClass('btn-default').addClass('btn-success');
+                $('#erase-button').attr('disabled', false);
+                $('#search_check-' + propertyId).removeClass('btn-default').addClass('btn-secondary').addClass('active');
+                $('#search_check_value-' + propertyId).val('1');
+                getCommitmentList(getSearchParams(''), 'update_time', 'DESC');
+              }
+            });
+
+            // Trigger the click event on per-property checks (allowing to search on empty values) and refresh the list
+            $('.search_check').click(function() {
+              $('#erase-button').removeClass('btn-default').addClass('btn-success');
+              $('#erase-button').attr('disabled', false);
+              var propertyId = $(this).attr('id').split('-')[1], check = 'search_check_value-' + propertyId;
+              if ($('#' + check).val() == '1') {
+                $(this).removeClass('btn-secondary').addClass('btn-default').removeClass('active');
+                $('#' + check).val('0');
+                $('#search-' + propertyId).val('');
+//                $('#search-' + propertyId).selectpicker('refresh');
+              }
+              else {
+                $(this).removeClass('btn-default').addClass('btn-secondary').addClass('active');
+                $('#' + check).val('1');
+              }
+              getCommitmentList(getSearchParams(''), 'update_time', 'DESC');
+            });
+
+				getCommitmentList(getSearchParams(''), 'update_time', 'DESC');
+		}
+	}
+	xhttp.send();
+}
+
+// Grouped actions
+
+function connectSendMessageForm()
+{
+	var xhttp = new XMLHttpRequest();
+
+	var commitmentNumber = $('#commitment-number').val(), commitments = '';
+	first = true;
+	for (i = 0, j = 0; i < commitmentNumber; i++) {
+		if (document.getElementById('commitment-checkbox_' + i).checked) {
+			if (!first) commitments += ',';
+			first = false;
+			commitments += $('#commitment_' + i).val();
+			j++;
+		}
+	}
+
+	var route = '<?php echo $this->url('commitment/sendMessageV2', ['type' => $type, 'template_id' => 'generic']) ?>' + '?commitments=' + commitments;
+
+	// Execute the ajax request
+	xhttp = new XMLHttpRequest();
+	xhttp.open("POST", route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4 && xhttp.status == 200) {
+			document.getElementById('send-message-panel').innerHTML = xhttp.responseText;
+		}
+	}
+	xhttp.send();
+}
+
+function getSendMessageForm() {
+	$('#send-message-button').removeClass('btn-default').addClass('btn-warning');
+	$('#send-message-alert').show();
+	$('#send-message-button').click(function () { connectSendMessageForm(); });
+}
+
+function getSendMessage() {
+
+	var xhttp = new XMLHttpRequest();
+
+	var commitmentNumber = $('#commitment-number').val(), commitments = '';
+	first = true;
+	for (i = 0, j = 0; i < commitmentNumber; i++) {
+		if (document.getElementById('commitment-checkbox_' + i).checked) {
+			if (!first) commitments += ',';
+			first = false;
+			commitments += $('#commitment_' + i).val();
+			j++;
+		}
+	}
+
+	var route = '<?php echo $this->url('commitment/sendMessageV2', ['type' => $type, 'template_id' => 'generic']) ?>' + '?commitments=' + commitments;
+
+	// Execute the ajax request
+	xhttp = new XMLHttpRequest();
+	xhttp.open("GET", route, true);
+	xhttp.onreadystatechange = function() {
+			if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4 && xhttp.status == 200) {
+
+			document.getElementById('send-message-panel').innerHTML = xhttp.responseText;
+			connectRemoveIcon('remove-anchor', 'form_action');
+			$('#send-message-alert').hide();
+			$('#send-message-button').click(function () { getSendMessageForm(); });
+		}
+	}
+	xhttp.send();
+}
+
+<?php if ($context->hasRole('accountant')) : ?>
+
+function connectRegisterSalesForm()
+{
+  var xhttp = new XMLHttpRequest();
+
+  var commitmentNumber = $('#commitment-number').val(), commitments = '';
+  first = true;
+  for (i = 0, j = 0; i < commitmentNumber; i++) {
+    if (document.getElementById('commitment-checkbox_' + i).checked) {
+      if (!first) commitments += ',';
+      first = false;
+      commitments += $('#commitment_' + i).val();
+      j++;
+    }
+  }
+
+  var route = '<?php echo $this->url('journal/registerSales', ['type' => $type]) ?>' + '?commitments=' + commitments;
+
+  // Execute the ajax request
+  xhttp = new XMLHttpRequest();
+  xhttp.open("POST", route, true);
+  xhttp.onreadystatechange = function() {
+    if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      document.getElementById('register-sales-panel').innerHTML = xhttp.responseText;
+      var exportRoute = '<?php echo $this->url('journal/export').'?min_update_time='.date('Y-m-d') ?>';
+      if ($('#search_place_id').val()) exportRoute += '&place_id='+ $('#search_place_id').val();
+      location.href = exportRoute;
+    }
+  }
+  xhttp.send();
+}
+
+function getRegisterSalesForm() {
+  $('#register-sales-button').removeClass('btn-default').addClass('btn-warning');
+  $('#register-sales-alert').show();
+  $('#register-sales-button').click(function () { connectRegisterSalesForm(); });
+}
+
+function getRegisterSales() {
+
+  var xhttp = new XMLHttpRequest();
+
+  var commitmentNumber = $('#commitment-number').val(), commitments = '';
+  first = true;
+  for (i = 0, j = 0; i < commitmentNumber; i++) {
+    if (document.getElementById('commitment-checkbox_' + i).checked) {
+      if (!first) commitments += ',';
+      first = false;
+      commitments += $('#commitment_' + i).val();
+      j++;
+    }
+  }
+
+  var route = '<?php echo $this->url('journal/registerSales', ['type' => $type]) ?>' + '?commitments=' + commitments;
+
+  // Execute the ajax request
+  xhttp = new XMLHttpRequest();
+  xhttp.open("GET", route, true);
+  xhttp.onreadystatechange = function() {
+      if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+
+      document.getElementById('register-sales-panel').innerHTML = xhttp.responseText;
+      connectRemoveIcon('remove-anchor', 'form_action');
+      $('#register-sales-alert').hide();
+      $('#register-sales-button').click(function () { getRegisterSalesForm(); });
+    }
+  }
+  xhttp.send();
+}
+<?php endif;?>
+
+function postGroup()
+{
+		$('.group_update_date').datepicker();
+		$('.group_update_time').timepicker({ 'timeFormat': 'H:i:s' });
+
+	$('.group_update').change(function() {
+      let propertyId = $(this).attr('id').split('-')[1];
+      document.getElementById(propertyId + '_check').checked = true;
+    });
+
+	var form = document.getElementById('group-form');
+	form.onsubmit = function(event) {
+		event.preventDefault();
+		
+			// Create a new FormData object.
+			var formData = new FormData();
+			formData.append('action', 'update');
+			var nbCommitment = $('#group-nb-commitment').val();
+			formData.append('nb-commitment', nbCommitment);
+			for (i = 0; i < nbCommitment; i++) formData.append('commitment_' + i, $('#group-commitment_' + i).val());
+			
+			// Get the properties values
+
+            $('.group_update_check').each(function () {
+              let propertyId = $(this).attr('id').split('-')[1];
+              formData.append(propertyId, (document.getElementById(propertyId).checked) ? 1 : 0);
+            });
+
+            $('.group_update_input').each(function () {
+              let propertyId = $(this).attr('id').split('-')[1];
+              formData.append(propertyId, ('#' + propertyId).val());
+            });
+
+			formData.append('update_time', document.getElementById('update_time').value);
+
+			var xhttp = new XMLHttpRequest();
+			var route, target;
+			route = '<?php echo $this->url('commitment/groupV2', array('type' => $type)) ?>';
+			xhttp.open('POST', route, true);
+			xhttp.onload = function () {
+				if (xhttp.readyState == 4 && xhttp.status == 200) {
+					document.getElementById('detail-div_0').innerHTML = xhttp.responseText;
+				}
+
+				$('#remove-anchor').click(function () {
+					$('.detail-row').hide();
+					filterCommitmentList();
+				});
+			};
+			xhttp.send(formData);
+	}
+}
+
+function getGroup() {
+
+	// Ensure the target is displayed
+	$('#detail-row_0').show();
+	$(location).attr('hash', 'detail-row_0');
+
+	// Disabled the list checkboxes
+	$('.commitment-checkbox').attr('disabled', 'disabled');
+	var route = '<?php echo $this->url('commitment/groupV2', array('type' => $type)) ?>';
+	var formData = new FormData();
+
+	var commitmentNumber = $('#commitment-number').val();
+	for (i = 0, j = 0; i < commitmentNumber; i++) {
+		if (document.getElementById('commitment-checkbox_' + i).checked) {
+			formData.append('commitment_' + j, $('#commitment_' + i).val());
+			j++;
+		}
+	}
+	formData.append('nb-commitment', j);
+
+	// Execute the ajax request
+	var xhttp = new XMLHttpRequest();
+	xhttp.open("POST", route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4) {
+		  if (xhttp.status == 200) {
+
+			document.getElementById('detail-div_0').innerHTML = xhttp.responseText;
+			postGroup();
+			getSendMessage();
+			
+			$('#remove-anchor').click(function () {
+				$('.detail-row').hide();
+				filterCommitmentList();
+			});
+
+			$('.group-panel').hide();
+			$('#update-tab').addClass('active');
+			$('#update-panel').show();
+			
+			$('#update-tab').click(function () {
+				$('.group-tab').removeClass('active');
+				$('#update-tab').addClass('active');
+				$('.group-panel').hide();
+				$('#update-panel').show();
+			});
+			
+			$('#send-message-tab').click(function () {
+				$('.group-tab').removeClass('active');
+				$('#send-message-tab').addClass('active');
+				$('.group-panel').hide();
+				$('#send-message-panel').show();
+			});
+
+<?php if ($context->hasRole('accountant')) : ?>
+            getRegisterSales();
+
+            $('#register-sales-tab').click(function () {
+              $('.group-tab').removeClass('active');
+              $('#register-sales-tab').addClass('active');
+              $('.group-panel').hide();
+              $('#register-sales-panel').show();
+            });
+<?php endif;?>
+      
+            $('#download-invoices-tab').click(function () {
+			  var commitmentNumber = $('#commitment-number').val();
+			  for (i = 0, j = 0; i < commitmentNumber; i++) {
+			    if (document.getElementById('commitment-checkbox_' + i).checked) {
+                  window.open('<?php echo $this->url('commitment/downloadInvoice', ['type' => $type]) ?>/' + $('#commitment_' + i).val());
+			    }
+			  }
+            });
+		  }
+		}
+	}
+	xhttp.send(formData);
+
+	// Highlight the clicked button (and only it in its class)
+	$('.index-btn').removeClass("btn-primary").addClass("btn-default");
+	$('.commitment-group-anchor').removeClass("btn-default").addClass("btn-primary");
+}
+
+function activateCommitment() {
+	getSearch();
+}
+
+//echo $this->partial('/partials/ppit-term-scripts');
+//echo $this->partial('/partials/ppit-controller') 
+
+activateCommitment('<?php echo $type ?>');
+
+</script>

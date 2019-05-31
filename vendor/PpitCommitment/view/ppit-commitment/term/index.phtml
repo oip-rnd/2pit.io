@@ -20,7 +20,7 @@ echo $this->partial('/partials/header');
 		<?php if (array_key_exists('glyphicon', $entryDef)) : ?>
 				<span class="glyphicon <?php echo $entryDef['glyphicon'] ?>"></span>
 		<?php endif;?>
-				<?php echo $entryDef['label'][$context->getLocale()] ?>
+				<?php echo $context->localize($entryDef['label']) ?>
 			</button>
 	<?php endif ?>
 		</div>

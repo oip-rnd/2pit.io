@@ -321,7 +321,7 @@ class GroupAccount
      * @param string $mode
      * @return GroupAccount[]
      */
-    public static function getList($description, $params, $order = '-update_time', $limit = 50, $offset = 0, $columns = null, $mode = 'search')
+    public static function getList($description, $params, $order = '-update_time', $limit = null, $offset = 0, $columns = null, $mode = 'search')
     {
     	$context = Context::getCurrent();
     	$type = $description['type'];

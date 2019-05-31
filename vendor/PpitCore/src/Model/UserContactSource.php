@@ -29,7 +29,6 @@ class UserContactSource
     public $tel_work;
     public $tel_cell;
     public $instance_caption;
-    public $community_name;
 
     protected $inputFilter;
 
@@ -56,7 +55,6 @@ class UserContactSource
         $this->tel_work = (isset($data['tel_work'])) ? $data['tel_work'] : null;
         $this->tel_cell = (isset($data['tel_cell'])) ? $data['tel_cell'] : null;
         $this->instance_caption = (isset($data['instance_caption'])) ? $data['instance_caption'] : null;
-//        $this->community_name = (isset($data['community_name'])) ? $data['community_name'] : null;
     }
     
     public function toArray()
@@ -77,7 +75,6 @@ class UserContactSource
     		->join('core_instance', 'core_user_contact.instance_id = core_instance.id', array('instance_caption' => 'caption'), 'left')
 	    	->join('core_vcard', 'core_user_contact.vcard_id = core_vcard.id', array('n_fn', 'email', 'tel_work', 'tel_cell'), 'left')
     		->join('core_user', 'core_user_contact.user_id = core_user.user_id', array(), 'left')
-    		->join('core_community', 'core_vcard.community_id = core_community.id', array('community_name' => 'name'), 'left')
     		->where(array('core_user_contact.user_id' => ($user_id) ? $user_id : $context->getUserId()))
     		->order(array('instance_caption', 'n_fn'));
     	$cursor = UserContactSource::getTable()->transSelectWith($select);

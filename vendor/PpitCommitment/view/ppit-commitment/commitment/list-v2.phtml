@@ -1,0 +1,168 @@
+<!-- 
+/**
+ * PpitAccounting V1.0 (https://github.com/p-pit/PpitAccounting)
+ *
+ * @link      https://github.com/p-pit/PpitAccounting
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitAccounting/blob/master/license.txt GNU-GPL license
+ */
+-->
+
+<style>
+{
+    .large
+    {
+        display: none;
+    }
+}
+</style>
+
+<div class="col-md-12">
+  <table class="table table-striped ppit_index">
+
+	<tr>
+		<th>&nbsp;</th>
+		<th>&nbsp;</th>
+
+<?php $first = true; foreach ($listPage['properties'] as $propertyId => $property) : ?>
+		<th align="center">
+            <a type="button" class="btn btn-sm sort_anchor <?php if ($major == $propertyId) echo 'btn-secondary active '.(($major == $propertyId) ? (($dir == 'ASC') ? 'sort_anchor_up' : 'sort_anchor_down') : '') ?>" role="button" id="<?php echo $propertyId ?>-anchor">
+              <span><?php echo $context->localize($property['labels']) ?></span>
+<?php if ($major == $propertyId) : ?>
+              <i class="fas fa-caret-<?php echo ($dir == 'ASC') ? 'up' : 'down' ?>"></i>
+<?php endif ?>
+			</a>
+		</th>
+<?php endforeach;?>
+	
+			<tr>
+				<td>
+     <input type="checkbox" class="commitment-checkbox" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Check all', 'ppit-core', $context->getLocale()) ?>"></input>
+ 				</td>
+	
+      <td style="text-align: center">
+        <div class="input-group input-group-sm">
+          <button type="button" class="btn btn-sm btn-outline-primary index-btn group-anchor" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Grouped actions', 'ppit-core', $context->getLocale())?>" id="group-anchor">
+            <span class="fas fa-list" id="group-glyphicon"></span>
+          </button>
+        </div>
+      </td>
+
+      <td style="text-align: center">
+        <div class="input-group input-group-sm">
+          <button type="button" class="btn btn-sm btn-outline-primary index-btn commitment-detail-anchor" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale())?>" id="commitment-detail-anchor_0">
+            <span class="fas fa-plus" id="add-glyphicon"></span>
+          </button>
+        </div>
+      </td>
+  
+      <td colspan="<?php echo count($listPage['properties']) - 1 ?>">&nbsp;</td>
+
+			</tr>
+		
+			<input type="hidden" id="commitment-number" value="<?php echo count($commitments) ?>" />
+	
+<?php $i = 0; foreach ($commitments as $commitment) : ?>
+	<?php if ($context->isAllowed('commitment/detail')) : ?>
+	
+	<input type="hidden"  id="commitment_<?php echo $i ?>" value="<?php echo $commitment->id ?>" />
+	
+	<tr>
+		<td>
+			<input type="checkbox" class="commitment-checkbox" id="commitment-checkbox_<?php echo $i ?>"></input>
+		</td>
+
+		<td >
+      <div class="input-group input-group-sm">
+        <button type="button" class="btn btn-sm btn-outline-primary index-btn commitment-detail-anchor" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Detail', 'ppit-core', $context->getLocale())?>" id="commitment-detail-anchor_<?php echo $commitment->id ?>">
+          <i class="fas fa-search" id="<?php echo $commitment->id ?>-glyphicon"></i>
+        </button>
+      </div>
+		</td>
+
+	<?php foreach ($listPage['properties'] as $propertyId => $property) : ?>
+      
+        <?php if ($propertyId == 'place_id') : ?>
+        <td><?php echo ($commitment->properties[$propertyId]) ? $property['modalities'][$commitment->properties[$propertyId]] : '' ?></td>
+	
+		<?php elseif ($property['type'] == 'input') : ?>
+		<td><?php echo $commitment->properties[$propertyId] ?></td>
+	
+		<?php elseif ($property['type'] == 'select') : ?>
+		<td><?php echo ($commitment->properties[$propertyId]) ? $context->localize($property['modalities'][$commitment->properties[$propertyId]]) : '' ?></td>
+	
+		<?php elseif ($property['type'] == 'number') : ?>
+		<td style="text-align: right"><?php echo $context->formatFloat($commitment->properties[$propertyId], 2) ?></td>
+	
+		<?php else : ?>
+		<td><?php echo $commitment->properties[$propertyId] ?></td>
+		
+		<?php endif;?>
+		
+	<?php endforeach;?>
+	</tr>
+
+	<?php endif;?>
+
+<?php $i++; endforeach; ?>
+
+			<tr>
+				<td>
+      <input type="checkbox" class="commitment-checkbox" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Check all', 'ppit-core', $context->getLocale()) ?>"></input>
+				</td>
+		
+				<td style="text-align: center">
+      <div class="input-group input-group-sm">
+        <button type="button" class="btn btn-sm btn-outline-primary index-btn commitment-group-anchor" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Grouped actions', 'ppit-core', $context->getLocale())?>" id="commitment-down-group-anchor">
+          <i class="fas fa-list" id="group-glyphicon"></i>
+        </button>
+      </div>
+				</td>
+
+<?php if ($mode == 'todo' && count($commitments) >= '5') : ?>
+    <td style="text-align: center">
+      <div class="input-group input-group-sm">
+        <button type="button" class="btn btn-sm btn-outline-primary index-btn" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Display the entire list', 'ppit-core', $context->getLocale())?>" id="more-anchor">
+          <i class="fas fa-ellipsis-h" id="more-glyphicon"></i>
+        </button>
+      </div>
+    </td>
+<?php else : ?>
+				<td>&nbsp;</td>
+<?php endif;?>
+    <td colspan="<?php echo count($listPage['properties']) - 1 ?>">&nbsp;</td>
+			</tr>
+
+	<tr>
+		<th>&nbsp;</th>
+		<th>&nbsp;</th>
+<?php foreach ($listPage['properties'] as $propertyId => $property) : ?>
+		<th>
+	<?php if ($propertyId == $major) : ?>
+			<?php echo $this->translate('Number', 'ppit-core', $context->getLocale()) ?>:&nbsp;<?php echo $count.'<br>' ?>
+			<?php if ($sum) echo $this->translate('Sum', 'ppit-core', $context->getLocale()).':&nbsp;'.$context->formatFloat($sum,2).'<br>' ?>
+			<?php if ($average) echo $this->translate('Average', 'ppit-core', $context->getLocale()).':&nbsp;'.$context->formatFloat($average, 2) ?>
+
+		<?php if ($distribution) : ?>
+			<select id="select-distribution">
+			<?php foreach ($distribution as $modality => $value) : ?>
+				<?php 
+				if ($propertyId == 'place_id') if ($modality) $label = $places[$modality]->caption; else $label = '';
+				else $label = $property['modalities'][$modality][$context->getLocale()];
+				?>
+				<option value="<?php echo $modality ?>"><?php echo $label ?></option>
+			<?php endforeach;?>
+			</select>
+			&nbsp;
+			<?php foreach ($distribution as $modality => $value) : ?>
+			<span class="distribution" id="distribution_<?php echo $modality ?>"><?php echo $value ?>&nbsp;/&nbsp;<?php echo $count ?>&nbsp;=&nbsp;<?php echo round($value / $count * 100, 1) ?>%</span>
+			<?php endforeach;?>
+		<?php endif;?>
+	<?php else : ?>
+			&nbsp;
+	<?php endif;?>
+		</th>
+<?php endforeach;?>
+	</tr>
+  </table>
+</div>

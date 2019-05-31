@@ -12,44 +12,21 @@
       </a>
     </div>
 
-<?php foreach ($eventAccountSearchPage['properties'] as $propertyId => $unused) : ?>
+<?php foreach ($eventAccountSearchPage['properties'] as $propertyId => $options) : ?>
 	<?php 
 	$property = $configProperties[$propertyId];
 	$label = $context->localize($property['labels']);
 	?>
-	<?php if ($propertyId == 'availability') : ?>
 
-		<?php
-		$modalities = array();
-		foreach ($context->getConfig('core_account/generic/property/availability_constraints')['fields'] as $modalityId => $modality) {
-			$modalities[$modalityId] = $context->localize($modality['labels']);
-		}
-		?>
-       <div class="input-group input-group-sm mb-2 mr-sm-2">
-          <input type="hidden" value="0" class="search_check_value" id="search_check_value-<?php echo $propertyId ?>" />
-          <div class="input-group-prepend">
-            <button type="button" class="btn btn-secondary input-group-text search_check" id="search_check-<?php echo $propertyId ?>"><?php echo $label ?></button>
-          </div>
-          <select class="form-control search_input search_input_select" id="search-<?php echo $propertyId ?>">
-            <option value=""></option>
-		<?php foreach ($modalities as $modalityId => $modalityLabel) : ?>
-		    <option value="<?php echo $modalityId ?>"><?php echo $modalityLabel ?></option>
-		<?php endforeach;?>
-            <option value="*">*</option>
-          </select>
-          <input class="form-control search_input search_input_date" type="text" id="search_min-<?php echo $propertyId ?>" placeholder="<?php echo $this->translate('Min', 'ppit-core', $context->getLocale()) ?>" />
-          <input class="form-control search_input search_input_date" type="text" id="search_max-<?php echo $propertyId ?>" placeholder="<?php echo $this->translate('Max', 'ppit-core', $context->getLocale()) ?>" />
-		</div>
-
-	<?php elseif (in_array($property['type'], array('date', 'time', 'datetime', 'number'))) : ?>
+	<?php if (in_array($property['type'], array('date', 'time', 'datetime', 'number'))) : ?>
 
         <div class="input-group input-group-sm mb-2 mr-sm-2 col-md-4">
           <input type="hidden" value="0" class="search_check_value" id="search_check_value-<?php echo $propertyId ?>" />
           <div class="input-group-prepend">
             <button type="button" class="btn btn-secondary input-group-text search_check" id="search_check-<?php echo $propertyId ?>"><?php echo $label ?></button>
           </div>
-		  <input class="form-control search_input search_input_date" type="text" id="search_min-<?php echo $propertyId ?>" placeholder="<?php echo $this->translate('Min', 'ppit-core', $context->getLocale()) ?>" />
-          <input class="form-control search_input search_input_date" type="text" id="search_max-<?php echo $propertyId ?>" placeholder="<?php echo $this->translate('Max', 'ppit-core', $context->getLocale()) ?>" />
+		  <input class="form-control search_input search_input_date search_input_date_min" type="text" id="search_min_<?php echo $propertyId ?>" placeholder="<?php echo $this->translate('Min', 'ppit-core', $context->getLocale()) ?>" />
+          <input class="form-control search_input search_input_date search_input_date_max" type="text" id="search_max-<?php echo $propertyId ?>" placeholder="<?php echo $this->translate('Max', 'ppit-core', $context->getLocale()) ?>" />
         </div>
 
 	<?php elseif (in_array($property['type'], ['select', 'multiselect'])) : ?>
@@ -69,7 +46,6 @@
 		else foreach ($property['modalities'] as $modalityId => $modality) {
 			$modalities[$modalityId] = $context->localize($modality);
 		}
-		?>
 
 		if (array_key_exists('multiple', $options) && $options['multiple']) $multiple = true; else $multiple = false;
 		?>
@@ -88,15 +64,6 @@
             <option value="*">*</option>
           </select>
         </div>
-  
-  <?php elseif ($property['type'] == 'boolean') : ?>
-      <label class="col-sm-6 control-label"><?php echo $label ?></label>
-      <div class="input-group search">
-          <span class="input-group-addon">
-          <input type="checkbox" class="search_check" id="search_check_<?php echo $propertyId ?>">
-        </span>
-        <input class="form-control search_input" type="checkbox" id="search_<?php echo $propertyId ?>" />
-      </div>
 	
 	<?php else : ?>
        <div class="input-group input-group-sm mb-2 mr-sm-2">

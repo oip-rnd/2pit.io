@@ -1,0 +1,31 @@
+<head>
+    
+    <meta charset="utf-8">
+        <?php echo $this->headTitle()->setSeparator('')->setAutoEscape(false) ?>
+
+        <?php echo $this->headMeta()
+            ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+        ?>
+<?php if ($this->description) : ?>
+    <meta name="description" content="<?php echo $this->description ?>">
+<?php endif;?>
+  <meta name="robots" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="<?php echo $this->basePath('/fontawesome-free-5.2.0-web/css/all.min.css') ?>">
+  <link rel="stylesheet" href="<?php echo $this->basePath('/bootstrap-4-2/css/bootstrap.min.css') ?>">
+    <link rel="stylesheet" href="<?php echo $this->basePath('/bootstrap-select-1.13.1/dist/css/bootstrap-select.min.css') ?>">
+  <link rel="stylesheet" href="<?php echo $this->basePath('/css/ppit-style.css') ?>">
+  <link rel="stylesheet" href="<?php echo $this->basePath('/jquery-ui-1.11.4/jquery-ui.css') ?>">
+    <link rel='stylesheet' href="<?php echo $this->basePath('/jquery.timepicker/jquery.timepicker.min.css') ?>" />
+ 
+<style>
+body { 
+//  background-color: #ededed;
+}
+</style>
+
+</head>

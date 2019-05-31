@@ -1,6 +1,10 @@
 <?php
 
-return array(
+include('commitment_learning.php');
+include('commitment_term_learning.php');
+
+return array_merge(
+[
     'controllers' => array(
         'invokables' => array(
             'PpitCommitment\Controller\Account' => 'PpitCommitment\Controller\AccountController', // Deprecated. For compatibility reasons with Shin Agency
@@ -100,12 +104,30 @@ return array(
         								),
         						),
         				),
+        				'indexV2' => array(
+        						'type' => 'segment',
+        						'options' => array(
+        								'route' => '/index-v2[/:type][/:app]',
+        								'defaults' => array(
+        										'action' => 'indexV2',
+        								),
+        						),
+        				),
         				'search' => array(
         						'type' => 'segment',
         						'options' => array(
         								'route' => '/search[/:type]',
         								'defaults' => array(
         										'action' => 'search',
+        								),
+        						),
+        				),
+        				'searchV2' => array(
+        						'type' => 'segment',
+        						'options' => array(
+        								'route' => '/search-v2[/:type]',
+        								'defaults' => array(
+        										'action' => 'searchV2',
         								),
         						),
         				),
@@ -118,12 +140,30 @@ return array(
         								),
         						),
         				),
+        				'listV2' => array(
+        						'type' => 'segment',
+        						'options' => array(
+        								'route' => '/list-v2[/:type]',
+        								'defaults' => array(
+        										'action' => 'listV2',
+        								),
+        						),
+        				),
         				'accountList' => array(
         						'type' => 'segment',
         						'options' => array(
         								'route' => '/account-list[/:type]',
         								'defaults' => array(
         										'action' => 'accountList',
+        								),
+        						),
+        				),
+        				'accountListV2' => array(
+        						'type' => 'segment',
+        						'options' => array(
+        								'route' => '/account-list-v2[/:type]',
+        								'defaults' => array(
+        										'action' => 'accountListV2',
         								),
         						),
         				),
@@ -157,7 +197,19 @@ return array(
         								),
         						),
         				),
-    					'dropboxLink' => array(
+        				'detailV2' => array(
+        						'type' => 'segment',
+        						'options' => array(
+        								'route' => '/detail-v2[/:type][/:id]',
+        								'constraints' => array(
+        										'id'     => '[0-9]*',
+        								),
+        								'defaults' => array(
+        										'action' => 'detailV2',
+        								),
+        						),
+        				),
+        				'dropboxLink' => array(
         						'type' => 'segment',
         						'options' => array(
         								'route' => '/dropbox-link[/:document]',
@@ -178,12 +230,33 @@ return array(
         								),
         						),
         				),
-						'group' => array(
+        				'updateV2' => array(
+        						'type' => 'segment',
+        						'options' => array(
+        								'route' => '/update-v2[/:type][/:id][/:act]',
+        								'constraints' => array(
+        										'id'     => '[0-9]*',
+        								),
+        								'defaults' => array(
+        										'action' => 'updateV2',
+        								),
+        						),
+        				),
+        				'group' => array(
 								'type' => 'segment',
 								'options' => array(
 										'route' => '/group[/:type]',
 										'defaults' => array(
 												'action' => 'group',
+										),
+								),
+        				),
+        				'groupV2' => array(
+								'type' => 'segment',
+								'options' => array(
+										'route' => '/group-v2[/:type]',
+										'defaults' => array(
+												'action' => 'groupV2',
 										),
 								),
         				),
@@ -345,6 +418,15 @@ return array(
         								'route' => '/send-message[/:type][/:template_id]',
         								'defaults' => array(
         										'action' => 'sendMessage',
+        								),
+        						),
+        				),
+        				'sendMessageV2' => array(
+        						'type' => 'segment',
+        						'options' => array(
+        								'route' => '/send-message-v2[/:type][/:template_id]',
+        								'defaults' => array(
+        										'action' => 'sendMessageV2',
         								),
         						),
         				),
@@ -914,12 +996,17 @@ return array(
             		
             	array('route' => 'commitment', 'roles' => array('sales_manager')),
             	array('route' => 'commitment/index', 'roles' => array('sales_manager')),
+            	array('route' => 'commitment/indexV2', 'roles' => array('sales_manager')),
             	array('route' => 'commitment/search', 'roles' => array('sales_manager')),
+            	array('route' => 'commitment/searchV2', 'roles' => array('sales_manager')),
             	array('route' => 'commitment/list', 'roles' => array('sales_manager')),
-            	array('route' => 'commitment/accountlist', 'roles' => array('operational_management', 'sales_manager', 'manager')),
+            	array('route' => 'commitment/listV2', 'roles' => array('sales_manager')),
+//            	array('route' => 'commitment/accountlist', 'roles' => array('operational_management', 'sales_manager', 'manager')),
             	array('route' => 'commitment/accountList', 'roles' => array('operational_management', 'sales_manager', 'manager')),
+            	array('route' => 'commitment/accountListV2', 'roles' => array('operational_management', 'sales_manager', 'manager')),
             	array('route' => 'commitment/export', 'roles' => array('sales_manager')),
             	array('route' => 'commitment/detail', 'roles' => array('sales_manager')),
+            	array('route' => 'commitment/detailV2', 'roles' => array('sales_manager')),
             	array('route' => 'commitment/dropboxLink', 'roles' => array('guest')),
             	array('route' => 'commitment/message', 'roles' => array('guest')),
             	array('route' => 'commitment/post', 'roles' => array('admin')),
@@ -929,7 +1016,9 @@ return array(
             	array('route' => 'commitment/xmlUblInvoice', 'roles' => array('sales_manager', 'accountant')),
 //            	array('route' => 'commitment/settle', 'roles' => array('sales_manager', 'accountant')),
             	array('route' => 'commitment/update', 'roles' => array('sales_manager')),
+            	array('route' => 'commitment/updateV2', 'roles' => array('sales_manager')),
             	array('route' => 'commitment/group', 'roles' => array('sales_manager')),
+            	array('route' => 'commitment/groupV2', 'roles' => array('sales_manager')),
             	array('route' => 'commitment/updateProduct', 'roles' => array('sales_manager')),
             	array('route' => 'commitment/updateOption', 'roles' => array('sales_manager')),
             	array('route' => 'commitment/updateTerm', 'roles' => array('sales_manager')),
@@ -939,6 +1028,7 @@ return array(
             	array('route' => 'commitment/serviceSettle', 'roles' => array('accountant')),
             	array('route' => 'commitment/downloadInvoice', 'roles' => array('user')),
             	array('route' => 'commitment/sendMessage', 'roles' => array('sales_manager', 'accountant')),
+            	array('route' => 'commitment/sendMessageV2', 'roles' => array('sales_manager', 'accountant')),
             	array('route' => 'commitment/paymentResponse', 'roles' => array('accountant')),
             	array('route' => 'commitment/delete', 'roles' => array('sales_manager')),
             	array('route' => 'commitment/notify', 'roles' => array('admin')),
@@ -3220,7 +3310,7 @@ table.note-report td {
 
 	'commitment/learning/property/property_13' => array(
 		'definition' => 'inline',
-		'type' => 'input',
+		'type' => 'date',
 		'labels' => array('en_US' => 'Training start date', 'fr_FR' => 'Date début de formation'),
 	),
 
@@ -3364,6 +3454,7 @@ table.note-report td {
 				'params' => array('property_13'),
 			),
 		),
+		'terms' => true,
 	),
 	
 	// Term
@@ -3617,6 +3708,11 @@ table.note-report td {
 	'commitmentTerm/generic/property/commitment_property_6' => array('definition' => 'commitment/generic/property/property_6'),
 	'commitmentTerm/generic/property/commitment_property_7' => array('definition' => 'commitment/generic/property/property_7'),
 	'commitmentTerm/generic/property/commitment_property_8' => array('definition' => 'commitment/generic/property/property_8'),
+	'commitmentTerm/generic/property/commitment_property_10' => array('definition' => 'commitment/generic/property/property_10'),
+	'commitmentTerm/generic/property/commitment_property_11' => array('definition' => 'commitment/generic/property/property_11'),
+	'commitmentTerm/generic/property/commitment_property_12' => array('definition' => 'commitment/generic/property/property_12'),
+	'commitmentTerm/generic/property/commitment_property_13' => array('definition' => 'commitment/generic/property/property_13'),
+	'commitmentTerm/generic/property/commitment_property_14' => array('definition' => 'commitment/generic/property/property_14'),
 	'commitmentTerm/generic/property/account_status' => array('definition' => 'commitment/generic/property/account_status'),
 	'commitmentTerm/generic/property/account_date_1' => array('definition' => 'core_account/generic/property/date_1'),
 	'commitmentTerm/generic/property/account_date_2' => array('definition' => 'core_account/generic/property/date_2'),
@@ -3645,7 +3741,7 @@ table.note-report td {
 		'properties' => array(
 				'commitment_id', 'name', 'status', 'place_id', 'caption', 'invoice_account_id', 'due_date', 'settlement_date', 'collection_date',
 				'quantity', 'unit_price', 'amount', 'means_of_payment', 'bank_name', 'invoice_n_last', 'reference', 'comment', 'document', 'invoice_identifier', 'commitment_caption', 
-				'commitment_property_1', 'commitment_property_2', 'commitment_property_3', 'commitment_property_4', 'commitment_property_5', 'commitment_property_6', 'commitment_property_7', 'commitment_property_8', 
+				'commitment_property_1', 'commitment_property_2', 'commitment_property_3', 'commitment_property_4', 'commitment_property_5', 'commitment_property_6', 'commitment_property_7', 'commitment_property_8', 'commitment_property_10', 'commitment_property_11', 'commitment_property_12', 'commitment_property_13', 'commitment_property_14', 
 				'tiny_1', 'tiny_2', 'tiny_3', 'tiny_4', 'tiny_5',
 				'account_status', 'account_date_1', 'account_date_2', 'account_date_3', 'account_date_4', 'account_date_5',
 				'account_property_1', 'account_property_2', 'account_property_3', 'account_property_4', 'account_property_5', 'account_property_6', 'account_property_7', 'account_property_8', 'account_property_9',
@@ -4319,4 +4415,9 @@ support@p-pit.fr
 					',
 			),
 	),
+],
+		
+COMMITMENT_LEARNING,
+COMMITMENT_TERM_LEARNING
+		
 );

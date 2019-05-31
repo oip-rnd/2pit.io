@@ -121,7 +121,7 @@ if ($commitment->id && $action != 'update' || $message == 'OK') $isDisabled = tr
 
 	<?php elseif ($property['type'] == 'date') : ?>
 				<input type="hidden" id="commitment-<?php echo $propertyId ?>" />
-				<input class="form-control" id="input_commitment-<?php echo $propertyId ?>" value="<?php echo $context->decodeDate($commitment->properties[$propertyId]) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+				<input class="form-control update_date" id="input_commitment-<?php echo $propertyId ?>" value="<?php echo $context->decodeDate($commitment->properties[$propertyId]) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
 
 	<?php elseif ($property['type'] == 'number') : ?>
 				<input type="hidden" id="commitment-<?php echo $propertyId ?>" />

@@ -77,7 +77,6 @@ class UserContactSource
     		->join('core_instance', 'core_user_contact.instance_id = core_instance.id', array('instance_caption' => 'caption'), 'left')
 	    	->join('core_vcard', 'core_user_contact.vcard_id = core_vcard.id', array('n_fn', 'email', 'tel_work', 'tel_cell'), 'left')
     		->join('core_user', 'core_user_contact.user_id = core_user.user_id', array(), 'left')
-    		->join('core_community', 'core_vcard.community_id = core_community.id', array('community_name' => 'name'), 'left')
     		->where(array('core_user_contact.user_id' => ($user_id) ? $user_id : $context->getUserId()))
     		->order(array('instance_caption', 'n_fn'));
     	$cursor = UserContactSource::getTable()->transSelectWith($select);

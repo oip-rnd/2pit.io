@@ -195,6 +195,7 @@ $this->headTitle($title);
 <script>
 
 <?php echo $this->partial('/ppit-core/event/calendar-scripts') ?>
+<?php echo $this->partial('/ppit-core/account/event-account-scripts', ['type' => $content_description['options']['account_type'], 'category' => $category]) ?>
 
 <?php foreach ($context->getConfig('menus/'.(($app) ? $app : 'synapps'))['entries'] as $entryId => $entryDef) : ?>
 $('#<?php echo $entryId ?>-anchor').click(function () { $(location).attr('href', '<?php echo $this->url($entryDef['route'], $entryDef['params']) ?>'); });

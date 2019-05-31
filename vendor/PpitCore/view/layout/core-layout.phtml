@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head -->
+<?php echo $this->partial('partials/core-head.phtml') ?>
+
+<body>
+
+  <!-- Header -->
+  <?php echo $this->partial('partials/core-header.phtml') ?>
+
+  <!--/Main Navigation-->
+  <?php echo $this->content ?>
+
+  <!-- Footer -->
+  <?php echo $this->partial('partials/core-footer.phtml') ?>
+
+</body>
+
+<!-- Sign in and registration -->
+<?php echo $this->partial('/partials/core-scripts.phtml'); ?>
+
+<?php echo $this->partial($pageScripts) ?>
+
+</html>

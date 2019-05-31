@@ -1,0 +1,104 @@
+	<header>
+		<!--Navbar-->
+		<nav class="navbar navbar-expand-lg navbar-light" style="background-color: <?php echo $context->getConfig('headerParams')['background-color'] ?>">
+<?php if (array_key_exists('anchor', $context->getConfig('headerParams'))) $anchor = $context->getConfig('headerParams')['anchor']; else $anchor = null; ?>
+<?php if ($anchor) : ?>
+	<?php if ($anchor['type'] == 'route') : ?>
+			<a class="navbar-brand" href="<?php echo $this->url($anchor['route'], $anchor['params']) ?>">
+	<?php else : ?>
+			<a class="navbar-brand" target="_blank" href="<?php echo $context->getConfig('headerParams')['anchor']['href'] ?>" rel="follow">
+	<?php endif;?>
+<?php endif;?>
+<?php if (array_key_exists('logo', $context->getConfig('headerParams'))) : ?>
+			   <img height="<?php echo min(60, $context->getConfig('headerParams')['logo-height']) ?>" src="<?php echo $this->basePath('/logos/'.$context->getInstance()->caption.'/'.$context->getConfig('headerParams')['logo']) ?>" alt="<?php echo $context->getInstance()->caption ?> logo" />
+<?php else : ?>
+              <span><?php echo $context->getInstance()->caption ?>&nbsp;&nbsp;|</span>
+<?php endif;?>
+<?php if ($anchor) : ?>
+			</a>
+<?php endif;?>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNavDropdown">
+				<ul class="navbar-nav">
+					<li class="nav-item">
+						&nbsp;&nbsp;<a class="navbar-brand" href="<?php echo $this->url('home') ?>" rel="follow"><?php echo $context->getFormatedName() ?></a>
+					</li>
+                    <li class="nav-item">
+                    	<a class="nav-link" href="<?php echo $this->url('home/index', ['instance_caption' => $context->getInstance()->caption]) ?>" rel="follow"><?php echo $this->translate('Home', 'ppit-core', $context->getLocale()) ?></a>
+                    </li>
+					<li class="nav-item dropdown <?php if ($active != 'password') echo 'active' ?>">
+						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAppLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<?php echo $applicationName ?>
+						</a>
+						<div class="dropdown-menu" aria-labelledby="navbarDropdownAppLink">
+<?php foreach ($context->getApplications() as $applicationId => $application) : ?>
+	<?php
+	if ($context->getConfig('menus/'.$applicationId)) {
+		$menuEntry = $context->getConfig('menus/'.$applicationId)['entries'][$application['default']];
+		$url = (array_key_exists('url', $application) ? $application['url'] : $this->url($menuEntry['route'], $menuEntry['params']));
+	}
+	else $url = $this->url($application['url']);
+	?>
+				          	<a class="dropdown-item" href="<?php echo $url ?>">
+				          		<?php echo $application['labels'][$context->getLocale()]?>
+				          	</a>
+<?php endforeach;?>
+						</div>
+					</li>
+					<li class="nav-item dropdown <?php if ($active == 'password') echo 'active' ?>">
+				        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownVcardLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				        	<span class="far fa-lg fa-user"> </span><span class="caret"></span></a>
+				        <div class="dropdown-menu" aria-labelledby="navbarDropdownVcardLink">
+				          	<a class="dropdown-item account-list-anchor <?php if ($active == 'password') echo 'active' ?>" href="<?php echo $this->url('user/password', ['id' => $context->getUserId()]) ?>">
+				          		<?php echo $this->translate('Password', 'ppit-core', $context->getLocale()) ?>
+				          	</a>
+				          	<a class="dropdown-item account-list-anchor" href="<?php echo $this->url('user/logout', ['instance_caption' => $context->getInstance()->caption]) ?>" rel="nofollow">
+				          		<?php echo $this->translate('Logout', 'ppit-core', $context->getLocale()) ?>
+				          	</a>
+<?php if (count($context->getContacts()) > 1) : ?>
+	<?php foreach ($context->getContacts() as $vcard_id => $userContact) : ?>
+				          	<a class="dropdown-item <?php if ($vcard_id == $context->getContactId()) echo 'active' ?>" href="<?php echo $this->url('user/changeContact', ['vcard_id' => $vcard_id]) ?>">
+				          		<?php echo $userContact->instance_caption ?> - <?php echo $userContact->n_fn ?>
+				          	</a>
+	<?php endforeach;?>
+<?php endif;?>
+				        </div>
+		        	</li>
+                    <li class="nav-item">
+                    	<a class="nav-link" href="<?php echo $this->url('vcard/demoMode') ?>" title="<?php echo $this->translate('Activate or deactivate demo mode', null, $context->getLocale()) ?>">
+                    		<i class="far fa-question-circle fa-lg"></i>
+                    	</a>
+                    </li>
+				</ul>
+			</div>
+		</nav>
+
+<div class="container-fluid">
+
+<?php
+$title = $context->localize($context->getConfig('event/index'.(($type) ? '/'.$type : ''))['title']);
+$this->headTitle($title);
+?>
+
+  <div class="my-4" id="main_menu">
+    <ul class="nav nav-pills nav-justified">
+<?php foreach ($context->getConfig('menus/' . $app)['entries'] as $entryId => $entryDef) : ?>
+  <?php if ($context->isAllowed($entryDef['route'])) : ?>
+    <?php if ((substr($entryId, 0, 10) == 'commitment' || isset($entry) && array_key_exists('entry', $entryDef['params']) && $entry == $entryDef['params']['entry']) && array_key_exists('type', $entryDef['params']) && $type == $entryDef['params']['type']) $active = true; else $active = false ?>
+      <li class="nav-item">
+        <a class="nav-link <?php if ($active) echo 'active' ?>" href="#" id="<?php echo $entryId ?>-anchor">
+    <?php if (array_key_exists('fa', $entryDef)) : ?>
+        <i class="<?php echo $entryDef['fa'] ?>"></i>
+    <?php endif;?>
+        <?php echo $context->localize($entryDef['label']) ?>
+        </a>
+      </li>
+  <?php endif ?>
+<?php endforeach;?>
+    </ul>
+
+  </div>
+</div>
+	</header>

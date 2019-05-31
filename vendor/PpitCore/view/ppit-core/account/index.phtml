@@ -2,7 +2,7 @@
 <?php echo $this->partial('/partials/common-form-js.phtml'); ?>
 
 <?php
-$title = $indexPage['title'][$context->getLocale()];
+$title = $context->localize($indexPage['title']);
 $this->headTitle($title);
 echo $this->partial('/partials/header');
 ?>
@@ -20,7 +20,7 @@ echo $this->partial('/partials/header');
 		<?php if (array_key_exists('glyphicon', $entryDef)) : ?>
 				<span class="glyphicon <?php echo $entryDef['glyphicon'] ?>"></span>
 		<?php endif;?>
-				<?php echo $entryDef['label'][$context->getLocale()] ?>
+				<?php echo $context->localize($entryDef['label']) ?>
 			</button>
 		</div>
 	<?php endif ?>

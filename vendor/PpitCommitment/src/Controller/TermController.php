@@ -400,7 +400,7 @@ class TermController extends AbstractActionController
     			'csrfForm' => $csrfForm,
     			'error' => $error,
     			'message' => $message,
-    			'updatePage' => $description['update'],
+    			'updatePage' => $updatePage,
     	));
     	$view->setTerminal(true);
     	return $view;
@@ -800,6 +800,7 @@ class TermController extends AbstractActionController
 	
     	$invoice['identifier'] = $invoice_identifier;
     	$invoice['date'] = date('Y-m-d');
+
     	foreach($invoiceSpecs['description'] as $line) {
     		$arguments = array();
     		foreach($line['params'] as $propertyId) {
@@ -810,7 +811,7 @@ class TermController extends AbstractActionController
     				elseif ($propertyId == 'caption') $arguments[] = $term->caption;
     				elseif ($property['type'] == 'date') $arguments[] = $context->decodeDate($term->properties[$propertyId]);
     				elseif ($property['type'] == 'number') $arguments[] = $context->formatFloat($term->properties[$propertyId], 2);
-    				elseif ($property['type'] == 'select' && array_key_exists($term->properties[$propertyId], $property['modalities'])) $arguments[] = $context->localize($property['modalities'][$commitment->properties[$propertyId]]);
+    				elseif ($property['type'] == 'select' && array_key_exists($term->properties[$propertyId], $property['modalities'])) $arguments[] = $context->localize($property['modalities'][$term->properties[$propertyId]]);
     				else $arguments[] = $term->properties[$propertyId];
     			}
     		}

@@ -2,10 +2,8 @@
 <div class="card">
   <h5 class="card-header text-center" style="background: <?php echo $context->getConfig('styleSheet')['panelHeadingBackground'] ?>; color: <?php echo $context->getConfig('styleSheet')['panelHeadingColor'] ?>">
     <?php 
-	if ($entry == 'contact') $title = $this->translate('Contacts', 'ppit-commitments', $context->getLocale());
-	elseif (isset ($searchPage['title'])) $title = $searchPage['title'][$context->getLocale()];
-	else $title = $this->translate('Accounts', 'ppit-commitment', $context->getLocale());
-	echo $title;
+	$title = $this->translate('Commitments', 'ppit-commitment', $context->getLocale());
+    echo $title;
     ?>
     (<span id="mode-text"></span>)
   </h5>
@@ -14,38 +12,15 @@
 <!-- Filters -->
 	<form class="form-inline">
       <div class="row">
-
+		
 <?php foreach ($searchPage['properties'] as $propertyId => $property) : ?>
 	<?php 
 	$label = $context->localize($property['labels']);
 	$options = (array_key_exists('options', $property)) ? $property['options'] : [];
 	?>
         <div class="col-md-3">
-	<?php if ($propertyId == 'availability') : ?>
 
-		<?php
-		$modalities = array();
-		foreach ($context->getConfig('core_account/generic/property/availability_constraints')['fields'] as $modalityId => $modality) {
-			$modalities[$modalityId] = $context->localize($modality['labels']);
-		}
-		?>
-        <div class="input-group input-group-sm mb-2 mr-sm-2">
-          <input type="hidden" value="0" class="search_check_value" id="search_check_value-<?php echo $propertyId ?>" />
-          <div class="input-group-prepend">
-            <button type="button" class="btn btn-secondary input-group-text search_check" id="search_check-<?php echo $propertyId ?>"><?php echo $label ?></button>
-          </div>
-          <select class="form-control search_input search_input_select" id="search-<?php echo $propertyId ?>">
-            <option value=""></option>
-		<?php foreach ($modalities as $modalityId => $modalityLabel) : ?>
-		    <option value="<?php echo $modalityId ?>"><?php echo $modalityLabel ?></option>
-		<?php endforeach;?>
-            <option value="*">*</option>
-          </select>
-          <input class="form-control search_input search_input_date" type="text" id="search_min-<?php echo $propertyId ?>" placeholder="<?php echo $this->translate('Min', 'ppit-core', $context->getLocale()) ?>" />
-          <input class="form-control search_input search_input_date" type="text" id="search_max-<?php echo $propertyId ?>" placeholder="<?php echo $this->translate('Max', 'ppit-core', $context->getLocale()) ?>" />
-		</div>
-
-	<?php elseif (in_array($property['type'], array('date', 'time', 'datetime', 'number'))) : ?>
+	<?php if (in_array($property['type'], array('date', 'time', 'datetime', 'number'))) : ?>
 
         <div class="input-group input-group-sm mb-2 mr-sm-2">
           <input type="hidden" value="0" class="search_check_value" id="search_check_value-<?php echo $propertyId ?>" />
@@ -64,17 +39,11 @@
 		if ($propertyId == 'place_id') foreach ($places as $place) {
 			$modalities[$place->id] = $place->caption;
 		} 
-		elseif ($propertyId == 'status') {
-			$modalities = array();
-			foreach ($property['perspectives'][$entry] as $modalityId) {
-				$modalities[$modalityId] = $context->localize($property['modalities'][$modalityId]);
-			}
-		} 
 		else foreach ($property['modalities'] as $modalityId => $modality) {
 			$modalities[$modalityId] = $context->localize($modality);
 		}
 
-		if (array_key_exists('multiple', $options) && $options['multiple']) $multiple = true; else $multiple = false;
+		/*if (array_key_exists('multiple', $options) && $options['multiple'])*/ $multiple = false; //else $multiple = false;
 		?>
         <div class="input-group input-group-sm mb-2 mr-sm-2">
           <input type="hidden" value="0" class="search_check_value" id="search_check_value-<?php echo $propertyId ?>" />
@@ -91,15 +60,6 @@
             <option value="*">*</option>
           </select>
         </div>
-	
-	<?php elseif ($property['type'] == 'boolean') : ?>
-			<label class="col-sm-6 control-label"><?php echo $label ?></label>
-			<div class="input-group search">
-			    <span class="input-group-addon">
-					<input type="checkbox" class="search_check" id="search_check_<?php echo $propertyId ?>">
-				</span>
-				<input class="form-control search_input" type="checkbox" id="search_<?php echo $propertyId ?>" />
-			</div>
 	
 	<?php else : ?>
         <div class="input-group input-group-sm mb-2 mr-sm-2">
@@ -129,10 +89,10 @@
       </form>
 
 <!-- Add or update section -->
-		<div style="background-color: #ffffff;" class="row">
-			<div>&nbsp;</div>
-			<input type="hidden" id="limit" value="50" />
-			<div class="table-responsive" id="list-panel"></div>
-		</div>
-	</div>
+    <div style="background-color: #ffffff;" class="row">
+      <div>&nbsp;</div>
+      <input type="hidden" id="limit" value="50" />
+      <div class="table-responsive" id="commitment-list-panel"></div>
+    </div>
+  </div>
 </div>

@@ -46,6 +46,26 @@
     </div>
     <div>&nbsp;</div>
 <?php endif;?>
+
+<?php if ($account->type == 'group') : ?>
+
+<!-- Display the members -->
+
+    <strong><?php echo $this->translate('Group members', 'ppit-core', $context->getLocale()) ?></strong>
+    <div id="member-panel" class="panel panel-default mt-2">
+      <div class="panel-body">
+  <?php foreach ($account->members as $member) : ?>
+        <div class="row px-2 py-2">
+          <div class="col-md-12">
+            <?php echo $member->n_fn ?>&nbsp;(<?php echo $member->type ?>)
+          </div>
+        </div>
+  <?php endforeach;?>
+      </div>
+    </div>
+    <div>&nbsp;</div>
+    <div>
+<?php endif;?>
         
 <?php if ($account->id) : ?>
   <?php 

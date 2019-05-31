@@ -120,23 +120,25 @@ class Term
 			$property = $context->getConfig('commitmentTerm/'.$type.'/property/'.$propertyId);
 			if (!$property) $property = $context->getConfig('commitmentTerm/generic/property/'.$propertyId);
 			if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
-			if (!array_key_exists('private', $property)) $property['private'] = false;
-			if (!$property['private'] || $context->hasRole('dpo')) {
-				if ($propertyId == 'place_id') {
-					$property['modalities'] = array();
-					foreach (Place::getList(array()) as $place) $property['modalities'][$place->id] = $place->caption;
-				}
-				elseif ($propertyId == 'invoice_account_id') {
-					$property['modalities'] = array();
-				}
-				elseif (in_array($property['type'], ['select', 'multiselect']) && array_key_exists('definition', $property['modalities']) && $property['modalities']['definition'] != 'inline') {
-					$definition = $context->getConfig($property['modalities']['definition']);
-					$property['modalities'] = array();
-					foreach ($definition as $modalityId => $modality) {
-						$property['modalities'][$modalityId] = $modality['labels'];
+			if ($property) {
+				if (!array_key_exists('private', $property)) $property['private'] = false;
+				if (!$property['private'] || $context->hasRole('dpo')) {
+					if ($propertyId == 'place_id') {
+						$property['modalities'] = array();
+						foreach (Place::getList(array()) as $place) $property['modalities'][$place->id] = $place->caption;
 					}
+					elseif ($propertyId == 'invoice_account_id') {
+						$property['modalities'] = array();
+					}
+					elseif (in_array($property['type'], ['select', 'multiselect']) && array_key_exists('definition', $property['modalities']) && $property['modalities']['definition'] != 'inline') {
+						$definition = $context->getConfig($property['modalities']['definition']);
+						$property['modalities'] = array();
+						foreach ($definition as $modalityId => $modality) {
+							$property['modalities'][$modalityId] = $modality['labels'];
+						}
+					}
+					$properties[$propertyId] = $property;
 				}
-				$properties[$propertyId] = $property;
 			}
 		}
 		return $properties;
@@ -907,7 +909,7 @@ class Term
 
 		if ($this->quantity) $this->amount = round($this->quantity * $this->unit_price, 2) * 1.2; // Amount is tax inclusive historically (and it's bad)
 			
-		$this->properties = $this->toArray();
+		$this->properties = $this->getProperties();
 		$this->files = $files;
 		if ($errors) return 'Integrity';
 		$this->audit[] = $auditRow;

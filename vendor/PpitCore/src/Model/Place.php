@@ -599,7 +599,6 @@ class Place
      * @return boolean
      */
     public function isDeletable() {
-    	if (Generic::getTable()->cardinality('core_community', array('status != ?' => 'deleted', 'place_id' => $this->id)) > 0) return false;
     	if (Generic::getTable()->cardinality('core_interaction', array('status != ?' => 'deleted', 'place_id' => $this->id)) > 0) return false;
     	if (Generic::getTable()->cardinality('core_event', array('status != ?' => 'deleted', 'place_id' => $this->id)) > 0) return false;
     	 

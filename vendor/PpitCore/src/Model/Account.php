@@ -1,6 +1,7 @@
 <?php
 namespace PpitCore\Model;
 
+use PpitCore\Model\GroupAccount;
 use Zend\Db\Sql\Where;
 use Zend\Filter\StripTags;
 use Zend\Http\Client;
@@ -136,6 +137,7 @@ class Account
 			'adr_city_5' => 				['entity' => 'contact_5', 'column' => 'adr_city'],
 			'adr_state_5' => 				['entity' => 'contact_5', 'column' => 'adr_state'],
 			'adr_country_5' => 				['entity' => 'contact_5', 'column' => 'adr_country'],
+			'groups' =>						['entity' => 'core_account', 'column' => 'groups'], // Implemented in fact by the n-n link on core_group_account
 			'opening_date' => 				['entity' => 'core_account', 'column' => 'opening_date'],
 			'closing_date' => 				['entity' => 'core_account', 'column' => 'closing_date'],
 			'callback_date' => 				['entity' => 'core_account', 'column' => 'callback_date'],
@@ -224,6 +226,12 @@ class Account
 			if ($propertyId == 'place_id') {
 				$property['modalities'] = array();
 				foreach (Place::getList(array()) as $place) $property['modalities'][$place->id] = $place->caption;
+			}
+
+			// Cache the groups retrieved from the database for the current instance in the groups property description
+			elseif ($propertyId == 'groups') {
+				$property['modalities'] = array();
+				foreach (Account::getList('group', [], '+name', null) as $group) $property['modalities'][$group->id] = ['default' => $group->name];
 			}
 				
 			// Cache the referred modalities definition for modalities not defined inline
@@ -971,6 +979,8 @@ class Account
     public $contact_3;
     public $contact_4;
     public $contact_5;
+    public $groups;
+    public $members;
 	public $properties;
     public $files;
 	public $comment;
@@ -1453,7 +1463,11 @@ class Account
     		$data['invoice_adr_state'] = $this->adr_state;
     		$data['invoice_adr_country'] = $this->adr_country;
     	}
-    	 
+    	
+    	// Transient properties
+    	$data['groups'] = $this->groups;
+    	$data['members'] = $this->members;    	 
+    	
     	$data['update_time'] = $this->update_time;
 
     	if ($description) {
@@ -1594,6 +1608,9 @@ class Account
     	unset($data['invoice_adr_state']);
     	unset($data['invoice_adr_country']);
     	 
+    	unset($data['groups']);
+    	unset($data['members']);
+    	
     	return $data;
     }
     
@@ -1623,14 +1640,24 @@ class Account
 		$where->notEqualTo('core_account.status', 'deleted');
 
 		// Set the filters
+		$members = [];
 		foreach ($params as $propertyId => $value) {
 			if (in_array(substr($propertyId, 0, 4), array('min_', 'max_'))) $propertyKey = substr($propertyId, 4);
 			else $propertyKey = $propertyId;
 			$property = Account::getConfig($type)[$propertyKey];
 			$entity = Account::$model['properties'][$propertyKey]['entity'];
 			$column = Account::$model['properties'][$propertyKey]['column'];
-				
-			if ($propertyId == 'gender') $where->equalTo('core_vcard.gender', $value);
+
+			if ($propertyId == 'groups') {
+				$groups = Account::getList('group', [], '+name', null);
+				foreach ($groups as $group) {
+				    $cursor = GroupAccount::getList(GroupAccount::getDescription('generic'), ['group_id' => $group->id]);
+				    foreach($cursor as $link) {
+				    	$members[$link->id] = $link->properties;
+				    }
+				}
+			}
+			elseif ($propertyId == 'gender') $where->equalTo('core_vcard.gender', $value);
 			elseif ($propertyId == 'adr_zip') $where->like('core_vcard.adr_zip', '%'.$value.'%');
 			elseif ($propertyId == 'locale') $where->like('core_vcard.locale', '%'.$value.'%');
 			elseif ($propertyId == 'min_availability') $where->greaterThanOrEqualTo('availability_end', $value);
@@ -1839,6 +1866,25 @@ class Account
     	$account->contact_5 = ($account->contact_5_id) ? Vcard::get($account->contact_5_id) : null;
 		$account->denormalize();	    
 	    $account->properties = $account->getProperties($account->type, $description);
+
+	    // Retrieve the groups this account is linked to
+	    $groups = [];
+	    $cursor = GroupAccount::getList(GroupAccount::getDescription('generic'), ['account_id' => $account->id]);
+	    foreach($cursor as $group) {
+	    	$groups[$group->id] = $group->properties;
+	    }
+	    $account->groups = $groups;
+
+		// Group account: Retrieve the members
+		if ($account->type == 'group') {
+			$members = [];
+			$cursor = GroupAccount::getList(GroupAccount::getDescription('generic'), ['group_id' => $account->id]);
+			foreach($cursor as $row) {
+				$member = Account::get($row->account_id);
+				$members[$member->id] = $member;
+			}
+			$account->members = $members;
+		}
 
 	    return $account;
 	}

@@ -82,6 +82,33 @@ class CommitmentController extends AbstractActionController
     	));
     }
 
+    public function indexV2Action()
+    {
+		// Retrieve the context and parameters
+		$context = Context::getCurrent();
+    	$type = $this->params()->fromRoute('type', null);
+		$app = $this->params()->fromRoute('app', 'p-pit-engagements');
+		$applicationName = $context->localize($context->getConfig('menus/'.$app)['labels']);
+		$description = Commitment::getDescription($type);
+		$termDescription = Term::getDescription($type);
+
+    	// Feed the layout
+		$this->layout('/layout/core-layout');
+		$this->layout()->setVariables(array(
+			'context' => Context::getCurrent(),
+			'type' => $type,
+			'app' => $app,
+			'active' => 'application',
+			'applicationName' => $applicationName,
+    		'products' => Product::getList(null, array()),
+    		'options' => ProductOption::getList(null, array()),
+			'pageScripts' => 'partials/ppit-commitment-scripts-v2',
+		));
+    	
+		$view = $this->indexAction();
+    	return $view;
+    }
+    
 	public function getFilters($params, $type)
 	{
 		// Retrieve the context
@@ -127,6 +154,11 @@ class CommitmentController extends AbstractActionController
        	return $view;
    	}
 
+   	public function searchV2Action()
+   	{
+   		return $this->searchAction();
+   	}
+   	
    	public function getList()
    	{
 		$context = Context::getCurrent();
@@ -181,9 +213,19 @@ class CommitmentController extends AbstractActionController
    		return $this->getList();
    	}
 
+   	public function listV2Action()
+   	{
+   		return $this->listAction();
+   	}
+   	
    	public function accountListAction()
    	{
    		return $this->getList();
+   	}
+
+   	public function accountListV2Action()
+   	{
+   		return $this->accountListAction();
    	}
    	
    	public function exportAction()
@@ -231,6 +273,11 @@ class CommitmentController extends AbstractActionController
 		return $view;
     }
 
+    public function detailV2Action()
+    {
+    	return $this->detailAction();
+    }
+    
     public function dropboxLinkAction()
     {
     	$context = Context::getCurrent();
@@ -400,7 +447,7 @@ class CommitmentController extends AbstractActionController
     	$accountStatuses = array();
     	foreach ($context->getConfig('commitment/generic/property/account_status')['modalities'] as $modalityId => $unused) $accountStatuses[] = $modalityId;
 //    	$accounts = Account::getList(null, ['status' => implode(',', $accountStatuses)], '+name', null);
-    	$accounts = Account::getList(null, ['status' => 'active,converted,committed,undefined,retention,canceled'], '+name', null);
+    	$accounts = Account::getList(null, ['status' => 'active,interested,converted,committed,undefined,retention,canceled'], '+name', null);
     	 
     	// Instanciate the csrf form
     	$csrfForm = new CsrfForm();
@@ -477,6 +524,11 @@ class CommitmentController extends AbstractActionController
     	return $view;
     }
 
+    public function updateV2Action()
+    {
+    	return $this->updateAction();
+    }
+    
     public function updateProductAction()
     {
     	// Retrieve the context
@@ -643,6 +695,11 @@ class CommitmentController extends AbstractActionController
     	return $view;
     }
 
+    public function groupV2Action()
+    {
+    	return $this->groupAction();
+    }
+    
     private function generateInvoice($type, $account, $commitment, $proforma = false)
     {
     	$context = Context::getCurrent();
@@ -1729,6 +1786,11 @@ class CommitmentController extends AbstractActionController
     	));
     	$view->setTerminal(true);
     	return $view;
+    }
+
+    public function sendMessageV2Action()
+    {
+    	return $this->sendMessageAction();
     }
     
     public function serviceSettleAction()

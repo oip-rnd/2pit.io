@@ -1,0 +1,20 @@
+
+<script src="<?php echo $this->basePath('/MDB-Pro/js/jquery-3.3.1.min.js') ?>"></script>
+<script //src="<?php echo $this->basePath('/jquery-ui-1.11.4/jquery-ui.js') ?>"></script>
+<script>
+//Resolve name collision between jQuery UI and Twitter Bootstrap
+$.widget.bridge('uitooltip', $.ui.tooltip);
+</script>
+<script src="<?php echo $this->basePath('/MDB-Pro/js/popper.min.js') ?>"></script>
+<script src="<?php echo $this->basePath('/bootstrap-4-2/js/bootstrap.min.js') ?>"></script>
+<script src="<?php echo $this->basePath('/bootstrap-select-1.13.1/dist/js/bootstrap-select.min.js') ?>"></script>
+<script src="<?php echo $this->basePath('/jquery.timepicker/jquery.timepicker.min.js') ?>"></script>
+
+<!-- Load the common form javascript functions -->
+<?php echo $this->partial('/partials/common-form-js.phtml'); ?>
+
+<script>
+<?php foreach ($context->getConfig('menus/' . $app)['entries'] as $entryId => $entryDef) : ?>
+$('#<?php echo $entryId ?>-anchor').click(function () { $(location).attr('href', '<?php echo $this->url($entryDef['route'], $entryDef['params']) ?>'); });
+<?php endforeach;?>
+</script>

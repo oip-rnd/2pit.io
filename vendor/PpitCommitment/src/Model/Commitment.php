@@ -197,7 +197,6 @@ class Commitment
 		if (!$description) $description = $context->getConfig('commitment/generic');
 		$description['type'] = $type;
 		foreach($description['properties'] as $propertyId) {
-			
 			$property = $context->getConfig('commitment/'.$type.'/property/'.$propertyId);
 			if (!$property) $property = $context->getConfig('commitment/generic/property/'.$propertyId);
 			if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
@@ -1677,12 +1676,15 @@ class Commitment
 
     public function add($xcblOrder = null)
     {
+    	// Temporary, due to a bug that create empty commitments
+    	if (!$this->account_id) throw new \Exception('Integrity');
+    	 
 		$context = Context::getCurrent();
 		$config = $context->getConfig();
 
     	// Check consistency
-    	$commitment = Commitment::getTable()->get($this->identifier, 'identifier');
-//    	if ($commitment) return 'Duplicate'; // Already exists
+/*    	$commitment = Commitment::getTable()->get($this->identifier, 'identifier');
+    	if ($commitment) return 'Duplicate';*/ // Already exists
 
     	if (!$this->commitment_date) $this->commitment_date = date('Y-m-d');
     	$this->id = Commitment::getTable()->save($this);
@@ -1716,6 +1718,9 @@ class Commitment
     
     public function update($update_time, $xcblOrderResponse = null)
     {
+    	// Temporary, due to a bug that create empty commitments
+    	if (!$this->account_id) throw new \Exception('Integrity');
+    	
     	$context = Context::getCurrent();
     	$config = $context->getConfig();
     	$commitment = Commitment::get($this->id);
@@ -1724,9 +1729,9 @@ class Commitment
     	if ($update_time && $commitment->update_time > $update_time) return 'Isolation';
 
     	// Consistency check
-	    $select = Commitment::getTable()->getSelect()->columns(array('id'))->where(array('identifier' => $this->identifier, 'id <> ?' => $this->id));
+/*	    $select = Commitment::getTable()->getSelect()->columns(array('id'))->where(array('identifier' => $this->identifier, 'id <> ?' => $this->id));
 	    $cursor = Commitment::getTable()->selectWith($select);
-//	    if (count($cursor) > 0) return 'Duplicate';
+	    if (count($cursor) > 0) return 'Duplicate';*/
 
     	// Save the order form and the commitment
     	if ($this->files) {

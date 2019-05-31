@@ -111,6 +111,7 @@
 			'Lost password?' => 'Mot de passe perdu ?',
 			'Mask' => 'Masquer',
 			'Max date' => 'Date max',
+			'Group members' => 'Membres du groupe',
 			'Min date' => 'Date min',
 			'More criteria' => 'Plus de critères',
 			'Move' => 'Déplacer',

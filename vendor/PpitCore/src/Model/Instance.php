@@ -386,7 +386,6 @@ class Instance
      */
     public function isDeletable()
     {
-    	if (Generic::getTable()->cardinality('core_community', array('status <> ?' => 'deleted', 'instance_id' => $this->id)) > 0) return false;
     	$config = Context::getCurrent()->getConfig();
     	foreach($config['ppitCoreDependencies'] as $dependency) {
     		if ($dependency->isUsed($this)) return false;

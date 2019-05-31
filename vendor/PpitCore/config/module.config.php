@@ -16,7 +16,6 @@ return array(
 	'controllers' => array(
 		'factories' => array(
 			Controller\AccountController::class => InvokableFactory::class,
-//			Controller\CommunityController::class => InvokableFactory::class,
 			Controller\ConfigController::class => InvokableFactory::class,
 			Controller\CreditController::class => InvokableFactory::class,
 			Controller\HomeController::class => InvokableFactory::class,
@@ -369,82 +368,6 @@ return array(
 					),
 				),
 			),
-/*        	'community' => array(
-                'type'    => Literal::class,
-                'options' => array(
-                    'route'    => '/community',
-                    'defaults' => array(
-                        'controller' => Controller\CommunityController::class,
-                        'action'     => 'index',
-                    ),
-                ),
-           		'may_terminate' => true,
-	       		'child_routes' => array(
-	       			'delete' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/delete[/:id]',
-		                    'constraints' => array(
-		                    	'id' => '[0-9]*',
-		                    ),
-	                    	'defaults' => array(
-	                            'action' => 'delete',
-	                        ),
-	                    ),
-	                ),
-	       			'index' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/index',
-	                    	'defaults' => array(
-	                    		'action' => 'index',
-	                        ),
-	                    ),
-	                ),
-	       			'list' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/list',
-	                    	'defaults' => array(
-	                    		'action' => 'list',
-	                        ),
-	                    ),
-	                ),
-	       			'dataList' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/data-list',
-	                    	'defaults' => array(
-	                    		'action' => 'dataList',
-	                        ),
-	                    ),
-	                ),
-	       			'update' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/update[/:id]',
-		                    'constraints' => array(
-		                    	'id' => '[0-9]*',
-		                    ),
-	                    	'defaults' => array(
-	                            'action' => 'update',
-	                        ),
-	                    ),
-	                ),
-	       			'sendMessage' => array(
-	                    'type' => 'segment',
-	                    'options' => array(
-	                        'route' => '/send-message[/:community_id]',
-		                    'constraints' => array(
-		                    	'community_id' => '[0-9]*',
-		                    ),
-	                    	'defaults' => array(
-	                            'action' => 'sendMessage',
-	                        ),
-	                    ),
-	                ),
-	       		),
-        	),*/
 			'document' => array(
 				'type'    => Literal::class,
 				'options' => array(
@@ -1724,15 +1647,6 @@ return array(
 				array('route' => 'account/fbgetleads', 'roles' => array('guest')),
 				array('route' => 'account/v1', 'roles' => array('guest')),
 				array('route' => 'account/repair', 'roles' => array('admin')),
-/*
-				array('route' => 'community', 'roles' => array('admin')),
-				array('route' => 'community/dataList', 'roles' => array('admin')),
-				array('route' => 'community/delete', 'roles' => array('admin')),
-				array('route' => 'community/index', 'roles' => array('admin')),
-				array('route' => 'community/list', 'roles' => array('admin')),
-            	array('route' => 'community/get', 'roles' => array('user')),
-				array('route' => 'community/update', 'roles' => array('admin')),
-				array('route' => 'community/sendMessage', 'roles' => array('sales_manager', 'admin')),*/
 
 				array('route' => 'config/serialize', 'roles' => array('admin')),
 				array('route' => 'config/v1', 'roles' => array('guest')),
@@ -2486,9 +2400,9 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 		'type' => 'select',
 		'modalities' => array(
 			'new' => array('en_US' => 'New', 'fr_FR' => 'Nouveau'),
-			'suspect' => array('en_US' => 'Suspect (landing page)', 'fr_FR' => 'Suspect (landing page)'),
+//			'suspect' => array('en_US' => 'Suspect (landing page)', 'fr_FR' => 'Suspect (landing page)'),
 			'interested' => array('en_US' => 'Interested', 'fr_FR' => 'Intéressé'),
-			'candidate' => array('en_US' => 'Condidate', 'fr_FR' => 'Candidat'),
+//			'candidate' => array('en_US' => 'Condidate', 'fr_FR' => 'Candidat'),
 			'active' => array('en_US' => 'Active', 'fr_FR' => 'Actif'),
 			'gone' => array('en_US' => 'Gone', 'fr_FR' => 'Parti'),
 		),
@@ -2497,9 +2411,9 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 			'fr_FR' => 'Statut',
 		),
 		'perspectives' => array(
-			'suspect' => array('suspect'),
-			'contact' => array('new', 'interested', 'candidate', 'gone'),
-			'account' => array('active'),
+//			'suspect' => array('suspect'),
+//			'contact' => array('new', 'interested', 'candidate', 'gone'),
+			'account' => array('new', 'interested', 'active', 'gone'),
 		),
 	),
 	
@@ -2951,6 +2865,17 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 	'core_account/generic/property/adr_city_5' => array('definition' => 'core_account/generic/property/adr_city'),
 	'core_account/generic/property/adr_state_5' => array('definition' => 'core_account/generic/property/adr_state'),
 	'core_account/generic/property/adr_country_5' => array('definition' => 'core_account/generic/property/adr_country'),
+
+	'core_account/generic/property/groups' => array(
+		'definition' => 'inline',
+		'type' => 'select',
+		'modalities' => array( // Dynamicaly loaded
+		),
+		'labels' => array(
+			'en_US' => 'Groups',
+			'fr_FR' => 'Groupes',
+		),
+	),
 	
 	'core_account/generic/property/opening_date' => array(
 		'definition' => 'inline',
@@ -3309,8 +3234,8 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 		'definition' => 'inline',
 		'type' => 'input',
 		'labels' => array(
-			'en_US' => 'A',
-			'fr_FR' => 'A',
+			'en_US' => 'Free field 1',
+			'fr_FR' => 'Champs libre 1',
 		),
 	),
 	
@@ -3318,8 +3243,8 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 		'definition' => 'inline',
 		'type' => 'input',
 		'labels' => array(
-			'en_US' => 'B',
-			'fr_FR' => 'B',
+			'en_US' => 'Free field 2',
+			'fr_FR' => 'Champs libre 2',
 		),
 	),
 	
@@ -3327,8 +3252,8 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 		'definition' => 'inline',
 		'type' => 'input',
 		'labels' => array(
-			'en_US' => 'C',
-			'fr_FR' => 'C',
+			'en_US' => 'Free field 3',
+			'fr_FR' => 'Champs libre 3',
 		),
 	),
 	
@@ -3336,8 +3261,8 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 		'definition' => 'inline',
 		'type' => 'input',
 		'labels' => array(
-			'en_US' => 'D',
-			'fr_FR' => 'D',
+			'en_US' => 'Free field 4',
+			'fr_FR' => 'Champs libre 4',
 		),
 	),
 	
@@ -3345,8 +3270,8 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 		'definition' => 'inline',
 		'type' => 'input',
 		'labels' => array(
-			'en_US' => 'E',
-			'fr_FR' => 'E',
+			'en_US' => 'Free field 5',
+			'fr_FR' => 'Champs libre 5',
 		),
 	),
 	
@@ -3354,8 +3279,8 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 		'definition' => 'inline',
 		'type' => 'input',
 		'labels' => array(
-			'en_US' => 'F',
-			'fr_FR' => 'F',
+			'en_US' => 'Free field 6',
+			'fr_FR' => 'Champs libre 6',
 		),
 	),
 	
@@ -3363,8 +3288,8 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 		'definition' => 'inline',
 		'type' => 'input',
 		'labels' => array(
-			'en_US' => 'G',
-			'fr_FR' => 'G',
+			'en_US' => 'Free field 7',
+			'fr_FR' => 'Champs libre 7',
 		),
 	),
 	
@@ -3372,8 +3297,8 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 		'definition' => 'inline',
 		'type' => 'input',
 		'labels' => array(
-			'en_US' => 'H',
-			'fr_FR' => 'H',
+			'en_US' => 'Free field 8',
+			'fr_FR' => 'Champs libre 8',
 		),
 	),
 	
@@ -3381,8 +3306,8 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 		'definition' => 'inline',
 		'type' => 'input',
 		'labels' => array(
-			'en_US' => 'I',
-			'fr_FR' => 'I',
+			'en_US' => 'Free field 9',
+			'fr_FR' => 'Champs libre 9',
 		),
 	),
 	
@@ -3390,8 +3315,8 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 		'definition' => 'inline',
 		'type' => 'input',
 		'labels' => array(
-			'en_US' => 'J',
-			'fr_FR' => 'J',
+			'en_US' => 'Free field 10',
+			'fr_FR' => 'Champs libre 10',
 		),
 	),
 	
@@ -3399,8 +3324,8 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 		'definition' => 'inline',
 		'type' => 'input',
 		'labels' => array(
-			'en_US' => 'J',
-			'fr_FR' => 'J',
+			'en_US' => 'Free field 11',
+			'fr_FR' => 'Champs libre 11',
 		),
 	),
 	
@@ -3408,8 +3333,8 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 		'definition' => 'inline',
 		'type' => 'input',
 		'labels' => array(
-			'en_US' => 'K',
-			'fr_FR' => 'K',
+			'en_US' => 'Free field 12',
+			'fr_FR' => 'Champs libre 12',
 		),
 	),
 	
@@ -3417,8 +3342,8 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 		'definition' => 'inline',
 		'type' => 'input',
 		'labels' => array(
-			'en_US' => 'L',
-			'fr_FR' => 'L',
+			'en_US' => 'Free field 13',
+			'fr_FR' => 'Champs libre 13',
 		),
 	),
 	
@@ -3426,8 +3351,8 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 		'definition' => 'inline',
 		'type' => 'input',
 		'labels' => array(
-			'en_US' => 'M',
-			'fr_FR' => 'M',
+			'en_US' => 'Free field 14',
+			'fr_FR' => 'Champs libre 14',
 		),
 	),
 	
@@ -3435,8 +3360,8 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 		'definition' => 'inline',
 		'type' => 'input',
 		'labels' => array(
-			'en_US' => 'N',
-			'fr_FR' => 'N',
+			'en_US' => 'Free field 15',
+			'fr_FR' => 'Champs libre 15',
 		),
 	),
 	
@@ -3444,8 +3369,8 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 		'definition' => 'inline',
 		'type' => 'input',
 		'labels' => array(
-			'en_US' => 'O',
-			'fr_FR' => 'O',
+			'en_US' => 'Free field 16',
+			'fr_FR' => 'Champs libre 16',
 		),
 	),
 	
@@ -3557,6 +3482,7 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 			'adr_street_4', 'adr_extended_4', 'adr_post_office_box_4', 'adr_zip_4', 'adr_city_4', 'adr_state_4', 'adr_country_4',
 			'contact_5_id', 'contact_5_status', 'n_title_5', 'n_first_5', 'n_last_5', 'email_5', 'tel_work_5', 'tel_cell_5',
 			'adr_street_5', 'adr_extended_5', 'adr_post_office_box_5', 'adr_zip_5', 'adr_city_5', 'adr_state_5', 'adr_country_5',
+			'groups',
 			'opening_date', 'closing_date', 'callback_date', 'first_activation_date', 'next_meeting_date', 'next_meeting_confirmed', 'priority', 'origine', 'contact_history', 'notification_time',
 			'default_means_of_payment', 'transfer_order_id', 'transfer_order_date', 'bank_identifier',
 			'property_1', 'property_2', 'property_3', 'property_4', 'property_5', 'property_6', 'property_7', 'property_8', 
@@ -3603,7 +3529,9 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 
 	'core_account/event_account_search/generic' => array(
 		'properties' => array(
+			'status' => [],
 			'n_fn' => [],
+//			'groups' => [],
 		),
 	),
 	
@@ -3679,6 +3607,7 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 			'adr_zip' => ['mandatory' => false],
 			'adr_city' => ['mandatory' => false],
 			'title_2' => [],
+			'groups' => ['readonly' => true],
 			'property_1' => ['mandatory' => false],
 			'property_2' => ['mandatory' => false],
 			'default_means_of_payment' => array('mandatory' => false),

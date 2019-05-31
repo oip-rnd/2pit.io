@@ -97,8 +97,62 @@ class AccountController extends AbstractActionController
 
     public function indexAltAction ()
     {
-    	$view = $this->indexAction();
-    	$view->setTerminal(true);
+    	// Retrieve the context and the current place
+    	$context = Context::getCurrent();
+    	$place = Place::get($context->getPlaceId());
+    	$place_identifier = $place->identifier;
+    	 
+    	$type = $this->params()->fromRoute('type', 'business');
+		$entry = $this->params()->fromRoute('entry', 'account');
+    	$configProperties = Account::getConfig($type);
+    	$description = $context->getConfig('core_account/'.$type);
+    	if (array_key_exists('options', $description) && array_key_exists('internal_identifier', $description['options'])) $internalIdentifier = $description['options']['internal_identifier'];
+    	else $internalIdentifier = false;
+    	$vcardProperties = Vcard::getConfig();
+    	 
+		// Retrieve the application
+		$app = $this->params()->fromRoute('app', 'p-pit-engagements');
+		$applicationName = $context->localize($context->getConfig('menus/'.$app)['labels']);
+
+		// Define the initial status depending on the perspective
+		if ($entry == 'contact') $status = 'new';
+		else $status = 'active';
+
+		// Retrieve the available email templates and the signature to use in the emails
+		$templates = array();
+		if ($context->getConfig('specificationMode') == 'config') $templates = $context->getConfig('emailing/'.$place_identifier);
+		else {
+			$config = Config::get($place_identifier.'_emailing', 'identifier');
+			if ($config) $templates = $config->content;
+		}
+		
+    	// Feed the layout
+		$this->layout('/layout/core-layout');
+		$this->layout()->setVariables(array(
+			'context' => $context,
+			'type' => $type,
+			'entry' => $entry,
+    		'internalIdentifier' => $internalIdentifier,
+			'vcardProperties' => $vcardProperties,
+			'description' => null,
+			'active' => 'home',
+    		'place' => $place,
+    		'app' => $app,
+			'applicationName' => $applicationName,
+			'page' => $context->getConfig('core_account/index/'.$type),
+			'indexPage' => $context->getConfig('core_account/index/'.$type),
+			'searchPage' => Account::getConfigSearch($type, $configProperties),
+			'listPage' => Account::getConfigList($type, $configProperties),
+			'detailPage' => $context->getConfig('core_account/detail/'.$type),
+			'updatePage' => Account::getConfigUpdate($type, $configProperties),
+			'updateContactPage' => $context->getConfig('core_account/updateContact/'.$type),
+			'groupUpdatePage' => Account::getConfigGroupUpdate($type, $configProperties),
+			'pageScripts' => 'partials/account-alt-scripts',
+			'templates' => $templates,
+			'status' => $status,
+		));
+    	
+		$view = $this->indexAction();
     	return $view;
     }
     
@@ -368,17 +422,48 @@ class AccountController extends AbstractActionController
 	 */
 	public function eventAccountListAction()
 	{
-		$view = $this->getList();
+		$context = Context::getCurrent();
+		$type = $this->params()->fromRoute('type');
+		$configProperties = Account::getConfig($type);
+		$eventAccountSearchPage = $context->getConfig('core_account/event_account_search/'.$type);
+		if (!$eventAccountSearchPage) $eventAccountSearchPage = $context->getConfig('core_account/event_account_search/generic');
+		$eventAccountListPage = $context->getConfig('core_account/event_account_list/'.$type);
+		if (!$eventAccountListPage) $eventAccountListPage = $context->getConfig('core_account/event_account_list/generic');
+
+    	// Retrieve the query parameters
+    	$filters = array();
+    	foreach ($eventAccountSearchPage['properties'] as $propertyId => $unused) {
+    		$property = ($this->params()->fromQuery($propertyId, null));
+    		if ($property !== null) $filters[$propertyId] = $property;
+    		$min_property = ($this->params()->fromQuery('min_'.$propertyId, null));
+    		if ($min_property !== null) $filters['min_'.$propertyId] = $min_property;
+    		$max_property = ($this->params()->fromQuery('max_'.$propertyId, null));
+    		if ($max_property !== null) $filters['max_'.$propertyId] = $max_property;
+    	}
+		
+    	$major = ($this->params()->fromQuery('major', $context->getConfig('core_account/'.$type)['order']));
+		$dir = ($this->params()->fromQuery('dir'));
+
+		$accounts = Account::getList($type, $filters, '+name', null);
 		
 		// Retrieve the per account planned hours 
-		$accounts = $view->accounts;
 		foreach ($accounts as $account) $account->properties['planned'] = 0;
 		$event_category = $this->params()->fromQuery('event_category');
 		$events = Event::getList('calendar', ['category' => $event_category], '-update_time', null);
 		foreach ($events as $event) {
 			if (array_key_exists($event->account_id, $accounts)) $accounts[$event->account_id]->properties['planned'] += $event->value;
 		}
-		
+
+		$view = new ViewModel(array(
+			'context' => $context,
+			'configProperties' => $configProperties,
+			'accounts' => $accounts,
+			'type' => $type,
+			'major' => $major,
+			'dir' => $dir,
+			'eventAccountListPage' => $eventAccountListPage,
+		));
+		$view->setTerminal(true);
 		return $view;
 	}
 	
