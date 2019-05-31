@@ -109,6 +109,8 @@ class AccountController extends AbstractActionController
     	if (array_key_exists('options', $description) && array_key_exists('internal_identifier', $description['options'])) $internalIdentifier = $description['options']['internal_identifier'];
     	else $internalIdentifier = false;
     	$vcardProperties = Vcard::getConfig();
+    	if ($type == 'p-pit-studies') $commitmentProperties = \PpitCommitment\Model\Commitment::getDescription('p-pit-studies')['update'];
+    	else $commitmentProperties = null;
     	 
 		// Retrieve the application
 		$app = $this->params()->fromRoute('app', 'p-pit-engagements');
@@ -147,6 +149,7 @@ class AccountController extends AbstractActionController
 			'updatePage' => Account::getConfigUpdate($type, $configProperties),
 			'updateContactPage' => $context->getConfig('core_account/updateContact/'.$type),
 			'groupUpdatePage' => Account::getConfigGroupUpdate($type, $configProperties),
+    		'commitmentProperties' => $commitmentProperties,
 			'pageScripts' => 'partials/account-alt-scripts',
 			'templates' => $templates,
 			'status' => $status,
