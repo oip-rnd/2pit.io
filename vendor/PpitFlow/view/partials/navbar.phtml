@@ -36,6 +36,16 @@ body.modal-open {
                   alt="<?php echo $header['logo']['alt'] ?>"
                 />
                 </a>
+<?php if (array_key_exists('baseline', $header)) : ?>
+                <a href="<?php echo $this->url($header['baseline']['href'], $header['baseline']['params']) ?>" class="navbar-brand">
+                  <img 
+                  src="<?php echo $this->basePath($header['baseline']['src']) ?>"
+                  <?php if (array_key_exists('height', $header['baseline'])) echo 'height="'.$header['baseline']['height'].'"' ?>
+                  <?php if (array_key_exists('width', $header['baseline'])) echo 'width="'.$header['baseline']['width'].'"' ?>
+                  alt="<?php echo $header['baseline']['alt'] ?>"
+                />
+                </a>
+<?php endif;?>
 
 <?php if ($navbarCollapse) :?>
                 <!-- Collapse button -->
