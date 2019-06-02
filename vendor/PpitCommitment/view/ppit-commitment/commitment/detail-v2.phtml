@@ -1,52 +1,70 @@
-<div class="panel panel-default">
-	<div class="panel-heading" style="background: <?php echo $context->getConfig('styleSheet')['panelHeadingBackground'] ?>; color: <?php echo $context->getConfig('styleSheet')['panelHeadingColor'] ?>">
-		<strong><?php echo ($commitment->id) ? $commitment->account_name.' - '.$commitment->caption : $this->translate('Add a commitment', 'ppit-commitment', $context->getLocale()) ?></strong>
- 		<div class="btn-group pull-right">
-			<button type="button" class="btn btn-default" title="<?php echo $this->translate('Return to list', 'ppit-core', $context->getLocale()) ?>" id="remove-anchor">
-				<span class="glyphicon glyphicon-remove"></span>
-			</button>
- 		 </div>
-	</div>
-	<div class="panel-body">
+<!-- 
+/**
+ * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
+ *
+ * @link      https://github.com/p-pit/PpitCore
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
+ */
+-->
+
+<div class="modal-dialog modal-lg" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="modalFormLabel"><?php echo ($commitment->id) ? $commitment->account_name.' - '.$commitment->caption : $this->translate('Add a commitment', 'ppit-commitment', $context->getLocale()) ?></h5>
+    <div>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" title="<?php echo $this->translate('Cancel', 'ppit-core', $context->getLocale()) ?>">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      </div>
+    </div>
+    <div class="modal-body">
+
+<?php if (in_array($commitment->status, ['invoiced'])) : ?>
 
 <!-- Invoiced commitment -->
-<?php if (in_array($commitment->status, ['invoiced'])) : ?>
-		<div class="form-group">
-			<div class="alert alert-warning" style="text-align: center">
-				<?php echo $this->translate('This invoice has been submitted and cannot be updated anymore.', 'ppit-commitment', $context->getLocale()) ?>
-			</div>
-		</div>
+      <div>
+        <h5 class="alert alert-warning my-3 text-center"><?php echo $this->translate('This invoice has been submitted and cannot be updated anymore.', 'ppit-commitment', $context->getLocale()) ?></h5>
+      </div>
+
 <?php elseif (in_array($commitment->status, ['registered'])) : ?>
-		<div class="form-group">
-			<div class="alert alert-warning" style="text-align: center">
-				<?php echo $this->translate('This invoice has been registered and cannot be updated anymore.', 'ppit-commitment', $context->getLocale()) ?>
-			</div>
-		</div>
+
+<!-- Registered commitment -->
+      <div>
+        <h5 class="alert alert-warning my-3 text-center"><?php echo $this->translate('This invoice has been registered and cannot be updated anymore.', 'ppit-commitment', $context->getLocale()) ?></h5>
+      </div>
+
 <?php endif;?>
 
+<?php if ($context->hasRole('admin') && $commitment->id) : ?>
+
 <!-- Display the audit -->
-		<?php echo $this->translate('History', 'ppit-core', $context->getLocale()) ?> (<a id="audit-label" href="#audit-panel"><?php echo $this->translate('Show', 'ppit-core', $context->getLocale()) ?></a>)
-		<div id="audit-panel" class="panel panel-default">
-			<div class="panel-body">
-<?php foreach ($commitment->audit as $comment) : ?>
-				<div class="row">
-					<div class="col-md-12">
-						<strong><?php echo $context->decodeDate(substr($comment['time'], 0, 10)).substr($comment['time'], 10) ?>:</strong>&nbsp;
-						<?php if (array_key_exists('status', $comment)) echo $context->getConfig('commitment')['properties']['status']['modalities'][$comment['status']][$context->getLocale()] ?>&nbsp;
-						(<?php echo $comment['n_fn'] ?>)
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-md-2" align="right">&nbsp;</div>
-					<div class="col-md-10"><em><?php if (array_key_exists('comment', $comment)) echo $comment['comment'] ?></em></div>
-				</div>
-<?php endforeach;?>
-			</div>
-		</div>
+  <?php echo $this->translate('History', 'ppit-core', $context->getLocale()) ?> (<a id="audit-label"><?php echo $this->translate('Show', 'ppit-core', $context->getLocale()) ?></a>)
+      <div id="audit-panel" class="panel panel-default">
+        <div class="panel-body">
+    <?php foreach ($commitment->audit as $auditEvent) : ?>
+          <div class="row">
+            <div class="col-md-12">
+              <strong><?php echo $context->decodeDate(substr($auditEvent['time'], 0, 10)).substr($auditEvent['time'], 10) ?>:</strong>&nbsp;
+              (<?php echo $auditEvent['n_fn'] ?>)
+            </div>
+          </div>
+      <?php foreach ($auditEvent as $propertyId => $property) : ?>
+        <?php if ($propertyId != 'time' && $propertyId != 'n_fn') : ?>
+          <div class="row">
+            <div class="col-md-2" align="right">&nbsp;</div>
+            <div class="col-md-10"><em><?php echo $propertyId.': '.$property ?></em></div>
+          </div>
+        <?php endif;?>
+      <?php endforeach;?>
+  <?php endforeach;?>
+        </div>
+      </div>
+      <div>&nbsp;</div>
 
-		<div>&nbsp;</div>
+<?php endif;?>
 
-		<div id="commitment-update-panel"></div>
+      <div id="commitment-update-panel"></div>
 
 <?php if ($id) : ?>
 	<h4><button class="glyphicon glyphicon-triangle-right btn btn-default btn-xs part-button" id="part-button_option"></button>&nbsp;&nbsp;<?php echo $this->translate('Invoice lines', 'ppit-commitment', $context->getLocale()) ?></h4>
@@ -365,5 +383,9 @@
 
 		</table>
 		<input type="hidden" id="termCount" value="<?php echo ++$i ?>" />
-	</div>
+	 </div>
 <?php endif;?>
+    
+    </div>
+  </div>
+</div>

@@ -1,99 +1,144 @@
-<?php if ($context->isDemoModeActive()) : ?>
-		<a class="tip" href="#" title="<?php echo $context->localize($context->getConfig('demo')['commitment/update']) ?>">
-		    <img src="<?php echo $this->basePath('img/tip.png') ?>" width="20" />
-		</a>
+			
+<?php if ($message == 'OK') : ?>
+
+<!-- Global message -->
+<div id="message">
+  <h5 class="alert alert-success my-3 text-center"><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h5>
+</div>
+
 <?php endif;?>
 
-<?php if ($commitment->id && !$message) : ?>
-		<button type="button" class="btn btn-default action-btn" id="commitment-update-anchor" title="<?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?>" <?php if ((in_array($commitment->status, array('invoiced', 'settled')) && !$context->hasRole('admin')) || $commitment->status == 'registered') echo 'disabled="disabled"' ?>>
-			<span class="glyphicon glyphicon-edit"></span>
-		</button>
+<?php if ($error == 'Duplicate') : ?>
 
-		<button type="button" class="btn btn-default action-btn" id="commitment-delete-anchor" title="<?php echo $this->translate('Delete', 'ppit-core', $context->getLocale()) ?>" <?php if (!$commitment->isDeletable()) echo 'disabled="disabled"' ?>>
-			<span class="glyphicon glyphicon-trash"></span>
-		</button>
+<!-- Duplicate error -->
+<div class="alert alert-danger my-3 text-center"><?php echo $this->translate('This record already exist', 'ppit-core', $context->getLocale()) ?></div>
 
-	<?php if (!in_array($commitment->status, ['invoiced', 'settled', 'registered'])) : ?>
-		<button type="button" class="btn btn-default action-btn" id="commitment-invoice-anchor">
-			<?php echo $this->translate('Generate invoice', 'ppit-commitment', $context->getLocale()) ?>
-		</button>
-		<div class="form-group">
-			<div class="alert alert-danger" id="commitment-invoice-alert" style="text-align: center">
-				<strong><?php echo $this->translate('This action is irreversible. Please confirm.', 'ppit-core', $context->getLocale()) ?></strong>
-			</div>
-		</div>
-	<?php elseif ($context->hasRole('admin') && $commitment->status != 'registered') : ?>
-		<button type="button" class="btn btn-danger action-btn" id="commitment-invoice-anchor">
-			<?php echo $this->translate('Actualize the invoice', 'ppit-commitment', $context->getLocale()) ?>
-		</button>
-		<div class="form-group">
-			<div class="alert alert-danger" id="commitment-invoice-alert" style="text-align: center">
-				<strong><?php echo $this->translate('You should have destroyed any previous version of this invoice. Please confirm.', 'ppit-commitment', $context->getLocale()) ?></strong>
-			</div>
-		</div>
-	<?php endif;?>
-
-	<?php if (false) : // ($commitment->status == 'invoiced') : ?>
-<!--		<button type="button" class="btn btn-default action-btn" id="commitment-settle-anchor">
-			<?php //echo $this->translate('Register settlement', 'ppit-commitment', $context->getLocale()) ?>
-		</button>
-		<div class="form-group">
-			<div class="alert alert-danger" id="commitment-settle-alert" style="text-align: center">
-				<strong><?php //echo $this->translate('This action is irreversible. Please confirm.', 'ppit-core', $context->getLocale()) ?></strong>
-			</div>
-		</div> -->
-	<?php endif;?>
 <?php endif;?>
 
-<?php if ($commitment->id) : ?>
-  <div>
-  <?php if (in_array($commitment->status, array('invoiced', 'settled', 'registered'))) : ?>
-    <a target="_blank" href="<?php echo $this->url('commitmentMessage/downloadInvoice', array('id' => $commitment->invoice_message_id)) ?>"><?php echo $this->translate('Invoice', 'ppit-commitment', $context->getLocale()) ?></a>
-    &nbsp;&nbsp;|&nbsp;&nbsp;
+<?php if ($error == 'Isolation') : ?>
+
+<!-- Isolation error -->
+<div class="alert alert-danger my-3 text-center"><?php echo $this->translate('The database has evolved in the meantime, please input again', 'ppit-core', $context->getLocale()) ?></div>
+
+<?php endif;?>
+
+<?php if ($error == 'Consistency') : ?>
+
+<!-- Consistency error -->
+<div class="alert alert-danger my-3 text-center"><?php echo $this->translate('The data are not consistent', 'ppit-core', $context->getLocale()) ?></div>
+
+<?php endif;?>
+
+<!-- CSRF -->
+<?php $element = $csrfForm->get('csrf') ?>
+<div class="form-group">
+  <?php echo $this->formElement($element) ?>
+<?php if ($this->formElementErrors($element)) : ?>
+  <h5 class="alert alert-danger my-3 text-center"><?php echo $this->translate('The form has expired, please input again', 'ppit-core', $context->getLocale()) ?></h5>
+<?php endif;?>
+</div>
+
+<input type="hidden" id="commitment-update_time" value="<?php echo $commitment->update_time ?>" />
+
+<?php if ($message != 'OK') : ?>
+  <?php if ($commitment->id && !$action) : ?>
+
+<div class="my-3">
+  <button type="button" class="btn btn-outline-primary" id="commitment-update-anchor" data-toggle="tooltip" title="<?php echo $this->translate('Modifier', 'ppit-core', $context->getLocale()) ?>"><i class="fa fa-edit"></i></button>
+  <button type="button" class="btn btn-outline-primary" id="commitment-delete-anchor" data-toggle="tooltip" title="<?php echo $this->translate('Supprimer', 'ppit-core', $context->getLocale()) ?>"><i class="fa fa-trash-alt"></i></button>
+
+    <?php if (!in_array($commitment->status, ['invoiced', 'settled', 'registered'])) : ?>
+  <button type="button" class="btn btn-outline-primary" id="commitment-invoice-anchor">
+    <?php echo $this->translate('Generate invoice', 'ppit-commitment', $context->getLocale()) ?>
+  </button>
+
+  <?php elseif ($context->hasRole('admin') && $commitment->status != 'registered') : ?>
+  <button type="button" class="btn btn-danger action-btn" id="commitment-invoice-anchor">
+    <?php echo $this->translate('Actualize the invoice', 'ppit-commitment', $context->getLocale()) ?>
+  </button>
+    <?php endif;?>
+
+</div>
+
   <?php endif;?>
-    <a target="_blank" href="<?php echo $this->url('commitment/downloadInvoice', array('type' => $type, 'id' => $commitment->id)) ?>?proforma=true"><?php echo $this->translate('Proforma', 'ppit-commitment', $context->getLocale()) ?></a>
-  <?php if ($commitment->id && $context->isDemoModeActive()) : ?>
-    <a class="tip" href="#" title="<?php echo $context->localize($context->getConfig('demo')['commitment/invoice']) ?>">
-        <img src="<?php echo $this->basePath('img/tip.png') ?>" width="20" />
-    </a>
-  <?php endif;?>
+
+  <?php if (!in_array($commitment->status, ['invoiced', 'settled', 'registered'])) : ?>
+<div class="form-group">
+  <div class="alert alert-danger" id="commitment-invoice-alert" style="text-align: center">
+    <strong><?php echo $this->translate('This action is irreversible. Please confirm.', 'ppit-core', $context->getLocale()) ?></strong>
   </div>
-<?php endif;?>
+</div>
 
-<!-- Form header -->
-<?php echo $this->partial('/partials/form-header', array(
-		'update_time' => $commitment->update_time,
-		'message' => $message,
-		'error' => $error,
-		'csrfForm' => $csrfForm,
-		'context' => $context,
-		'formId' => 'commitment-form',
-));
-?>
+  <?php elseif ($context->hasRole('admin') && $commitment->status != 'registered') : ?>
+<div class="form-group">
+  <div class="alert alert-danger" id="commitment-invoice-alert" style="text-align: center">
+    <strong><?php echo $this->translate('You should have destroyed any previous version of this invoice. Please confirm.', 'ppit-commitment', $context->getLocale()) ?></strong>
+  </div>
+</div>
 
-<?php if (!$commitment->id) : ?>
-		    <div class="form-group">
-				<div class="col-sm-5">&nbsp;</div>
-				<div class="col-sm-7">
-					<input name="submit" type="submit" id="commitment-up-submit-button" class="btn btn-warning" value="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale()) ?>">
-				</div>
-			</div>
+  <?php endif;?>
 
-<?php elseif ($action == 'update') : ?>
-		    <div class="form-group">
-				<div class="col-sm-5">&nbsp;</div>
-				<div class="col-sm-7">
-					<input name="submit" type="submit" id="commitment-up-submit-button" class="btn btn-warning" value="<?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?>">
-				</div>
-			</div>
+  <?php if ($commitment->id) : ?>
 
-<?php elseif ($action == 'delete') : ?>
-		    <div class="form-group">
-				<div class="col-sm-5">&nbsp;</div>
-				<div class="col-sm-7">
-					<input name="submit" type="submit" id="commitment-up-submit-button" class="btn btn-danger" value="<?php echo $this->translate('Delete', 'ppit-core', $context->getLocale()) ?>">
-				</div>
-			</div>
+<div>
+
+<div class="my-3">
+
+    <?php if (in_array($commitment->status, array('invoiced', 'settled', 'registered'))) : ?>
+
+  <a target="_blank" href="<?php echo $this->url('commitmentMessage/downloadInvoice', array('id' => $commitment->invoice_message_id)) ?>"><?php echo $this->translate('Invoice', 'ppit-commitment', $context->getLocale()) ?></a>
+  &nbsp;&nbsp;|&nbsp;&nbsp;
+
+    <?php endif;?>
+
+  <a target="_blank" href="<?php echo $this->url('commitment/downloadInvoice', array('type' => $type, 'id' => $commitment->id)) ?>?proforma=true"><?php echo $this->translate('Proforma', 'ppit-commitment', $context->getLocale()) ?></a>
+
+    <?php if ($commitment->id && $context->isDemoModeActive()) : ?>
+
+  <a class="tip" href="#" title="<?php echo $context->localize($context->getConfig('demo')['commitment/invoice']) ?>">
+    <img src="<?php echo $this->basePath('img/tip.png') ?>" width="20" />
+  </a>
+
+    <?php endif;?>
+
+</div>
+
+  <?php endif;?>
+
+  <?php if (!$commitment->id) : ?>
+
+<div class="form-group row">
+  <div class="col-sm-5">&nbsp;</div>
+  <div class="col-sm-7">
+    <input name="submit" type="submit" id="commitment-up-submit-button" class="btn btn-warning" value="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale()) ?>">
+  </div>
+</div>
+
+  <?php elseif ($action == 'update') : ?>
+
+<div class="form-group row">
+  <div class="col-sm-5">&nbsp;</div>
+  <div class="col-sm-7">
+    <input name="submit" type="submit" id="commitment-up-submit-button" class="btn btn-warning" value="<?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?>">
+    <button type="button" class="btn btn-link" id="commitment-up-cancel-button">
+      <?php echo $this->translate('Cancel', 'ppit-core', $context->getLocale()) ?>
+    </button>
+  </div>
+</div>
+
+  <?php elseif ($action == 'delete') : ?>
+
+<div class="form-group row">
+  <div class="col-sm-5">&nbsp;</div>
+  <div class="col-sm-7">
+    <input name="submit" type="submit" id="commitment-up-submit-button" class="btn btn-danger" value="<?php echo $this->translate('Delete', 'ppit-core', $context->getLocale()) ?>">
+    <button type="button" class="btn btn-link" id="commitment-up-cancel-button">
+      <?php echo $this->translate('Cancel', 'ppit-core', $context->getLocale()) ?>
+    </button>
+  </div>
+</div>
+
+  <?php endif;?>
 <?php endif;?>
 
 <?php 
@@ -107,70 +152,83 @@ if ($commitment->id && $action != 'update' || $message == 'OK') $isDisabled = tr
   if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) $mandatory = true;
   else $mandatory = false;
   ?>
-		<div class="form-group" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_' : '').'commitment-'.$propertyId ?>_group">
-			<label class="col-sm-5 control-label"><?php if ($mandatory) echo '* ' ?><?php echo $context->localize($property['labels']) ?></label>
-			<div class="col-sm-7">
 
-	<?php if ($propertyId == 'account_id') : ?>
-				<select class="form-control" id="commitment-<?php echo $propertyId ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
-	    			<option />
-		<?php foreach ($accounts as $account) : ?>
-	    			<option value="<?php echo $account->id ?>" <?php if ($account->id == $commitment->account_id) echo 'selected="selected"' ?>><?php echo $account->name ?></option>
-		<?php endforeach;?>
-				</select>
+<div class="form-group row" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_' : '').'commitment-' . $propertyId ?>_group">
+  <label class="col-sm-5 col-form-label"><?php if ($mandatory) echo '* ' ?><?php echo $context->localize($property['labels']) ?></label>
+  <div class="col-sm-7">
 
-	<?php elseif ($property['type'] == 'date') : ?>
-				<input type="hidden" id="commitment-<?php echo $propertyId ?>" />
-				<input class="form-control update_date" id="input_commitment-<?php echo $propertyId ?>" value="<?php echo $context->decodeDate($commitment->properties[$propertyId]) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+  <?php if ($propertyId == 'account_id') : ?>
 
-	<?php elseif ($property['type'] == 'number') : ?>
-				<input type="hidden" id="commitment-<?php echo $propertyId ?>" />
-				<input class="form-control" id="input_commitment-<?php echo $propertyId ?>" value="<?php echo $context->formatFloat($commitment->properties[$propertyId], 2) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
-
-	<?php elseif ($property['type'] == 'textarea') : ?>
-				<textarea class="form-control" id="commitment-<?php echo $propertyId ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>><?php echo $commitment->properties[$propertyId] ?></textarea>
-
-	<?php elseif ($property['type'] == 'select') : ?>
-				<select class="form-control" id="commitment-<?php echo $propertyId ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
-	    			<option />
-		<?php foreach ($property['modalities'] as $key => $labels) : ?>
-	    			<option value="<?php echo $key ?>" <?php if ($commitment->properties[$propertyId] == $key) echo 'selected="selected"' ?>><?php echo $context->localize($labels) ?></option>
-		<?php endforeach;?>
-				</select>
+    <select class="form-control" id="commitment-<?php echo $propertyId ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
+      <option />
 	
-	<?php else : ?>
-				<input class="form-control" id="commitment-<?php echo $propertyId ?>" value="<?php echo $commitment->properties[$propertyId] ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+    <?php foreach ($accounts as $account) : ?>
+      <option value="<?php echo $account->id ?>" <?php if ($account->id == $commitment->account_id) echo 'selected="selected"' ?>><?php echo $account->name ?></option>
+    <?php endforeach;?>
+  
+    </select>
 
-	<?php endif;?>
-			</div>
-			<div class="col-sm-12"><p class="help-block" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_' : '').'commitment-'.$propertyId ?>_error"></p></div>
-		</div>
+  <?php elseif ($property['type'] == 'date') : ?>
+    <input type="hidden" id="commitment-<?php echo $propertyId ?>" />
+    <input class="form-control update_date" id="input_commitment-<?php echo $propertyId ?>" value="<?php echo $context->decodeDate($commitment->properties[$propertyId]) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+
+  <?php elseif ($property['type'] == 'number') : ?>
+    <input type="hidden" id="commitment-<?php echo $propertyId ?>" />
+    <input class="form-control" id="input_commitment-<?php echo $propertyId ?>" value="<?php echo $context->formatFloat($commitment->properties[$propertyId], 2) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+
+  <?php elseif ($property['type'] == 'textarea') : ?>
+    <textarea class="form-control" id="commitment-<?php echo $propertyId ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>><?php echo $commitment->properties[$propertyId] ?></textarea>
+
+  <?php elseif ($property['type'] == 'select') : ?>
+    <select class="form-control" id="commitment-<?php echo $propertyId ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
+      <option />
+
+    <?php foreach ($property['modalities'] as $key => $labels) : ?>
+      <option value="<?php echo $key ?>" <?php if ($commitment->properties[$propertyId] == $key) echo 'selected="selected"' ?>><?php echo $context->localize($labels) ?></option>
+    <?php endforeach;?>
+  
+    </select>
+	
+  <?php else : ?>
+    <input class="form-control" id="commitment-<?php echo $propertyId ?>" value="<?php echo $commitment->properties[$propertyId] ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+
+  <?php endif;?>
+
+    <div class="invalid-feedback" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_' : '') . 'commitment-' . $propertyId ?>_error"></div>
+  </div>
+</div>
 
 <?php endforeach;?>
 
 <?php if (!$commitment->id) : ?>
-		    <div class="form-group">
-				<div class="col-sm-5">&nbsp;</div>
-				<div class="col-sm-7">
-					<input name="submit" type="submit" id="commitment-submit-button" class="btn btn-warning" value="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale()) ?>">
-				</div>
-			</div>
+  <div class="form-group row">
+    <div class="col-sm-5">&nbsp;</div>
+    <div class="col-sm-7">
+      <input name="submit" type="submit" id="commitment-submit-button" class="btn btn-warning" value="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale()) ?>">
+    </div>
+  </div>
 
 <?php elseif ($action == 'update') : ?>
-		    <div class="form-group">
-				<div class="col-sm-5">&nbsp;</div>
-				<div class="col-sm-7">
-					<input name="submit" type="submit" id="commitment-submit-button" class="btn btn-warning" value="<?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?>">
-				</div>
-			</div>
+  <div class="form-group row">
+    <div class="col-sm-5">&nbsp;</div>
+    <div class="col-sm-7">
+      <input name="submit" type="submit" id="commitment-submit-button" class="btn btn-warning" value="<?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?>">
+      <button type="button" class="btn btn-link" id="commitment-cancel-button">
+       <?php echo $this->translate('Cancel', 'ppit-core', $context->getLocale()) ?>
+      </button>
+    </div>
+  </div>
 
 <?php elseif ($action == 'delete') : ?>
-		    <div class="form-group">
-				<div class="col-sm-5">&nbsp;</div>
-				<div class="col-sm-7">
-					<input name="submit" type="submit" id="commitment-submit-button" class="btn btn-danger" value="<?php echo $this->translate('Delete', 'ppit-core', $context->getLocale()) ?>">
-				</div>
-			</div>
+  <div class="form-group row">
+    <div class="col-sm-5">&nbsp;</div>
+    <div class="col-sm-7">
+      <input name="submit" type="submit" id="commitment-submit-button" class="btn btn-danger" value="<?php echo $this->translate('Delete', 'ppit-core', $context->getLocale()) ?>">
+      <button type="button" class="btn btn-link" id="commitment-cancel-button">
+        <?php echo $this->translate('Cancel', 'ppit-core', $context->getLocale()) ?>
+      </button>
+    </div>
+  </div>
 <?php endif;?>
 		
 		</form>

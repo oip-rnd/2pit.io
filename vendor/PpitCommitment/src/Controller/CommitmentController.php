@@ -91,7 +91,8 @@ class CommitmentController extends AbstractActionController
 		$applicationName = $context->localize($context->getConfig('menus/'.$app)['labels']);
 		$description = Commitment::getDescription($type);
 		$termDescription = Term::getDescription($type);
-
+		$updatePage = $description['update']; // Deprecated, pageScripts should not depend on php structures
+		
     	// Feed the layout
 		$this->layout('/layout/core-layout');
 		$this->layout()->setVariables(array(
@@ -103,6 +104,7 @@ class CommitmentController extends AbstractActionController
     		'products' => Product::getList(null, array()),
     		'options' => ProductOption::getList(null, array()),
 			'pageScripts' => 'partials/ppit-commitment-scripts-v2',
+			'updatePage' => $updatePage,
 		));
     	
 		$view = $this->indexAction();
@@ -473,6 +475,7 @@ class CommitmentController extends AbstractActionController
 					if ($property['type'] == 'file' && array_key_exists($propertyId, $request->getFiles()->toArray())) $files = $request->getFiles()->toArray()[$propertyId];
 					else $data[$propertyId] = $request->getPost('commitment-'.$propertyId);
     			}
+    			
     			$rc = $commitment->loadData($data, $request->getFiles()->toArray());
     			if ($rc != 'OK') throw new \Exception('View error');
 

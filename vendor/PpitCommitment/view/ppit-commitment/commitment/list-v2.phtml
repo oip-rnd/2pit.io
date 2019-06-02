@@ -9,18 +9,15 @@
 -->
 
 <style>
-{
-    .large
-    {
-        display: none;
-    }
+table td { 
+  font-size: 0.9rem;
 }
 </style>
 
 <div class="col-md-12">
-  <table class="table table-striped ppit_index">
+  <table class="table table-sm table-hover">
 
-	<tr>
+	<tr class="table-info">
 		<th>&nbsp;</th>
 		<th>&nbsp;</th>
 
@@ -37,12 +34,12 @@
 	
 			<tr>
 				<td>
-     <input type="checkbox" class="commitment-checkbox" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Check all', 'ppit-core', $context->getLocale()) ?>"></input>
+     <input type="checkbox" class="commitment-checkbox" id="commitment-checkbox" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Check all', 'ppit-core', $context->getLocale()) ?>"></input>
  				</td>
 	
       <td style="text-align: center">
         <div class="input-group input-group-sm">
-          <button type="button" class="btn btn-sm btn-outline-primary index-btn group-anchor" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Grouped actions', 'ppit-core', $context->getLocale())?>" id="group-anchor">
+          <button type="button" class="btn btn-sm btn-outline-primary index-btn commitment-group-anchor" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Grouped actions', 'ppit-core', $context->getLocale())?>" id="group-anchor">
             <span class="fas fa-list" id="group-glyphicon"></span>
           </button>
         </div>
@@ -108,7 +105,7 @@
 
 			<tr>
 				<td>
-      <input type="checkbox" class="commitment-checkbox" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Check all', 'ppit-core', $context->getLocale()) ?>"></input>
+      <input type="checkbox" class="commitment-checkbox" id="down-commitment-checkbox" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Check all', 'ppit-core', $context->getLocale()) ?>"></input>
 				</td>
 		
 				<td style="text-align: center">
@@ -133,7 +130,7 @@
     <td colspan="<?php echo count($listPage['properties']) - 1 ?>">&nbsp;</td>
 			</tr>
 
-	<tr>
+	<tr class="table-info">
 		<th>&nbsp;</th>
 		<th>&nbsp;</th>
 <?php foreach ($listPage['properties'] as $propertyId => $property) : ?>

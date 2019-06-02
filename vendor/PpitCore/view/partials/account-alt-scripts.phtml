@@ -123,9 +123,9 @@ function getAccountList(params) {
         });
 
         // Able the group action button
-        $('.account-group-anchor').attr('disabled', 'disabled');
+        $('.account-group-anchor').prop('disabled', true);
         $('.accountCheckbox').click(function () {
-          $('.account-group-anchor').removeAttr('disabled');
+          $('.account-group-anchor').prop('disabled', false);
         });
 
         // Connect the check all checkbox
