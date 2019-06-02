@@ -3836,7 +3836,7 @@ table.note-report td {
 			array(
 				'left' => array('en_US' => 'Caption', 'fr_FR' => 'Libellé'),
 				'right' => array('en_US' => '%s', 'fr_FR' => '%s'),
-				'params' => array('caption'),
+				'params' => array('commitment_caption'),
 			),
 			array(
 				'left' => array('en_US' => 'Invoice date', 'fr_FR' => 'Date de facture'),
