@@ -122,7 +122,8 @@ class PdfInvoiceViewHelper
     	foreach($invoice['description'] as $line) {
     		$pdf->MultiCell(50, 5, '<strong>'.$line['title'].'</strong>', 1, 'L', 1, 0, '', '', true, 0, true);
     		$pdf->MultiCell(5, 5, ':', 1, 'L', 1, 0, '', '', true);
-    		$pdf->MultiCell(125, 5, $line['value'], 1, 'L', 0, 1, '' ,'', true);
+    		$pdf->MultiCell(125, 5, $line['value'], 1, 'L', 1, 0, '' ,'', true);
+    		$pdf->Ln(5);
     	}
 
     	$taxComputing = ($invoice['tax'] == 'excluding') ? 'HT' : 'TTC';

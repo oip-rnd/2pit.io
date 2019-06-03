@@ -121,6 +121,7 @@
 			'New request' => 'Nouvelle demande',
 			'Next step' => 'Prochaine étape',
 			'No' => 'Non',
+			'Non-catalog' => 'Hors catalogue',
 			'Number' => 'Nombre',
 			'Opening date' => 'Date d\'ouverture',
 			'Order additional accounts' => 'Commander des comptes supplémentaires',
