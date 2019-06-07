@@ -720,7 +720,7 @@ class CommitmentController extends AbstractActionController
 	    }
 	    $description = Commitment::getDescription($type);
 
-	    if ($account->type == 'business') $invoice['customer_invoice_name'] = $account->name;
+	    if ($account->name != $account->n_last . ', ' . $account->n_first) $invoice['customer_invoice_name'] = $account->name;
     	$invoicingContact = null;
     	if ($account->contact_1_status == 'invoice') $invoicingContact = $account->contact_1;
     	elseif ($account->contact_2_status == 'invoice') $invoicingContact = $account->contact_2;
