@@ -729,7 +729,8 @@ class Event
     			}
     			elseif (substr($propertyId, 0, 4) == 'min_') $where->greaterThanOrEqualTo('core_event.'.substr($propertyId, 4), $value);
     			elseif (substr($propertyId, 0, 4) == 'max_') $where->lessThanOrEqualTo('core_event.'.substr($propertyId, 4), $value);
-    			elseif (strpos($value, ',')) $where->in('core_event.'.$propertyId, array_map('trim', explode(', ', $value)));
+    			elseif (strpos($value, ', ')) $where->in('core_event.'.$propertyId, array_map('trim', explode(', ', $value))); // Deprecated
+    			elseif (strpos($value, ',')) $where->in('core_event.'.$propertyId, array_map('trim', explode(',', $value))); // Deprecated
     			elseif ($value == '*') $where->notEqualTo('core_event.'.$propertyId, '');
 				elseif ($property['type'] == 'multiselect') $where->like('core_event.'.$propertyId, '%'.$value.'%');
     			elseif ($property['type'] == 'select') $where->equalTo('core_event.'.$propertyId, $value);

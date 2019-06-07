@@ -9,6 +9,7 @@ define('COMMITMENT_TERM_LEARNING', [
 	'commitmentTerm/learning/property/commitment_property_12' => array('definition' => 'commitment/learning/property/property_12'),
 	'commitmentTerm/learning/property/commitment_property_13' => array('definition' => 'commitment/learning/property/property_13'),
 	'commitmentTerm/learning/property/commitment_property_14' => array('definition' => 'commitment/learning/property/property_14'),
+	'commitmentTerm/learning/property/commitment_property_15' => array('definition' => 'commitment/learning/property/property_15'),
 	
 	'commitmentTerm/search/learning' => array(
 		'title' => array('en_US' => 'Terms', 'fr_FR' => 'Echéances'),
@@ -57,6 +58,7 @@ define('COMMITMENT_TERM_LEARNING', [
 		'commitment_property_12' => ['readonly' => true],
 		'commitment_property_13' => ['readonly' => true],
 		'commitment_property_14' => ['readonly' => true],
+		'commitment_property_15' => ['readonly' => true],
 		'comment' => [],
 		'document' => [],
 	),

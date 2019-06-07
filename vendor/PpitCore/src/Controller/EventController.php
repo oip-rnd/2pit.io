@@ -307,10 +307,14 @@ class EventController extends AbstractActionController
     	$description = Event::getDescription($type);
     	$begin = $this->params()->fromQuery('begin');
     	$end = $this->params()->fromQuery('end');
-    	if ($begin && $end) return new JsonModel(EventPlanningViewHelper::displayPlanning($description, $this->getList()->events, $begin, $end));
+    	$accounts = $this->params()->fromQuery('accounts', '*');
+    	if ($accounts) {
+			$events = Event::getList($type, ($accounts == '*') ? [] : ['account_id' => $accounts], '-update_time', null);
+    	}
+    	if ($begin && $end) return new JsonModel(EventPlanningViewHelper::displayPlanning($description, $events, $begin, $end));
     	else return new JsonModel(EventPlanningViewHelper::format($description, $this->getList()->events));
     }
-
+/*
     public function concurrenciesAction()
     {
     	$type = $this->params()->fromRoute('type');
@@ -325,7 +329,7 @@ class EventController extends AbstractActionController
     	}
 		$events = Event::getList($type, [], '-update_time', null, null);
     	return new JsonModel(EventPlanningViewHelper::displayConcurrencies($description, $category, $accounts, $events, $begin, $end));
-    }
+    }*/
     
     public function exportAction()
     {
@@ -446,6 +450,20 @@ class EventController extends AbstractActionController
     		$event->category = $category;
     	}
 
+		// Overwrite the account list as being the group members for type Calendar
+    	if ($type == 'calendar') {
+    		$group = Account::get($category, 'identifier', 'group', 'type');
+    		if ($group) {
+	    		$property = &$description['update']['account_id'];
+	    		$property['modalities'] = [];
+				foreach ($group->members as $account) {
+					if ($account->type == 'teacher') {
+						$property['modalities'][$account->id] = ['default' => $account->n_fn.' - '.$account->email];
+					}
+				}
+    		}
+    	}
+    	 
     	// Instanciate the csrf form
     	$csrfForm = new CsrfForm();
     	$csrfForm->addCsrfElement('csrf');

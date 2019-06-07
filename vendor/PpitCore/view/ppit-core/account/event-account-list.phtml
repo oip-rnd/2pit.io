@@ -45,7 +45,7 @@ $textColors = ['Black', 'White', 'Black', 'Black', 'Black', 'Black', 'White', 'B
   $textColor = ($i < 15) ? $textColors[$i] : 'White';
   ?>
 	
-			<input type="hidden"  id="account_<?php echo $i ?>" value="<?php echo $account->id ?>" />
+			<input type="hidden" class="hidden-account_id" id="account_<?php echo $i ?>" value="<?php echo $account->id ?>" />
             <input type="hidden"  id="color_<?php echo $account->id ?>" value="<?php echo $color ?>" />
             <input type="hidden"  id="textColor_<?php echo $account->id ?>" value="<?php echo $textColor ?>" />
 		

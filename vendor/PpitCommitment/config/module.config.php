@@ -3713,6 +3713,7 @@ table.note-report td {
 	'commitmentTerm/generic/property/commitment_property_12' => array('definition' => 'commitment/learning/property/property_12'),
 	'commitmentTerm/generic/property/commitment_property_13' => array('definition' => 'commitment/learning/property/property_13'),
 	'commitmentTerm/generic/property/commitment_property_14' => array('definition' => 'commitment/learning/property/property_14'),
+	'commitmentTerm/generic/property/commitment_property_15' => array('definition' => 'commitment/learning/property/property_15'),
 	'commitmentTerm/generic/property/account_status' => array('definition' => 'commitment/generic/property/account_status'),
 	'commitmentTerm/generic/property/account_date_1' => array('definition' => 'core_account/generic/property/date_1'),
 	'commitmentTerm/generic/property/account_date_2' => array('definition' => 'core_account/generic/property/date_2'),
@@ -3741,7 +3742,7 @@ table.note-report td {
 		'properties' => array(
 				'commitment_id', 'name', 'status', 'place_id', 'caption', 'invoice_account_id', 'due_date', 'settlement_date', 'collection_date',
 				'quantity', 'unit_price', 'amount', 'means_of_payment', 'bank_name', 'invoice_n_last', 'reference', 'comment', 'document', 'invoice_identifier', 'commitment_caption', 
-				'commitment_property_1', 'commitment_property_2', 'commitment_property_3', 'commitment_property_4', 'commitment_property_5', 'commitment_property_6', 'commitment_property_7', 'commitment_property_8', 'commitment_property_10', 'commitment_property_11', 'commitment_property_12', 'commitment_property_13', 'commitment_property_14', 
+				'commitment_property_1', 'commitment_property_2', 'commitment_property_3', 'commitment_property_4', 'commitment_property_5', 'commitment_property_6', 'commitment_property_7', 'commitment_property_8', 'commitment_property_10', 'commitment_property_11', 'commitment_property_12', 'commitment_property_13', 'commitment_property_14', 'commitment_property_15', 
 				'tiny_1', 'tiny_2', 'tiny_3', 'tiny_4', 'tiny_5',
 				'account_status', 'account_date_1', 'account_date_2', 'account_date_3', 'account_date_4', 'account_date_5',
 				'account_property_1', 'account_property_2', 'account_property_3', 'account_property_4', 'account_property_5', 'account_property_6', 'account_property_7', 'account_property_8', 'account_property_9',

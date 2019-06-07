@@ -74,11 +74,20 @@ function getAvailability() {
 function getPlanning() {
 	
 	// Execute the ajax request
-    begin = new Date($('#calendar').fullCalendar('getView').intervalStart);
+    let begin = new Date($('#calendar').fullCalendar('getView').intervalStart);
     begin = begin.toISOString().substring(0, 10);
-    end = new Date($('#calendar').fullCalendar('getView').intervalEnd);
+    let end = new Date($('#calendar').fullCalendar('getView').intervalEnd);
     end = end.toISOString().substring(0, 10);
-	route = '<?php echo $this->url('event/planning', ['type' => $type, 'category' => $category]) ?>?';
+
+  let accounts = '', first = true;
+  $('.hidden-account_id').each(function () {
+      id = $(this).val();
+      if (!first) accounts += ',';
+      first = false;
+      accounts += id;
+  });
+
+	let route = '<?php echo $this->url('event/planning', ['type' => $type, 'category' => $category]) ?>?' + 'accounts=' + accounts;
     route += '&begin=' + begin;
     route += '&end=' + end;
 	var xhttp = new XMLHttpRequest();
@@ -99,21 +108,33 @@ function getPlanning() {
 <?php endif;?>
 
 			jQuery.each(obj, function (name, value) {
-				var color = 'lightBlue', textColor = 'black';			
-	            var event={
-	              id: value.id,
-                  allDay: false,
-	              title: value.formatted,
-	              color: $('#color_' + value.account_id).val(),
-                  textColor: $('#textColor_' + value.account_id).val(),
-			      start:  $.fullCalendar.moment(value.begin_date + ' ' + value.begin_time), 
-				  end:  $.fullCalendar.moment(value.begin_date + ' ' + value.end_time)
-	            };
+				var color = 'lightBlue', textColor = 'black';
+                if (value.category == '<?php echo $category ?>' || '<?php echo $type ?>' != 'calendar') {
+                  var event={
+		            id: value.id,
+	                allDay: false,
+		            title: value.formatted,
+		            color: $('#color_' + value.account_id).val(),
+	                textColor: $('#textColor_' + value.account_id).val(),
+				    start:  $.fullCalendar.moment(value.begin_date + ' ' + value.begin_time), 
+					end:  $.fullCalendar.moment(value.begin_date + ' ' + value.end_time)
+                  }
+                }
+                else {
+                  var event={
+                    color: 'red',
+                    id: value.id,
+                    allDay: false,
+                    title: value.formatted,
+                    start: $.fullCalendar.moment(value.begin_date + ' ' + value.begin_time), 
+                    end: $.fullCalendar.moment(value.end_date + ' ' + value.end_time)
+                  }
+                }
 				$('#calendar').fullCalendar('renderEvent', event, true);
 			});
 
 			getAvailability();
-            getConcurrencies();
+//            getConcurrencies();
 		}
 	}
 	xhttp.send();
@@ -148,7 +169,7 @@ function mapPlanning() {
   }
   xhttp.send();
 }
-
+/*
 function getConcurrencies() {
   var id, accounts = '', first = true;
   var begin = new Date($('#calendar').fullCalendar('getView').intervalStart);
@@ -163,7 +184,7 @@ function getConcurrencies() {
         accounts += $('#account_' + id).val();
       }
   });
-  var route = '<?php echo $this->url('event/concurrencies', ['type' => $type, 'category' => $category]) ?>' + '?accounts=' + accounts;
+  var route = '<?php //echo $this->url('event/concurrencies', ['type' => $type, 'category' => $category]) ?>' + '?accounts=' + accounts;
   route += '&begin=' + begin;
   route += '&end=' + end;
   var xhttp = new XMLHttpRequest();
@@ -186,7 +207,7 @@ function getConcurrencies() {
     }
   }
   xhttp.send();
-}
+}*/
 
 function connectAuditPanel()
 {

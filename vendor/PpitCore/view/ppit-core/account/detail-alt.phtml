@@ -19,6 +19,7 @@
       </div>
     </div>
     <div class="modal-body">
+      <div class="container">
 
 <?php if ($context->hasRole('admin') && $account->id) : ?>
 
@@ -47,7 +48,7 @@
     <div>&nbsp;</div>
 <?php endif;?>
 
-<?php if ($account->type == 'group') : ?>
+<?php if ($account->id && $account->type == 'group') : ?>
 
 <!-- Display the members -->
 
@@ -91,6 +92,8 @@
     <div id="community-send-message-panel"></div>
 
     <div id="commitment-password-request-panel"></div>
+
+      </div>
     </div>
   </div>
 </div>

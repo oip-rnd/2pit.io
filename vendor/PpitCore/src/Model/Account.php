@@ -2227,7 +2227,7 @@ class Account
 	    	$vcard = Vcard::get($vcardData['email'], 'email');
     	}
     	if (!$vcard) $vcard = Vcard::instanciate();
-		if (!$account) $account = $vcard->id ? current(Account::getList($type, ['place_id' => $place->id, 'contact_1_id' => $vcard->id])) : null;
+		if (!$account) $account = $vcard->id ? current(Account::getList($type, [/*'place_id' => $place->id, */'contact_1_id' => $vcard->id])) : null;
     	if (!$allowDuplicate && $account) {
 			if ($logDuplicate && array_key_exists('contact_history', $accountData) && $accountData['contact_history']) {
 				if (in_array($account->status, ['new', 'gone'])) $accountData['callback_date'] = date('Y-m-d');

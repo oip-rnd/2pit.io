@@ -434,7 +434,8 @@ class AccountController extends AbstractActionController
 		if (!$eventAccountListPage) $eventAccountListPage = $context->getConfig('core_account/event_account_list/generic');
 
     	// Retrieve the query parameters
-    	$filters = array();
+		$event_category = $this->params()->fromQuery('event_category');
+		$filters = array();
     	foreach ($eventAccountSearchPage['properties'] as $propertyId => $unused) {
     		$property = ($this->params()->fromQuery($propertyId, null));
     		if ($property !== null) $filters[$propertyId] = $property;
@@ -443,15 +444,25 @@ class AccountController extends AbstractActionController
     		$max_property = ($this->params()->fromQuery('max_'.$propertyId, null));
     		if ($max_property !== null) $filters['max_'.$propertyId] = $max_property;
     	}
-		
-    	$major = ($this->params()->fromQuery('major', $context->getConfig('core_account/'.$type)['order']));
-		$dir = ($this->params()->fromQuery('dir'));
 
-		$accounts = Account::getList($type, $filters, '+name', null);
+    	$major = 'name'; // ($this->params()->fromQuery('major', $context->getConfig('core_account/'.$type)['order']));
+		$dir = 'ASC'; // ($this->params()->fromQuery('dir'));
+
+    	$accounts = Account::getList($type, $filters, '+name', null);
+
+		if ($type == 'teacher') {
+			$group = Account::get($event_category, 'identifier', 'group', 'type');
+			$members = [];
+			if ($group) {
+				foreach ($group->members as $member_id => $member) {
+					if ($member->type == $type && array_key_exists($member_id, $accounts)) $members[$member_id] = $member;
+				}
+			}
+			$accounts = $members;
+		}
 		
 		// Retrieve the per account planned hours 
 		foreach ($accounts as $account) $account->properties['planned'] = 0;
-		$event_category = $this->params()->fromQuery('event_category');
 		$events = Event::getList('calendar', ['category' => $event_category], '-update_time', null);
 		foreach ($events as $event) {
 			if (array_key_exists($event->account_id, $accounts)) $accounts[$event->account_id]->properties['planned'] += $event->value;

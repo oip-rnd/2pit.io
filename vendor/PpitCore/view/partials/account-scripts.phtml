@@ -438,7 +438,12 @@ foreach ($updatePage as $propertyId => $property) {
 				}
 			}
 		}
-		else $properties[$propertyId] = array('type' => $property['type'], 'mandatory' => (array_key_exists('mandatory', $property['options'])) ? $property['options']['mandatory'] : false, 'maxSize' => ($property['type'] == 'textarea' || $property['type'] == 'log') ? 2047 : 255);
+		elseif ($property['type'] == 'textarea') {
+			$properties[$propertyId] = array('type' => $property['type'], 'mandatory' => (array_key_exists('mandatory', $property['options'])) ? $property['options']['mandatory'] : false, 'maxSize' => (array_key_exists('max_length', $property)) ? $property['max_length'] : 2047);
+		}
+		else {
+			$properties[$propertyId] = array('type' => $property['type'], 'mandatory' => (array_key_exists('mandatory', $property['options'])) ? $property['options']['mandatory'] : false, 'maxSize' => ($property['type'] == 'log') ? 2047 : 255);
+		}
 	}
 }
 

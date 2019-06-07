@@ -90,6 +90,7 @@ class EventPlanningViewHelper
 							$formatted = vsprintf($captionFormat['mask'], $arguments);
 	    					$content[] = array(
 	    						'id' => $event->id,
+	    						'category' => $event->category,
 	    						'begin_date' => $date,
 	    						'end_date' => $date,
 	    						'begin_time' => $event->begin_time,
@@ -203,7 +204,7 @@ class EventPlanningViewHelper
     	}
     	return $days;
     }
-
+/*
     public static function displayConcurrencies($description, $category, $accounts, $events, $viewBeginDate, $viewEndDate)
     {
     	$context = Context::getCurrent();
@@ -252,5 +253,5 @@ class EventPlanningViewHelper
     	}
     	 
 		return $content;
-    }
+    }*/
 }

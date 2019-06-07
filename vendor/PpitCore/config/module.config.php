@@ -512,7 +512,7 @@ return array(
 							),
 						),
 					),
-					'concurrencies' => array(
+/*					'concurrencies' => array(
 						'type' => 'segment',
 						'options' => array(
 							'route' => '/concurrencies[/:type][/:category]',
@@ -520,7 +520,7 @@ return array(
 								'action' => 'concurrencies',
 							),
 						),
-					),
+					),*/
 					'export' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -1667,7 +1667,7 @@ return array(
 				array('route' => 'event/distribute', 'roles' => array('user')),
 				array('route' => 'event/mapPlanning', 'roles' => array('user')),
 				array('route' => 'event/planning', 'roles' => array('user')),
-				array('route' => 'event/concurrencies', 'roles' => array('user')),
+//				array('route' => 'event/concurrencies', 'roles' => array('user')),
 				array('route' => 'event/export', 'roles' => array('user')),
 				array('route' => 'event/synchronize', 'roles' => array('user')),
 				array('route' => 'event/detail', 'roles' => array('user')),
