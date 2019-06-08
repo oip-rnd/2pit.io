@@ -540,7 +540,10 @@ class Context
     	Context::$static_user_id = $user_id;
     	if (!$user_id) {
     		$fqdn = (method_exists($request, 'getUri')) ? $request->getUri()->getHost() : null;
-    		if ($fqdn) Context::$instance = Instance::get($fqdn, 'fqdn');
+    		if ($fqdn) {
+    			if (array_key_exists($fqdn, $config['fqdnToInstance'])) Context::$instance = Instance::get($config['fqdnToInstance'][$fqdn]['instance_id']);
+    			else Context::$instance = Instance::get($fqdn, 'fqdn');
+    		}
     		if (!Context::$instance) Context::$instance = Instance::get($config['defaultInstanceId']);
     		if (Context::$instance->id == 0) {
     			Context::$exemplary->getSecurityAgent()->demoAuthenticate($config['demoAccount']);

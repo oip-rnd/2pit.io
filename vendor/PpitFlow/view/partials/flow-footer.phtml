@@ -19,8 +19,11 @@
 
       <?php foreach ($column['list'] as $link) : ?>
               <li>
-        <?php if ($link['target'] == 'modal') : ?>
+        <?php if (array_key_exists('target', $link) && $link['target'] == 'modal') : ?>
 	           <a data-toggle="modal" data-target="#<?php echo $link['data-target'] ?>"><?php echo $context->localize($link['html']) ?></a>
+
+        <?php elseif (array_key_exists('route', $link['href'])) : ?>
+             <a href="<?php echo $this->url($link['href']['route']) ?>"><?php echo $context->localize($link['html']) ?></a>
 
         <?php else : ?>
              <a href="<?php echo $link['href']['uri'] ?>" target="_blank"><?php echo $context->localize($link['html']) ?></a>
@@ -52,7 +55,7 @@
   <?php if (array_key_exists('links', $footer)) : ?>
     <?php $first = true; foreach ($footer['links'] as $column) : ?>
       <?php foreach ($column['list'] as $linkId => $link) : ?>
-        <?php if ($link['target'] == 'modal') : ?>
+        <?php if (array_key_exists('target', $link) && $link['target'] == 'modal') : ?>
 <div class="modal fade" id="<?php echo $link['data-target'] ?>" tabindex="-1" role="dialog" aria-labelledby="<?php echo $linkId ?>" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">

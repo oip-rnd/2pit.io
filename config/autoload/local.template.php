@@ -33,4 +33,5 @@ return array(
 	'mailProtocol' => 'Smtp', // Should be 'SendMail' or 'Smtp'. No email sent if null
 	'mailAdmin' => 'no-reply@2pit.io',
 	'nameAdmin' => '2pit.io',
+	'fqdnToInstance' => [],
 );
