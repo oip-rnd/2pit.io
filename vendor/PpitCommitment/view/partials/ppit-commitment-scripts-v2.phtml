@@ -287,8 +287,14 @@ function getCommitmentUpdate(id, action) {
 
       $('#commitment-update-panel').html(xhttp.responseText);
       if (id) {
-        $('#commitment-update-anchor').click(function () { getCommitmentUpdate(id, 'update'); });
-        $('#commitment-delete-anchor').click(function () { getCommitmentUpdate(id, 'delete'); });
+        $('#commitment-update-anchor').click(function () { 
+          $('[data-toggle="tooltip"]').tooltip('hide');
+          getCommitmentUpdate(id, 'update');
+        });
+        $('#commitment-delete-anchor').click(function () { 
+          $('[data-toggle="tooltip"]').tooltip('hide');
+          getCommitmentUpdate(id, 'delete');
+        });
         $('#commitment-invoice-anchor').click(function () { getCommitmentInvoiceForm(id); });
         $('#commitment-invoice-alert').hide();
         $('#up-cancel-button').click(function () { getCommitmentUpdate(id, ''); });
@@ -841,12 +847,6 @@ function connectCommitmentUpdateTermForm(id)
 // Load the detail panel
 function getCommitmentDetail(id) {
 
-	// Ensure the target is displayed
-	$('#detail-row_' + id).show();
-
-	// Anchor to the new panel
-	$(location).attr('hash', 'detail-row_' + id);
-
 	var route = '<?php echo $this->url('commitment/detailV2', array('type' => ($type) ? $type : 'generic')) ?>/' + id;
 
 	// Execute the ajax request
@@ -942,9 +942,7 @@ function getCommitmentDetail(id) {
 				connectCommitmentUpdateTermForm(id);
 			});
 
-			$('.part-button').hide();
-
-            $('#modalForm').modal('toggle');
+			$('#modalForm').modal('toggle');
 		}
 	}
 	xhttp.send();
@@ -1068,7 +1066,7 @@ function connectSendMessageForm()
 	xhttp.onreadystatechange = function() {
 		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
 		if (xhttp.readyState == 4 && xhttp.status == 200) {
-			document.getElementById('send-message-panel').innerHTML = xhttp.responseText;
+			document.getElementById('commitment_group_send_message_panel').innerHTML = xhttp.responseText;
 		}
 	}
 	xhttp.send();
@@ -1104,8 +1102,7 @@ function getSendMessage() {
 			if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
 		if (xhttp.readyState == 4 && xhttp.status == 200) {
 
-			document.getElementById('send-message-panel').innerHTML = xhttp.responseText;
-			connectRemoveIcon('remove-anchor', 'form_action');
+			document.getElementById('commitment_group_send_message_panel').innerHTML = xhttp.responseText;
 			$('#send-message-alert').hide();
 			$('#send-message-button').click(function () { getSendMessageForm(); });
 		}
@@ -1138,7 +1135,7 @@ function connectRegisterSalesForm()
   xhttp.onreadystatechange = function() {
     if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
     if (xhttp.readyState == 4 && xhttp.status == 200) {
-      document.getElementById('register-sales-panel').innerHTML = xhttp.responseText;
+      document.getElementById('commitment_group_register_sales_panel').innerHTML = xhttp.responseText;
       var exportRoute = '<?php echo $this->url('journal/export').'?min_update_time='.date('Y-m-d') ?>';
       if ($('#search_place_id').val()) exportRoute += '&place_id='+ $('#search_place_id').val();
       location.href = exportRoute;
@@ -1177,8 +1174,7 @@ function getRegisterSales() {
       if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
     if (xhttp.readyState == 4 && xhttp.status == 200) {
 
-      document.getElementById('register-sales-panel').innerHTML = xhttp.responseText;
-      connectRemoveIcon('remove-anchor', 'form_action');
+      document.getElementById('commitment_group_register_sales_panel').innerHTML = xhttp.responseText;
       $('#register-sales-alert').hide();
       $('#register-sales-button').click(function () { getRegisterSalesForm(); });
     }
@@ -1189,14 +1185,6 @@ function getRegisterSales() {
 
 function postGroup()
 {
-		$('.group_update_date').datepicker();
-		$('.group_update_time').timepicker({ 'timeFormat': 'H:i:s' });
-
-	$('.group_update').change(function() {
-      let propertyId = $(this).attr('id').split('-')[1];
-      document.getElementById(propertyId + '_check').checked = true;
-    });
-
 	var form = document.getElementById('group-form');
 	form.onsubmit = function(event) {
 		event.preventDefault();
@@ -1210,18 +1198,17 @@ function postGroup()
 			
 			// Get the properties values
 
-            $('.group_update_check').each(function () {
+            $('.commitment_group_update_check').each(function () {
               let propertyId = $(this).attr('id').split('-')[1];
-              formData.append(propertyId, (document.getElementById(propertyId).checked) ? 1 : 0);
-            });
-
-            $('.group_update_input').each(function () {
-              let propertyId = $(this).attr('id').split('-')[1];
-              formData.append(propertyId, ('#' + propertyId).val());
+              if ($('#commitment_group_update_check-' + propertyId).prop('checked')) {
+                let value = $('#commitment_group_update_input-' + propertyId).val();
+                if ($('#commitment_group_update_input-' + propertyId).hasClass('commitment_group_update_date')) value = encodeDate(value);
+                formData.append(propertyId + '_check', 1); // For compatibility reason
+                formData.append(propertyId, value);
+              }
             });
 
 			formData.append('update_time', document.getElementById('update_time').value);
-
 			var xhttp = new XMLHttpRequest();
 			var route, target;
 			route = '<?php echo $this->url('commitment/groupV2', array('type' => $type)) ?>';
@@ -1229,7 +1216,7 @@ function postGroup()
 			xhttp.onload = function () {
 				if (xhttp.readyState == 4 && xhttp.status == 200) {
                   getCommitmentList(getSearchParams(''));
-                  document.getElementById('detail-div_0').innerHTML = xhttp.responseText;
+                  $('#modalForm').html(xhttp.responseText);
 				}
 			};
 			xhttp.send(formData);
@@ -1239,7 +1226,6 @@ function postGroup()
 function getGroup() {
 
 	// Disabled the list checkboxes
-	$('.commitment-checkbox').prop('disabled', true);
 	var route = '<?php echo $this->url('commitment/groupV2', array('type' => $type)) ?>';
 	var formData = new FormData();
 
@@ -1270,42 +1256,50 @@ function getGroup() {
                 getCommitmentList(getSearchParams(''));
 			});
 
-			$('.group-panel').hide();
-			$('#update-tab').addClass('active');
-			$('#update-panel').show();
+			$('.commitment_group_panel').hide();
+			$('#commitment_group_update_tab').addClass('active');
+			$('#commitment_group_update_panel').show();
 			
-			$('#update-tab').click(function () {
-				$('.group-tab').removeClass('active');
-				$('#update-tab').addClass('active');
-				$('.group-panel').hide();
-				$('#update-panel').show();
+			$('#commitment_group_update_tab').click(function () {
+				$('.commitment_group_tab').removeClass('active');
+				$('#commitment_group_update_tab').addClass('active');
+				$('.commitment_group_panel').hide();
+				$('#commitment_group_update_panel').show();
 			});
 			
-			$('#send-message-tab').click(function () {
-				$('.group-tab').removeClass('active');
-				$('#send-message-tab').addClass('active');
-				$('.group-panel').hide();
-				$('#send-message-panel').show();
+			$('#commitment_group_send_message_tab').click(function () {
+				$('.commitment_group_tab').removeClass('active');
+				$('#commitment_group_send_message_tab').addClass('active');
+				$('.commitment_group_panel').hide();
+				$('#commitment_group_send_message_panel').show();
 			});
 
 <?php if ($context->hasRole('accountant')) : ?>
             getRegisterSales();
 
-            $('#register-sales-tab').click(function () {
-              $('.group-tab').removeClass('active');
-              $('#register-sales-tab').addClass('active');
-              $('.group-panel').hide();
-              $('#register-sales-panel').show();
+            $('#commitment_group_register_sales_tab').click(function () {
+              $('.commitment_group_tab').removeClass('active');
+              $('#commitment_group_register_sales_tab').addClass('active');
+              $('.commitment_group_panel').hide();
+              $('#commitment_group_register_sales_panel').show();
             });
 <?php endif;?>
       
-            $('#download-invoices-tab').click(function () {
+            $('#commitment_group_download_invoices_tab').click(function () {
 			  var commitmentNumber = $('#commitment-number').val();
 			  for (i = 0, j = 0; i < commitmentNumber; i++) {
-			    if (document.getElementById('commitment-checkbox_' + i).checked) {
+			    if (document.getElementById('commitment_group_checkbox_' + i).checked) {
                   window.open('<?php echo $this->url('commitment/downloadInvoice', ['type' => $type]) ?>/' + $('#commitment_' + i).val());
 			    }
 			  }
+            });
+
+            $('.commitment_group_update_date').datepicker();
+            $('.commitment_group_update_time').timepicker({ 'timeFormat': 'H:i:s' });
+
+            $('.commitment_group_update_input').change(function() {
+              let propertyId = $(this).attr('id').split('-')[1];
+              document.getElementById('commitment_group_update_check-' + propertyId).checked = true;
             });
 
             $('#modalForm').modal('toggle');
@@ -1328,3 +1322,7 @@ function activateCommitment() {
 activateCommitment('<?php echo $type ?>');
 
 </script>
+
+<?php
+echo $this->partial('/partials/ppit-term-scripts-v2');
+?>

@@ -87,6 +87,7 @@
 			'Group' => 'Groupe',
 			'Grouped actions' => 'Actions groupées',
 			'Grouped update' => 'Modification groupée',
+			'Header' => 'Entête',
 			'Historical' => 'Historique',
 			'History' => 'Historique',
 			'Home' => 'Accueil',

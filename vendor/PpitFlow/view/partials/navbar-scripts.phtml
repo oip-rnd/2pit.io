@@ -290,99 +290,6 @@ xhttp.send();
 
 $('#modalRequestActivationForm').on('show.bs.modal', showRequestActivation);
 
-	<?php if (isset ($payPal) && $payPal) : ?>
-
-<!-- PayPal -->
-
-function showPaypal() {  
-  // Render the PayPal button
-  paypal.Button.render({
-  // Set your environment
-  env: '<?php echo $payPal['env'] ?>', // sandbox | production
-
-  // Specify the style of the button
-  style: {
-    layout: 'vertical',  // horizontal | vertical
-    size:   'medium',    // medium | large | responsive
-    shape:  'rect',      // pill | rect
-    color:  'gold'       // gold | blue | silver | white | black
-  },
-
-  // Specify allowed and disallowed funding sources
-  //
-  // Options:
-  // - paypal.FUNDING.CARD
-  // - paypal.FUNDING.CREDIT
-  // - paypal.FUNDING.ELV
-  funding: {
-    allowed: [
-      paypal.FUNDING.CARD,
-      paypal.FUNDING.CREDIT
-    ],
-    disallowed: []
-  },
-
-  // PayPal Client IDs - replace with your own
-  // Create a PayPal app: https://developer.paypal.com/developer/applications/create
-  client: {
-    sandbox: '<?php echo $payPal['id'] ?>',
-  },
-
-  payment: function (data, actions) {
-    return actions.payment.create({
-      payment: {
-        transactions: [
-          {
-            amount: {
-              total: $('#paymentAmount').val(),
-              currency: 'EUR'
-            }
-          }
-        ]
-      },
-      experience: {
-        input_fields: {
-          no_shipping: 1
-        }
-      }
-    });
-  },
-
-  onAuthorize: function (data, actions) {
-    return actions.payment.execute()
-    .then(function () {
-      var xhttp = new XMLHttpRequest(), formData = new FormData();
-      xhttp.open('GET', '<?php echo $this->url('funnel/paypal') ?>?step=confirmed', true);
-      xhttp.onload = function () {
-        if (xhttp.readyState == 4) {
-          $('#modalPaymentContent').html(xhttp.responseText);
-        }
-   	  };
-      xhttp.send(formData);
-    });
-  }
-  }, '#paypal-button-container');
-}
-
-function showPayment() {
-  var xhttp = new XMLHttpRequest();
-  xhttp.open('GET', '<?php echo $this->url('funnel/paypal') ?>', true);
-  xhttp.onload = function () {
-    if (xhttp.readyState == 4) {
-      $('#modalPaymentContent').html(xhttp.responseText);
-      showPaypal();
-    }
-  };
-  xhttp.send();
-}
-
-$('#modalPaymentForm').on('show.bs.modal', showPayment);
-
-		<?php if ($panel == 'payment') : ?>
-$('#modalPaymentForm').modal('show');
-		<?php endif;?>
-	<?php endif;?>
-
 <?php else : ?>
 
 //Profile
@@ -405,6 +312,99 @@ xhttp.onload = function () {
 };
 xhttp.send();
 });
+  <?php endif;?>
+
+  <?php if (isset ($payPal) && $payPal) : ?>
+
+<!-- PayPal -->
+
+function showPaypal() {  
+  // Render the PayPal button
+  paypal.Button.render({
+    // Set your environment
+    env: '<?php echo $payPal['env'] ?>', // sandbox | production
+
+    // Specify the style of the button
+    style: {
+      layout: 'vertical',  // horizontal | vertical
+      size:   'medium',    // medium | large | responsive
+      shape:  'rect',      // pill | rect
+      color:  'gold'       // gold | blue | silver | white | black
+    },
+
+    // Specify allowed and disallowed funding sources
+    //
+    // Options:
+    // - paypal.FUNDING.CARD
+    // - paypal.FUNDING.CREDIT
+    // - paypal.FUNDING.ELV
+    funding: {
+      allowed: [
+        paypal.FUNDING.CARD,
+        paypal.FUNDING.CREDIT
+      ],
+      disallowed: []
+    },
+
+    // PayPal Client IDs - replace with your own
+    // Create a PayPal app: https://developer.paypal.com/developer/applications/create
+    client: {
+      sandbox: '<?php echo $payPal['id'] ?>',
+    },
+
+    payment: function (data, actions) {
+      return actions.payment.create({
+        payment: {
+          transactions: [
+            {
+              amount: {
+                total: $('#paymentAmount').val(),
+                currency: 'EUR'
+              }
+            }
+          ]
+        },
+        experience: {
+         input_fields: {
+           no_shipping: 1
+          }
+        }
+      });
+    },
+
+    onAuthorize: function (data, actions) {
+      return actions.payment.execute()
+   .  then(function () {
+        var xhttp = new XMLHttpRequest(), formData = new FormData();
+        xhttp.open('GET', '<?php echo $this->url('funnel/paypal') ?>?step=confirmed', true);
+        xhttp.onload = function () {
+          if (xhttp.readyState == 4) {
+            $('#modalPaymentContent').html(xhttp.responseText);
+          }
+        };
+        xhttp.send(formData);
+      });
+    }
+  }, '#paypal-button-container');
+}
+
+function showPayment() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.open('GET', '<?php echo $this->url('funnel/paypal') ?>', true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4) {
+      $('#modalPaymentContent').html(xhttp.responseText);
+      showPaypal();
+    }
+  };
+  xhttp.send();
+}
+
+$('#modalPaymentForm').on('show.bs.modal', showPayment);
+
+    <?php if ($panel == 'modalPaymentForm') : ?>
+$('#modalPaymentForm').modal('show');
+    <?php endif;?>
   <?php endif;?>
 
 // Validate charter

@@ -1,0 +1,132 @@
+<script>
+
+<?php 
+$properties = array();
+
+foreach ($termUpdatePage as $propertyId => $property) {
+  $options = $property['options'];
+  if ((!$options || !array_key_exists('readonly', $options) || !$options['readonly']) && $property['type'] != 'title') {
+    if ($property['type'] == 'number') $properties['term-'.$propertyId] = array('type' => $property['type'], 'mandatory' => (array_key_exists('mandatory', $options)) ? $options['mandatory'] : false, 'minValue' => $property['minValue'], 'maxValue' => $property['maxValue']);
+    else $properties['term-'.$propertyId] = array('type' => $property['type'], 'mandatory' => (array_key_exists('mandatory', $options)) ? $options['mandatory'] : false, 'maxSize' => ($property['type'] == 'textarea') ? 2047 : 255);
+  }
+}
+
+$properties['term_update_time'] = array('type' => 'hidden');
+
+echo $this->partial('/partials/check-update-properties', array('entity' => 'Term', 'context' => $context, 'properties' => $properties)) 
+?>
+
+function connectTermUpdateForm(commitment_id, id, action, target)
+{
+
+<?php foreach ($properties as $propertyId => $property) : ?>
+	<?php if ($property['type'] == 'date') : ?>
+		$('#input_<?php echo $propertyId ?>').datepicker();
+	<?php endif;?>
+<?php endforeach ?>
+
+	var form = document.getElementById('ppit-form');
+	form.onsubmit = function(event) {
+		
+		event.preventDefault();
+	
+		// Check validity
+		var validity = checkTermUpdateProperties(id);
+		if (validity) {
+		
+			// Create a new FormData object.
+			var formData = new FormData();
+			
+			// Get the properties values
+<?php foreach ($properties as $propertyId => $property) : ?>
+	<?php if ($property['type'] == 'input' || $property['type'] == 'date' || $property['type'] == 'textarea' || $property['type'] == 'select' || $property['type'] == 'repository' || $property['type'] == 'number' || $property['type'] == 'email' || $property['type'] == 'phone' || $property['type'] == 'dropbox' || $property['type'] == 'hidden') : ?>
+				formData.append('<?php echo $propertyId ?>', document.getElementById('<?php echo $propertyId ?>').value);
+
+	<?php elseif ($property['type'] == 'checkbox') : ?>
+				formData.append('<?php echo $propertyId ?>', ((document.getElementById('<?php echo $propertyId ?>').checked) ? 1 : 0));
+
+	<?php elseif ($property['type'] == 'attachment') : ?>
+				var fileSelect = document.getElementById('<?php echo $propertyId ?>');
+				if (fileSelect) {
+					var files = fileSelect.files;
+					for (var i = 0; i < files.length; i++) {
+						var file = files[i];
+						formData.append('<?php echo $propertyId ?>', file, file.name);
+					}
+				}
+
+	<?php endif ?>
+
+<?php endforeach ?>
+
+			var xhttp = new XMLHttpRequest();
+			var route;
+			route = '<?php echo $this->url('commitmentTerm/update', ['type' => $type]) ?>/' + commitment_id + '/' + id;
+			if (action) route += '/' + action;
+			xhttp.open('POST', route, true);
+			// Set up a handler for when the request finishes.
+			xhttp.onload = function () {
+				if (xhttp.readyState == 4 <?php if (!$context->getConfig()['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+					document.getElementById(target).innerHTML = xhttp.responseText;
+//					filterTermList();
+					connectTermUpdateForm(id, action, target);
+					$('.action-btn').removeClass('btn-primary').addClass('btn-default');
+				}
+			};
+			xhttp.send(formData);
+		}
+		else return false;
+	}
+}
+
+function getTermInvoiceForm(id) {
+  $('#term-invoice-anchor').removeClass('btn-default').addClass('btn-danger');
+  $('#term-invoice-alert').show();
+  $('#term-invoice-anchor').click(function () { invoice(id, 'GET'); });
+}
+
+function getTermUpdate(commitment_id, id, action, target) {
+
+	var xhttp = new XMLHttpRequest();
+	var route = '<?php echo $this->url('commitmentTerm/update', ['type' => $type]) ?>/' + commitment_id + '/' + id;
+	if (action) route += '/' + action;
+
+	xhttp.open('GET', route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4) {
+          if (xhttp.status == 200) {
+			document.getElementById(target).innerHTML = xhttp.responseText;
+			
+			$(function () {
+			    $('.tip').tooltip({
+			        content: function () {
+			            return $(this).prop('title');
+			        }
+			    });
+			});
+
+            $('#input_term-quantity').change(function() { if ($('#input_term-quantity').val()) $('#input_term-amount').val(''); });
+            $('#input_term-amount').change(function() { if ($('#input_term-amount').val()) { $('#input_term-quantity').val(''); $('#input_term-unit_price').val(''); } });
+
+            $('#term-invoice-alert').hide();
+			if (id) {
+				$('#term-update-anchor').click(function () { getTermUpdate(commitment_id, id, 'update', target); });
+				$('#term-delete-anchor').click(function () { getTermUpdate(commitment_id, id, 'delete', target); });
+				$('#term-invoice-anchor').click(function () { getTermInvoiceForm(id); });
+			}
+			else $('#term-add-anchor').click(function () { getTermUpdate(commitment_id, id, 'add', target); });
+			
+			connectTermUpdateForm(commitment_id, id, action, target);
+		  }
+		}
+	}
+	xhttp.send();
+
+	// Highlight the clicked button (and only it in its class)
+	$('.action-btn').removeClass("btn-primary").addClass("btn-default");
+	if (action == 'update') $('#term-update-anchor').removeClass("btn-default").addClass("btn-primary");
+	else if (action == 'delete') $('#term-delete-anchor').removeClass("btn-default").addClass("btn-primary");
+}
+
+</script>

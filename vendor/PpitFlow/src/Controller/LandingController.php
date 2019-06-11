@@ -99,7 +99,7 @@ class LandingController extends AbstractActionController
 			else $panel = 'modalRegisterForm';
 		}
 		if ($context->isAuthenticated() && !$panel) {
-			if ($shopping_cart) $panel = 'payment';
+			if ($shopping_cart) $panel = 'modalPaymentForm';
 		}
 
 		if (!$locale) if ($account) $locale = $account->locale; else $locale = $context->getLocale();

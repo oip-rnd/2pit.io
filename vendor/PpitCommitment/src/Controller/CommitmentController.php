@@ -105,6 +105,7 @@ class CommitmentController extends AbstractActionController
     		'options' => ProductOption::getList(null, array()),
 			'pageScripts' => 'partials/ppit-commitment-scripts-v2',
 			'updatePage' => $updatePage,
+			'termUpdatePage' => $termDescription['update'],
 		));
     	
 		$view = $this->indexAction();
@@ -1665,8 +1666,11 @@ class CommitmentController extends AbstractActionController
     	$type = $this->params()->fromRoute('type');
     	$template_id = $this->params()->fromRoute('template_id');
 
-    	$template = $context->getConfig('commitment/send-message'.(($type) ? '/'.$type : ''))['templates'][$template_id];
-    	if ($template['definition'] != 'inline') $template = $context->getConfig($template['definition']);
+    	if ($context->getConfig('commitment/send-message'.(($type) ? '/'.$type : ''))) {
+	    	$template = $context->getConfig('commitment/send-message'.(($type) ? '/'.$type : ''))['templates'][$template_id];
+    		if ($template['definition'] != 'inline') $template = $context->getConfig($template['definition']);
+    	}
+    	else $template = $context->getConfig('commitment/template/generic');
 
     	$places = Place::getList([]);
     	
