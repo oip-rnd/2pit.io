@@ -310,16 +310,21 @@ class EventController extends AbstractActionController
     	$description = Event::getDescription($type);
     	$category = $this->params()->fromRoute('category');
     	$groups = $this->params()->fromQuery('groups');
+    	$groups = ($groups) ? explode(',', $groups) : [];
     	$begin = $this->params()->fromQuery('begin');
     	$end = $this->params()->fromQuery('end');
 //    	$accounts = $this->params()->fromQuery('accounts'/*, '*'*/);
     	$filters = [];
     	if ($category) $filters['category'] = $category;
 //    	$filters['account_id'] = $accounts;
-    	if ($groups) $filters['groups'] = $groups;
     	if ($begin && $end) {
-			$events = Event::getList($type, $filters, '-update_time', null);
-    		return new JsonModel(EventPlanningViewHelper::displayPlanning($description, $events, $begin, $end));
+    		$events = [];
+    		foreach ($groups as $group_id) {
+    			$filters['groups'] = $group_id;
+				$cursor = Event::getList($type, $filters, '-update_time', null);
+				foreach ($cursor as $event_id => $event) $events[$event_id] = $event;
+    		}
+	    	return new JsonModel(EventPlanningViewHelper::displayPlanning($description, $events, $begin, $end));
     	}
     	else return new JsonModel(EventPlanningViewHelper::format($description, $this->getList()->events));
     }
