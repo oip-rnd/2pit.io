@@ -711,14 +711,14 @@ class Event
     	else {
     		// Set the filters
     		foreach ($params as $propertyId => $value) {
-    			if ($value === null) $where->isNull($propertyId);
-    			elseif (in_array(substr($propertyId, 0, 4), array('min_', 'max_'))) $propertyKey = substr($propertyId, 4);
+    			if (in_array(substr($propertyId, 0, 4), array('min_', 'max_'))) $propertyKey = substr($propertyId, 4);
     			else $propertyKey = $propertyId;
     			$property = $context->getConfig('event/'.$type.'/property/'.$propertyKey);
     			if (!$property) $property = $context->getConfig('event/generic/property/'.$propertyKey);
     			if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
     			
-				if ($propertyId == 'status') $where->in('core_event.status', explode(',', $value));
+    			if ($value === null) $where->isNull($propertyId);
+    			elseif ($propertyId == 'status') $where->in('core_event.status', explode(',', $value));
     			elseif ($propertyId == 'place_identifier') {
     				if ($value == '*') $where->notEqualTo('core_place.identifier', '');
     				else $where->like('core_place.identifier', '%'.$value.'%');
