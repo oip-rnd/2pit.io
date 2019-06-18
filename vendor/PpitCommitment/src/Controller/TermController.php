@@ -59,6 +59,36 @@ class TermController extends AbstractActionController
 		));
 	}
 
+	public function indexV2Action()
+	{
+		// Retrieve the context and parameters
+		$context = Context::getCurrent();
+    	$type = $this->params()->fromRoute('type', null);
+    	$app = $this->params()->fromRoute('app', 'p-pit-engagements');
+    	$applicationName = $context->localize($context->getConfig('menus/'.$app)['labels']);
+		$types = Context::getCurrent()->getConfig('commitment/types')['modalities'];
+		$description = Term::getDescription($type);
+		
+    	// Feed the layout
+		$this->layout('/layout/core-layout');
+		$this->layout()->setVariables(array(
+			'context' => Context::getCurrent(),
+			'type' => $type,
+			'app' => $app,
+			'active' => 'application',
+			'applicationName' => $applicationName,
+			'pageScripts' => 'partials/ppit-term-scripts-v2',
+			'termProperties' => $description['properties'],
+			'termSearchPage' => $description['search'],
+			'listPage' => $description['list'],
+			'termUpdatePage' => $description['update'],
+			'termGroupPage' => $description['groupUpdate'],
+		));
+    	
+		$view = $this->indexAction();
+    	return $view;
+	}
+	
     public function getFilters($description, $params)
     {
 		$context = Context::getCurrent();
@@ -100,6 +130,11 @@ class TermController extends AbstractActionController
     	return $view;
     }
 
+    public function searchV2Action()
+    {
+    	return $this->searchAction();
+    }
+    
     public function getList()
     {
     	// Retrieve the context
@@ -138,6 +173,11 @@ class TermController extends AbstractActionController
     public function listAction()
     {
     	return $this->getList();
+    }
+
+    public function listV2Action()
+    {
+    	return $this->listAction();
     }
     
     public function exportAction()
@@ -184,6 +224,11 @@ class TermController extends AbstractActionController
     	return $view;
     }
 
+    public function detailV2Action()
+    {
+    	return $this->detailAction();
+    }
+    
     public function generateAction()
     {
     	// Retrieve the context
@@ -297,6 +342,11 @@ class TermController extends AbstractActionController
     	$view->setTerminal(true);
     	return $view;
     }
+
+    public function generateV2Action()
+    {
+    	return $this->generateAction();
+    }
     
     public function updateAction()
     {
@@ -406,6 +456,11 @@ class TermController extends AbstractActionController
     	return $view;
     }
 
+    public function updateV2Action()
+    {
+    	return $this->updateAction();
+    }
+    
     public function groupAction()
     {
     	// Retrieve the context
@@ -484,6 +539,11 @@ class TermController extends AbstractActionController
     	$view->setTerminal(true);
     	return $view;
     }
+
+    public function groupV2Action()
+    {
+    	return $this->groupAction();
+    }
     
     public function debitAction()
     {
@@ -510,6 +570,11 @@ class TermController extends AbstractActionController
     	return $view;
     }
 
+    public function debitV2Action()
+    {
+    	return $this->debitAction();
+    }
+    
     public function generateDebit($terms, $interaction_id, $sum, $collection_date, $config)
     {
     	// Retrieve the context
@@ -646,7 +711,7 @@ class TermController extends AbstractActionController
 		$view->setTerminal(true);
 		return $view;
     }
-
+    
     public function checkDepositAction()
     {
     	// Retrieve the context
@@ -670,6 +735,11 @@ class TermController extends AbstractActionController
     	));
     	$view->setTerminal(true);
     	return $view;
+    }
+
+    public function checkDepositV2Action()
+    {
+    	return $this->checkDepositAction();
     }
     
     public function checkDepositSsmlAction()

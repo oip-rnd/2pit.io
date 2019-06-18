@@ -83,7 +83,8 @@ class EventController extends AbstractActionController
     	$type = $this->params()->fromRoute('type', $context->getConfig('event/type')['default']);
     	$category = $this->params()->fromRoute('category');
     	$app = $this->params()->fromRoute('app');
-    
+    	$group_identifier = $this->params()->fromQuery('group');
+    	$group_id = Account::get($group_identifier, 'identifier', 'group', 'type')->id;
     	$applicationId = ($app) ? $app : 'synapps';
     	$applicationName = $context->localize($context->getConfig('menus/'.$applicationId)['labels']);
 
@@ -104,6 +105,7 @@ class EventController extends AbstractActionController
     		'applicationId' => $applicationId,
     		'applicationName' => $applicationName,
     		'category' => $category,
+    		'group' => $group_id,
 			'content_description' => $description,
     		'planningMap' => $planningMap,
 			'configProperties' => Account::getConfig('teacher'),
@@ -305,21 +307,29 @@ class EventController extends AbstractActionController
     {
     	$type = $this->params()->fromRoute('type');
     	$description = Event::getDescription($type);
+    	$category = $this->params()->fromRoute('category');
+    	$groups = $this->params()->fromQuery('groups');
     	$begin = $this->params()->fromQuery('begin');
     	$end = $this->params()->fromQuery('end');
-    	$accounts = $this->params()->fromQuery('accounts', '*');
-    	if ($accounts) {
-			$events = Event::getList($type, ($accounts == '*') ? [] : ['account_id' => $accounts], '-update_time', null);
+//    	$accounts = $this->params()->fromQuery('accounts'/*, '*'*/);
+    	$filters = [];
+    	if ($category) $filters['category'] = $category;
+//    	$filters['account_id'] = $accounts;
+    	if ($groups) $filters['groups'] = $groups;
+    	if ($begin && $end) {
+			$events = Event::getList($type, $filters, '-update_time', null);
+    		return new JsonModel(EventPlanningViewHelper::displayPlanning($description, $events, $begin, $end));
     	}
-    	if ($begin && $end) return new JsonModel(EventPlanningViewHelper::displayPlanning($description, $events, $begin, $end));
     	else return new JsonModel(EventPlanningViewHelper::format($description, $this->getList()->events));
     }
-/*
+
     public function concurrenciesAction()
     {
     	$type = $this->params()->fromRoute('type');
     	$description = Event::getDescription($type);
-    	$category = $this->params()->fromRoute('category');
+    	$category = $this->params()->fromRoute('category'); // Deprecated
+    	$groups = $this->params()->fromQuery('groups');
+    	$groups = ($groups) ? explode(',', $groups) : [];
     	$accountIds = explode(',', $this->params()->fromQuery('accounts'));
         $begin = $this->params()->fromQuery('begin');
     	$end = $this->params()->fromQuery('end');
@@ -328,8 +338,8 @@ class EventController extends AbstractActionController
     		if ($account_id) $accounts[$account_id] = Account::get($account_id)->getProperties();
     	}
 		$events = Event::getList($type, [], '-update_time', null, null);
-    	return new JsonModel(EventPlanningViewHelper::displayConcurrencies($description, $category, $accounts, $events, $begin, $end));
-    }*/
+    	return new JsonModel(EventPlanningViewHelper::displayConcurrencies($description, $groups, $accounts, $events, $begin, $end));
+    }
     
     public function exportAction()
     {

@@ -195,10 +195,10 @@ $this->headTitle($title);
 <script>
 
 <?php echo $this->partial('/ppit-core/event/calendar-scripts') ?>
-<?php echo $this->partial('/ppit-core/account/event-account-scripts', ['type' => $content_description['options']['account_type'], 'category' => $category]) ?>
+<?php echo $this->partial('/ppit-core/account/event-account-scripts', ['type' => $content_description['options']['account_type'], 'category' => $category, 'group' => $group]) ?>
 
 <?php foreach ($context->getConfig('menus/'.(($app) ? $app : 'synapps'))['entries'] as $entryId => $entryDef) : ?>
-$('#<?php echo $entryId ?>-anchor').click(function () { $(location).attr('href', '<?php echo $this->url($entryDef['route'], $entryDef['params']) ?>'); });
+$('#<?php echo $entryId ?>-anchor').click(function () { $(location).attr('href', '<?php echo $this->url($entryDef['route'], $entryDef['params']); if (array_key_exists('urlParams', $entryDef)) echo $entryDef['urlParams']; ?>'); });
 <?php endforeach;?>
 
 activateCalendar();

@@ -14,6 +14,9 @@ if (!$mdbCss) $mdbCss = 'MDB-Pro';
 	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 	
 	ga('create', '<?php echo $header['analytics-id']?>', 'auto');
+    <?php if (array_key_exists('sendHitTask', $context->getConfig()['analytics']) && !$context->getConfig()['analytics']['sendHitTask']) : ?>
+    ga('set', 'sendHitTask', null);
+    <?php endif;?>
 	ga('send', 'pageview');
 	</script>
 	<!--/Google Analytics-->
@@ -31,7 +34,6 @@ if (!$mdbCss) $mdbCss = 'MDB-Pro';
 
 	<!-- Font Awesome -->
     <link href="<?php echo $this->basePath('fontawesome-free-5.2.0-web/css/all.min.css" rel="stylesheet') ?>">
-<!--	<link href="<?php echo $this->basePath('MDB-Pro/css/bootstrap.min.css" rel="stylesheet') ?>"> -->
     <link rel="stylesheet" href="<?php echo $this->basePath('/bootstrap-4-2/css/bootstrap.min.css') ?>">
 
 	<!-- Material Design Bootstrap -->

@@ -1,0 +1,134 @@
+<!-- 
+/**
+ * PpitAccounting V1.0 (https://github.com/p-pit/PpitAccounting)
+ *
+ * @link      https://github.com/p-pit/PpitAccounting
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitAccounting/blob/master/license.txt GNU-GPL license
+ */
+-->
+
+<style>
+table td { 
+  font-size: 0.9rem;
+}
+</style>
+
+<div class="col-md-12">
+    
+  <input type="hidden" id="term-number" value="<?php echo count($terms) ?>" />
+
+  <table class="table table-sm table-hover">
+    <tr class="table-info">
+      <th>&nbsp;</th>
+      <th>&nbsp;</th>
+	
+<?php $first = true; foreach ($listPage['properties'] as $propertyId => $property) : ?>
+
+      <th align="center">
+        <a type="button" class="btn btn-sm sort_anchor <?php if ($major == $propertyId) echo 'btn-secondary active '.(($major == $propertyId) ? (($dir == 'ASC') ? 'sort_anchor_up' : 'sort_anchor_down') : '') ?>" role="button" id="<?php echo $propertyId ?>-anchor">
+          <span><?php echo $context->localize($property['labels']) ?></span>
+  <?php if ($major == $propertyId) : ?>
+          <i class="fas fa-caret-<?php echo ($dir == 'ASC') ? 'up' : 'down' ?>"></i>
+  <?php endif ?>
+        </a>
+      </th>
+<?php endforeach;?>
+      <th>&nbsp;</th>
+    </tr>
+
+	<tr>
+      <td>
+        <input type="checkbox" class="term-checkbox" id="term-checkbox" title="<?php echo $this->translate('Check all', 'ppit-core', $context->getLocale()) ?>"></input>
+      </td>
+
+      <td class="text-center">
+        <div class="input-group input-group-sm">
+          <button type="button" class="btn btn-sm btn-outline-primary index-btn term-group-anchor" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Grouped actions', 'ppit-core', $context->getLocale())?>" id="term-group-anchor" disabled="disabled">
+            <span class="fas fa-list" id="group-glyphicon"></span>
+          </button>
+        </div>
+      </td>
+
+	<?php $total=0; foreach($terms as $term) $total += $term->amount; ?>
+      <td>&nbsp;</td>
+      <td colspan="<?php echo count($listPage['properties']) - 1 ?>" class="text-right <?php if ($mode == 'todo' && $total > 0) echo 'text-danger' ?>">
+        <?php echo $this->translate('Total', 'ppit-core', $context->getLocale()) ?>: 
+        <?php echo $context->formatFloat($total, 2) ?>
+      </td>		
+      <th>&nbsp;</th>
+	</tr>
+
+<?php $i = 0; foreach ($terms as $term) : ?>
+		
+    <tr class="term">
+      <td>
+        <input type="checkbox" class="term-checkbox" id="term-checkbox_<?php echo $i ?>" />
+      </td>
+
+      <td>
+        <input type="hidden"  id="term_<?php echo $i ?>" value="<?php echo $term->id ?>" />
+        <div class="input-group input-group-sm">
+          <button type="button" class="btn btn-sm btn-outline-primary index-btn term-detail-anchor" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Detail', 'ppit-core', $context->getLocale())?>" id="term-detail-anchor_<?php echo $term->id ?>">
+            <i class="fas fa-search" id="<?php echo $term->id ?>-glyphicon"></i>
+          </button>
+        </div>
+      </td>
+
+  <?php foreach ($listPage['properties'] as $propertyId => $property) : ?>
+
+    <?php if ($propertyId == 'place_id') : ?>
+      <td><?php if ($term->properties[$propertyId]) echo $places[$term->properties[$propertyId]]->caption ?></td>
+
+    <?php elseif ($propertyId == 'invoice_account_id') : ?>
+      <td><?php echo $term->properties['invoice_account_name'] ?></td>
+
+    <?php elseif ($propertyId == 'name') : ?>
+      <td><?php echo $term->name ?></td>
+
+    <?php elseif ($property['type'] == 'text') : ?>
+      <td><?php echo $term->properties[$propertyId] ?></td>
+
+    <?php elseif ($property['type'] == 'select') : ?>
+      <td><?php echo $property['modalities'][$term->properties[$propertyId]][$context->getLocale()] ?></td>
+
+    <?php elseif ($property['type'] == 'date') : ?>
+      <td><?php echo $context->decodeDate($term->properties[$propertyId]) ?></td>
+
+    <?php elseif ($property['type'] == 'number') : ?>
+      <td style="text-align: right"><?php echo $context->formatFloat($term->properties[$propertyId], 2) ?></td>
+
+    <?php else : ?>
+      <td><?php echo $term->properties[$propertyId] ?></td>
+
+    <?php endif;?>
+		
+  <?php endforeach;?>
+	
+      <td>
+  <?php if ($term->document) : ?>
+        <a class="fas fa-paperclip" href="<?php echo $this->url('commitment/dropboxLink', array('document' => $term->document)) ?>" title="<?php echo $this->translate('Attachment', 'ppit-document', $context->getLocale()) ?>" target=".blank"></a>
+  <?php endif;?>
+      </td>
+    </tr>
+	
+<?php $i++; endforeach; ?>
+
+    <tr>
+      <td>
+        <input type="checkbox" class="term-checkbox" id="down-term-checkbox" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Check all', 'ppit-core', $context->getLocale()) ?>"></input>
+      </td>
+
+      <td style="text-align: center">
+        <div class="input-group input-group-sm">
+          <button type="button" class="btn btn-sm btn-outline-primary index-btn term-group-anchor" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Grouped actions', 'ppit-core', $context->getLocale())?>" id="down-term-group-anchor">
+            <i class="fas fa-list" id="group-glyphicon"></i>
+          </button>
+        </div>
+      </td>
+      <td>&nbsp;</td>
+      <td colspan="<?php echo count($listPage['properties']) - 1 ?>">&nbsp;</td>		
+      <td>&nbsp;</td>
+	</tr>
+  </table>
+</div>

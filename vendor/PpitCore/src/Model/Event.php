@@ -35,6 +35,7 @@ class Event
 			'place_id' => 			['entity' => 'core_event', 'column' => 'place_id'],
 			'place_caption' => 		['entity' => 'core_place', 'column' => 'caption'],
 			'account_id' =>			['entity' => 'core_event', 'column' => 'account_id'],
+			'groups' =>				['entity' => 'core_event', 'column' => 'groups'],
 			'account_status' =>		['entity' => 'core_account', 'column' => 'status'],
 			'n_fn' => 				['entity' => 'core_vcard', 'column' => 'n_fn'],
 			'n_first' => 			['entity' => 'core_vcard', 'column' => 'n_first'],
@@ -107,6 +108,7 @@ class Event
 	public $type;
 	public $place_id;
 	public $account_id;
+	public $groups;
 	public $vcard_id; // Deprecated
 	public $category;
 	public $subcategory;
@@ -285,6 +287,10 @@ class Event
 				$property['modalities'] = array();
 				foreach (Account::getList($property['account_type'], [], '+name', null) as $account) $property['modalities'][$account->id] = ['default' => $account->n_fn.' - '.$account->email];
 			}
+			elseif ($propertyId == 'groups') {
+				$property['modalities'] = array();
+				foreach (Account::getList('group', [], '+name', null) as $group) $property['modalities'][$group->id] = ['default' => $group->name];
+			}
 			elseif ($propertyId == 'matched_accounts') {
 				$property['modalities'] = array();
 				foreach ($accounts as $account) $property['modalities'][$account->id] = ['default' => $account->n_fn.' - '.$account->email];
@@ -404,6 +410,7 @@ class Event
         $this->type = (isset($data['type'])) ? $data['type'] : null;
         $this->place_id = (isset($data['place_id'])) ? $data['place_id'] : null;
         $this->account_id = (isset($data['account_id'])) ? $data['account_id'] : null;
+        $this->groups = (isset($data['groups'])) ? $data['groups'] : null;
         $this->vcard_id = (isset($data['vcard_id'])) ? $data['vcard_id'] : null;
         $this->category = (isset($data['category'])) ? $data['category'] : null;
         $this->subcategory = (isset($data['subcategory'])) ? $data['subcategory'] : null;
@@ -509,6 +516,7 @@ class Event
     	$data['type'] = $this->type;
     	$data['place_id'] = (int) $this->place_id;
     	$data['account_id'] = (int) $this->account_id;
+    	$data['groups'] = $this->groups;
     	$data['vcard_id'] = (int) $this->vcard_id;
     	$data['category'] = $this->category;
     	$data['subcategory'] = $this->subcategory;
@@ -991,6 +999,10 @@ class Event
 		if (array_key_exists('account_id', $data)) {
 			$account_id = (int) $data['account_id'];
 			if ($this->account_id != $account_id) $auditRow['account_id'] = $this->account_id = $account_id;
+		}
+		if (array_key_exists('groups', $data)) {
+			$groups = $data['groups'];
+			if ($this->groups != $groups) $auditRow['groups'] = $this->groups = $groups;
 		}
 		if (array_key_exists('vcard_id', $data)) { // Depreciated
 			$vcard_id = (int) $data['vcard_id'];

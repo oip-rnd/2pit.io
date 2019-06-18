@@ -203,10 +203,13 @@ class AccountController extends AbstractActionController
 		// Retrieve the parameters and the panel configuration
 		$entry = $this->params()->fromRoute('entry');
 		$type = $this->params()->fromRoute('type', null);
+		$group = $this->params()->fromQuery('group');
 		$configProperties = Account::getConfig($type);
 		$searchPage = Account::getConfigSearch($type, $configProperties);
 		$eventAccountSearchPage = $context->getConfig('core_account/event_account_search/'.$type);
 		if (!$eventAccountSearchPage) $eventAccountSearchPage = $context->getConfig('core_account/event_account_search/generic');
+
+		$groups = Account::getList('group', [], '+name', null);
 		
 		$view = new ViewModel(array(
 			'context' => $context,
@@ -214,6 +217,8 @@ class AccountController extends AbstractActionController
 			'places' => Place::getList(array()),
 			'entry' => $entry,
 			'type' => $type,
+			'default_group_id' => $group,
+			'groups' => $groups,
 			'searchPage' => $searchPage,
 			'eventAccountSearchPage' => $eventAccountSearchPage,
 		));
@@ -437,12 +442,14 @@ class AccountController extends AbstractActionController
 		$event_category = $this->params()->fromQuery('event_category');
 		$filters = array();
     	foreach ($eventAccountSearchPage['properties'] as $propertyId => $unused) {
-    		$property = ($this->params()->fromQuery($propertyId, null));
-    		if ($property !== null) $filters[$propertyId] = $property;
-    		$min_property = ($this->params()->fromQuery('min_'.$propertyId, null));
-    		if ($min_property !== null) $filters['min_'.$propertyId] = $min_property;
-    		$max_property = ($this->params()->fromQuery('max_'.$propertyId, null));
-    		if ($max_property !== null) $filters['max_'.$propertyId] = $max_property;
+    		if ($propertyId != 'groups') { // Restrict group members on the SQL resulting list and not as an SQL filter
+	    		$property = ($this->params()->fromQuery($propertyId, null));
+	    		if ($property !== null) $filters[$propertyId] = $property;
+	    		$min_property = ($this->params()->fromQuery('min_'.$propertyId, null));
+	    		if ($min_property !== null) $filters['min_'.$propertyId] = $min_property;
+	    		$max_property = ($this->params()->fromQuery('max_'.$propertyId, null));
+	    		if ($max_property !== null) $filters['max_'.$propertyId] = $max_property;
+    		}
     	}
 
     	$major = 'name'; // ($this->params()->fromQuery('major', $context->getConfig('core_account/'.$type)['order']));
@@ -450,17 +457,20 @@ class AccountController extends AbstractActionController
 
     	$accounts = Account::getList($type, $filters, '+name', null);
 
-		if ($type == 'teacher') {
-			$group = Account::get($event_category, 'identifier', 'group', 'type');
-			$members = [];
-			if ($group) {
-				foreach ($group->members as $member_id => $member) {
-					if ($member->type == $type && array_key_exists($member_id, $accounts)) $members[$member_id] = $member;
+		$members = [];
+    	if ($type == 'teacher' && $this->params()->fromQuery('groups')) {
+			$groups = explode(',', $this->params()->fromQuery('groups'));
+			foreach ($groups as $groupId) {
+				$group = Account::get($groupId);
+				if ($group) {
+					foreach ($group->members as $member_id => $member) {
+						if ($member->type == $type && array_key_exists($member_id, $accounts)) $members[$member_id] = $member;
+					}
 				}
 			}
-			$accounts = $members;
 		}
-		
+		$accounts = $members;
+
 		// Retrieve the per account planned hours 
 		foreach ($accounts as $account) $account->properties['planned'] = 0;
 		$events = Event::getList('calendar', ['category' => $event_category], '-update_time', null);
@@ -585,15 +595,17 @@ class AccountController extends AbstractActionController
 			$groups[$group->id] = array('identifier' => $group->identifier, 'name' => $group->name);
 		}
 
+		$content = array('data' => array('selection' => []));
+		
 		// Retrieve the selected list of accounts and provide a json-like array of the data for the view layer
-    	$accountIds = explode(',', $this->params()->fromQuery('accounts'));
+    	$accountIds = ($this->params()->fromQuery('accounts')) ? explode(',', $this->params()->fromQuery('accounts')) : [];
 		$accounts = array();
 		foreach ($accountIds as $accountId) {
 			$account = Account::get($accountId);
 			$accounts[] = $account;
 			$content['data']['selection'][$account->id] = $account->properties;
 		}
-	
+
 		// Instanciate the csrf form
 		$csrfForm = new CsrfForm();
 		$csrfForm->addCsrfElement('csrf');
@@ -606,7 +618,6 @@ class AccountController extends AbstractActionController
 			if ($csrfForm->isValid()) { // CSRF check
 				$selectedGroup = $request->getPost('group_id');
 				$groupAccount = GroupAccount::instanciate();
-				$content = array('data' => array());
 				$content['data']['group_id'] = $selectedGroup;
 				foreach ($accounts as $account) {
 					$content['data']['account_id'] = $account->id;

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <!-- Header -->
 <?php echo $this->partial('/partials/mdbootstrap-header') ?>
@@ -300,6 +300,9 @@ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
 ga('create', 'UA-82264844-1', 'auto');
+<?php if (array_key_exists('sendHitTask', $context->getConfig()['analytics']) && !$context->getConfig()['analytics']['sendHitTask']) : ?>
+ga('set', 'sendHitTask', null);
+<?php endif;?>
 ga('send', 'pageview');
 <?php endif;?>
 

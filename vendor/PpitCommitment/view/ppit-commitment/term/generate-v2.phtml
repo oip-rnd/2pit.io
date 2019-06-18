@@ -1,0 +1,163 @@
+<!-- Form header -->
+<?php echo $this->partial('/partials/form-header', array(
+		'formId' => 'generate-term-form',
+ 		'update_time' => $term->update_time,
+		'message' => $message,
+		'error' => $error,
+		'csrfForm' => $csrfForm,
+		'context' => $context,
+));
+?>
+		<div class="form-group">
+			<div class="col-sm-5">&nbsp;</div>
+			<div class="col-sm-7">
+				<input name="submit" type="submit" id="up-submit-button" class="btn btn-warning" value="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale()) ?>">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-5 control-label"><?php echo $this->translate('Commitment', 'ppit-commitment', $context->getLocale()) ?></label>
+			<div class="col-sm-7">
+				<input class="form-control" value="<?php echo $term->commitment_caption ?>" disabled="disabled" />
+			</div>
+		</div>
+
+        <div class="form-group">
+          <label class="col-sm-5 control-label"><?php echo $this->translate('Invoice account', 'ppit-commitment', $context->getLocale()) ?></label>
+          <div class="col-sm-7">
+            <select class="form-control" id="term-invoice_account_id">
+              <option />
+<?php foreach ($accounts as $account) : ?>
+              <option value="<?php echo $account->id ?>"><?php echo $account->name ?></option>
+<?php endforeach;?>
+            </select>
+          </div>
+        </div>
+
+		<div class="form-group" id="number_of_terms-group">
+			<label class="col-sm-5 control-label">* <?php echo $this->translate('Number of terms', 'ppit-commitment', $context->getLocale()) ?></label>
+			<div class="col-sm-7">
+				<input class="form-control" id="number_of_terms" />
+			</div>
+			<div class="col-sm-12"><p class="help-block" id="number_of_terms-error"></p></div>
+		</div>
+
+		<div class="form-group" id="input_first_term_date-group">
+			<label class="col-sm-5 control-label">* <?php echo $this->translate('First term date', 'ppit-commitment', $context->getLocale()) ?></label>
+			<div class="col-sm-7">
+				<input type="hidden" id="first_term_date" />
+				<input class="form-control" id="input_first_term_date" />
+			</div>
+			<div class="col-sm-12"><p class="help-block" id="input_first_term_date-error"></p></div>
+		</div>
+
+		<div class="form-group" id="periodicity-group">
+			<label class="col-sm-5 control-label"><?php echo $this->translate('Days between two terms', 'ppit-commitment', $context->getLocale()) ?></label>
+			<div class="col-sm-7">
+				<input class="form-control" id="periodicity" />
+			</div>
+			<div class="col-sm-12"><p class="help-block" id="periodicity-error"></p></div>
+		</div>
+
+      <div class="form-group" id="periodicity-group">
+        <label class="col-sm-5 control-label"><?php echo $this->translate('Or the same day each month', 'ppit-commitment', $context->getLocale()) ?></label>
+        <div class="col-sm-7">
+          <input type="checkbox" id="same_day_of_month" class="form-control">
+        </div>
+      </div>
+
+<?php $status = $termProperties['status'] ?>
+    <div class="form-group">
+      <label class="col-sm-5 control-label">* <?php echo $context->localize($status['labels']) ?></label>
+      <div class="col-sm-7">
+        <select class="form-control" id="term-status">
+          <option />
+<?php foreach ($status['modalities'] as $modalityId => $modality) : ?>
+          <option value="<?php echo $modalityId ?>" <?php if ($modalityId == $term->status) echo 'selected="selected"' ?>><?php echo $context->localize($modality) ?>
+<?php endforeach;?>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group" id="amountToDivide-group">
+      <label class="col-sm-5 control-label">* <?php echo $this->translate('Tax incl. amount to divide', 'ppit-commitment', $context->getLocale()) ?></label>
+      <div class="col-sm-7">
+        <input class="form-control" id="amountToDivide" value="<?php echo ($amountToDivide) ? $context->formatFLoat($amountToDivide, 2) : '' ?>" />
+      </div>
+      <div class="col-sm-12"><p class="help-block" id="amountToDivide-error"></p></div>
+    </div>
+
+    <div class="form-group" id="quantityToDivide-group">
+      <label class="col-sm-5 control-label">* <?php echo $this->translate('Or Quantity to divide', 'ppit-commitment', $context->getLocale()) ?></label>
+      <div class="col-sm-7">
+        <input class="form-control" id="quantityToDivide" value="<?php echo ($quantityToDivide) ? $context->formatFLoat($quantityToDivide, 2)  : '' ?>" />
+      </div>
+      <div class="col-sm-12"><p class="help-block" id="quantityToDivide-error"></p></div>
+    </div>
+
+    <div class="form-group" id="term-unit_price-group">
+      <label class="col-sm-5 control-label">* <?php echo $this->translate('Tax excl. unit price', 'ppit-commitment', $context->getLocale()) ?></label>
+      <div class="col-sm-7">
+        <input class="form-control" id="term-unit_price" value="<?php echo ($unit_price) ? $context->formatFLoat($unitPrice, 2)  : '' ?>" />
+      </div>
+      <div class="col-sm-12"><p class="help-block" id="term-unit_price-error"></p></div>
+    </div>
+
+<?php $meansOfPayment = $termProperties['means_of_payment'] ?>
+		<div class="form-group">
+			<label class="col-sm-5 control-label">* <?php echo $context->localize($meansOfPayment['labels']) ?></label>
+			<div class="col-sm-7">
+				<select class="form-control" id="means_of_payment">
+					<option />
+<?php foreach ($meansOfPayment['modalities'] as $modalityId => $modality) : ?>
+					<option value="<?php echo $modalityId ?>" <?php if ($modalityId == $term->default_means_of_payment) echo 'selected="selected"' ?>><?php echo $context->localize($modality) ?>
+<?php endforeach;?>
+				</select>
+			</div>
+		</div>
+
+<?php foreach ($termGenerateConfig as $propertyId => $property) : ?>
+
+    <div class="form-group" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_term-' : 'term-').$propertyId ?>_group">
+      <label class="col-sm-5 control-label">
+        <?php echo $property['labels'][$context->getLocale()] ?>
+      </label>
+      <div class="col-sm-7">
+
+  <?php if ($property['type'] == 'date') : ?>
+        <input type="hidden" id="term-<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
+        <input class="form-control" id="input_term-<?php echo $propertyId ?>" value="<?php echo $context->decodeDate($term->properties[$propertyId]) ?>" />
+
+  <?php elseif ($property['type'] == 'number') : ?>
+        <input type="hidden" id="term-<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
+        <input class="form-control" id="input_term-<?php echo $propertyId ?>" value="<?php echo ($term->properties[$propertyId]) ? $context->formatFloat($term->properties[$propertyId], 2) : '' ?>" />
+
+  <?php elseif ($property['type'] == 'textarea') : ?>
+        <textarea class="form-control" id="term-<?php echo $propertyId ?>"><?php echo $term->properties[$propertyId] ?></textarea>
+
+  <?php elseif ($property['type'] == 'select') : ?>
+        <select class="form-control" id="term-<?php echo $propertyId ?>">
+            <option />
+    <?php foreach ($property['modalities'] as $key => $labels) : ?>
+            <option value="<?php echo $key ?>" <?php if ($term->properties[$propertyId] == $key) echo 'selected="selected"' ?>><?php echo $labels[$context->getLocale()] ?></option>
+    <?php endforeach;?>
+        </select>
+   
+  <?php else : ?>
+        <input class="form-control" id="term-<?php echo $propertyId ?>" value="<?php echo $term->properties[$propertyId] ?>" />
+
+  <?php endif;?>
+      </div>
+      <div class="col-sm-12"><p class="help-block" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_term-' : 'term-').$propertyId ?>_error"></p></div>
+    </div>
+
+<?php endforeach;?>
+
+		<div class="form-group">
+			<div class="col-sm-5">&nbsp;</div>
+			<div class="col-sm-7">
+				<input name="submit" type="submit" id="submit-button" class="btn btn-warning" value="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale()) ?>">
+			</div>
+		</div>
+		
+	</form>

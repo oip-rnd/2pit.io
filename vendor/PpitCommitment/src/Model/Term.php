@@ -5,6 +5,7 @@ use PpitCore\Model\Account;
 use PpitCore\Model\Context;
 use PpitCore\Model\Generic;
 use PpitCore\Model\Place;
+use PpitCore\Model\Vcard;
 use Zend\Db\Sql\Where;
 use Zend\InputFilter\InputFilter;
 use Zend\InputFilter\InputFilterInterface;
@@ -17,6 +18,7 @@ class Term
 			'commitment' => 		['table' => 'commitment'],
 			'core_account' => 		['table' => 'core_account'],
 			'core_place' => 		['table' => 'core_place'],
+			'core_vcard' => 		['table' => 'core_vcard'],
 			'invoice_account' => 	['table' => 'core_account', 'foreign_key' => 'invoice_account_id'],
 		),
 		'properties' => array(
@@ -26,6 +28,9 @@ class Term
 			'account_status' => 			['entity' => 'core_account', 'column' => 'status'],
 			'name' => 						['entity' => 'core_account', 'column' => 'name'],
 			'account_identifier' => 		['entity' => 'core_account', 'column' => 'identifier'],
+			'email' => 						['entity' => 'core_account', 'column' => 'email'],
+			'tel_work' => 					['entity' => 'core_vcard', 'column' => 'tel_work'],
+			'tel_cell' => 					['entity' => 'core_vcard', 'column' => 'tel_cell'],
 			'commitment_caption' => 		['entity' => 'commitment', 'column' => 'caption'],
 			'place_id' => 					['entity' => 'commitment', 'column' => 'place_id'],
 			'place_identifier' => 			['entity' => 'core_place', 'column' => 'place_identifier'],
@@ -290,6 +295,9 @@ class Term
 	
 	// Joined properties
 	public $name;
+	public $email;
+	public $tel_work;
+	public $tel_cell;
 	public $account_identifier;
 	public $commitment_caption;
 	public $place_id;
@@ -404,6 +412,9 @@ class Term
 		
 		// Joined properties
 		$this->name = (isset($data['name'])) ? $data['name'] : null;
+		$this->email = (isset($data['email'])) ? $data['email'] : null;
+		$this->tel_work = (isset($data['tel_work'])) ? $data['tel_work'] : null;
+		$this->tel_cell = (isset($data['tel_cell'])) ? $data['tel_cell'] : null;
 		$this->account_identifier = (isset($data['account_identifier'])) ? $data['account_identifier'] : null;
 		$this->commitment_caption = (isset($data['commitment_caption'])) ? $data['commitment_caption'] : null;
 		$this->place_id = (isset($data['place_id'])) ? $data['place_id'] : null;
@@ -506,6 +517,9 @@ class Term
 		$data['invoice_n_last'] = $this->invoice_n_last;
 		
 		$data['name'] = $this->name;
+		$data['email'] = $this->email;
+		$data['tel_work'] = $this->tel_work;
+		$data['tel_cell'] = $this->tel_cell;
 		$data['account_identifier'] = $this->account_identifier;
 		$data['commitment_caption'] = $this->commitment_caption;
 		$data['place_caption'] = $this->place_caption;
@@ -595,6 +609,9 @@ class Term
 		if (!$data['collection_date']) $data['collection_date'] = '9999-12-31';
 		$data['audit'] = json_encode($data['audit']);
 		unset($data['name']);
+		unset($data['email']);
+		unset($data['tel_work']);
+		unset($data['tel_cell']);
 		unset($data['account_identifier']);
 		unset($data['commitment_caption']);
 		unset($data['place_caption']);
@@ -673,6 +690,7 @@ class Term
 		$select = Term::getTable()->getSelect()
 			->join('commitment', 'commitment.id = commitment_term.commitment_id', ['commitment_caption' => 'caption', 'commitment_property_1' => 'property_1', 'commitment_property_2' => 'property_2', 'commitment_property_3' => 'property_3', 'commitment_property_4' => 'property_4', 'commitment_property_5' => 'property_5', 'commitment_property_6' => 'property_6', 'commitment_property_7' => 'property_7', 'commitment_property_8' => 'property_8', 'commitment_property_9' => 'property_9', 'commitment_property_10' => 'property_10', 'commitment_property_11' => 'property_11', 'commitment_property_12' => 'property_12', 'commitment_property_13' => 'property_13', 'commitment_property_14' => 'property_14', 'commitment_property_15' => 'property_15', 'commitment_property_16' => 'property_16', 'commitment_property_17' => 'property_17', 'commitment_property_18' => 'property_18', 'commitment_property_19' => 'property_19', 'commitment_property_20' => 'property_20', 'commitment_property_21' => 'property_21', 'commitment_property_22' => 'property_22', 'commitment_property_23' => 'property_23', 'commitment_property_24' => 'property_24', 'commitment_property_25' => 'property_25', 'commitment_property_26' => 'property_26', 'commitment_property_27' => 'property_27', 'commitment_property_28' => 'property_28', 'commitment_property_29' => 'property_29', 'commitment_property_30' => 'property_30'], 'left')
 			->join('core_account', 'core_account.id = commitment.account_id', ['account_status' => 'status', 'place_id', 'name', 'account_identifier' => 'identifier', 'default_means_of_payment', 'transfer_order_id', 'transfer_order_date', 'bank_identifier', 'account_date_1' => 'date_1', 'account_date_2' => 'date_2', 'account_date_3' => 'date_3', 'account_date_4' => 'date_4', 'account_date_5' => 'date_5', 'account_property_1' => 'property_1', 'account_property_2' => 'property_2', 'account_property_3' => 'property_3', 'account_property_4' => 'property_4', 'account_property_5' => 'property_5', 'account_property_6' => 'property_6', 'account_property_7' => 'property_7', 'account_property_8' => 'property_8', 'account_property_9' => 'property_9', 'account_property_10' => 'property_10', 'account_property_11' => 'property_11', 'account_property_12' => 'property_12', 'account_property_13' => 'property_13', 'account_property_14' => 'property_14', 'account_property_15' => 'property_15', 'account_property_16' => 'property_16'], 'left')
+			->join('core_vcard', 'core_vcard.id = core_account.contact_1_id', ['email', 'tel_work', 'tel_cell'], 'left')
 			->join('core_place', 'core_account.place_id = core_place.id', ['place_caption' => 'caption', 'place_identifier' => 'identifier'], 'left')
 			->join(['invoice_account' => 'core_account'], 'invoice_account.id = commitment_term.invoice_account_id', ['invoice_account_name' => 'name'], 'left')
 			->order($order);
@@ -746,7 +764,6 @@ class Term
 			$term->commitment_caption = $commitment->caption;
 			$account = Account::get($commitment->account_id);
 			if ($account) {
-				$term->name = $account->name;
 				
 				if (!$term->invoice_identifier) $term->invoice_identifier = $commitment->invoice_identifier;
 				$term->commitment_property_1 = $commitment->property_1;
@@ -780,6 +797,7 @@ class Term
 				$term->commitment_property_29 = $commitment->property_29;
 				$term->commitment_property_30 = $commitment->property_30;
 				
+				$term->name = $account->name;
 				$term->account_status = $account->status;
 	    		$term->account_identifier = $account->identifier;
 				$term->default_means_of_payment = $account->default_means_of_payment;
@@ -808,6 +826,13 @@ class Term
 		    	$term->account_property_14 = $account->property_14;
 		    	$term->account_property_15 = $account->property_15;
 		    	$term->account_property_16 = $account->property_16;
+		    	
+		    	if ($account->contact_1_id) {
+		    		$vcard = Vcard::get($account->contact_1_id);
+		    		$term->email = $vcard->email;
+		    		$term->tel_work = $vcard->tel_work;
+		    		$term->tel_cell = $vcard->tel_cell;
+		    	}
 			}
 			if ($term->invoice_account_id) {
 				$invoiceAccount = Account::get($term->invoice_account_id);

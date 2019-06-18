@@ -11,10 +11,12 @@ function getSearchParams(prefix) {
   let params = '?', todo = true;
 
   $('.search_input_select').each(function () {
-    let propertyId = $(this).attr('id').split('-')[1];
-    let checked = $('#' + prefix + 'search_check_value-' + propertyId).val();
-    let value = $('#' + prefix + 'search-' + propertyId).val();
-    if (checked == '1') { params += '&' + propertyId + '=' + value; }
+    if ($(this).attr('id')) {
+      let propertyId = $(this).attr('id').split('-')[1];
+      let checked = $('#' + prefix + 'search_check_value-' + propertyId).val();
+      let value = $('#' + prefix + 'search-' + propertyId).val();
+      if (checked == '1') { params += '&' + propertyId + '=' + value; }
+    }
   });
 
   $('.search_input_text').each(function () {
@@ -91,7 +93,7 @@ function getAccountSearch()
 {
   // Process request formatting the search engine
   var xhttp = new XMLHttpRequest();
-  xhttp.open("GET", '<?php echo $this->url('account/eventAccountSearch', array('entry' => 'account', 'type' => $type)) ?>?', true);
+  xhttp.open("GET", '<?php echo $this->url('account/eventAccountSearch', array('entry' => 'account', 'type' => $type)) ?>?group=<?php echo $group ?>', true);
   xhttp.onreadystatechange = function() {
     if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
     if (xhttp.readyState == 4) {
@@ -112,6 +114,7 @@ function getAccountSearch()
         });
    
         $('.search_selectpicker').selectpicker('refresh');
+        $('.search_selectpicker').selectpicker({ noneSelectedText : '' });
         
         // Connect the date picker on date inputs
         $('.search_input_date').datepicker();
@@ -128,12 +131,14 @@ function getAccountSearch()
    
         // Trigger the change event on select inputs and refresh the list
         $('.search_input_select').change(function () {
-          var propertyId = $(this).attr('id').split('-')[1];
-          $('#erase-button').removeClass('btn-default').addClass('btn-success');
-          $('#erase-button').attr('disabled', false);
-          $('#search_check-' + propertyId).removeClass('btn-default').addClass('btn-secondary').addClass('active');
-          $('#search_check_value-' + propertyId).val('1');
-          getAccountList(getSearchParams(''), 'n_fn', 'ASC');
+          if ($(this).attr('id')) {
+            var propertyId = $(this).attr('id').split('-')[1];
+            $('#erase-button').removeClass('btn-default').addClass('btn-success');
+            $('#erase-button').attr('disabled', false);
+            $('#search_check-' + propertyId).removeClass('btn-default').addClass('btn-secondary').addClass('active');
+            $('#search_check_value-' + propertyId).val('1');
+            getAccountList(getSearchParams(''), 'n_fn', 'ASC');
+          }
         }); 
 
         // Trigger the keyup event on text inputs and refresh the list

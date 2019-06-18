@@ -11,6 +11,7 @@ module/*
 !module/Application
 public/MDB-Pro
 public/photos/*
+public/audio/*
 public/img/*
 !public/img/carre80.png
 !public/img/2pit_io

@@ -39,6 +39,7 @@ function getAvailability() {
                             allDay: true,
 							title: 'AM ' + value.n_fn,
 							color: value.color.morning,
+                            textColor: 'white',
 							start: moment(value.date, 'YYYY-MM-DD')
 						};
 						$('#calendar').fullCalendar('renderEvent', event, true);
@@ -49,6 +50,7 @@ function getAvailability() {
                             allDay: true,
 							title: 'PM ' + value.n_fn,
 							color: value.color.afternoon,
+                            textColor: 'white',
 							start: moment(value.date, 'YYYY-MM-DD')
 						};
 						$('#calendar').fullCalendar('renderEvent', event, true);
@@ -59,6 +61,7 @@ function getAvailability() {
                             allDay: true,
 							title: 'Soir ' + value.n_fn,
 							color: value.color.evening,
+                            textColor: 'white',
 							start: moment(value.date, 'YYYY-MM-DD')
 						};
 						$('#calendar').fullCalendar('renderEvent', event, true);
@@ -87,9 +90,11 @@ function getPlanning() {
       accounts += id;
   });
 
-	let route = '<?php echo $this->url('event/planning', ['type' => $type, 'category' => $category]) ?>?' + 'accounts=' + accounts;
+	let route = '<?php echo $this->url('event/planning', ['type' => $type]) ?>?';
+//    if (accounts) route += '&accounts=' + accounts;
     route += '&begin=' + begin;
     route += '&end=' + end;
+    if ($('#search-groups').val()) route += '&groups=' + $('#search-groups').val();
 	var xhttp = new XMLHttpRequest();
 	xhttp.open("GET", route, true);
 	xhttp.onreadystatechange = function() {
@@ -109,32 +114,20 @@ function getPlanning() {
 
 			jQuery.each(obj, function (name, value) {
 				var color = 'lightBlue', textColor = 'black';
-                if (value.category == '<?php echo $category ?>' || '<?php echo $type ?>' != 'calendar') {
-                  var event={
-		            id: value.id,
-	                allDay: false,
-		            title: value.formatted,
-		            color: $('#color_' + value.account_id).val(),
-	                textColor: $('#textColor_' + value.account_id).val(),
-				    start:  $.fullCalendar.moment(value.begin_date + ' ' + value.begin_time), 
-					end:  $.fullCalendar.moment(value.begin_date + ' ' + value.end_time)
-                  }
-                }
-                else {
-                  var event={
-                    color: 'red',
-                    id: value.id,
-                    allDay: false,
-                    title: value.formatted,
-                    start: $.fullCalendar.moment(value.begin_date + ' ' + value.begin_time), 
-                    end: $.fullCalendar.moment(value.end_date + ' ' + value.end_time)
-                  }
+                var event={
+		          id: value.id,
+	              allDay: false,
+		          title: value.formatted,
+		          color: $('#color_' + value.account_id).val(),
+	              textColor: $('#textColor_' + value.account_id).val(),
+				  start:  $.fullCalendar.moment(value.begin_date + ' ' + value.begin_time), 
+				  end:  $.fullCalendar.moment(value.begin_date + ' ' + value.end_time)
                 }
 				$('#calendar').fullCalendar('renderEvent', event, true);
 			});
 
 			getAvailability();
-//            getConcurrencies();
+            getConcurrencies();
 		}
 	}
 	xhttp.send();
@@ -155,7 +148,7 @@ function mapPlanning() {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
       let obj = jQuery.parseJSON(xhttp.responseText);
       jQuery.each(obj, function (name, value) {
-        value.slots.forEach(function (slot) {
+ /*       value.slots.forEach(function (slot) {
 	      var event={
 	        id: value.date,
 	        color: '#F1F1F1',
@@ -163,13 +156,24 @@ function mapPlanning() {
 			end:  $.fullCalendar.moment(value.date + ' ' + slot.end_time)
 	      };
 	      $('#calendar').fullCalendar('renderEvent', event, true);
-        });
+        });*/
+        if (value.exception) {
+          var event={
+            id: value.date,
+            allDay: true,
+			title: '<?php echo $this->translate('Closed', 'ppit-core', $context->getLocale()) ?>',
+            color: 'red',
+            textColor: 'white',
+            start:  $.fullCalendar.moment(value.date), 
+          };
+          $('#calendar').fullCalendar('renderEvent', event, true);
+        }
       });
     }
   }
   xhttp.send();
 }
-/*
+
 function getConcurrencies() {
   var id, accounts = '', first = true;
   var begin = new Date($('#calendar').fullCalendar('getView').intervalStart);
@@ -184,9 +188,10 @@ function getConcurrencies() {
         accounts += $('#account_' + id).val();
       }
   });
-  var route = '<?php //echo $this->url('event/concurrencies', ['type' => $type, 'category' => $category]) ?>' + '?accounts=' + accounts;
+  var route = '<?php echo $this->url('event/concurrencies', ['type' => $type]) ?>' + '?accounts=' + accounts;
   route += '&begin=' + begin;
   route += '&end=' + end;
+  route += '&groups=' + $('#search-groups').val();
   var xhttp = new XMLHttpRequest();
   xhttp.open("GET", route, true);
   xhttp.onreadystatechange = function() {
@@ -207,7 +212,7 @@ function getConcurrencies() {
     }
   }
   xhttp.send();
-}*/
+}
 
 function connectAuditPanel()
 {
@@ -316,7 +321,7 @@ function postForm(id, action)
 
           if (action == 'update') connectDetail(id, '');
         
-          getAccountList('?', 'n_fn', 'ASC');
+//          getAccountList('?', 'n_fn', 'ASC');
         }
         else {
           console.log(xhttp.status + ' ' + xhttp.statusText);

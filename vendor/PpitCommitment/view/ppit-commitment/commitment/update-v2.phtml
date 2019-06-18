@@ -138,9 +138,7 @@
   <div class="card-body">
     <h5 class="card-title text-muted"><?php echo $this->translate('Header', 'ppit-core', $context->getLocale()) ?></h5>
 
-<?php 
-if ($commitment->id && $action != 'update' || $message == 'OK') $isDisabled = true; else $isDisabled = false;
-?>
+<?php if ($commitment->id && $action != 'update' || $message == 'OK') $isDisabled = true; else $isDisabled = false; ?>
 
 <?php foreach ($updatePage as $propertyId => $property) : ?>
   <?php 
@@ -227,8 +225,6 @@ if ($commitment->id && $action != 'update' || $message == 'OK') $isDisabled = tr
     </div>
   </div>
 <?php endif;?>
-		
-		</form>
 
   </div>
 </div>

@@ -72,9 +72,10 @@ class EventPlanningViewHelper
     	}
     	$content = array();
 		foreach ($events as &$event) {
-    		if ($event->begin_date <= ($viewEndDate) && ($event->end_date >= $viewBeginDate)) {
+			$end_date = ($event->end_date) ? $event->end_date : '9999-12-31';
+    		if ($event->begin_date <= ($viewEndDate) && ($end_date >= $viewBeginDate)) {
     			foreach ($days as $date => $dayOfWeek) {
-    				if (!in_array($date, $event->exception_dates) && $event->begin_date <= $date && $event->end_date >= $date) {
+    				if (!in_array($date, $event->exception_dates) && $event->begin_date <= $date && $end_date >= $date) {
 	    				if ($event->begin_date == $date || $event->day_of_week == $dayOfWeek || $event->day_of_month == substr($date, 5, 2)) {
 	    					$captionFormat = $context->getConfig('event/format/' . $event->type);
 	    					if (!$captionFormat) $captionFormat = $context->getConfig('event/format/generic');
@@ -189,6 +190,7 @@ class EventPlanningViewHelper
 				foreach ($mapExceptions as $exception) {
 					if (!array_key_exists('end_date', $exception)) $exception['end_date'] = $exception['begin_date'];
 					if ($exception['begin_date'] <= $day['date'] && $exception['end_date'] >= $day['date']) {
+						$day['exception'] = $exception;
 						$ignore = true;
 					}
 				}
@@ -204,8 +206,8 @@ class EventPlanningViewHelper
     	}
     	return $days;
     }
-/*
-    public static function displayConcurrencies($description, $category, $accounts, $events, $viewBeginDate, $viewEndDate)
+
+    public static function displayConcurrencies($description, $groups, $accounts, $events, $viewBeginDate, $viewEndDate)
     {
     	$context = Context::getCurrent();
     
@@ -217,10 +219,15 @@ class EventPlanningViewHelper
     	$content = [];
 
     	foreach ($events as $event) {
-    		if (array_key_exists($event->account_id, $accounts) && $event->category != $category) {
-				if ($event->begin_date <= ($viewEndDate) && ($event->end_date >= $viewBeginDate)) {
+			$end_date = ($event->end_date) ? $event->end_date : '9999-12-31';
+			$current = false;
+			if ($event->groups) foreach (explode(',', $event->groups) as $eventGroupId) {
+				if (in_array($eventGroupId, $groups)) $current = true;
+			}
+    		if (array_key_exists($event->account_id, $accounts) && !$current) {
+				if ($event->begin_date <= ($viewEndDate) && ($end_date >= $viewBeginDate)) {
 	    			foreach ($days as $date => $dayOfWeek) {
-	    				if (!in_array($date, $event->exception_dates) && $event->begin_date <= $date && $event->end_date >= $date) {
+	    				if (!in_array($date, $event->exception_dates) && $event->begin_date <= $date && $end_date >= $date) {
 		    				if ($event->begin_date == $date || $event->day_of_week == $dayOfWeek || $event->day_of_month == substr($date, 5, 2)) {
 		    					$captionFormat = $context->getConfig('event/format/' . $event->type);
 		    					if (!$captionFormat) $captionFormat = $context->getConfig('event/format/generic');
@@ -253,5 +260,5 @@ class EventPlanningViewHelper
     	}
     	 
 		return $content;
-    }*/
+    }
 }

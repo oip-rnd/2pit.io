@@ -45,6 +45,7 @@
 			'Confirm the password' => 'Confirmez le mot de passe',
 			'Close' => 'Fermer',
 			'closed' => 'clôturé',
+			'Closed' => 'Fermé',
 			'Closing date' => 'Date de fermeture',
 			'Comment' => 'Commentaire',
 			'Complete' => 'Compléter',

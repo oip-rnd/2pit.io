@@ -512,7 +512,7 @@ return array(
 							),
 						),
 					),
-/*					'concurrencies' => array(
+					'concurrencies' => array(
 						'type' => 'segment',
 						'options' => array(
 							'route' => '/concurrencies[/:type][/:category]',
@@ -520,7 +520,7 @@ return array(
 								'action' => 'concurrencies',
 							),
 						),
-					),*/
+					),
 					'export' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -1667,7 +1667,7 @@ return array(
 				array('route' => 'event/distribute', 'roles' => array('user')),
 				array('route' => 'event/mapPlanning', 'roles' => array('user')),
 				array('route' => 'event/planning', 'roles' => array('user')),
-//				array('route' => 'event/concurrencies', 'roles' => array('user')),
+				array('route' => 'event/concurrencies', 'roles' => array('user')),
 				array('route' => 'event/export', 'roles' => array('user')),
 				array('route' => 'event/synchronize', 'roles' => array('user')),
 				array('route' => 'event/detail', 'roles' => array('user')),
@@ -4256,6 +4256,16 @@ table.note-report td {
 			'fr_FR' => 'Compte propriétaire',
 		),
 	),
+
+	'event/generic/property/groups' => array(
+		'definition' => 'inline',
+		'type' => 'multiselect',
+		'account_type' => 'generic',
+		'labels' => array(
+			'en_US' => 'Group',
+			'fr_FR' => 'Groupe',
+		),
+	),
 	
 	'event/generic/property/place_caption' => array(
 		'definition' => 'inline',
@@ -4996,7 +5006,7 @@ table.note-report td {
 		'dimensions' => array(),
 		'indicators' => array(),
 		'properties' => array(
-			'status', 'type', 'place_id', 'place_caption', 'account_id', 'n_fn', 'n_first', 'n_last', 'email', 'category', 'subcategory', 'identifier', 'caption', 'description',
+			'status', 'type', 'place_id', 'place_caption', 'account_id', 'groups', 'n_fn', 'n_first', 'n_last', 'email', 'category', 'subcategory', 'identifier', 'caption', 'description',
 			'begin_date', 'end_date', 'day_of_week', 'day_of_month', 'exception_1', 'exception_2', 'exception_3', 'exception_4', 'begin_time', 'end_time', 'time_zone', 'location', 'latitude', 'longitude', 
 			'matched_accounts', 'matching_log', 'feedbacks', 'value', 'comments',
 			'property_1', 'property_2', 'property_3', 'property_4', 'property_5', 'property_6', 'property_7', 'property_8', 'property_9', 'property_10',
@@ -5182,7 +5192,7 @@ table.note-report td {
 	
 	'planningMap/generic' => [
 		'periods' => [
-			[
+/*			[
 				'begin' => '2018-09-15',
 				'end' => '2019-06-30',
 				'exceptions' => [['begin_date' => '2018-12-20', 'end_date' => '2019-01-06']],
@@ -5193,7 +5203,7 @@ table.note-report td {
 					4 => [['begin_time' => '09:00', 'end' => '13:00'], ['begin_time' => '14:00', 'end' => '18:00']],
 					5 => [['begin_time' => '09:00', 'end' => '13:00'], ['begin_time' => '14:00', 'end' => '16:00']],
 				],
-			],
+			],*/
 		],
 		'labels' => ['default' => 'Generic', 'fr_FR' => 'Générique'],
 	],
@@ -5326,7 +5336,7 @@ table.note-report td {
 		'dimensions' => array(),
 		'indicators' => array(),
 		'properties' => array(
-			'status', 'type', 'place_id', 'place_caption', 'account_id', 'category', 'subcategory', 'identifier', 'caption', 'description',
+			'status', 'type', 'place_id', 'place_caption', 'account_id', 'groups', 'category', 'subcategory', 'identifier', 'caption', 'description',
 			'begin_date', 'end_date', 'day_of_week', 'day_of_month', 'exception_1', 'exception_2', 'exception_3', 'exception_4', 'begin_time', 'end_time', 'time_zone', 'location', 'latitude', 'longitude',
 			'value', 'comments',
 			'update_time',
@@ -5346,6 +5356,8 @@ table.note-report td {
 	
 	'event/update/calendar' => array(
 		'status' => ['mandatory' => true],
+//		'category' => ['mandatory' => true],
+		'groups' => ['mandatory' => true],
 		'place_id' => [],
 		'account_id' => [],
 		'caption' => [],

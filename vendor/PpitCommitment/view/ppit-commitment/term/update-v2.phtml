@@ -1,0 +1,234 @@
+<?php if ($message == 'OK') : ?>
+
+<!-- Global message -->
+<div id="message">
+  <h5 class="alert alert-success my-3 text-center"><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h5>
+</div>
+
+<?php endif;?>
+
+<?php if ($error == 'Duplicate') : ?>
+
+<!-- Duplicate error -->
+<div class="alert alert-danger my-3 text-center"><?php echo $this->translate('This record already exist', 'ppit-core', $context->getLocale()) ?></div>
+
+<?php endif;?>
+
+<?php if ($error == 'Isolation') : ?>
+
+<!-- Isolation error -->
+<div class="alert alert-danger my-3 text-center"><?php echo $this->translate('The database has evolved in the meantime, please input again', 'ppit-core', $context->getLocale()) ?></div>
+
+<?php endif;?>
+
+<?php if ($error == 'Consistency') : ?>
+
+<!-- Consistency error -->
+<div class="alert alert-danger my-3 text-center"><?php echo $this->translate('The data are not consistent', 'ppit-core', $context->getLocale()) ?></div>
+
+<?php endif;?>
+
+<!-- CSRF -->
+<?php $element = $csrfForm->get('csrf') ?>
+<div class="form-group">
+  <?php echo $this->formElement($element) ?>
+<?php if ($this->formElementErrors($element)) : ?>
+  <h5 class="alert alert-danger my-3 text-center"><?php echo $this->translate('The form has expired, please input again', 'ppit-core', $context->getLocale()) ?></h5>
+<?php endif;?>
+</div>
+
+<input type="hidden" id="term_update_time" value="<?php echo $term->update_time ?>" />
+
+<?php if ($term->id && !$action && !$message) : ?>
+
+<button type="button" class="btn btn-outline-primary" id="term-update-anchor" data-toggle="tooltip" title="<?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?>" <?php if ($term->status == 'registered') echo 'disabled="disabled"' ?>><i class="fa fa-edit"></i></button>
+<button type="button" class="btn btn-outline-primary" id="term-delete-anchor" data-toggle="tooltip" title="<?php echo $this->translate('Delete', 'ppit-core', $context->getLocale()) ?>" <?php if (!$term->isDeletable() || $term->status == 'registered') echo 'disabled="disabled"' ?>><i class="fa fa-trash-alt"></i></button>
+
+  <?php if (!$term->invoice_id) : ?>
+
+<button type="button" class="btn btn-outline-primary" id="term-invoice-anchor" data-toggle="tooltip" title="<?php echo $this->translate('Generate invoice', 'ppit-core', $context->getLocale()) ?>" <?php if (!$term->isDeletable() || $term->status == 'registered') echo 'disabled="disabled"' ?>>
+  <?php echo $this->translate('Generate invoice', 'ppit-commitment', $context->getLocale())?>
+</button>
+
+<div class="alert alert-danger" id="term-invoice-alert" class="text-center">
+  <strong><?php echo $this->translate('This action is irreversible. Please confirm.', 'ppit-core', $context->getLocale()) ?></strong>
+</div>
+
+  <?php else : ?>
+
+    <?php if ($context->hasRole('admin') && $term->status != 'registered') : ?>
+
+<button type="button" class="btn btn-danger action-btn" id="term-invoice-anchor">
+  <?php echo $this->translate('Actualize the invoice', 'ppit-commitment', $context->getLocale()) ?>
+</button>
+
+<div class="alert alert-danger" id="term-invoice-alert" class="text-center">
+  <strong><?php echo $this->translate('You should have destroyed any previous version of this invoice. Please confirm.', 'ppit-commitment', $context->getLocale()) ?></strong>
+</div>
+  
+    <?php endif;?>
+  <?php endif;?>
+
+<div class="my-3">
+
+  <?php if (!$term->invoice_id) : ?>
+&nbsp;&nbsp;<a href="<?php echo $this->url('commitmentMessage/downloadInvoice', array('id' => $term->invoice_id)) ?>"><?php echo $this->translate('Download the invoice', 'ppit-commitment', $context->getLocale())?></a>&nbsp;&nbsp;|
+  <?php endif;?>
+
+&nbsp;&nbsp;<a href="<?php echo $this->url('commitmentTerm/downloadInvoice', array('id' => $term->id)) ?>"><?php echo $this->translate('Proforma', 'ppit-commitment', $context->getLocale())?></a>
+
+</div>
+
+<?php endif;?>
+
+<?php if (!$term->id) : ?>
+
+<div class="form-group row">
+  <div class="col-sm-5">&nbsp;</div>
+  <div class="col-sm-7">
+    <input name="submit" type="submit" id="up-submit-button" class="btn btn-warning" value="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale()) ?>">
+  </div>
+</div>
+
+<?php elseif ($action == 'update') : ?>
+
+<div class="form-group row">
+  <div class="col-sm-5">&nbsp;</div>
+  <div class="col-sm-7">
+    <input name="submit" type="submit" id="up-submit-button" class="btn btn-warning" value="<?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?>">
+  </div>
+</div>
+
+<?php elseif ($action == 'delete') : ?>
+
+<div class="form-group row">
+  <div class="col-sm-5">&nbsp;</div>
+  <div class="col-sm-7">
+    <input name="submit" type="submit" id="up-submit-button" class="btn btn-danger" value="<?php echo $this->translate('Delete', 'ppit-core', $context->getLocale()) ?>">
+  </div>
+</div>
+
+<?php endif;?>
+
+<?php if ($term->id && $action != 'update' || $message == 'OK') $isDisabled = true; else $isDisabled = false; ?>
+
+<div class="form-group row">
+  <label class="col-sm-5 control-label"><?php echo $this->translate('Name', 'ppit-core', $context->getLocale()) ?></label>
+  <div class="col-sm-7">
+    <input class="form-control" value="<?php echo $term->name ?>" disabled="disabled" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-5 control-label"><?php echo $this->translate('Commitment', 'ppit-commitment', $context->getLocale()) ?></label>
+  <div class="col-sm-7">
+    <input class="form-control" value="<?php echo $term->commitment_caption ?>" disabled="disabled" />
+  </div>
+</div>
+
+<?php foreach ($updatePage as $propertyId => $property) : ?>
+  <?php 
+  $options = $property['options'];
+  if ($options && array_key_exists('readonly', $options) && $options['readonly']) $readonly = true;
+  
+  // Tax inclusive amount is not updatable if the quantity is defined
+  elseif ($propertyId == 'amount' && $term->quantity) $readonly = true;
+  
+  // For invoiced term only the schedule can be updated
+  elseif ($term->status == 'registered' && !in_array($propertyId, ['status', 'due_date', 'settlement_date', 'collection_date', 'means_of_payment'])) $readonly = true;
+
+  else $readonly = false;
+  ?>
+  
+<div class="form-group row" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_term-' : '').$propertyId ?>_group">
+
+  <label class="col-sm-5 control-label">
+  <?php if (array_key_exists('mandatory', $options) && $options['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels']) ?>
+    <?php if ($term->document && $property['type'] == 'dropbox') : ?>
+    <a class="glyphicon glyphicon-paperclip" href="<?php echo $this->url('commitment/dropboxLink', array('document' => $term->document)) ?>" title="<?php echo $this->translate('Attachment', 'ppit-document', $context->getLocale()) ?>" target=".blank"></a>
+  <?php endif;?>
+  </label>
+  
+  <div class="col-sm-7">
+  
+  <?php if ($propertyId == 'invoice_account_id') : ?>
+  
+    <select class="form-control" id="term-<?php echo $propertyId ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
+      <option />
+    <?php foreach ($accounts as $account) : ?>
+      <option value="<?php echo $account->id ?>" <?php if ($account->id == $term->invoice_account_id) echo 'selected="selected"' ?>><?php echo $account->name ?></option>
+    <?php endforeach;?>
+    </select>
+
+  <?php elseif ($property['type'] == 'date') : ?>
+  
+    <input type="hidden" id="term-<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
+    <input class="form-control" id="input_term-<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php echo $context->decodeDate($term->properties[$propertyId]) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+
+  <?php elseif ($property['type'] == 'number') : ?>
+
+    <input type="hidden" id="term-<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
+    <input class="form-control" id="input_term-<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php echo ($term->properties[$propertyId]) ? $context->formatFloat($term->properties[$propertyId], 2) : '' ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+
+  <?php elseif ($property['type'] == 'textarea') : ?>
+    
+    <textarea class="form-control" id="term-<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>><?php echo $term->properties[$propertyId] ?></textarea>
+
+  <?php elseif ($property['type'] == 'select') : ?>
+    
+    <select class="form-control" id="term-<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
+      <option />
+    <?php foreach ($property['modalities'] as $key => $labels) : ?>
+      <option value="<?php echo $key ?>" <?php if ($term->properties[$propertyId] == $key) echo 'selected="selected"' ?>><?php echo $context->localize($labels) ?></option>
+    <?php endforeach;?>
+    </select>
+	
+  <?php elseif ($property['type'] == 'dropbox') : ?>
+
+    <select class="form-control" id="term-<?php echo $propertyId ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
+      <option />
+    <?php foreach ($documentList as $document) : ?>
+      <option value="<?php echo $document ?>" <?php if ($term->document == $document) echo 'selected="selected"' ?>><?php echo $document ?></option>
+    <?php endforeach;?>
+    </select>
+	
+  <?php else : ?>
+
+    <input class="form-control" id="term-<?php echo $propertyId ?>" value="<?php echo $term->properties[$propertyId] ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+
+  <?php endif;?>
+
+  </div>
+  <div class="col-sm-12"><p class="help-block" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_term-' : '').$propertyId ?>_error"></p></div>
+</div>
+
+<?php endforeach;?>
+
+<?php if (!$term->id) : ?>
+		    
+<div class="form-group row">
+  <div class="col-sm-5">&nbsp;</div>
+  <div class="col-sm-7">
+    <input name="submit" type="submit" id="submit-button" class="btn btn-warning" value="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale()) ?>">
+  </div>
+</div>
+
+<?php elseif ($action == 'update') : ?>
+
+  <div class="form-group">
+    <div class="col-sm-5">&nbsp;</div>
+    <div class="col-sm-7">
+      <input name="submit" type="submit" id="submit-button" class="btn btn-warning" value="<?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?>">
+    </div>
+  </div>
+
+<?php elseif ($action == 'delete') : ?>
+
+  <div class="form-group">
+    <div class="col-sm-5">&nbsp;</div>
+    <div class="col-sm-7">
+      <input name="submit" type="submit" id="submit-button" class="btn btn-danger" value="<?php echo $this->translate('Delete', 'ppit-core', $context->getLocale()) ?>">
+    </div>
+  </div>
+
+<?php endif;?>

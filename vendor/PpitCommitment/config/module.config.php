@@ -805,7 +805,16 @@ return array_merge(
         										),
         								),
         						),
-        						'search' => array(
+        						'indexV2' => array(
+        								'type' => 'segment',
+        								'options' => array(
+        										'route' => '/index-v2[/:type][/:app]',
+        										'defaults' => array(
+        												'action' => 'indexV2',
+        										),
+        								),
+        						),
+	       						'search' => array(
         								'type' => 'segment',
         								'options' => array(
         										'route' => '/search[/:type]',
@@ -814,7 +823,16 @@ return array_merge(
         										),
         								),
         						),
-        						'list' => array(
+	       						'searchV2' => array(
+        								'type' => 'segment',
+        								'options' => array(
+        										'route' => '/search-v2[/:type]',
+        										'defaults' => array(
+        												'action' => 'searchV2',
+        										),
+        								),
+        						),
+	       						'list' => array(
         								'type' => 'segment',
         								'options' => array(
         										'route' => '/list[/:type]',
@@ -823,7 +841,16 @@ return array_merge(
         										),
         								),
         						),
-        						'export' => array(
+	       						'listV2' => array(
+        								'type' => 'segment',
+        								'options' => array(
+        										'route' => '/list-v2[/:type]',
+        										'defaults' => array(
+        												'action' => 'listV2',
+        										),
+        								),
+        						),
+	       						'export' => array(
         								'type' => 'segment',
         								'options' => array(
         										'route' => '/export[/:type]',
@@ -844,12 +871,33 @@ return array_merge(
         										),
         								),
         						),
-		        				'generate' => array(
+	       						'detailV2' => array(
+        								'type' => 'segment',
+        								'options' => array(
+        										'route' => '/detail-v2[/:type][/:id]',
+        										'constraints' => array(
+        												'id' => '[0-9]*',
+        										),
+        										'defaults' => array(
+        												'action' => 'detailV2',
+        										),
+        								),
+        						),
+	       						'generate' => array(
 		        						'type' => 'segment',
 		        						'options' => array(
 		        								'route' => '/generate[/:type][/:commitment_id]',
 		        								'defaults' => array(
 		        										'action' => 'generate',
+		        								),
+		        						),
+		        				),
+	       						'generateV2' => array(
+		        						'type' => 'segment',
+		        						'options' => array(
+		        								'route' => '/generate-v2[/:type][/:commitment_id]',
+		        								'defaults' => array(
+		        										'action' => 'generateV2',
 		        								),
 		        						),
 		        				),
@@ -863,6 +911,19 @@ return array_merge(
 		        								),
 		        								'defaults' => array(
 		        										'action' => 'update',
+		        								),
+		        						),
+		        				),
+	       						'updateV2' => array(
+		        						'type' => 'segment',
+		        						'options' => array(
+		        								'route' => '/update-v2[/:type][/:commitment_id][/:id][/:act]',
+		        								'constraints' => array(
+		        										'commitment_id'     => '[0-9]*',
+		        										'id'     => '[0-9]*',
+		        								),
+		        								'defaults' => array(
+		        										'action' => 'updateV2',
 		        								),
 		        						),
 		        				),
@@ -899,6 +960,15 @@ return array_merge(
 												),
 										),
 		        				),
+	       						'groupV2' => array(
+										'type' => 'segment',
+										'options' => array(
+												'route' => '/group-v2[/:type]',
+												'defaults' => array(
+														'action' => 'groupV2',
+												),
+										),
+		        				),
 	       						'debit' => array(
 		        						'type' => 'segment',
 		        						'options' => array(
@@ -908,7 +978,16 @@ return array_merge(
 		        								),
 		        						),
 		        				),
-		        				'debitSsml' => array(
+	       						'debitV2' => array(
+		        						'type' => 'segment',
+		        						'options' => array(
+		        								'route' => '/debit-v2[/:type]',
+		        								'defaults' => array(
+		        										'action' => 'debitV2',
+		        								),
+		        						),
+		        				),
+	       						'debitSsml' => array(
 		        						'type' => 'segment',
 		        						'options' => array(
 		        								'route' => '/debit-ssml[/:type][/:place_id]',
@@ -932,6 +1011,15 @@ return array_merge(
 		        								'route' => '/check-deposit[/:type]',
 		        								'defaults' => array(
 		        										'action' => 'checkDeposit',
+		        								),
+		        						),
+		        				),
+		        				'checkDepositV2' => array(
+		        						'type' => 'segment',
+		        						'options' => array(
+		        								'route' => '/check-deposit-v2[/:type]',
+		        								'defaults' => array(
+		        										'action' => 'checkDepositV2',
 		        								),
 		        						),
 		        				),
@@ -1066,18 +1154,27 @@ return array_merge(
             	 
             	array('route' => 'commitmentTerm', 'roles' => array('sales_manager')),
 				array('route' => 'commitmentTerm/index', 'roles' => array('sales_manager')),
-				array('route' => 'commitmentTerm/search', 'roles' => array('sales_manager')),
-				array('route' => 'commitmentTerm/detail', 'roles' => array('sales_manager')),
-				array('route' => 'commitmentTerm/delete', 'roles' => array('sales_manager')),
+				array('route' => 'commitmentTerm/indexV2', 'roles' => array('sales_manager')),
+            	array('route' => 'commitmentTerm/search', 'roles' => array('sales_manager')),
+            	array('route' => 'commitmentTerm/searchV2', 'roles' => array('sales_manager')),
+            	array('route' => 'commitmentTerm/detail', 'roles' => array('sales_manager')),
+            	array('route' => 'commitmentTerm/detailV2', 'roles' => array('sales_manager')),
+            	array('route' => 'commitmentTerm/delete', 'roles' => array('sales_manager')),
 				array('route' => 'commitmentTerm/export', 'roles' => array('sales_manager')),
             	array('route' => 'commitmentTerm/list', 'roles' => array('sales_manager')),
-				array('route' => 'commitmentTerm/generate', 'roles' => array('sales_manager')),
+            	array('route' => 'commitmentTerm/listV2', 'roles' => array('sales_manager')),
+            	array('route' => 'commitmentTerm/generate', 'roles' => array('sales_manager')),
+            	array('route' => 'commitmentTerm/generateV2', 'roles' => array('sales_manager')),
             	array('route' => 'commitmentTerm/update', 'roles' => array('sales_manager')),
+            	array('route' => 'commitmentTerm/updateV2', 'roles' => array('sales_manager')),
             	array('route' => 'commitmentTerm/group', 'roles' => array('sales_manager')),
+            	array('route' => 'commitmentTerm/groupV2', 'roles' => array('sales_manager')),
             	array('route' => 'commitmentTerm/debit', 'roles' => array('sales_manager')),
+            	array('route' => 'commitmentTerm/debitV2', 'roles' => array('sales_manager')),
             	array('route' => 'commitmentTerm/debitSsml', 'roles' => array('dpo')),
             	array('route' => 'commitmentTerm/debitXml', 'roles' => array('dpo')),
             	array('route' => 'commitmentTerm/checkDeposit', 'roles' => array('sales_manager')),
+            	array('route' => 'commitmentTerm/checkDepositV2', 'roles' => array('sales_manager')),
             	array('route' => 'commitmentTerm/checkDepositSsml', 'roles' => array('sales_manager')),
             	array('route' => 'commitmentTerm/invoice', 'roles' => array('sales_manager', 'accountant')),
             	array('route' => 'commitmentTerm/downloadInvoice', 'roles' => array('sales_manager', 'accountant')),
@@ -3476,6 +3573,33 @@ table.note-report td {
 			'fr_FR' => 'Nom',
 		),
 	),
+
+	'commitmentTerm/generic/property/email' => array(
+		'definition' => 'inline',
+		'type' => 'email',
+		'labels' => array(
+			'en_US' => 'Email',
+			'fr_FR' => 'Email',
+		),
+	),
+	
+	'commitmentTerm/generic/property/tel_work' => array(
+		'definition' => 'inline',
+		'type' => 'phone',
+		'labels' => array(
+			'en_US' => 'Phone',
+			'fr_FR' => 'Téléphone',
+		),
+	),
+	
+	'commitmentTerm/generic/property/tel_cell' => array(
+		'definition' => 'inline',
+		'type' => 'phone',
+		'labels' => array(
+			'en_US' => 'Cellular',
+			'fr_FR' => 'Mobile',
+		),
+	),
 	
 	'commitmentTerm/generic/property/status' => array(
 		'definition' => 'inline',
@@ -3740,7 +3864,7 @@ table.note-report td {
 	'commitmentTerm/generic' => array(
 		'statuses' => array(),
 		'properties' => array(
-				'commitment_id', 'name', 'status', 'place_id', 'caption', 'invoice_account_id', 'due_date', 'settlement_date', 'collection_date',
+				'commitment_id', 'name', 'email', 'tel_work', 'tel_cell', 'status', 'place_id', 'caption', 'invoice_account_id', 'due_date', 'settlement_date', 'collection_date',
 				'quantity', 'unit_price', 'amount', 'means_of_payment', 'bank_name', 'invoice_n_last', 'reference', 'comment', 'document', 'invoice_identifier', 'commitment_caption', 
 				'commitment_property_1', 'commitment_property_2', 'commitment_property_3', 'commitment_property_4', 'commitment_property_5', 'commitment_property_6', 'commitment_property_7', 'commitment_property_8', 'commitment_property_10', 'commitment_property_11', 'commitment_property_12', 'commitment_property_13', 'commitment_property_14', 'commitment_property_15', 
 				'tiny_1', 'tiny_2', 'tiny_3', 'tiny_4', 'tiny_5',
@@ -3774,6 +3898,8 @@ table.note-report td {
 	'commitmentTerm/list/generic' => array(
 		'properties' => array(
 			'name' => [],
+			'email' => [],
+			'tel_cell' => [],
 //			'invoice_account_id' => [],
 			'status' => [],
 			'due_date' => [],

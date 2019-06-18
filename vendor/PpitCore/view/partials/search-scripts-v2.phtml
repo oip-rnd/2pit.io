@@ -1,0 +1,58 @@
+<script>
+
+var criterion = 'update_time', dir = 'DESC';
+
+function getSearchParams(prefix) {
+
+  let params = '?', todo = true;
+
+  $('.search_input_select').each(function () {
+    if ($(this).attr('id')) {
+      let propertyId = $(this).attr('id').split('-')[1];
+      let checked = $('#' + prefix + 'search_check_value-' + propertyId).val();
+      let value = $('#' + prefix + 'search-' + propertyId).val();
+      if (checked == '1') { params += '&' + propertyId + '=' + value; }
+    }
+  });
+
+  $('.search_input_text').each(function () {
+    let propertyId = $(this).attr('id').split('-')[1];
+    let checked = $('#' + prefix + 'search_check_value-' + propertyId).val();
+    let value = $('#' + prefix + 'search-' + propertyId).val();
+    if (value.length >= 2 || checked == '1') { params += '&' + propertyId + '=' + value; }
+  });
+
+  $('.search_input_text_min').each(function () {
+    let propertyId = $(this).attr('id').split('-')[1];
+    let checked = $('#' + prefix + 'search_check_value-' + propertyId).val();
+    let value = $('#' + prefix + 'search_min-' + propertyId).val();
+    if (value.length >= 2 || checked == '1') { params += '&min_' + propertyId + '=' + value; }
+  });
+
+  $('.search_input_text_max').each(function () {
+    let propertyId = $(this).attr('id').split('-')[1];
+    let checked = $('#' + prefix + 'search_check_value-' + propertyId).val();
+    let value = $('#' + prefix + 'search_max-' + propertyId).val();
+    if ((value.length >= 2 || checked == '1') && value) { params += '&max_' + propertyId + '=' + value; }
+  });
+
+  $('.search_input_date_min').each(function () {
+    let propertyId = $(this).attr('id').split('-')[1];
+    let checked = $('#' + prefix + 'search_check_value-' + propertyId).val();
+    let value = $('#' + prefix + 'search_min-' + propertyId).val();
+    if (value) value = encodeDate(value);
+    if (value.length >= 2 || checked == '1') { params += '&min_' + propertyId + '=' + value; }
+  });
+
+  $('.search_input_date_max').each(function () {
+    let propertyId = $(this).attr('id').split('-')[1];
+    let checked = $('#' + prefix + 'search_check_value-' + propertyId).val();
+    let value = $('#' + prefix + 'search_max-' + propertyId).val();
+    if (value) value = encodeDate(value);
+    if ((value.length >= 2 || checked == '1') && value) { params += '&max_' + propertyId + '=' + value; }
+  });
+
+  return params;
+}
+
+</script>

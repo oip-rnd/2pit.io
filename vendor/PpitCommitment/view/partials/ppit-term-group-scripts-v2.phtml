@@ -1,0 +1,408 @@
+<script>
+
+// Grouped actions
+
+<?php 
+$properties = array();
+
+foreach ($termGroupPage as $propertyId => $options) {
+	$property = $termProperties[$propertyId];
+	if ((!$options || !array_key_exists('readonly', $options) || !$options['readonly']) && $property['type'] != 'title') {
+		if ($property['type'] == 'number') $properties[$propertyId] = array('type' => $property['type'], 'mandatory' => $updateOptions['mandatory'], 'minValue' => $property['minValue'], 'maxValue' => $property['maxValue']);
+		else $properties[$propertyId] = array('type' => $property['type'], 'mandatory' => false, 'maxSize' => ($property['type'] == 'textarea' || $property['type'] == 'log') ? 2047 : 255);
+	}
+}
+echo $this->partial('/partials/check-update-properties', array('entity' => 'TermGroup', 'context' => $context, 'properties' => $properties)) 
+?>
+
+function connectDebitForm()
+{
+	var termNumber = $('#term-number').val(), terms = '';
+	first = true;
+	for (i = 0, j = 0; i < termNumber; i++) {
+		if (document.getElementById('term-checkbox_' + i).checked) {
+			if (!first) terms += ',';
+			first = false;
+			terms += $('#term_' + i).val();
+			j++;
+		}
+	}
+
+	window.open('<?php echo $this->url('commitmentTerm/debitXml', ['type' => $type]) ?>/' + $('#place_id').val() + '?terms=' + terms, '_blank');
+}
+
+function getDebitForm() {
+	var termNumber = $('#term-number').val(), terms = '';
+	first = true;
+	for (i = 0, j = 0; i < termNumber; i++) {
+		if (document.getElementById('term-checkbox_' + i).checked) {
+			if (!first) terms += ',';
+			first = false;
+			terms += $('#term_' + i).val();
+			j++;
+		}
+	}
+
+	$('#term-debit-button').show();
+	location.href = '<?php echo $this->url('commitmentTerm/debitSsml', ['type' => $type]) ?>/' + $('#place_id').val() + '?terms=' + terms, '_blank';
+	$('#term-debit-alert').show();
+	$('#term-debit-button').click(function () { connectDebitForm(); });
+}
+
+function getDebit() {
+
+	var xhttp = new XMLHttpRequest();
+
+	var termNumber = $('#term-number').val(), terms = '';
+	first = true;
+	for (i = 0, j = 0; i < termNumber; i++) {
+		if (document.getElementById('term-checkbox_' + i).checked) {
+			if (!first) terms += ',';
+			first = false;
+			terms += $('#term_' + i).val();
+			j++;
+		}
+	}
+
+	var route = '<?php echo $this->url('commitmentTerm/debitV2', ['type' => $type]) ?>' + '?terms=' + terms;
+
+	// Execute the ajax request
+	xhttp = new XMLHttpRequest();
+	xhttp.open("GET", route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+		if (xhttp.readyState == 4 && xhttp.status == 200) {
+			document.getElementById('term-debit-panel').innerHTML = xhttp.responseText;
+			$('#term-debit-button').hide();
+			$('#term-debit-alert').hide();
+			$('#term-control-button').click(function () { getDebitForm(); });
+		}
+	}
+	xhttp.send();
+}
+
+function getCheckDeposit() {
+
+  var xhttp = new XMLHttpRequest();
+
+  var termNumber = $('#term-number').val(), terms = '';
+  first = true;
+  for (i = 0, j = 0; i < termNumber; i++) {
+    if (document.getElementById('term-checkbox_' + i).checked) {
+      if (!first) terms += ',';
+      first = false;
+      terms += $('#term_' + i).val();
+      j++;
+    }
+  }
+
+  var route = '<?php echo $this->url('commitmentTerm/checkDepositV2', ['type' => $type]) ?>' + '?terms=' + terms;
+
+  // Execute the ajax request
+  xhttp = new XMLHttpRequest();
+  xhttp.open("GET", route, true);
+  xhttp.onreadystatechange = function() {
+    if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      $('#term-check-deposit-panel').html(xhttp.responseText);
+      $('#term-check-deposit-button').click(function () {
+        window.open('<?php echo $this->url('commitmentTerm/checkDepositSsml') ?>/' + $('#place_id').val() + '?terms=' + terms, '_blank');
+      });
+    }
+  }
+  xhttp.send();
+}
+
+<?php if ($context->hasRole('accountant')) : ?>
+
+function connectRegisterSalesForm()
+{
+  var xhttp = new XMLHttpRequest();
+
+  var termNumber = $('#term-number').val(), terms = '';
+  first = true;
+  for (i = 0, j = 0; i < termNumber; i++) {
+    if (document.getElementById('term-checkbox_' + i).checked) {
+      if (!first) terms += ',';
+      first = false;
+      terms += $('#term_' + i).val();
+      j++;
+    }
+  }
+
+  var route = '<?php echo $this->url('journal/registerTermSales', ['type' => $type]) ?>' + '?terms=' + terms;
+
+  // Execute the ajax request
+  xhttp = new XMLHttpRequest();
+  xhttp.open("POST", route, true);
+  xhttp.onreadystatechange = function() {
+    if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      document.getElementById('term-register-sales-panel').innerHTML = xhttp.responseText;
+      var exportRoute = '<?php echo $this->url('journal/export').'?min_update_time='.date('Y-m-d') ?>';
+      if ($('#search_place_id').val()) exportRoute += '&place_id='+ $('#search_place_id').val();
+      location.href = exportRoute;
+    }
+  }
+  xhttp.send();
+}
+
+function getRegisterSalesForm() {
+  $('#term-register-sales-button').removeClass('btn-default').addClass('btn-warning');
+  $('#term-register-sales-alert').show();
+  $('#term-register-sales-button').click(function () { connectRegisterSalesForm(); });
+}
+
+function getRegisterSales() {
+
+  var xhttp = new XMLHttpRequest();
+
+  var termNumber = $('#term-number').val(), terms = '';
+  first = true;
+  for (i = 0, j = 0; i < termNumber; i++) {
+    if (document.getElementById('term-checkbox_' + i).checked) {
+      if (!first) terms += ',';
+      first = false;
+      terms += $('#term_' + i).val();
+      j++;
+    }
+  }
+
+  var route = '<?php echo $this->url('journal/registerTermSales', ['type' => $type]) ?>' + '?terms=' + terms;
+
+  // Execute the ajax request
+  xhttp = new XMLHttpRequest();
+  xhttp.open("GET", route, true);
+  xhttp.onreadystatechange = function() {
+      if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+    if (xhttp.readyState == 4) {
+  <?php if (!$context->getConfig()['isTraceActive']) : ?>
+      if (xhttp.status == 200) {
+  <?php endif;?>
+
+      document.getElementById('term-register-sales-panel').innerHTML = xhttp.responseText;
+      $('#term-register-sales-alert').hide();
+      $('#term-register-sales-button').click(function () { getRegisterSalesForm(); });
+      
+  <?php if (!$context->getConfig()['isTraceActive']) : ?>
+      }
+  <?php endif;?>
+    }
+  }
+  xhttp.send();
+}
+
+function connectRegisterSettlementsForm()
+{
+  var xhttp = new XMLHttpRequest();
+
+  var termNumber = $('#term-number').val(), terms = '';
+  first = true;
+  for (i = 0, j = 0; i < termNumber; i++) {
+    if (document.getElementById('term-checkbox_' + i).checked) {
+      if (!first) terms += ',';
+      first = false;
+      terms += $('#term_' + i).val();
+      j++;
+    }
+  }
+
+  var route = '<?php echo $this->url('journal/registerSettlements', ['type' => $type]) ?>' + '?terms=' + terms;
+
+  // Execute the ajax request
+  xhttp = new XMLHttpRequest();
+  xhttp.open("POST", route, true);
+  xhttp.onreadystatechange = function() {
+    if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      document.getElementById('register-settlements-panel').innerHTML = xhttp.responseText;
+      var exportRoute = '<?php echo $this->url('journal/export', ['journal_code' => 'general']).'?min_update_time='.date('Y-m-d') ?>';
+      if ($('#search_place_id').val()) exportRoute += '&place_id='+ $('#search_place_id').val();
+      location.href = exportRoute;
+    }
+  }
+  xhttp.send();
+}
+
+function getRegisterSettlementsForm() {
+  $('#register-settlements-button').removeClass('btn-default').addClass('btn-warning');
+  $('#register-settlements-alert').show();
+  $('#register-settlements-button').click(function () { connectRegisterSettlementsForm(); });
+}
+
+function getRegisterSettlements() {
+
+  var xhttp = new XMLHttpRequest();
+
+  var termNumber = $('#term-number').val(), terms = '';
+  first = true;
+  for (i = 0, j = 0; i < termNumber; i++) {
+    if (document.getElementById('term-checkbox_' + i).checked) {
+      if (!first) terms += ',';
+      first = false;
+      terms += $('#term_' + i).val();
+      j++;
+    }
+  }
+
+  var route = '<?php echo $this->url('journal/registerSettlements', ['type' => $type]) ?>' + '?terms=' + terms;
+
+  // Execute the ajax request
+  xhttp = new XMLHttpRequest();
+  xhttp.open("GET", route, true);
+  xhttp.onreadystatechange = function() {
+      if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+    if (xhttp.readyState == 4) {
+  <?php if (!$context->getConfig()['isTraceActive']) : ?>
+      if (xhttp.status == 200) {
+  <?php endif;?>
+
+      document.getElementById('register-settlements-panel').innerHTML = xhttp.responseText;
+      $('#register-settlements-alert').hide();
+      $('#register-settlements-button').click(function () { getRegisterSettlementsForm(); });
+      
+  <?php if (!$context->getConfig()['isTraceActive']) : ?>
+      }
+  <?php endif;?>
+    }
+  }
+  xhttp.send();
+}
+<?php endif;?>
+
+var action;
+
+function postTermGroup()
+{
+	var form = document.getElementById('term-group-form');
+	form.onsubmit = function(event) {
+		event.preventDefault();
+	
+		// Check validity
+		var validity;
+		validity = checkTermGroupUpdateProperties();
+
+		if (validity) {
+		
+			// Create a new FormData object.
+			var formData = new FormData();
+			formData.append('action', action);
+			var nbTerm = $('#group-nb-term').val();
+			formData.append('nb-term', nbTerm);
+			for (i = 0; i < nbTerm; i++) formData.append('term_' + i, $('#group-term_' + i).val());
+			
+			// Get the properties values
+
+            $('.term_group_update_check').each(function () {
+              let propertyId = $(this).attr('id').split('-')[1];
+              if ($('#term_group_update_check-' + propertyId).prop('checked')) {
+                let value = $('#term_group_update_input-' + propertyId).val();
+                if ($('#term_group_update_input-' + propertyId).hasClass('term_group_update_date')) value = encodeDate(value);
+                formData.append(propertyId + '_check', 1); // For compatibility reason
+                formData.append(propertyId, value);
+              }
+            });
+
+			formData.append('update_time', document.getElementById('update_time').value);
+			var xhttp = new XMLHttpRequest();
+			var route, target;
+			route = '<?php echo $this->url('commitmentTerm/groupV2', ['type' => $type]) ?>';
+			xhttp.open('POST', route, true);
+			xhttp.onload = function () {
+				if (xhttp.readyState == 4 <?php if (!$context->getConfig()['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+	                  getCommitmentTermList(getSearchParams(''));
+	                  $('#modalForm').html(xhttp.responseText);
+				}
+			};
+			xhttp.send(formData);
+		}
+		else return false;
+	}
+}
+
+function getTermGroup() {
+
+  var route = '<?php echo $this->url('commitmentTerm/groupV2', ['type' => $type]) ?>';
+  var formData = new FormData();
+
+  var termNumber = $('#term-number').val();
+  for (i = 0, j = 0; i < termNumber; i++) {
+    if (document.getElementById('term-checkbox_' + i).checked) {
+      formData.append('term_' + j, $('#term_' + i).val());
+      j++;
+    }
+  }
+  formData.append('nb-term', j);
+
+  // Execute the ajax request
+  xhttp = new XMLHttpRequest();
+  xhttp.open("POST", route, true);
+  xhttp.onreadystatechange = function() {
+    if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+
+      $('#modalForm').html(xhttp.responseText);
+  
+      $('#submit-button').click(function () { action = 'update' });
+      $('#delete-button').click(function () { action = 'delete' });
+      postTermGroup();
+      getDebit();
+      getCheckDeposit();
+
+      $('.term-group-panel').hide();
+      $('#term-update-tab').addClass('active');
+      $('#term-update-panel').show();
+			
+      $('#term-update-tab').click(function () {
+        $('.term-group-tab').removeClass('active');
+        $('#term-update-tab').addClass('active');
+        $('.term-group-panel').hide();
+        $('#term-update-panel').show();
+      });
+		
+      $('#term-debit-tab').click(function () {
+        $('.term-group-tab').removeClass('active');
+        $('#term-debit-tab').addClass('active');
+        $('.term-group-panel').hide();
+        $('#term-debit-panel').show();
+      });
+
+      $('#term-check-deposit-tab').click(function () {
+        $('.term-group-tab').removeClass('active');
+        $('#term-check-deposit-tab').addClass('active');
+        $('.term-group-panel').hide();
+        $('#term-check-deposit-panel').show();
+      });
+
+<?php if ($context->hasRole('accountant')) : ?>
+      getRegisterSales();
+
+      $('#term-register-sales-tab').click(function () {
+        $('.term-group-tab').removeClass('active');
+        $('#term-register-sales-tab').addClass('active');
+        $('.term-group-panel').hide();
+        $('#term-register-sales-panel').show();
+      });
+
+      getRegisterSettlements();
+
+      $('#term-register-settlements-tab').click(function () {
+        $('.term-group-tab').removeClass('active');
+        $('#term-register-settlements-tab').addClass('active');
+        $('.term-group-panel').hide();
+        $('#term-register-settlements-panel').show();
+      });
+<?php endif;?>
+
+      $('.term_group_update_input').change(function() {
+        let propertyId = $(this).attr('id').split('-')[1];
+        $('#term_group_update_check-' + propertyId).prop('checked', true);
+      });
+
+      $('#modalForm').modal('toggle');
+    }
+  }
+  xhttp.send(formData);
+}
+
+</script>

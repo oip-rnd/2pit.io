@@ -56,16 +56,16 @@ $('#a_survey').click(function () {
 <?php if (array_key_exists('links', $footer)) : ?>
   <?php $first = true; foreach ($footer['links'] as $column) : ?>
     <?php foreach ($column['list'] as $linkId => $link) : ?>
-      <?php if ($link['target'] == 'modal') : ?>
+      <?php if (array_key_exists('target', $link) && $link['target'] == 'modal') : ?>
     $('#<?php echo $link['data-target'] ?>').on('show.bs.modal', function () { 
-    var xhttp = new XMLHttpRequest();
-    xhttp.open('GET', '<?php echo $this->url($link['href']['route']) ?>', true);
-    xhttp.onload = function () {
-      if (xhttp.readyState == 4 && xhttp.status == 200) $('#<?php echo $link['content_id'] ?>').html(xhttp.responseText);
-      else toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
-    };
-    xhttp.send();
-});
+      var xhttp = new XMLHttpRequest();
+      xhttp.open('GET', '<?php echo $this->url($link['href']['route']) ?>', true);
+      xhttp.onload = function () {
+        if (xhttp.readyState == 4 && xhttp.status == 200) $('#<?php echo $link['content_id'] ?>').html(xhttp.responseText);
+        else toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+      };
+      xhttp.send();
+    });
       <?php endif;?>
     <?php endforeach;?>
   <?php endforeach;?>

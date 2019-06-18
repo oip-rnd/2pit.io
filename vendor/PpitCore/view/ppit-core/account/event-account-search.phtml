@@ -3,7 +3,7 @@
 <!-- Filters -->
   <form class="form-inline">
 	
-    <div class="input-group input-group-sm mb-2 mr-sm-2">
+    <div class="input-group input-group-sm mb-2 mr-sm-2 col-md-12">
       <button type="button" class="btn btn-default input-group-text" disabled title="<?php echo $this->translate('Erase', 'ppit-core', $context->getLocale()) ?>" id="erase-button">
         <i class="fa fa-times text-center"></i>
       </button>
@@ -13,14 +13,28 @@
     </div>
 
 <?php foreach ($eventAccountSearchPage['properties'] as $propertyId => $options) : ?>
-	<?php 
-	$property = $configProperties[$propertyId];
-	$label = $context->localize($property['labels']);
-	?>
+  <?php 
+  $property = $configProperties[$propertyId];
+  $label = $context->localize($property['labels']);
+  ?>
 
-	<?php if (in_array($property['type'], array('date', 'time', 'datetime', 'number'))) : ?>
+  <?php if ($propertyId == 'groups') : ?>
 
-        <div class="input-group input-group-sm mb-2 mr-sm-2 col-md-4">
+        <div class="input-group input-group-sm mb-2 mr-sm-2 col-md-12">
+          <input type="hidden" value="1" class="search_check_value" id="search_check_value-groups" />
+          <div class="input-group-prepend">
+            <button type="button" class="btn btn-secondary active input-group-text search_check" id="search_check-groups"><?php echo $label ?></button>
+          </div>
+          <select class="form-control search_input search_input_select selectpicker search_selectpicker" id="search-groups" multiple="multiple">
+      <?php foreach ($groups as $group_id => $group) : ?>
+            <option value="<?php echo $group_id ?>" <?php if ($default_group_id && $default_group_id == $group_id) echo 'selected="selected"' ?>><?php echo $group->name ?></option>
+      <?php endforeach;?>
+          </select>
+        </div>
+
+  <?php elseif (in_array($property['type'], array('date', 'time', 'datetime', 'number'))) : ?>
+
+        <div class="input-group input-group-sm mb-2 mr-sm-2 col-md-12">
           <input type="hidden" value="0" class="search_check_value" id="search_check_value-<?php echo $propertyId ?>" />
           <div class="input-group-prepend">
             <button type="button" class="btn btn-secondary input-group-text search_check" id="search_check-<?php echo $propertyId ?>"><?php echo $label ?></button>
@@ -49,12 +63,12 @@
 
 		if (array_key_exists('multiple', $options) && $options['multiple']) $multiple = true; else $multiple = false;
 		?>
-        <div class="input-group input-group-sm mb-2 mr-sm-2 <?php if ($multiple) echo 'col-md-3' ?>">
+        <div class="input-group input-group-sm mb-2 mr-sm-2 col-md-12">
           <input type="hidden" value="0" class="search_check_value" id="search_check_value-<?php echo $propertyId ?>" />
           <div class="input-group-prepend">
             <button type="button" class="btn btn-secondary input-group-text search_check" id="search_check-<?php echo $propertyId ?>"><?php echo $label ?></button>
           </div>
-          <select class="form-control search_input search_input_select <?php if ($multiple) echo 'selectpicker search_selectpicker' ?>" id="search-<?php echo $propertyId ?>" <?php if (array_key_exists('multiple', $options) && $options['multiple']) echo 'multiple' ?>>
+          <select class="form-control search_input search_input_select <?php if ($multiple) echo 'selectpicker search_selectpicker' ?>" id="search-<?php echo $propertyId ?>" <?php if ($multiple) echo 'multiple' ?>>
       <?php if (!$multiple) : ?>
             <option value=""></option>
       <?php endif;?>
@@ -66,12 +80,12 @@
         </div>
 	
 	<?php else : ?>
-       <div class="input-group input-group-sm mb-2 mr-sm-2">
+       <div class="input-group input-group-sm mb-2 mr-sm-2 col-md-12">
          <input type="hidden" value="0" class="search_check_value" id="search_check_value-<?php echo $propertyId ?>" />
          <div class="input-group-prepend">
            <button type="button" class="btn btn-secondary input-group-text search_check" id="search_check-<?php echo $propertyId ?>"><?php echo $label ?></button>
          </div>
-         <input class="form-control search_input search_input_text" type="text" id="search-<?php echo $propertyId ?>" placeholder="<?php echo $this->translate('Contains', 'ppit-core', $context->getLocale()) ?>" />
+         <input class="form-control search_input search_input_text" type="text" id="search-<?php echo $propertyId ?>" />
        </div>
 
 	<?php endif;?>
