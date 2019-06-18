@@ -13,6 +13,7 @@ use Zend\Db\Sql\Where;
 use Zend\InputFilter\Factory as InputFactory;
 use Zend\InputFilter\InputFilter;
 use Zend\InputFilter\InputFilterInterface;
+use Zend\Db\Sql\Predicate\IsNull;
 
 /**
   * Event is the class supporting generic interactions between applications
@@ -710,7 +711,8 @@ class Event
     	else {
     		// Set the filters
     		foreach ($params as $propertyId => $value) {
-    			if (in_array(substr($propertyId, 0, 4), array('min_', 'max_'))) $propertyKey = substr($propertyId, 4);
+    			if ($value === null) $where->isNull($propertyId);
+    			elseif (in_array(substr($propertyId, 0, 4), array('min_', 'max_'))) $propertyKey = substr($propertyId, 4);
     			else $propertyKey = $propertyId;
     			$property = $context->getConfig('event/'.$type.'/property/'.$propertyKey);
     			if (!$property) $property = $context->getConfig('event/generic/property/'.$propertyKey);

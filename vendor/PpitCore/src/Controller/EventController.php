@@ -318,11 +318,17 @@ class EventController extends AbstractActionController
     	if ($category) $filters['category'] = $category;
 //    	$filters['account_id'] = $accounts;
     	if ($begin && $end) {
-    		$events = [];
-    		foreach ($groups as $group_id) {
-    			$filters['groups'] = $group_id;
-				$cursor = Event::getList($type, $filters, '-update_time', null);
-				foreach ($cursor as $event_id => $event) $events[$event_id] = $event;
+    		if (!$groups) {
+	    		$filters['groups'] = null;
+    			$events = Event::getList($type, $filters, '-update_time', null);
+    		}
+    		else {
+	    		$events = [];
+	    		foreach ($groups as $group_id) {
+	    			$filters['groups'] = $group_id;
+					$cursor = Event::getList($type, $filters, '-update_time', null);
+					foreach ($cursor as $event_id => $event) $events[$event_id] = $event;
+	    		}
     		}
 	    	return new JsonModel(EventPlanningViewHelper::displayPlanning($description, $events, $begin, $end));
     	}
