@@ -84,7 +84,8 @@ class EventController extends AbstractActionController
     	$category = $this->params()->fromRoute('category');
     	$app = $this->params()->fromRoute('app');
     	$group_identifier = $this->params()->fromQuery('group');
-    	$group_id = Account::get($group_identifier, 'identifier', 'group', 'type')->id;
+    	$group = Account::get($group_identifier, 'identifier', 'group', 'type');
+    	$group_id = ($group) ? $group->id : null;
     	$applicationId = ($app) ? $app : 'synapps';
     	$applicationName = $context->localize($context->getConfig('menus/'.$applicationId)['labels']);
 
