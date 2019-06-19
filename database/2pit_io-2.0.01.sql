@@ -31,3 +31,5 @@ ALTER TABLE `core_product_option` ADD `category` VARCHAR(255) NULL DEFAULT NULL 
 ALTER TABLE `core_instance` ADD `specifications_backup` LONGTEXT NULL DEFAULT NULL AFTER `specifications`;
 
 ALTER TABLE `commitment_term` ADD `invoice_identifier` VARCHAR(255) NULL DEFAULT NULL AFTER `invoice_id`;
+
+ALTER TABLE `core_account` ADD `property_17` VARCHAR(255) NULL DEFAULT NULL AFTER `property_16`, ADD `property_18` VARCHAR(255) NULL DEFAULT NULL AFTER `property_17`, ADD `property_19` VARCHAR(255) NULL DEFAULT NULL AFTER `property_18`, ADD `property_20` VARCHAR(255) NULL DEFAULT NULL AFTER `property_19`;

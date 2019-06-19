@@ -182,6 +182,10 @@ class Account
 			'property_14' => 				['entity' => 'core_account', 'column' => 'property_14'],
 			'property_15' => 				['entity' => 'core_account', 'column' => 'property_15'],
 			'property_16' => 				['entity' => 'core_account', 'column' => 'property_16'],
+			'property_17' => 				['entity' => 'core_account', 'column' => 'property_17'],
+			'property_18' => 				['entity' => 'core_account', 'column' => 'property_18'],
+			'property_19' => 				['entity' => 'core_account', 'column' => 'property_19'],
+			'property_20' => 				['entity' => 'core_account', 'column' => 'property_20'],
 			'json_property_1' => 			['entity' => 'core_account', 'column' => 'json_property_1'],
 			'json_property_2' => 			['entity' => 'core_account', 'column' => 'json_property_2'],
 			'json_property_3' => 			['entity' => 'core_account', 'column' => 'json_property_3'],
@@ -860,6 +864,10 @@ class Account
     public $property_14;
     public $property_15;
     public $property_16;
+    public $property_17;
+    public $property_18;
+    public $property_19;
+    public $property_20;
     public $json_property_1;
     public $json_property_2;
     public $json_property_3;
@@ -1079,6 +1087,10 @@ class Account
         $this->property_14 = (isset($data['property_14'])) ? $data['property_14'] : null;
         $this->property_15 = (isset($data['property_15'])) ? $data['property_15'] : null;
         $this->property_16 = (isset($data['property_16'])) ? $data['property_16'] : null;
+        $this->property_17 = (isset($data['property_17'])) ? $data['property_17'] : null;
+        $this->property_18 = (isset($data['property_18'])) ? $data['property_18'] : null;
+        $this->property_19 = (isset($data['property_19'])) ? $data['property_19'] : null;
+        $this->property_20 = (isset($data['property_20'])) ? $data['property_20'] : null;
         $this->json_property_1 = (isset($data['json_property_1'])) ? json_decode($data['json_property_1'], true) : null;
         $this->json_property_2 = (isset($data['json_property_2'])) ? json_decode($data['json_property_2'], true) : null;
         $this->json_property_3 = (isset($data['json_property_3'])) ? json_decode($data['json_property_3'], true) : null;
@@ -1246,6 +1258,10 @@ class Account
     	$data['property_14'] =  ($this->property_14) ? $this->property_14 : null;
     	$data['property_15'] =  ($this->property_15) ? $this->property_15 : null;
     	$data['property_16'] =  ($this->property_16) ? $this->property_16 : null;
+    	$data['property_17'] =  ($this->property_17) ? $this->property_17 : null;
+    	$data['property_18'] =  ($this->property_18) ? $this->property_18 : null;
+    	$data['property_19'] =  ($this->property_19) ? $this->property_19 : null;
+    	$data['property_20'] =  ($this->property_20) ? $this->property_20 : null;
     	$data['json_property_1'] = $this->json_property_1;
     	$data['json_property_2'] = $this->json_property_2;
     	$data['json_property_3'] = $this->json_property_3;
@@ -2005,6 +2021,10 @@ class Account
     		elseif ($propertyId == 'property_14') $this->property_14 = $value;
     		elseif ($propertyId == 'property_15') $this->property_15 = $value;
     		elseif ($propertyId == 'property_16') $this->property_16 = $value;
+    		elseif ($propertyId == 'property_17') $this->property_17 = $value;
+    		elseif ($propertyId == 'property_18') $this->property_18 = $value;
+    		elseif ($propertyId == 'property_19') $this->property_19 = $value;
+    		elseif ($propertyId == 'property_20') $this->property_20 = $value;
     		elseif ($propertyId == 'json_property_1') $this->json_property_1 = $value;
         	elseif ($propertyId == 'json_property_2') $this->json_property_2 = $value;
             elseif ($propertyId == 'json_property_3') $this->json_property_3 = $value;

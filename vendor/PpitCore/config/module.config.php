@@ -3373,6 +3373,42 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 			'fr_FR' => 'Champs libre 16',
 		),
 	),
+
+	'core_account/generic/property/property_17' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'default' => 'Free property 17',
+			'fr_FR' => 'Propriété libre 17',
+		),
+	),
+	
+	'core_account/generic/property/property_18' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'default' => 'Free property 18',
+			'fr_FR' => 'Propriété libre 18',
+		),
+	),
+	
+	'core_account/generic/property/property_19' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'default' => 'Free property 19',
+			'fr_FR' => 'Propriété libre 19',
+		),
+	),
+	
+	'core_account/generic/property/property_20' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'default' => 'Free property 20',
+			'fr_FR' => 'Propriété libre 20',
+		),
+	),
 	
 	'core_account/generic/property/json_property_1' => array(
 		'definition' => 'inline',
@@ -3486,7 +3522,7 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 			'opening_date', 'closing_date', 'callback_date', 'first_activation_date', 'next_meeting_date', 'next_meeting_confirmed', 'priority', 'origine', 'contact_history', 'notification_time',
 			'default_means_of_payment', 'transfer_order_id', 'transfer_order_date', 'bank_identifier',
 			'property_1', 'property_2', 'property_3', 'property_4', 'property_5', 'property_6', 'property_7', 'property_8', 
-			'property_9', 'property_10', 'property_11', 'property_12', 'property_13', 'property_14', 'property_15', 'property_16',
+			'property_9', 'property_10', 'property_11', 'property_12', 'property_13', 'property_14', 'property_15', 'property_16', 'property_17', 'property_18', 'property_19', 'property_20',
 			'json_property_1', 'json_property_2', 'json_property_3', 'json_property_4', 'json_property_5',
 			'comment_1', 'comment_2', 'comment_3', 'comment_4', 'update_time'
 		),
