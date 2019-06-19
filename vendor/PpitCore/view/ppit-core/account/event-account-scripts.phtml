@@ -93,7 +93,11 @@ function getAccountSearch()
 {
   // Process request formatting the search engine
   var xhttp = new XMLHttpRequest();
-  xhttp.open("GET", '<?php echo $this->url('account/eventAccountSearch', array('entry' => 'account', 'type' => $type)) ?>?group=<?php echo $group ?>', true);
+  let route = '<?php echo $this->url('account/eventAccountSearch', array('entry' => 'account', 'type' => $type)) ?>';
+<?php if ($group) : ?>
+  if (group) route += '?group=<?php echo $group ?>
+<?php endif;?>
+  xhttp.open("GET", route, true);
   xhttp.onreadystatechange = function() {
     if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
     if (xhttp.readyState == 4) {

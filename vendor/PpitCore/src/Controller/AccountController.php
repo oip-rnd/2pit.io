@@ -217,7 +217,6 @@ class AccountController extends AbstractActionController
 			'places' => Place::getList(array()),
 			'entry' => $entry,
 			'type' => $type,
-			'default_group_id' => $group,
 			'groups' => $groups,
 			'searchPage' => $searchPage,
 			'eventAccountSearchPage' => $eventAccountSearchPage,
@@ -457,9 +456,9 @@ class AccountController extends AbstractActionController
 
     	$accounts = Account::getList($type, $filters, '+name', null);
 
-		$members = [];
-    	if ($type == 'teacher' && $this->params()->fromQuery('groups')) {
-			$groups = explode(',', $this->params()->fromQuery('groups'));
+    	if ($this->params()->fromQuery('groups')) {
+			$members = [];
+    		$groups = explode(',', $this->params()->fromQuery('groups'));
 			foreach ($groups as $groupId) {
 				$group = Account::get($groupId);
 				if ($group) {
@@ -468,8 +467,8 @@ class AccountController extends AbstractActionController
 					}
 				}
 			}
-		}
-		$accounts = $members;
+			$accounts = $members;
+    	}
 
 		// Retrieve the per account planned hours 
 		foreach ($accounts as $account) $account->properties['planned'] = 0;
