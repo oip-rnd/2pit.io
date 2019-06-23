@@ -13,6 +13,7 @@ use PpitCore\Form\CsrfForm;
 use PpitCore\Model\Context;
 use PpitCore\Model\Csrf;
 use PpitCore\Model\Place;
+use PpitCore\ViewHelper\SsmlGenericViewHelper;
 use PpitDocument\Model\DocumentPart;
 use Zend\Http\Client;
 use Zend\View\Model\ViewModel;
@@ -1231,6 +1232,51 @@ class CommitmentMessageController extends AbstractActionController
     	return $this->downloadInvoiceAction();
     }
 
+    public function downloadSsmlAction()
+    {
+    	include 'public/PHPExcel_1/Classes/PHPExcel.php';
+    	include 'public/PHPExcel_1/Classes/PHPExcel/Writer/Excel2007.php';
+    	include 'public/PHPExcel_1/Classes/PHPExcel/CachedObjectStorageFactory.php';
+    	
+    	// Retrieve the context
+    	$context = Context::getCurrent();
+
+    	$id = $this->params()->fromRoute('id', null);
+    	if (!$id) return $this->redirect()->toRoute('index');
+    	$message = CommitmentMessage::get($id);
+    	$content = json_decode($message->content, true);
+
+    	$cacheMethod = \PHPExcel_CachedObjectStorageFactory:: cache_to_phpTemp;
+    	$cacheSettings = array( ' memoryCacheSize ' => '8MB');
+    	\PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
+    		
+    	$workbook = new \PHPExcel;
+    	(new SsmlGenericViewHelper)->formatXls($workbook, $content);
+    	$writer = new \PHPExcel_Writer_Excel2007($workbook);
+    	
+    	header('Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    	header('Content-Disposition:inline;filename=' . str_replace(' ', '_', $context->localize($content['title'])) . '.xlsx ');
+    	ob_end_clean();
+    	$writer->save('php://output');
+    	return $this->response;
+    }
+    
+    public function guestDownloadSsmlAction()
+    {
+    	// Retrieve the context
+    	$context = Context::getCurrent();
+    	 
+    	$id = $this->params()->fromRoute('id', null);
+    	if (!$id) return $this->redirect()->toRoute('index');
+    
+    	$token = $this->params()->fromQuery('hash', null);
+    	$message = CommitmentMessage::get($id);
+    	if (!$message->authentication_token) return $this->redirect()->toRoute('user/expired');
+    	if ($token != $message->authentication_token) return $this->redirect()->toRoute('user/expired');
+    
+    	return $this->downloadSsmlAction();
+    }
+    
     public function serializeAction()
     {
     	// Retrieve the context

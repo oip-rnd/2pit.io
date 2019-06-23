@@ -26,7 +26,6 @@ return array(
 			Controller\PlaceController::class => InvokableFactory::class,
 			Controller\ProductController::class => InvokableFactory::class,
 			Controller\ProductOptionController::class => InvokableFactory::class,
-			Controller\PublicController::class => InvokableFactory::class,
 			Controller\RequestController::class => InvokableFactory::class,
 			Controller\UserController::class => InvokableFactory::class,
 			Controller\VcardController::class => InvokableFactory::class,
@@ -1175,84 +1174,6 @@ return array(
 					),
 				),
 			),
-			'public' => array(
-				'type' => Literal::class,
-				'options' => array(
-					'route'    => '/public',
-					'defaults' => array(
-						'controller' => Controller\PublicController::class,
-						'action'     => 'displayPage',
-					),
-				),
-				'may_terminate' => true,
-				'child_routes' => array(
-					'displayPage' => array(
-						'type' => 'segment',
-						'options' => array(
-							'route' => '[/:directory][/:name]',
-							'constraints' => array(
-								'directory' => '[a-zA-Z0-9_-]+',
-								'name' => '[a-zA-Z0-9_-]+',
-							),
-							'defaults' => array(
-								'action' => 'displayPage',
-							),
-						),
-					),
-					'home' => array(
-						'type' => 'segment',
-						'options' => array(
-							'route' => '/home',
-							'defaults' => array(
-								'action' => 'home',
-							),
-						),
-					),
-					'community' => array(
-						'type' => 'segment',
-						'options' => array(
-							'route' => '/community[/:identifier][/:place_identifier][/:subject_id]',
-							'constraints' => array(
-								'id' => '[0-9]*',
-								'subject_id' => '[0-9]*',
-							),
-							'defaults' => array(
-								'action' => 'community',
-							),
-						),
-					),
-					'communityPrint' => array(
-						'type' => 'segment',
-						'options' => array(
-							'route' => '/community-print[/:identifier][/:place_identifier][/:subject_id]',
-							'defaults' => array(
-								'action' => 'communityPrint',
-							),
-						),
-					),
-					'dashboard' => array(
-						'type' => 'segment',
-						'options' => array(
-							'route' => '/dashboard',
-							'defaults' => array('action' => 'dashboard'),
-						),
-					),
-					'pricing' => array(
-						'type' => 'segment',
-						'options' => array(
-							'route' => '/pricing[/:directory][/:name]',
-							'defaults' => array('action' => 'pricing'),
-						),
-					),
-					'blogPost' => array(
- 						'type' => 'segment',
-						'options' => array(
-							'route' => '/blog-post',
-							'defaults' => array('action' => 'blogPost'),
-						),
-					),
-				),
-        	),
 			'user' => array(
 				'type'    => Literal::class,
 				'options' => array(
@@ -1738,15 +1659,6 @@ return array(
 				array('route' => 'productOption/list', 'roles' => array('sales_manager')),
 				array('route' => 'productOption/export', 'roles' => array('sales_manager')),
 				array('route' => 'productOption/update', 'roles' => array('sales_manager')),
-				
-				array('route' => 'public/displayContent', 'roles' => array('guest')),
-				array('route' => 'public/displayPage', 'roles' => array('guest')),
-				array('route' => 'public/home', 'roles' => array('guest')),
-				array('route' => 'public/community', 'roles' => array('guest')),
-				array('route' => 'public/communityPrint', 'roles' => array('guest')),
-				array('route' => 'public/dashboard', 'roles' => array('guest')),
-				array('route' => 'public/pricing', 'roles' => array('guest')),
-				array('route' => 'public/blogPost', 'roles' => array('guest')),
 
 				array('route' => 'user', 'roles' => array('admin', 'manager')),
 				array('route' => 'user/index', 'roles' => array('admin', 'manager')),
@@ -6022,8 +5934,6 @@ table.note-report td {
 	),
 
 	// Product
-
-	// Account
 	
 	'core_product/generic/property/status' => array(
 		'definition' => 'inline',

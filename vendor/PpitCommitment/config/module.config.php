@@ -765,6 +765,30 @@ return array_merge(
 	        								),
 	        						),
 	        				),
+	        				'downloadSsml' => array(
+	        						'type' => 'segment',
+	        						'options' => array(
+	        								'route' => '/download-ssml[/:id]',
+	        								'constraints' => array(
+	        										'id'     => '[0-9]*',
+	        								),
+	        								'defaults' => array(
+	        										'action' => 'downloadSsml',
+	        								),
+	        						),
+	        				),
+	        				'guestDownloadSsml' => array(
+	        						'type' => 'segment',
+	        						'options' => array(
+	        								'route' => '/guest-download-ssml[/:id]',
+	        								'constraints' => array(
+	        										'id'     => '[0-9]*',
+	        								),
+	        								'defaults' => array(
+	        										'action' => 'guestDownloadSsml',
+	        								),
+	        						),
+	        				),
             				'serialize' => array(
 	        						'type' => 'segment',
 	        						'options' => array(
@@ -1149,6 +1173,8 @@ return array_merge(
             	array('route' => 'commitmentMessage/submit', 'roles' => array('admin')),
 				array('route' => 'commitmentMessage/downloadInvoice', 'roles' => array('sales_manager', 'accountant')),
 				array('route' => 'commitmentMessage/guestDownloadInvoice', 'roles' => array('guest')),
+				array('route' => 'commitmentMessage/downloadSsml', 'roles' => array('sales_manager', 'accountant')),
+				array('route' => 'commitmentMessage/guestDownloadSsml', 'roles' => array('guest')),
             	array('route' => 'commitmentMessage/serialize', 'roles' => array('admin')),
             	array('route' => 'commitmentMessage/repair', 'roles' => array('admin')),
             	 
