@@ -1941,6 +1941,32 @@ return array_merge(
 
 			'contact_history' => [],
 	),
+
+	'core_account/message/new/business' => [
+		'subject' => [
+			'text' => ['default' => '%s is your new contact!', 'fr_FR' => '%s est votre nouveau contact !'],
+			'params' => ['name'],
+		],
+		'body' => [
+			'text' => [
+				'en_US' => '
+<p>Hello,</p>
+<p>%s shows his (her) interest for your offer as presented on your home page.</p>
+<p>You should follow this request from the back-office probably recontact him (her).</p>
+<p>Email address: %s.</p>
+<p>Best regards</p>
+',
+				'fr_FR' => '
+<p>Bonjour,</p>
+<p>%s a signalé(e) être intéressé(e) par votre offre depuis la page de votre site.</p>
+<p>Il vous appartient de suivre cette demande dans le back-office et le cas échéant le(la) recontacter.</p>
+<p>Adresse email : %s.</p>
+<p>Bien cordialement</p>
+',
+			],
+			'params' => ['name', 'email'],
+		],
+	],
 	
 	'core_account/indexCard/business' => array(
 			'title' => array('en_US' => 'Enterprise index card', 'fr_FR' => 'Fiche entreprise'),
@@ -4118,7 +4144,7 @@ table.note-report td {
 						'en_US' => 'To be translated',
 						'fr_FR' => '
 <hr>
-<div><a href="https://www.p-pit.fr"><img src="http://img.p-pit.fr/P-Pit/p-pit-advert.png" width="400" alt="P-Pit logo" /></a></div>
+<div><a href="https://www.p-pit.fr"><img src="http://img.p-pit.fr/p-pit/p-pit-advert-2024.png" width="400" alt="P-Pit logo" /></a></div>
 Le support P-Pit<br>
 support@p-pit.fr
 '

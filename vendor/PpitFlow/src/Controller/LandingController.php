@@ -1,6 +1,7 @@
 <?php
 namespace PpitFlow\Controller;
 
+use PpitContact\Model\ContactMessage;
 use PpitCore\Form\CsrfForm;
 use PpitCore\Model\Account;
 use PpitCore\Model\Config;
@@ -17,6 +18,44 @@ use Zend\View\Model\ViewModel;
 
 class LandingController extends AbstractActionController
 {
+
+	public function notifyNew($account, $place)
+	{
+		// Retrieve the context
+		$context = Context::getCurrent();
+	
+		// Retrieve the template
+		$template = $context->getConfig('core_account/message/new/business');
+	
+		// Generate the email 
+		$data = array();
+		$basePath = $this->getRequest()->getUri()->getPath();
+		$data['name'] = $account->name;
+		$data['email'] = $account->email;
+		$data['type'] = 'email';
+		$data['to'][$place->support_email] = null;
+		$data['from_mail'] = $place->support_email;
+		$data['from_name'] = $place->caption;
+		$data['subject'] = $template['subject'];
+		$arguments = array();
+		foreach ($template['subject']['params'] as $param) $arguments[] = $data[$param];
+		$data['subject'] = vsprintf($context->localize($data['subject']['text']), $arguments);
+	
+		$data['body'] = $context->localize($template['body']['text']);
+		$arguments = array();
+		foreach ($template['body']['params'] as $param) $arguments[] = $data[$param];
+		$data['body'] = vsprintf($data['body'], $arguments);
+	
+		if ($place && array_key_exists('core_account/sendMessage', $place->config)) $signature = $place->config['core_account/sendMessage']['signature'];
+		else $signature = $context->getConfig('core_account/sendMessage')['signature'];
+		if ($signature['definition'] != 'inline') {
+			$signature = $context->getConfig($signature['definition']);
+		}
+		$data['body'] .= $context->localize($signature['body']);
+	
+		return $data;
+	}
+	
 	public function template1Action()
 	{
 		// Retrieve the context and the parameters
@@ -42,7 +81,7 @@ class LandingController extends AbstractActionController
 		
 		$locale = $this->params()->fromQuery('locale');
 		
-		$accountType = $context->getConfig('event_account_type')[$type];
+		$accountType = 'business'; //$context->getConfig('event_account_type')[$type];
 		$account = null;
 		if (!$shopping_cart) {
 			if ($context->isAuthenticated()) {
@@ -140,13 +179,7 @@ class LandingController extends AbstractActionController
 				$content['form']['inputs'][$inputId] = $property;
 				if (array_key_exists('property_id', $property)) $propertyId = $property['property_id'];
 				else $propertyId = $inputId;
-	/*			if ($id) {
-					if ($inputId != $propertyId) $viewData[$inputId] = (in_array($property['value'], explode(',', $account->properties[$propertyId])) ? $property['value'] : null);
-					else $viewData[$inputId] = $account->properties[$propertyId];
-					$queryValue = $this->params()->fromQuery($inputId);
-					if ($queryValue !== null) $viewData[$inputId] = $queryValue;
-				}
-				else*/ $viewData[$inputId] = (array_key_exists('default', $property)) ? $property['default'] : null;
+				$viewData[$inputId] = (array_key_exists('default', $property)) ? $property['default'] : null;
 			}
 		}
 		
@@ -159,16 +192,14 @@ class LandingController extends AbstractActionController
 			$data['place_id'] = $place->id;
 			$data['callback_date'] = date('Y-m-d');
 			foreach ($content['form']['inputs'] as $inputId => $property) {
-//				if (!$id || $property['updatable']) {
-					$viewData[$inputId] = $this->request->getPost($inputId);
-					if (array_key_exists('property_id', $property)) $propertyId = $property['property_id'];
-					else $propertyId = $inputId;
-					
-					if (array_key_exists($propertyId, $data) && $data[$propertyId]) {
-						if ($viewData[$inputId]) $data[$propertyId] .= ','.$viewData[$inputId];
-					}
-					else $data[$propertyId] = $viewData[$inputId];
-//				}
+				$viewData[$inputId] = $this->request->getPost($inputId);
+				if (array_key_exists('property_id', $property)) $propertyId = $property['property_id'];
+				else $propertyId = $inputId;
+				
+				if (array_key_exists($propertyId, $data) && $data[$propertyId]) {
+					if ($viewData[$inputId]) $data[$propertyId] .= ','.$viewData[$inputId];
+				}
+				else $data[$propertyId] = $viewData[$inputId];
 			}
 			$data['contact_history'] = '';
 			if (array_key_exists('HTTP_ACCEPT_LANGUAGE', $_SERVER)) $data['contact_history'] .= substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
@@ -178,7 +209,24 @@ class LandingController extends AbstractActionController
 
 			$data['origine'] = 'subscription';
 			$rc = $account->loadAndAdd($data, Account::getConfig($accountType));
-			if (in_array($rc[0], ['200', '206'])) $message = 'OK';
+			if (in_array($rc[0], ['200', '206'])) {
+				$message = 'OK';
+
+				// Notify the back-office of the new contact
+				$places = Place::getList([]);
+				if (array_key_exists($account->place_id, $places)) {
+					$place = $places[$account->place_id];
+					$data = $this->notifyNew($account, $place);
+					$mail = ContactMessage::instanciate();
+					$mail->type = 'email';
+					if ($mail->loadData($data) != 'OK') throw new \Exception('View error');
+					$rc = $mail->add();
+					if ($rc != 'OK') {
+						$connection->rollback();
+						$error = $rc;
+					}
+				}
+			}
 			else $error = $rc;
 		}
 
