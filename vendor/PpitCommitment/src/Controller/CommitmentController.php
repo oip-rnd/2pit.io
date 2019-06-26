@@ -873,12 +873,17 @@ class CommitmentController extends AbstractActionController
 
     	if (array_key_exists('terms', $invoiceSpecs)) $invoice['terms'] = array();
 	    $settledAmount = 0;
+	    $collectedAmount = 0;
 	    foreach(Term::getList($type, array('commitment_id' => $commitment->id), '+due_date') as $term) {
-	    	if ($term->status != 'expected') $settledAmount += $term->amount;
+	    	$termDescription = Term::getDescription($term->type);
+	    	
+	    	if ($term->status == 'settled') $settledAmount += $term->amount;
+	    	elseif (!(in_array($term->status, ['expected', 'settled']))) $collectedAmount += $term->amount;
+	    	
 	    	if (array_key_exists('terms', $invoiceSpecs)) {
 		    	$line[] = array();
 	    		$line['caption'] = $term->caption;
-	    		$line['status'] = ($term->status == 'collected') ? 'settled' : $term->status;
+	    		$line['status'] = $context->localize($termDescription['properties']['status']['modalities'][(!(in_array($term->status, ['expected', 'settled']))) ? 'collected' : $term->status]);
 	    		$line['due_date'] = $term->due_date;
 	    		$line['settlement_date'] = $term->settlement_date;
 	    		$line['means_of_payment'] = $term->means_of_payment;
@@ -888,6 +893,7 @@ class CommitmentController extends AbstractActionController
 		}
 
 	    $invoice['settled_amount'] = $settledAmount;
+	    $invoice['collected_amount'] = $collectedAmount;
 	    $invoice['still_due'] = $commitment->tax_inclusive - $settledAmount;
     	
     	if (array_key_exists('commitment/invoice_tax_mention', $commitment->place_config)) $invoice['tax_mention'] = $commitment->place_config['commitment/invoice_tax_mention'];

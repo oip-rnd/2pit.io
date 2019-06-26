@@ -1032,7 +1032,7 @@ class Commitment
     	// Filter on type
 		if ($type) $where->equalTo('commitment.type', $type);
 
-		// Filter on place
+		// Check the habilitation on place perimeter
 		$keep = true;
 		if (array_key_exists('p-pit-admin', $context->getPerimeters()) && array_key_exists('place_id', $context->getPerimeters()['p-pit-admin'])) {
 			$where->in('core_account.place_id', $context->getPerimeters()['p-pit-admin']['place_id']);
@@ -1107,12 +1107,19 @@ class Commitment
 
     public static function get($id, $column = 'id')
     {
+    	$context = Context::getCurrent();
     	$commitment = Commitment::getTable()->get($id, $column);
     	if (!$commitment) return null;
         if ($commitment->account_id) {
 	    	$commitment->account = Account::get($commitment->account_id);
 	    	$commitment->place_id = $commitment->account->place_id;
-	    	$commitment->account_status = $commitment->account->status;
+
+			// Check the habilitation on place perimeter
+	    	if (array_key_exists('p-pit-admin', $context->getPerimeters()) && array_key_exists('place_id', $context->getPerimeters()['p-pit-admin'])) {
+	    		if (!in_array($commitment->place_id, $context->getPerimeters()['p-pit-admin']['place_id'])) return null;
+    		}
+	    	
+    		$commitment->account_status = $commitment->account->status;
 	    	$commitment->account_name = $commitment->account->name;
 	    	$commitment->account_identifier = $commitment->account->identifier;
 

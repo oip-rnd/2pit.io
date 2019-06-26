@@ -309,7 +309,7 @@ class Place
      */
 	public function getConfig($key) {
 		$context = Context::getCurrent();
-		if ($context->getConfig('specificationMode') == 'config' && $context->getConfig('place_config/'.$this->identifier)[$key]) {
+		if ($context->getConfig('specificationMode') == 'config' && $context->getConfig('place_config/'.$this->identifier) && array_key_exists($key, $context->getConfig('place_config/'.$this->identifier)) && $context->getConfig('place_config/'.$this->identifier)[$key]) {
 			return $context->getConfig('place_config/'.$this->identifier)[$key];
 		}
 		elseif (array_key_exists($key, $this->config)) {
