@@ -875,7 +875,6 @@ class CommitmentController extends AbstractActionController
 	    $settledAmount = 0;
 	    $collectedAmount = 0;
 	    foreach(Term::getList($type, array('commitment_id' => $commitment->id), '+due_date') as $term) {
-	    	$termDescription = Term::getDescription($term->type);
 	    	
 	    	if ($term->status == 'settled') $settledAmount += $term->amount;
 	    	elseif (!(in_array($term->status, ['expected', 'settled']))) $collectedAmount += $term->amount;
@@ -883,7 +882,7 @@ class CommitmentController extends AbstractActionController
 	    	if (array_key_exists('terms', $invoiceSpecs)) {
 		    	$line[] = array();
 	    		$line['caption'] = $term->caption;
-	    		$line['status'] = $context->localize($termDescription['properties']['status']['modalities'][(!(in_array($term->status, ['expected', 'settled']))) ? 'collected' : $term->status]);
+	    		$line['status'] = (!(in_array($term->status, ['expected', 'settled']))) ? 'collected' : $term->status;
 	    		$line['due_date'] = $term->due_date;
 	    		$line['settlement_date'] = $term->settlement_date;
 	    		$line['means_of_payment'] = $term->means_of_payment;

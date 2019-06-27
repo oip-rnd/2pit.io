@@ -504,7 +504,13 @@ class Context
     		Context::$profile = Account::get($contact->id, 'contact_1_id');
     		
     		// Retrieve the place data
-    		Context::$place_id = Context::$instance->default_place_id;
+			if (array_key_exists('p-pit-admin', Context::$static_perimeters) && array_key_exists('place_id', Context::$static_perimeters['p-pit-admin'])) {
+				if (in_array(Context::$instance->default_place_id, Context::$static_perimeters['p-pit-admin']['place_id'])) {
+					Context::$place_id = Context::$instance->default_place_id;
+				}
+				else Context::$place_id = current(Context::$static_perimeters['p-pit-admin']['place_id']);
+			}
+    		else Context::$place_id = Context::$instance->default_place_id;
     		Context::$place = Place::get(Context::$place_id);
     	}
     }

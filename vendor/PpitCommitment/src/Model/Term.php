@@ -709,7 +709,7 @@ class Term
 
 		// Todo list vs search modes
 		if (count($params) == 0) {
-			$where->notEqualTo('commitment_term.status', 'collected');
+			$where->in('commitment_term.status', ['expected', 'settled']);
 			$where->lessThanOrEqualTo('collection_date', date('Y-m-d'));
 		}
 		else {
@@ -763,84 +763,84 @@ class Term
 		
 		// Check the habilitation on place perimeter
 		if (!$commitment) return null;
-		$term->commitment_caption = $commitment->caption;
-		$account = Account::get($commitment->account_id);
-		if ($account) {
-			if (!$term->invoice_identifier) $term->invoice_identifier = $commitment->invoice_identifier;
-			$term->commitment_property_1 = $commitment->property_1;
-			$term->commitment_property_2 = $commitment->property_2;
-			$term->commitment_property_3 = $commitment->property_3;
-			$term->commitment_property_4 = $commitment->property_4;
-			$term->commitment_property_5 = $commitment->property_5;
-			$term->commitment_property_6 = $commitment->property_6;
-			$term->commitment_property_7 = $commitment->property_7;
-			$term->commitment_property_8 = $commitment->property_8;
-			$term->commitment_property_9 = $commitment->property_9;
-			$term->commitment_property_10 = $commitment->property_10;
-			$term->commitment_property_11 = $commitment->property_11;
-			$term->commitment_property_12 = $commitment->property_12;
-			$term->commitment_property_13 = $commitment->property_13;
-			$term->commitment_property_14 = $commitment->property_14;
-			$term->commitment_property_15 = $commitment->property_15;
-			$term->commitment_property_16 = $commitment->property_16;
-			$term->commitment_property_17 = $commitment->property_17;
-			$term->commitment_property_18 = $commitment->property_18;
-			$term->commitment_property_19 = $commitment->property_19;
-			$term->commitment_property_20 = $commitment->property_20;
-			$term->commitment_property_21 = $commitment->property_21;
-			$term->commitment_property_22 = $commitment->property_22;
-			$term->commitment_property_23 = $commitment->property_23;
-			$term->commitment_property_24 = $commitment->property_24;
-			$term->commitment_property_25 = $commitment->property_25;
-			$term->commitment_property_26 = $commitment->property_26;
-			$term->commitment_property_27 = $commitment->property_27;
-			$term->commitment_property_28 = $commitment->property_28;
-			$term->commitment_property_29 = $commitment->property_29;
-			$term->commitment_property_30 = $commitment->property_30;
-			
-			$term->name = $account->name;
-			$term->account_status = $account->status;
-    		$term->account_identifier = $account->identifier;
-			$term->default_means_of_payment = $account->default_means_of_payment;
-			$term->transfer_order_id = $account->transfer_order_id;
-			$term->transfer_order_date = $account->transfer_order_date;
-			$term->bank_identifier = $account->bank_identifier;
+			$term->commitment_caption = $commitment->caption;
+			$account = Account::get($commitment->account_id);
+			if ($account) {
+				if (!$term->invoice_identifier) $term->invoice_identifier = $commitment->invoice_identifier;
+				$term->commitment_property_1 = $commitment->property_1;
+				$term->commitment_property_2 = $commitment->property_2;
+				$term->commitment_property_3 = $commitment->property_3;
+				$term->commitment_property_4 = $commitment->property_4;
+				$term->commitment_property_5 = $commitment->property_5;
+				$term->commitment_property_6 = $commitment->property_6;
+				$term->commitment_property_7 = $commitment->property_7;
+				$term->commitment_property_8 = $commitment->property_8;
+				$term->commitment_property_9 = $commitment->property_9;
+				$term->commitment_property_10 = $commitment->property_10;
+				$term->commitment_property_11 = $commitment->property_11;
+				$term->commitment_property_12 = $commitment->property_12;
+				$term->commitment_property_13 = $commitment->property_13;
+				$term->commitment_property_14 = $commitment->property_14;
+				$term->commitment_property_15 = $commitment->property_15;
+				$term->commitment_property_16 = $commitment->property_16;
+				$term->commitment_property_17 = $commitment->property_17;
+				$term->commitment_property_18 = $commitment->property_18;
+				$term->commitment_property_19 = $commitment->property_19;
+				$term->commitment_property_20 = $commitment->property_20;
+				$term->commitment_property_21 = $commitment->property_21;
+				$term->commitment_property_22 = $commitment->property_22;
+				$term->commitment_property_23 = $commitment->property_23;
+				$term->commitment_property_24 = $commitment->property_24;
+				$term->commitment_property_25 = $commitment->property_25;
+				$term->commitment_property_26 = $commitment->property_26;
+				$term->commitment_property_27 = $commitment->property_27;
+				$term->commitment_property_28 = $commitment->property_28;
+				$term->commitment_property_29 = $commitment->property_29;
+				$term->commitment_property_30 = $commitment->property_30;
+				
+				$term->name = $account->name;
+				$term->account_status = $account->status;
+	    		$term->account_identifier = $account->identifier;
+				$term->default_means_of_payment = $account->default_means_of_payment;
+				$term->transfer_order_id = $account->transfer_order_id;
+				$term->transfer_order_date = $account->transfer_order_date;
+				$term->bank_identifier = $account->bank_identifier;
 
-			$term->account_date_1 = $account->date_1;
-			$term->account_date_2 = $account->date_2;
-			$term->account_date_3 = $account->date_3;
-			$term->account_date_4 = $account->date_4;
-			$term->account_date_5 = $account->date_5;
-			$term->account_property_1 = $account->property_1;
-	    	$term->account_property_2 = $account->property_2;
-	    	$term->account_property_3 = $account->property_3;
-	    	$term->account_property_4 = $account->property_4;
-	    	$term->account_property_5 = $account->property_5;
-	    	$term->account_property_6 = $account->property_6;
-	    	$term->account_property_7 = $account->property_7;
-	    	$term->account_property_8 = $account->property_8;
-	    	$term->account_property_9 = $account->property_9;
-	    	$term->account_property_10 = $account->property_10;
-	    	$term->account_property_11 = $account->property_11;
-	    	$term->account_property_12 = $account->property_12;
-	    	$term->account_property_13 = $account->property_13;
-	    	$term->account_property_14 = $account->property_14;
-	    	$term->account_property_15 = $account->property_15;
-	    	$term->account_property_16 = $account->property_16;
-	    	
-	    	if ($account->contact_1_id) {
-	    		$vcard = Vcard::get($account->contact_1_id);
-	    		$term->email = $vcard->email;
-	    		$term->tel_work = $vcard->tel_work;
-	    		$term->tel_cell = $vcard->tel_cell;
-	    	}
-		}
-		if ($term->invoice_account_id) {
-			$invoiceAccount = Account::get($term->invoice_account_id);
-			if ($invoiceAccount) {
-				$term->invoice_account_name = $invoiceAccount->name;
+				$term->account_date_1 = $account->date_1;
+				$term->account_date_2 = $account->date_2;
+				$term->account_date_3 = $account->date_3;
+				$term->account_date_4 = $account->date_4;
+				$term->account_date_5 = $account->date_5;
+				$term->account_property_1 = $account->property_1;
+		    	$term->account_property_2 = $account->property_2;
+		    	$term->account_property_3 = $account->property_3;
+		    	$term->account_property_4 = $account->property_4;
+		    	$term->account_property_5 = $account->property_5;
+		    	$term->account_property_6 = $account->property_6;
+		    	$term->account_property_7 = $account->property_7;
+		    	$term->account_property_8 = $account->property_8;
+		    	$term->account_property_9 = $account->property_9;
+		    	$term->account_property_10 = $account->property_10;
+		    	$term->account_property_11 = $account->property_11;
+		    	$term->account_property_12 = $account->property_12;
+		    	$term->account_property_13 = $account->property_13;
+		    	$term->account_property_14 = $account->property_14;
+		    	$term->account_property_15 = $account->property_15;
+		    	$term->account_property_16 = $account->property_16;
+		    	
+		    	if ($account->contact_1_id) {
+		    		$vcard = Vcard::get($account->contact_1_id);
+		    		$term->email = $vcard->email;
+		    		$term->tel_work = $vcard->tel_work;
+		    		$term->tel_cell = $vcard->tel_cell;
+		    	}
 			}
-		}
+			if ($term->invoice_account_id) {
+				$invoiceAccount = Account::get($term->invoice_account_id);
+				if ($invoiceAccount) {
+					$term->invoice_account_name = $invoiceAccount->name;
+				}
+			}
 		$term->properties = $term->getProperties();
 		return $term;
 	}
