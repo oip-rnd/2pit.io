@@ -107,7 +107,7 @@ return array_merge(
         				'indexV2' => array(
         						'type' => 'segment',
         						'options' => array(
-        								'route' => '/index-v2[/:type][/:app]',
+        								'route' => '/index-v2[/:type][/:entryId]',
         								'defaults' => array(
         										'action' => 'indexV2',
         								),
@@ -832,7 +832,7 @@ return array_merge(
         						'indexV2' => array(
         								'type' => 'segment',
         								'options' => array(
-        										'route' => '/index-v2[/:type][/:app]',
+        										'route' => '/index-v2[/:type][/:entryId]',
         										'defaults' => array(
         												'action' => 'indexV2',
         										),
@@ -1268,7 +1268,7 @@ return array_merge(
 		'entries' => array(
 				'account' => array(
 					'route' => 'account/indexAlt',
-					'params' => array('entry' => 'account', 'type' => 'business'),
+					'params' => array('entry' => 'account', 'type' => 'business', 'entryId' => 'account'),
 					'glyphicon' => 'glyphicon-user',
 					'label' => array(
 						'en_US' => 'Clients',

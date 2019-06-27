@@ -67,7 +67,7 @@ return array(
 					'indexAlt' => array(
 						'type' => 'segment',
 						'options' => array(
-							'route' => '/index-alt[/:entry][/:type][/:app]',
+							'route' => '/index-alt[/:entry][/:type][/:entryId]',
 							'defaults' => array(
 								'action' => 'indexAlt',
 							),
@@ -2021,7 +2021,7 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 		'entries' => array(
 			'suspect' => array(
 				'route' => 'account/indexAlt',
-				'params' => array('entry' => 'contact', 'type' => 'pbc', 'app' => 'synapps'),
+				'params' => array('entry' => 'contact', 'type' => 'pbc', 'entryId' => 'suspect'),
 				'glyphicon' => 'glyphicon-user',
 				'fa' => 'far fa-address-card fa-lg',
 				'label' => array(
@@ -2031,7 +2031,7 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 			),
 			'contact' => array(
 				'route' => 'account/indexAlt',
-				'params' => array('entry' => 'account', 'type' => 'pbc', 'app' => 'synapps'),
+				'params' => array('entry' => 'account', 'type' => 'pbc', 'entryId' => 'contact'),
 				'glyphicon' => 'glyphicon-user',
 				'fa' => 'far fa-address-card fa-lg',
 				'label' => array(
@@ -2041,7 +2041,7 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 			),
 			'account' => array(
 				'route' => 'account/indexAlt',
-				'params' => array('entry' => 'group', 'type' => 'group', 'app' => 'synapps'),
+				'params' => array('entry' => 'group', 'type' => 'group', 'entryId' => 'account'),
 				'glyphicon' => 'glyphicon-user',
 				'label' => array(
 					'en_US' => 'Groups',
@@ -2821,7 +2821,7 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 		'type' => 'date',
 		'labels' => array(
 			'en_US' => 'First activation date',
-			'fr_FR' => 'Date de première activation',
+			'fr_FR' => 'Date 1ère activation',
 		),
 	),
 
@@ -2880,7 +2880,7 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 		'type' => 'datetime',
 		'labels' => array(
 			'en_US' => 'Next meeting_date',
-			'fr_FR' => 'Date de prochain rendez-vous',
+			'fr_FR' => 'Prochain rendez-vous',
 		),
 	),
 	
@@ -3460,7 +3460,7 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 			'title' => array('en_US' => 'Contacts', 'fr_FR' => 'Contacts'),
 			'todoTitle' => array('en_US' => 'todo list', 'fr_FR' => 'todo list'),
 			'properties' => array(
-					'place_id' => [],
+//					'place_id' => [],
 					'status' => [],
 					'name' => [],
 					'email' => [],
@@ -3468,10 +3468,10 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 					'callback_date' => [],
 					'first_activation_date' => [],
 					'next_meeting_date' => [],
-					'next_meeting_confirmed' => ['type' => 'boolean'],
 					'basket' => [],
 					'origine' => [],
 					'property_1' => [],
+					'property_2' => [],
 			),
 	),
 
@@ -3542,7 +3542,6 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 			'callback_date' => ['mandatory' => false],
 			'first_activation_date' => ['mandatory' => false],
 			'next_meeting_date' => ['mandatory' => false],
-			'next_meeting_confirmed' => ['mandatory' => false],
 			'origine' => ['mandatory' => false],
 			'title_1' => [],
 			'n_title' => ['mandatory' => false],
@@ -3559,9 +3558,9 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 			'property_1' => ['mandatory' => false],
 			'property_2' => ['mandatory' => false],
 			'default_means_of_payment' => array('mandatory' => false),
-			'transfer_order_id' => array('mandatory' => false), 
+/*			'transfer_order_id' => array('mandatory' => false), 
 			'transfer_order_date' => array('mandatory' => false), 
-			'bank_identifier' => array('mandatory' => false),
+			'bank_identifier' => array('mandatory' => false),*/
 			'comment_1' => ['mandatory' => false],
 			'comment_2' => ['mandatory' => false],
 			'contact_history' => ['mandatory' => false],

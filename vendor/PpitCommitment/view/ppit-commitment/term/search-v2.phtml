@@ -104,7 +104,7 @@
               <i class="fa fa-cloud-download-alt"></i>
             </a>
             <div class="input-group-prepend">
-              <a type="button" class="input-group-text btn" role="button" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Forecast export', 'ppit-commitment', $context->getLocale()) ?>" id="forecast-button">
+              <a type="button" class="input-group-text btn" role="button" href="<?php echo $this->url('commitmentTerm/statusMonth', ['status' => $type])?>" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Forecast export', 'ppit-commitment', $context->getLocale()) ?>" id="forecast-button">
                 <i class="fa fa-cloud-download-alt"></i>&nbsp;
                 <span><?php echo $this->translate('Forecast', 'ppit-commitment', $context->getLocale())?></span>
               </a>

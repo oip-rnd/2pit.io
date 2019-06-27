@@ -64,9 +64,24 @@ class TermController extends AbstractActionController
 		// Retrieve the context and parameters
 		$context = Context::getCurrent();
     	$type = $this->params()->fromRoute('type', null);
-    	$app = $this->params()->fromRoute('app', 'p-pit-engagements');
-    	$applicationName = $context->localize($context->getConfig('menus/'.$app)['labels']);
-		$types = Context::getCurrent()->getConfig('commitment/types')['modalities'];
+    	$place = Place::get($context->getPlaceId());
+
+    	// Transient: Serialize a list of the entries from all menus
+    	$menuEntries = [];
+    	foreach ($context->getApplications() as $applicationId => $application) {
+    		if ($context->getConfig('menus/'.$applicationId)) {
+    			foreach ($context->getConfig('menus/' . $applicationId)['entries'] as $entryId => $entryDef) {
+    				$menuEntries[$entryId] = ['menuId' => $applicationId, 'menu' => $application, 'definition' => $entryDef];
+    			}
+    		}
+    	}
+    	$entry = $this->params()->fromRoute('entryId', 'account');
+    	 
+    	// Retrieve the application
+    	$app = $menuEntries[$entry]['menuId'];
+    	$applicationName = $context->localize($menuEntries[$entry]['menu']['labels']);
+    	
+    	$types = Context::getCurrent()->getConfig('commitment/types')['modalities'];
 		$description = Term::getDescription($type);
 		
     	// Feed the layout
@@ -74,6 +89,8 @@ class TermController extends AbstractActionController
 		$this->layout()->setVariables(array(
 			'context' => Context::getCurrent(),
 			'type' => $type,
+			'place' => $place,
+			'entry' => $entry,
 			'app' => $app,
 			'active' => 'application',
 			'applicationName' => $applicationName,

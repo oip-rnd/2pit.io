@@ -58,7 +58,7 @@ function connectTermUpdateForm(commitment_id, id, action, target)
     // Set up a handler for when the request finishes.
     xhttp.onload = function () {
       if (xhttp.readyState == 4 && xhttp.status == 200) {
-        getCommitmentTermList(getSearchParams(''));
+//        getCommitmentTermList(getSearchParams(''));
         $('#' + target).html(xhttp.responseText);
       }
     };

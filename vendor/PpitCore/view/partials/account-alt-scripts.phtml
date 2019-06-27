@@ -388,6 +388,7 @@ function getDetail(id) {
 
 <?php 
 $properties = array();
+$properties['contact_status'] = array('type' => 'select', 'mandatory' => false);
 
 foreach ($updateContactPage as $propertyId => $options) {
   $property = $vcardProperties[$propertyId];

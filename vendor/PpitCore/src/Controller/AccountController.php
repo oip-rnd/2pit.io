@@ -111,10 +111,21 @@ class AccountController extends AbstractActionController
     	$vcardProperties = Vcard::getConfig();
     	if ($type == 'p-pit-studies') $commitmentProperties = \PpitCommitment\Model\Commitment::getDescription('p-pit-studies')['update'];
     	else $commitmentProperties = null;
-    	 
+
+		// Transient: Serialize a list of the entries from all menus
+		$menuEntries = [];
+		foreach ($context->getApplications() as $applicationId => $application) {
+			if ($context->getConfig('menus/'.$applicationId)) {
+				foreach ($context->getConfig('menus/' . $applicationId)['entries'] as $entryId => $entryDef) {
+					$menuEntries[$entryId] = ['menuId' => $applicationId, 'menu' => $application, 'definition' => $entryDef];
+				}
+			}
+		}
+		$entry = $this->params()->fromRoute('entryId', 'account');
+
 		// Retrieve the application
-		$app = $this->params()->fromRoute('app', 'p-pit-engagements');
-		$applicationName = $context->localize($context->getConfig('menus/'.$app)['labels']);
+		$app = $menuEntries[$entry]['menuId'];
+		$applicationName = $context->localize($menuEntries[$entry]['menu']['labels']);
 
 		// Define the initial status depending on the perspective
 		if ($entry == 'contact') $status = 'new';
