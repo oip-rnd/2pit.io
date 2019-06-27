@@ -88,7 +88,7 @@ $this->headTitle($title);
     <ul class="nav nav-pills nav-justified">
 <?php foreach ($context->getConfig('menus/' . $app)['entries'] as $entryId => $entryDef) : ?>
   <?php if ($context->isAllowed($entryDef['route'])) : ?>
-    <?php if (isset($entry) && array_key_exists('entryId', $entryDef['params']) && $entry == $entryDef['params']['entryId']) $active = true; else $active = false ?>
+    <?php if (isset($tab) && array_key_exists('entryId', $entryDef['params']) && $tab == $entryDef['params']['entryId']) $active = true; else $active = false ?>
       <li class="nav-item">
         <a class="nav-link <?php if ($active) echo 'active' ?>" href="#" id="<?php echo $entryId ?>-anchor">
     <?php if (array_key_exists('fa', $entryDef)) : ?>

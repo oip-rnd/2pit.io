@@ -121,11 +121,11 @@ class AccountController extends AbstractActionController
 				}
 			}
 		}
-		$entry = $this->params()->fromRoute('entryId', 'account');
+		$tab = $this->params()->fromRoute('entryId', 'account');
 
 		// Retrieve the application
-		$app = $menuEntries[$entry]['menuId'];
-		$applicationName = $context->localize($menuEntries[$entry]['menu']['labels']);
+		$app = $menuEntries[$tab]['menuId'];
+		$applicationName = $context->localize($menuEntries[$tab]['menu']['labels']);
 
 		// Define the initial status depending on the perspective
 		if ($entry == 'contact') $status = 'new';
@@ -150,7 +150,8 @@ class AccountController extends AbstractActionController
 			'description' => null,
 			'active' => 'home',
     		'place' => $place,
-    		'app' => $app,
+			'tab' => $tab,
+			'app' => $app,
 			'applicationName' => $applicationName,
 			'page' => $context->getConfig('core_account/index/'.$type),
 			'indexPage' => $context->getConfig('core_account/index/'.$type),

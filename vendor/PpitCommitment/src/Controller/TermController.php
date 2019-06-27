@@ -75,11 +75,11 @@ class TermController extends AbstractActionController
     			}
     		}
     	}
-    	$entry = $this->params()->fromRoute('entryId', 'account');
+    	$tab = $this->params()->fromRoute('entryId', 'account');
     	 
     	// Retrieve the application
-    	$app = $menuEntries[$entry]['menuId'];
-    	$applicationName = $context->localize($menuEntries[$entry]['menu']['labels']);
+    	$app = $menuEntries[$tab]['menuId'];
+    	$applicationName = $context->localize($menuEntries[$tab]['menu']['labels']);
     	
     	$types = Context::getCurrent()->getConfig('commitment/types')['modalities'];
 		$description = Term::getDescription($type);
@@ -90,7 +90,7 @@ class TermController extends AbstractActionController
 			'context' => Context::getCurrent(),
 			'type' => $type,
 			'place' => $place,
-			'entry' => $entry,
+			'tab' => $tab,
 			'app' => $app,
 			'active' => 'application',
 			'applicationName' => $applicationName,
