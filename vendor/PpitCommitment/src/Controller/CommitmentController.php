@@ -910,7 +910,7 @@ class CommitmentController extends AbstractActionController
 
 	    $invoice['settled_amount'] = $settledAmount;
 	    $invoice['collected_amount'] = $collectedAmount;
-	    $invoice['still_due'] = $commitment->tax_inclusive - $settledAmount;
+	    $invoice['still_due'] = $commitment->tax_inclusive - $settledAmount - $collectedAmount;
     	
     	if (array_key_exists('commitment/invoice_tax_mention', $commitment->place_config)) $invoice['tax_mention'] = $commitment->place_config['commitment/invoice_tax_mention'];
     	elseif ($context->getConfig('commitment/invoice_tax_mention')) $invoice['tax_mention'] = $context->getConfig('commitment/invoice_tax_mention');
