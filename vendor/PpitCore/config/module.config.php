@@ -2336,8 +2336,8 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 			'2pit' => array('fr_FR' => 'P-PIT', 'en_US' => '2PIT'),
 		),
 		'labels' => array(
-			'en_US' => 'Center',
-			'fr_FR' => 'Centre',
+			'en_US' => 'Place',
+			'fr_FR' => 'Établissement',
 		),
 	),
 

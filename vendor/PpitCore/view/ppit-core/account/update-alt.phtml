@@ -149,15 +149,15 @@ if ($account->id && $action != 'update' || $message == 'OK') $isDisabled = true;
 
 <!-- place_id -->
     <?php elseif ($propertyId == 'place_id') : ?>
+      <?php $current_place_id = ($account->place_id) ? $account->place_id : $context->getPlaceId() ?>
 
   <div class="form-group row" id="<?php echo $propertyId ?>_group">
     <label class="col-sm-5 col-form-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels']) ?></label>
     <div class="col-sm-7">
       <select class="form-control <?php if (!$readonly) echo 'updatable-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
-        <option />
-    <?php foreach ($places as $place) : ?>
-        <option value="<?php echo $place->id ?>" <?php if ($account->properties[$propertyId] == $place->id) echo 'selected="selected"' ?>><?php echo $place->caption ?></option>
-    <?php endforeach;?>
+      <?php foreach ($places as $place) : ?>
+        <option value="<?php echo $place->id ?>" <?php if ($current_place_id == $place->id) echo 'selected="selected"' ?>><?php echo $place->caption ?></option>
+      <?php endforeach;?>
       </select>
       <div class="invalid-feedback" id="<?php echo $propertyId ?>_error"></div>
     </div>
