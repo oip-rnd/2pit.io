@@ -7,7 +7,7 @@ use PpitCore\Model\Csrf;
 use PpitCore\Model\Place;
 use PpitCore\Model\Product;
 use PpitCore\Model\Vcard;
-use ViewHelper\SsmlProductViewHelper;
+use PpitCore\ViewHelper\SsmlProductViewHelper;
 use Zend\Log\Logger;
 use Zend\Log\Writer;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -39,6 +39,46 @@ class ProductController extends AbstractActionController
     			'menu' => $menu,
 //    			'contact' => $contact,
     	));
+    }
+
+    public function indexV2Action()
+    {
+    	$context = Context::getCurrent();
+    	$place = Place::get($context->getPlaceId());
+		
+		$type = $this->params()->fromRoute('type', 0);
+		$app = $this->params()->fromRoute('type', 'product');
+		$types = Context::getCurrent()->getConfig('commitment/types')['modalities'];
+
+		// Transient: Serialize a list of the entries from all menus
+		$menuEntries = [];
+		foreach ($context->getApplications() as $applicationId => $application) {
+			if ($context->getConfig('menus/'.$applicationId)) {
+				foreach ($context->getConfig('menus/' . $applicationId)['entries'] as $entryId => $entryDef) {
+					$menuEntries[$entryId] = ['menuId' => $applicationId, 'menu' => $application, 'definition' => $entryDef];
+				}
+			}
+		}
+		$tab = $this->params()->fromRoute('entryId', 'product');
+		
+		// Retrieve the application
+		$app = $menuEntries[$tab]['menuId'];
+		$applicationName = $context->localize($menuEntries[$tab]['menu']['labels']);
+		
+		$this->layout('/layout/core-layout');
+		$this->layout()->setVariables(array(
+			'context' => $context,
+			'type' => $type,
+    		'place' => $place,
+			'tab' => $tab,
+			'app' => $app,
+			'active' => 'application',
+			'applicationName' => $applicationName,
+			'pageScripts' => '/ppit-core/product/scripts-v2',
+    	));
+	
+		$view = $this->indexAction();
+    	return $view;
     }
     
     public function criteriaAction()
@@ -133,6 +173,11 @@ class ProductController extends AbstractActionController
        	return $view;
    	}
 
+   	public function searchV2Action()
+   	{
+   		return $this->searchAction();
+   	}
+   	
    	public function getList()
    	{
 		// Retrieve the context
@@ -169,6 +214,11 @@ class ProductController extends AbstractActionController
    		return $this->getList();
    	}
 
+   	public function listV2Action()
+   	{
+   		return $this->getList();
+   	}
+   	
    	public function exportAction()
    	{
 		$context = Context::getCurrent();
@@ -178,7 +228,7 @@ class ProductController extends AbstractActionController
 		
 		$content = [];
    		$filters = array();
-		foreach ($context->getConfig('core_product/search/'.$type)['properties'] as $propertyId => $unused) {
+		foreach ($context->getConfig('core_product/export/generic'/*.$type*/)['properties'] as $propertyId => $unused) {
 			$property = ($this->params()->fromQuery($propertyId, null));
 			if ($property) $filters[$propertyId] = $property;
 		}
@@ -199,7 +249,7 @@ class ProductController extends AbstractActionController
 		\PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
 
 		$workbook = new \PHPExcel;
-		(new SsmlProductViewHelper)->formatXls($type, $workbook, $content);
+		(new SsmlProductViewHelper)->formatXls('generic'/*$type*/, $workbook, $content);
 		$writer = new \PHPExcel_Writer_Excel2007($workbook);
 		
 		header('Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -281,6 +331,11 @@ class ProductController extends AbstractActionController
 		return $view;
     }
 
+    public function detailV2Action()
+    {
+    	return $this->detailAction();
+    }
+    
     public function updateAction()
     {
     	// Retrieve the context
@@ -372,6 +427,11 @@ class ProductController extends AbstractActionController
     	return $view;
     }
 
+    public function updateV2Action()
+    {
+    	return $this->updateAction();
+    }
+    
     /**
      * Restfull implementation
      */

@@ -995,6 +995,15 @@ return array(
 							),
 						),
 					),
+					'indexV2' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/index-v2[/:type][/:entryId]',
+							'defaults' => array(
+								'action' => 'indexV2',
+							),
+						),
+					),
 					'criteria' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -1013,12 +1022,30 @@ return array(
 							),
 						),
 					),
+					'searchV2' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/search-v2[/:type]',
+							'defaults' => array(
+								'action' => 'searchV2',
+							),
+						),
+					),
 					'list' => array(
 						'type' => 'segment',
 						'options' => array(
 							'route' => '/list[/:type]',
 							'defaults' => array(
 								'action' => 'list',
+							),
+						),
+					),
+					'listV2' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/list-v2[/:type]',
+							'defaults' => array(
+								'action' => 'listV2',
 							),
 						),
 					),
@@ -1043,6 +1070,18 @@ return array(
 							),
 						),
 					),
+					'detailV2' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/detail-v2[/:type][/:id]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'detailV2',
+							),
+						),
+					),
 					'dataList' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -1064,6 +1103,18 @@ return array(
 							),
 							'defaults' => array(
 								'action' => 'update',
+							),
+						),
+					),
+					'updateV2' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/update-v2[/:type][/:id][/:act]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'updateV2',
 							),
 						),
 					),
@@ -1147,6 +1198,18 @@ return array(
 							),
 						),
 					),
+					'listV2' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/list-v2[/:type][/:product_id]',
+							'constraints' => array(
+								'product_id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'listV2',
+							),
+						),
+					),
 					'export' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -1169,6 +1232,19 @@ return array(
 							),
 							'defaults' => array(
 								'action' => 'update',
+							),
+						),
+					),
+					'updateV2' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/update-v2[/:type][/:product_id][/:id][/:act]',
+							'constraints' => array(
+								'product_id' => '[0-9]*',
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'updateV2',
 							),
 						),
 					),
@@ -1642,13 +1718,18 @@ return array(
 				// Product
 				array('route' => 'product', 'roles' => array('sales_manager')),
 				array('route' => 'product/index', 'roles' => array('sales_manager')),
+				array('route' => 'product/indexV2', 'roles' => array('sales_manager')),
 				array('route' => 'product/list', 'roles' => array('sales_manager')),
+				array('route' => 'product/listV2', 'roles' => array('sales_manager')),
 				array('route' => 'product/export', 'roles' => array('sales_manager')),
 				array('route' => 'product/criteria', 'roles' => array('guest')),
 				array('route' => 'product/serviceList', 'roles' => array('guest')),
 				array('route' => 'product/search', 'roles' => array('sales_manager')),
+				array('route' => 'product/searchV2', 'roles' => array('sales_manager')),
 				array('route' => 'product/detail', 'roles' => array('sales_manager')),
+				array('route' => 'product/detailV2', 'roles' => array('sales_manager')),
 				array('route' => 'product/update', 'roles' => array('sales_manager')),
+				array('route' => 'product/updateV2', 'roles' => array('sales_manager')),
 				array('route' => 'product/matrix', 'roles' => array('admin')),
 				array('route' => 'product/delete', 'roles' => array('admin')),
 				array('route' => 'product/v1', 'roles' => array('guest')),
@@ -1657,9 +1738,11 @@ return array(
 				array('route' => 'productOption', 'roles' => array('sales_manager')),
 				array('route' => 'productOption/index', 'roles' => array('sales_manager')),
 				array('route' => 'productOption/list', 'roles' => array('sales_manager')),
+				array('route' => 'productOption/listV2', 'roles' => array('sales_manager')),
 				array('route' => 'productOption/export', 'roles' => array('sales_manager')),
 				array('route' => 'productOption/update', 'roles' => array('sales_manager')),
-
+				array('route' => 'productOption/updateV2', 'roles' => array('sales_manager')),
+				
 				array('route' => 'user', 'roles' => array('admin', 'manager')),
 				array('route' => 'user/index', 'roles' => array('admin', 'manager')),
 				array('route' => 'user/search', 'roles' => array('admin', 'manager')),
@@ -6028,6 +6111,15 @@ table.note-report td {
 					'identifier' => [],
 					'caption' => [],
 			),
+	),
+
+	'core_product/export/generic' => array(
+		'properties' => array(
+//			'place_id' => 'A',
+			'status' => 'B',
+			'identifier' => 'C',
+			'caption' => 'D',
+		),
 	),
 	
 	// Deprecated

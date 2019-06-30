@@ -162,6 +162,11 @@ class ProductOptionController extends AbstractActionController
     {
     	return $this->getList();
     }
+
+    public function listV2Action()
+    {
+    	return $this->getList();
+    }
     
     public function exportAction()
     {
@@ -250,5 +255,10 @@ class ProductOptionController extends AbstractActionController
     	));
    		$view->setTerminal(true);
    		return $view;
+    }
+
+    public function updateV2Action()
+    {
+    	return $this->updateAction();
     }
 }

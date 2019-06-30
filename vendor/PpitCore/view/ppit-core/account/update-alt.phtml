@@ -226,10 +226,10 @@ if ($account->id && $action != 'update' || $message == 'OK') $isDisabled = true;
     <label class="col-sm-5 col-form-label"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels']) ?></label>
     <div class="col-sm-4">
       <input type="hidden" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
-      <input class="form-control <?php if (!$readonly) echo 'updatable-control' ?>" id="input_<?php echo $propertyId ?>" value="<?php echo $context->decodeDate(substr($account->properties[$propertyId], 0, 10)) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+      <input class="form-control <?php if (!$readonly) echo 'updatable-control' ?> update_date" id="input_<?php echo $propertyId ?>" value="<?php echo $context->decodeDate(substr($account->properties[$propertyId], 0, 10)) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
     </div>
     <div class="col-sm-3">
-      <input class="form-control time <?php if (!$readonly) echo 'updatable-control' ?>" id="<?php echo $propertyId ?>-time" value="<?php echo substr($account->properties[$propertyId], 11, 8) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+      <input class="form-control time <?php if (!$readonly) echo 'updatable-control' ?> update_time" id="<?php echo $propertyId ?>-time" value="<?php echo substr($account->properties[$propertyId], 11, 8) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
       <div class="invalid-feedback" id="<?php echo $propertyId ?>_error"></div>
     </div>
   </div>

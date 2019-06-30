@@ -1,0 +1,114 @@
+<!-- 
+/**
+ * PpitAccounting V1.0 (https://github.com/p-pit/PpitAccounting)
+ *
+ * @link      https://github.com/p-pit/PpitAccounting
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitAccounting/blob/master/license.txt GNU-GPL license
+ */
+-->
+
+<style>
+table td { 
+  font-size: 0.9rem;
+}
+</style>
+
+<div class="col-md-12">
+
+  <table class="table table-sm table-hover">
+    <tr class="table-info">
+      <th>&nbsp;</th>
+
+      <th align="center">
+        <a type="button" class="btn btn-sm product-sort-anchor <?php if ($major == 'identifier') echo 'btn-secondary active '.(($major == 'identifier') ? (($dir == 'ASC') ? 'sort_anchor_up' : 'sort_anchor_down') : '') ?>" role="button" id="identifier-anchor">
+          <span><?php echo $this->translate('Reference', 'ppit-core', $context->getLocale()) ?></span>
+<?php if ($major == 'identifier') : ?>
+          <i class="fas fa-caret-<?php echo ($dir == 'ASC') ? 'up' : 'down' ?>"></i>
+<?php endif ?>
+        </a>
+      </th>
+
+      <th align="center">
+        <a type="button" class="btn btn-sm product-sort-anchor <?php if ($major == 'caption') echo 'btn-secondary active '.(($major == 'caption') ? (($dir == 'ASC') ? 'sort_anchor_up' : 'sort_anchor_down') : '') ?>" role="button" id="caption-anchor">
+          <span><?php echo $this->translate('Caption', 'ppit-core', $context->getLocale()) ?></span>
+<?php if ($major == 'caption') : ?>
+          <i class="fas fa-caret-<?php echo ($dir == 'ASC') ? 'up' : 'down' ?>"></i>
+<?php endif ?>
+        </a>
+      </th>
+
+<?php foreach ($context->getConfig('ppitProduct/list') as $propertyId => $property) : ?>
+      <th align="center">
+        <a type="button" class="btn btn-sm product-sort-anchor <?php if ($major == $propertyId) echo 'btn-secondary active '.(($major == $propertyId) ? (($dir == 'ASC') ? 'sort_anchor_up' : 'sort_anchor_down') : '') ?>" id="<?php echo $propertyId ?>-anchor">
+          <span><?php echo $context->getInstance()->specifications['ppitMasterData']['properties'][$propertyId]['labels'][$context->getLocale()] ?></span>
+<?php if ($major == $propertyId) : ?>
+          <i class="fas fa-caret-<?php echo ($dir == 'ASC') ? 'up' : 'down' ?>"></i>
+<?php endif ?>
+        </a>
+      </th>
+<?php endforeach;?>
+
+	</tr>
+		
+	<tr>
+
+      <td class="text-center">
+        <div class="input-group input-group-sm">
+          <button type="button" class="btn btn-sm btn-outline-primary index-btn product-detail-anchor" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale())?>" id="product-detail-anchor_0">
+            <span class="fas fa-plus" id="add-glyphicon"></span>
+          </button>
+        </div>
+      </td>
+      
+      <td colspan="6">
+        <div class="input-group input-group-sm">
+          <button type="button" class="btn btn-sm btn-outline-primary index-btn" title="<?php echo $this->translate('Detail', 'ppit-core', $context->getLocale())?>" id="option-anchor">
+            <?php echo $this->translate('Non-catalog', 'ppit-core', $context->getLocale()) ?>
+          </button>
+        </div>
+      </td>
+    </tr>
+
+<?php foreach ($products as $product) : ?>
+	<?php if ($context->isAllowed('product/detail')) : ?>
+	
+	<tr class="product <?php if (!$product->is_available) echo 'font-italic' ?>">
+
+      <td>
+        <div class="input-group input-group-sm">
+          <button type="button" class="btn btn-sm btn-outline-primary index-btn product-detail-anchor" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Detail', 'ppit-core', $context->getLocale())?>" id="product-detail-anchor_<?php echo $product->id ?>">
+            <i class="fas fa-search" id="<?php echo $product->id ?>-glyphicon"></i>
+          </button>
+        </div>
+      </td>
+
+  <?php if (array_key_exists('brand', $context->getConfig('ppitProduct/list'))) : ?>
+      <td><?php echo $product->brand ?></td>
+  <?php endif;?>
+
+      <td><?php echo $product->identifier ?></td>
+      <td><?php echo $product->caption ?></td>
+
+  <?php foreach ($context->getConfig('ppitProduct/list') as $propertyId => $params) : ?>
+    <?php $property = $context->getConfig('ppitProduct')['properties'][$propertyId] ?>
+	
+    <?php if ($property['type'] == 'number') : ?>
+      <td style="text-align: right"><?php echo $context->formatFloat($product->properties[$propertyId], 2) ?></td>
+	
+    <?php elseif ($property['type'] == 'date') : ?>
+      <td><?php echo $context->decodeDate($product->properties[$propertyId]) ?></td>
+	
+    <?php else : ?>
+      <td><?php echo $product->properties[$propertyId] ?></td>
+
+    <?php endif;?>
+
+  <?php endforeach;?>
+
+	</tr>
+	
+	<?php endif;?>
+<?php endforeach; ?>
+
+</table>

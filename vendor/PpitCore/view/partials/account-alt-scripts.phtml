@@ -317,12 +317,8 @@ function getUpdate(id, action) {
         $('.update_time').timepicker({ 'timeFormat':'H:i:s', 'step': 15, 'scrollDefault': 'now' });
         $('.update_selectpicker').selectpicker();
 
-        $('#up-submit-button').click(function () { 
-          postForm(id, action); 
-        });
-        $('#submit-button').click(function () {
-          postForm(id, action);
-        });
+        $('#up-submit-button').click(function () { postForm(id, action); });
+        $('#submit-button').click(function () { postForm(id, action); });
                 
 //        $('#modalFormLabel').html($('#caption_' + id).val());
 

@@ -94,6 +94,7 @@ function commitmentTermExport() {
 
 // Load the list
 function getCommitmentTermList(params) {    
+
   // Execute the ajax request
   route = '<?php echo $this->url('commitmentTerm/listV2', ['type' => $type]) ?>' + params + '&major=' + criterion + ((dir =='ASC') ? '&dir=ASC' : '&dir=DESC');
   xhttp = new XMLHttpRequest();

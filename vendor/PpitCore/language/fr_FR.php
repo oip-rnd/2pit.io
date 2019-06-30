@@ -26,6 +26,7 @@
 			'Applications' => 'Applications',
 			'Apply the changes' => 'Appliquer les modifications',
 			'Authentication failed, please try again' => 'Authentification invalide, Veuillez essayer à nouveau',
+			'Available' => 'Disponibles',
 			'Available images' => 'Images disponibles',
 			'Average' => 'Moyenne',
 			'Balance' => 'Solde',

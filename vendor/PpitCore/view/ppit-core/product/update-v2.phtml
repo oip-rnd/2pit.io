@@ -1,0 +1,268 @@
+<!-- 
+/**
+ * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
+ *
+ * @link      https://github.com/p-pit/PpitCore
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
+ */
+-->
+      
+<style>
+table.structured-data {
+  font-size: 0.83em;
+  border-width:1px; 
+  border-style:solid; 
+  border-color:gray;
+}
+table.structured-data caption { 
+  font-size:1.5em; 
+  padding:1em 0 0.5em 1em;
+}
+table.structured-data th {
+  color: #666;
+//font-size:0.83em;
+  text-align: center;
+  border-width:1px; 
+  border-style:solid; 
+  border-color:gray;
+  background-color:#DDD;
+}
+
+table.structured-data td {
+  color: #666;
+//font-size: 0.83em;
+  border-width:1px; 
+  border-style:solid; 
+  border-color:gray;
+}
+
+table.structured-data td.subject {
+  font-weight: bold;
+}
+
+table.structured-data tr.period {
+  background-color:#DDD;
+}
+</style>
+
+<!-- Global message -->
+<?php if ($message == 'OK') : ?>
+<div id="message">
+  <h5 class="alert alert-success my-3 text-center"><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h5>
+</div>
+<?php endif;?>
+
+<!-- Duplicate error -->
+<?php if ($error == 'Duplicate') : ?>
+<div class="alert alert-danger my-3 text-center"><?php echo $this->translate('This record already exist', 'ppit-core', $context->getLocale()) ?></div>
+<?php endif;?>
+
+<!-- Isolation error -->
+<input type="hidden" id="update_time" value="<?php echo $product->update_time ?>" />
+<?php if ($error == 'Isolation') : ?>
+<div class="alert alert-danger my-3 text-center"><?php echo $this->translate('The database has evolved in the meantime, please input again', 'ppit-core', $context->getLocale()) ?></div>
+<?php endif;?>
+
+<!--  CSRF -->
+<?php $element = $csrfForm->get('csrf') ?>
+<div class="form-group">
+  <?php echo $this->formElement($element) ?>
+<?php if ($this->formElementErrors($element)) : ?>
+  <h5 class="alert alert-danger"><?php echo $this->translate('The form has expired, please input again', 'ppit-core', $context->getLocale()) ?></h5>
+<?php endif;?>
+</div>
+
+<?php if ($message != 'OK') : ?>
+  <?php if ($product->id && !$action) : ?>
+  <div class="my-3">
+    <button type="button" class="btn btn-outline-primary action-btn" id="product-update-anchor" data-toggle="tooltip" title="<?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?>"><i class="fa fa-edit"></i></button>
+    <button type="button" class="btn btn-outline-primary action-btn" id="product-delete-anchor" data-toggle="tooltip" title="<?php echo $this->translate('Delete', 'ppit-core', $context->getLocale()) ?>" <?php if (!$product->isDeletable()) echo 'disabled="disabled"' ?>><i class="fa fa-trash-alt"></i></button>
+  </div>
+  <?php endif;?>
+<?php endif;?>
+
+<?php if (!$product->id) : ?>
+	    <div class="form-group row">
+			<div class="col-sm-5">&nbsp;</div>
+			<div class="col-sm-7">
+				<input type="submit" id="product-up-submit-button" class="btn btn-warning" value="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale()) ?>">
+			</div>
+		</div>
+
+<?php elseif ($action == 'update') : ?>
+	    <div class="form-group row">
+			<div class="col-sm-5">&nbsp;</div>
+			<div class="col-sm-7">
+				<input type="submit" id="product-up-submit-button" class="btn btn-warning" value="<?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?>">
+		        <button type="button" class="btn btn-link" id="up-cancel-button">
+		          <?php echo $this->translate('Cancel', 'ppit-core', $context->getLocale()) ?>
+		        </button>
+			</div>
+		</div>
+
+<?php elseif ($action == 'delete') : ?>
+	    <div class="form-group row">
+			<div class="col-sm-5">&nbsp;</div>
+			<div class="col-sm-7">
+				<input type="submit" id="product-up-submit-button" class="btn btn-danger" value="<?php echo $this->translate('Delete', 'ppit-core', $context->getLocale()) ?>">
+	            <button type="button" class="btn btn-link" id="up-cancel-button">
+	              <?php echo $this->translate('Cancel', 'ppit-core', $context->getLocale()) ?>
+	            </button>
+			</div>
+		</div>
+<?php endif;?>
+
+<?php 
+if ($product->id && $action != 'update' || $message == 'OK') $isDisabled = true; else $isDisabled = false;
+?>
+
+		<div class="form-group row" id="product-type_group">
+			<label class="col-sm-5 col-form-label">* <?php echo $this->translate('Type', 'ppit-core', $context->getLocale()) ?></label>
+			<div class="col-sm-7">
+				<select class="form-control" id="product-type" <?php if ($isDisabled || $product->id) echo 'disabled="disabled"'?>>
+					<option />
+	<?php foreach ($context->getConfig('commitment/types')['modalities'] as $typeId => $typeDef) : ?>
+					<option value="<?php echo $typeId ?>" <?php if ($product->type == $typeId) echo 'selected="selected"' ?>><?php echo $typeDef[$context->getLocale()] ?></option>
+	<?php endforeach;?>
+				</select>
+			</div>
+			<div class="invalid-feedback" id="product-type_error"></div>
+		</div>
+
+		<div class="form-group row" id="product-identifier_group">
+			<label class="col-sm-5 col-form-label">* <?php echo $this->translate('Reference', 'ppit-core', $context->getLocale()) ?></label>
+			<div class="col-sm-7">
+				<input class="form-control" id="product-identifier" value="<?php echo $product->identifier ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?> />
+			</div>
+			<div class="invalid-feedback" id="product-identifier_error"></div>
+		</div>
+
+		<div class="form-group row" id="product-caption_group">
+			<label class="col-sm-5 col-form-label">* <?php echo $this->translate('Caption', 'ppit-core', $context->getLocale()) ?></label>
+			<div class="col-sm-7">
+				<input class="form-control" id="product-caption" value="<?php echo $product->caption ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?> />
+			</div>
+			<div class="invalid-feeback" id="product-caption_error"></div>
+		</div>
+
+		<div class="form-group row" id="product-description_group">
+			<label class="col-sm-5 col-form-label"><?php echo $this->translate('Description', 'ppit-core', $context->getLocale()) ?></label>
+			<div class="col-sm-7">
+				<textarea class="form-control" id="product-description" <?php if ($isDisabled) echo 'disabled="disabled"'?>><?php echo $product->description ?></textarea>
+			</div>
+			<div class="invalid-feedback" id="product-description_error"></div>
+		</div>
+
+		<div class="form-group row" id="product-is_available_group">
+			<label class="col-sm-5 col-form-label"><?php echo $this->translate('Available ?', 'ppit-core', $context->getLocale()) ?></label>
+			<div class="col-sm-7">
+				<input type="checkbox" id="product-is_available" class="form-control" value="1"<?php if ($product->is_available) echo ' checked="checked"' ?><?php if (isset($isDisabled) && $isDisabled) echo ' disabled ="disabled"' ?>>
+			</div>
+			<div class="invalid-feedback" id="product-is_available_error"></div>
+		</div>
+
+<?php foreach ($context->getConfig('ppitProduct/update'.(($type) ? '/'.$type : '')) as $propertyId => $options) : ?>
+	<?php 
+	$property = $context->getConfig('product'.(($type) ? '/'.$type : ''))['properties'][$propertyId];
+	if ($property['type'] == 'repository') $property = $context->getConfig($property['definition']);
+	?>
+		<div class="form-group row" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_' : '').'product-'.$propertyId ?>_group">
+			<label class="col-sm-5 col-form-label"><?php if ($options['mandatory']) echo '* ' ?><?php echo $property['labels'][$context->getLocale()] ?></label>
+			<div class="col-sm-7">
+
+	<?php if ($property['type'] == 'date') : ?>
+				<input type="hidden" id="product-<?php echo $propertyId ?>" />
+				<input class="form-control" id="input_product-<?php echo $propertyId ?>" value="<?php echo $context->decodeDate($product->properties[$propertyId]) ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?> />
+
+	<?php elseif ($property['type'] == 'number') : ?>
+				<input type="hidden" id="product-<?php echo $propertyId ?>" />
+				<input class="form-control" id="input_product-<?php echo $propertyId ?>" value="<?php echo ($product->properties[$propertyId]) ? $context->formatFloat($product->properties[$propertyId], 2) : '' ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?> />
+
+	<?php elseif ($property['type'] == 'textarea') : ?>
+				<textarea class="form-control" id="product-<?php echo $propertyId ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?>><?php echo $product->properties[$propertyId] ?></textarea>
+
+	<?php elseif ($property['type'] == 'select') : ?>
+				<select class="form-control" id="product-<?php echo $propertyId ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?>>
+	    			<option />
+		<?php foreach ($property['modalities'] as $key => $labels) : ?>
+	    			<option value="<?php echo $key ?>" <?php if ($product->properties[$propertyId] == $key) echo 'selected="selected"' ?>><?php echo $labels[$context->getLocale()] ?></option>
+		<?php endforeach;?>
+				</select>
+	
+	<?php else : ?>
+				<input class="form-control" id="product-<?php echo $propertyId ?>" value="<?php echo $product->properties[$propertyId] ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?> />
+
+	<?php endif;?>
+			</div>
+			<div class="invalid-feedback" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_' : '').'product-'.$propertyId ?>_error"></div>
+		</div>
+<?php endforeach;?>
+
+		<input type="hidden" id="product-variant-number" value="1" />
+		<input type="hidden" id="product-price_0" />
+		<div class="form-group row" id="input_product-price_0_group">
+			<label class="col-sm-5 col-form-label"><?php echo $this->translate('Price', 'ppit-core', $context->getLocale()) ?></label>
+			<div class="col-sm-7">
+				<input class="form-control" id="input_product-price_0" value="<?php echo ($product->variants[0]['price']) ? $context->formatFloat($product->variants[0]['price'], 2) : '' ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?> />
+			</div>
+			<div class="invalid-feedback" id="input_product-price_0_error"></div>
+		</div>
+
+		<input type="hidden" id="product-tax_1_share" />
+		<div class="form-group row" id="input_product-tax_1_share_group">
+			<label class="col-sm-5 col-form-label"><?php echo $this->translate('Tax 1 share', 'ppit-core', $context->getLocale()) ?> (%)</label>
+			<div class="col-sm-7">
+				<input class="form-control" id="input_product-tax_1_share" value="<?php echo ($product->tax_1_share) ? $context->formatFloat($product->tax_1_share*100, 2) : '' ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?> />
+			</div>
+			<div class="invalid-feedback" id="input_product-tax_1_share_error"></div>
+		</div>
+
+		<input type="hidden" id="product-tax_2_share" />
+		<div class="form-group row" id="input_product-tax_2_share_group">
+			<label class="col-sm-5 col-form-label"><?php echo $this->translate('Tax 2 share', 'ppit-core', $context->getLocale()) ?> (%)</label>
+			<div class="col-sm-7">
+				<input class="form-control" id="input_product-tax_2_share" value="<?php echo ($product->tax_2_share) ? $context->formatFloat($product->tax_2_share*100, 2) : '' ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?> />
+			</div>
+			<div class="invalid-feedback" id="input_product-tax_2_share_error"></div>
+		</div>
+
+		<input type="hidden" id="product-tax_3_share" />
+		<div class="form-group row" id="input_product-tax_3_share_group">
+			<label class="col-sm-5 col-form-label"><?php echo $this->translate('Tax 3 share', 'ppit-core', $context->getLocale()) ?> (%)</label>
+			<div class="col-sm-7">
+				<input class="form-control" id="input_product-tax_3_share" value="<?php echo ($product->tax_3_share) ? $context->formatFloat($product->tax_3_share*100, 2) : '' ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?> />
+			</div>
+			<div class="invalid-feedback" id="input_product-tax_3_share_error"></div>
+		</div>
+
+<?php if (!$product->id) : ?>
+		    <div class="form-group row">
+				<div class="col-sm-5">&nbsp;</div>
+				<div class="col-sm-7">
+					<input name="submit" type="submit" id="product-submit-button" class="btn btn-warning" value="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale()) ?>">
+				</div>
+			</div>
+
+<?php elseif ($action == 'update') : ?>
+		    <div class="form-group row">
+				<div class="col-sm-5">&nbsp;</div>
+				<div class="col-sm-7">
+					<input name="submit" type="submit" id="product-submit-button" class="btn btn-warning" value="<?php echo $this->translate('Update', 'ppit-core', $context->getLocale()) ?>">
+			      <button type="button" class="btn btn-link" id="cancel-button">
+			       <?php echo $this->translate('Cancel', 'ppit-core', $context->getLocale()) ?>
+			      </button>
+				</div>
+			</div>
+
+<?php elseif ($action == 'delete') : ?>
+		    <div class="form-group row">
+				<div class="col-sm-5">&nbsp;</div>
+				<div class="col-sm-7">
+					<input name="submit" type="submit" id="product-submit-button" class="btn btn-danger" value="<?php echo $this->translate('Delete', 'ppit-core', $context->getLocale()) ?>">
+			      <button type="button" class="btn btn-link" id="cancel-button">
+			       <?php echo $this->translate('Cancel', 'ppit-core', $context->getLocale()) ?>
+			      </button>
+				</div>
+			</div>
+<?php endif;?>

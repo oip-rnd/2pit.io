@@ -1,0 +1,79 @@
+<div class="card">
+  <h5 class="card-header text-center" style="background: <?php echo $context->getConfig('styleSheet')['panelHeadingBackground'] ?>; color: <?php echo $context->getConfig('styleSheet')['panelHeadingColor'] ?>">
+    <?php echo $this->translate('Products', 'ppit-core', $context->getLocale());?>
+    (<span id="mode-text"></span>)
+  </h5>
+  <div class="card-body">
+
+<!-- Filters -->
+    <form class="form-inline">
+      <div class="row">
+	
+<?php $multiple = false ?>
+        <div class="col-md-3">
+          <div class="input-group input-group-sm mb-2 mr-sm-2">
+            <input type="hidden" value="0" class="search_check_value" id="search_check_value-type" />
+            <div class="input-group-prepend">
+              <button type="button" class="btn btn-secondary input-group-text search_check" id="search_check-type"><?php echo $this->translate('Type', 'ppit-core', $context->getLocale()) ?></button>
+            </div>
+            <select class="form-control search_input search_input_select <?php if ($multiple) echo 'selectpicker search_selectpicker' ?>" id="search-type">
+              <option />
+<?php foreach ($context->getConfig('commitment/types')['modalities'] as $typeId => $typeDef) : ?>
+                <option value="<?php echo $typeId ?>"><?php echo $typeDef[$context->getLocale()] ?></option>
+<?php endforeach;?>
+            </select>
+          </div>
+        </div>
+  
+        <div class="col-md-3">
+          <div class="input-group input-group-sm mb-2 mr-sm-2">
+            <input type="hidden" value="0" class="search_check_value" id="search_check_value-identifier" />
+            <div class="input-group-prepend">
+              <button type="button" class="btn btn-secondary input-group-text search_check" id="search_check-identifier"><?php echo $this->translate('Reference', 'ppit-core', $context->getLocale()) ?></button>
+            </div>
+			<input class="form-control search_input search_input_text" type="text" id="search-identifier" />
+          </div>
+        </div>
+  
+        <div class="col-md-3">
+          <div class="input-group input-group-sm mb-2 mr-sm-2">
+            <input type="hidden" value="0" class="search_check_value" id="search_check_value-caption" />
+            <div class="input-group-prepend">
+              <button type="button" class="btn btn-secondary input-group-text search_check" id="search_check-caption"><?php echo $this->translate('Caption', 'ppit-core', $context->getLocale()) ?></button>
+            </div>
+			<input class="form-control search_input search_input_text" type="text" id="search-caption" />
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="input-group input-group-sm mb-2 mr-sm-2">
+            <input type="hidden" value="0" class="search_check_value" id="search_check_value-price" />
+            <div class="input-group-prepend">
+              <button type="button" class="btn btn-secondary input-group-text search_check" id="search_check-price"><?php echo $this->translate('Price', 'ppit-core', $context->getLocale()) ?></button>
+            </div>
+            <input class="form-control search_input search_input_text_min" type="text" id="search_min-price" placeholder="<?php echo $this->translate('Min', 'ppit-core', $context->getLocale()) ?>" />
+            <input class="form-control search_input search_input_text_max" type="text" id="search_max-price" placeholder="<?php echo $this->translate('Max', 'ppit-core', $context->getLocale()) ?>" />
+          </div>
+        </div>
+
+        <div class="col-md-3">    
+          <div class="input-group input-group-sm mb-2 mr-sm-2">
+            <button type="button" class="btn btn-default input-group-text" disabled title="<?php echo $this->translate('Erase', 'ppit-core', $context->getLocale()) ?>" id="erase-button">
+              <i class="fa fa-times text-center"></i>
+            </button>
+            <a type="button" class="input-group-text btn" role="button" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Export', 'ppit-core', $context->getLocale()) ?>" id="export-button">
+              <i class="fa fa-cloud-download-alt"></i>
+            </a>
+          </div>
+        </div> <!-- col -->
+       
+      </div> <!-- row -->
+    </form>
+
+<!-- Add or update section -->
+    <div style="background-color: #ffffff;" class="row">
+      <div>&nbsp;</div>
+      <input type="hidden" id="limit" value="50" />
+      <div class="table-responsive" id="product-list-panel"></div>
+    </div>
+</div>
