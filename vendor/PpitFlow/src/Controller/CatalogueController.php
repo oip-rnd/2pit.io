@@ -3,6 +3,7 @@ namespace PpitFlow\Controller;
 
 use PpitCommitment\Model\Commitment;
 use PpitCommitment\Model\Term;
+use PpitContact\Model\ContactMessage;
 use PpitCore\Form\CsrfForm;
 use PpitCore\Model\Account;
 use PpitCore\Model\Config;
@@ -20,6 +21,45 @@ use Zend\View\Model\ViewModel;
 
 class CatalogueController extends AbstractActionController
 {
+	public function notifyNew($content, $account, $place, $property_1)
+	{
+		// Retrieve the context
+		$context = Context::getCurrent();
+	
+		// Retrieve the template
+		$template = $content['contact']['email_template'];
+	
+		// Generate the email
+		$data = array();
+		$basePath = $this->getRequest()->getUri()->getPath();
+		$data['name'] = $account->name;
+		$data['property_1'] = $property_1;
+		$data['email'] = $account->email;
+		$data['tel_cell'] = $account->tel_cell;
+		$data['type'] = 'email';
+		$data['to'][$place->support_email] = null;
+		$data['from_mail'] = $place->support_email;
+		$data['from_name'] = $place->caption;
+		$data['subject'] = $template['subject'];
+		$arguments = array();
+		foreach ($template['subject']['params'] as $param) $arguments[] = $data[$param];
+		$data['subject'] = vsprintf($context->localize($data['subject']['text']), $arguments);
+	
+		$data['body'] = $context->localize($template['body']['text']);
+		$arguments = array();
+		foreach ($template['body']['params'] as $param) $arguments[] = $data[$param];
+		$data['body'] = vsprintf($data['body'], $arguments);
+	
+		if ($place && array_key_exists('core_account/sendMessage', $place->config)) $signature = $place->config['core_account/sendMessage']['signature'];
+		else $signature = $context->getConfig('core_account/sendMessage')['signature'];
+		if ($signature['definition'] != 'inline') {
+			$signature = $context->getConfig($signature['definition']);
+		}
+		$data['body'] .= $context->localize($signature['body']);
+	
+		return $data;
+	}
+
 	public static function getContent()
 	{
 		$context = Context::getCurrent();
@@ -140,6 +180,87 @@ class CatalogueController extends AbstractActionController
 			'product' => $product,
 			'rates' => $rates,
 			'actionStatus' => null,
+		));
+		$view->setTerminal(true);
+		return $view;
+	}
+
+	public function contactAction()
+	{
+		// Retrieve the context and the parameters
+		$context = Context::getCurrent();
+		$type = $this->params()->fromRoute('type', 'generic');
+		$content = CatalogueController::getContent();
+		$account = $context->getProfile();
+		if (!$account) $account = Account::instanciate($type);
+	
+		// Retrieve the request content
+		$cart = json_decode($this->request->getPost('cart'), true);
+	
+		// CSRF protection
+		$csrfForm = new CsrfForm();
+		$csrfForm->addCsrfElement('csrf');
+	
+		// Process the post data after input
+		$actionStatus = null;
+		if ($this->request->getPost('complete')) {
+	
+			$csrfForm->setInputFilter((new Csrf('csrf'))->getInputFilter());
+			$csrfForm->setData($this->request->getPost());
+	
+			if ($csrfForm->isValid()) { // CSRF check
+	
+				// Atomicity
+				$connection = Account::getTable()->getAdapter()->getDriver()->getConnection();
+				$connection->beginTransaction();
+				try {
+						
+					// Create the account if no exists for the user
+					if (!$account->id) {
+						$data = array();
+						$data['place_id'] = $context->getPlaceId();
+						$data['status'] = 'interested';
+						$data['n_first'] = $this->request->getPost('n_first');
+						$data['n_last'] = $this->request->getPost('n_last');
+						$data['email'] = $this->request->getPost('email');
+						$data['tel_cell'] = $this->request->getPost('tel_cell');
+						$data['property_1'] = $this->request->getPost('property_1');
+						$data['callback_date'] = date('Y-m-d');
+						$actionStatus = $account->loadAndAdd($data);
+						if ($actionStatus[0] == '206') $account = Account::get($actionStatus[1]);
+					}
+					if (in_array($actionStatus[0], ['200', '206'])) {
+
+						// Notify the back-office of the new contact
+						$place = $context->getPlace();
+						$data = $this->notifyNew($content, $account, $place, $this->request->getPost('property_1'));
+						$mail = ContactMessage::instanciate();
+						$mail->type = 'email';
+						if ($mail->loadData($data) != 'OK') throw new \Exception('View error');
+						$rc = $mail->add();
+						if ($rc != 'OK') {
+							$connection->rollback();
+							$actionStatus = ['500'];
+						}
+						else $connection->commit();
+					}
+					else $connection->rollback();
+				}
+				catch (\Exception $e) {
+					$connection->rollback();
+					$actionStatus = ['500'];
+				}
+			}
+		}
+	
+		// Return the view
+		$view = new ViewModel(array(
+			'context' => $context,
+			'content' => $content,
+			'account' => $account,
+			'cart' => $cart,
+			'csrfForm' => $csrfForm,
+			'actionStatus' => $actionStatus,
 		));
 		$view->setTerminal(true);
 		return $view;

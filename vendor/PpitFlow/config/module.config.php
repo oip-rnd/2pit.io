@@ -258,6 +258,15 @@ return array (
 							),
 						),
 					),
+					'contact' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/contact[/:type]',
+							'defaults' => array(
+								'action' => 'contact',
+							),
+						),
+					),
 					'calculate' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -768,6 +777,7 @@ return array (
 				array('route' => 'catalogue', 'roles' => array('guest')),
 				array('route' => 'catalogue/index', 'roles' => array('guest')),
 				array('route' => 'catalogue/subscribe', 'roles' => array('guest')),
+				array('route' => 'catalogue/contact', 'roles' => array('guest')),
 				array('route' => 'catalogue/calculate', 'roles' => array('guest')),
 				array('route' => 'catalogue/cart', 'roles' => array('guest')),
 				array('route' => 'catalogue/complete', 'roles' => array('user')),

@@ -18,7 +18,6 @@ use Zend\View\Model\ViewModel;
 
 class LandingController extends AbstractActionController
 {
-
 	public function notifyNew($account, $place)
 	{
 		// Retrieve the context

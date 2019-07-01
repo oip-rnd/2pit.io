@@ -1,0 +1,77 @@
+<form id="contactForm">
+  <!--Header-->
+  <div class="modal-header text-center">
+
+    <h4 class="modal-title font-weight-bold dark-grey-text" id="myModalLabel"><?php echo $context->localize($content['contact']['title']['labels']) ?></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body mx-3">
+
+<!--  CSRF protection -->
+<?php $element = $csrfForm->get('csrf') ?>
+    <div class="form-group">
+      <?php echo $this->formElement($element) ?>
+<?php if ($this->formElementErrors($element)) : ?>
+      <div class="alert alert-danger" style="text-align: center">
+        <strong><?php echo $this->translate('The form has expired, please input again', 'ppit-core', $context->getLlocale()) ?></strong>
+      </div>
+<?php endif;?>
+    </div>
+
+<?php if ($actionStatus[0] == '500') : ?>
+    <div class="alert alert-danger" style="text-align: center">
+      <strong><?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?></strong>
+    </div>
+
+<?php endif;?>
+
+<?php if ($account->id) : ?>
+    <div class="alert alert-success" style="text-align: center">
+      <strong><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></strong>
+    </div>
+  <?php $isDisabled = true ?>
+<?php else  : ?>
+  <?php $isDisabled = false ?>
+<?php endif;?>
+        <!--Body-->
+        <div class="modal-body">
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="md-form my-0 py-0">
+      <input type="text" id="register-n_first" class="form-control validate modal_input" required="required" value="<?php echo $account->n_first ?>" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
+      <label <?php if ($isDisabled) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" for="register-n_first">* <?php echo $this->translate('First name', 'ppit-core', $context->getLocale()) ?></label>
+    </div>
+  </div>
+  
+  <div class="col-md-6">
+    <div class="md-form my-0 py-0">
+      <input type="text" id="register-n_last" class="form-control validate modal_input" required="required" value="<?php echo $account->n_last ?>" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
+      <label <?php if ($isDisabled) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" for="register-n_last">* <?php echo $this->translate('Last name', 'ppit-core', $context->getLocale()) ?></label>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="md-form my-0 py-0">
+      <input type="email" id="register-email" class="form-control validate modal_input" required="required" value="<?php echo $account->email ?>" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
+      <label <?php if ($isDisabled) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" for="register-email">* <?php echo $this->translate('Email', 'ppit-core', $context->getLocale()) ?></label>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="md-form my-0 py-0">
+      <input type="text" id="register-tel_cell" class="form-control validate modal_input" required="required" value="<?php echo $account->tel_cell ?>" <?php if ($isDisabled) echo 'disabled="disabled"' ?>>
+      <label <?php if ($isDisabled) echo 'class="active"' ?> data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" for="register-n_last">* <?php echo $this->translate('Phone', 'ppit-core', $context->getLocale()) ?></label>
+    </div>
+  </div>
+</div>
+
+          <button class="btn btn-primary btn-rounded btn-sm" id="contact-submit"><?php echo $context->localize($content['contact']['navigation']['submit']['labels']) ?></button>
+
+        </div>
+  </div>
+</form>
