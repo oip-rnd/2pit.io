@@ -243,7 +243,7 @@ return array (
 					'index' => array(
 						'type' => 'segment',
 						'options' => array(
-							'route' => '/index[/:type]',
+							'route' => '/index[/:type][/:place_identifier]',
 							'defaults' => array(
 								'action' => 'index',
 							),
@@ -252,7 +252,7 @@ return array (
 					'subscribe' => array(
 						'type' => 'segment',
 						'options' => array(
-							'route' => '/subscribe[/:type]',
+							'route' => '/subscribe[/:type][/:place_identifier]',
 							'defaults' => array(
 								'action' => 'subscribe',
 							),
@@ -261,7 +261,7 @@ return array (
 					'contact' => array(
 						'type' => 'segment',
 						'options' => array(
-							'route' => '/contact[/:type]',
+							'route' => '/contact[/:type][/:place_identifier]',
 							'defaults' => array(
 								'action' => 'contact',
 							),
@@ -270,7 +270,7 @@ return array (
 					'calculate' => array(
 						'type' => 'segment',
 						'options' => array(
-							'route' => '/calculate',
+							'route' => '/calculate[/:place_identifier]',
 							'defaults' => array(
 								'action' => 'calculate',
 							),
@@ -279,7 +279,7 @@ return array (
 					'cart' => array(
 						'type' => 'segment',
 						'options' => array(
-							'route' => '/cart[/:type]',
+							'route' => '/cart[/:type][/:place_identifier]',
 							'defaults' => array(
 								'action' => 'cart',
 							),
@@ -288,7 +288,7 @@ return array (
 					'complete' => array(
 						'type' => 'segment',
 						'options' => array(
-							'route' => '/complete[/:commitment_id]',
+							'route' => '/complete[/:place_identifier][/:commitment_id]',
 							'defaults' => array(
 								'action' => 'complete',
 							),
@@ -297,7 +297,7 @@ return array (
 					'invoiceList' => array(
 						'type' => 'segment',
 						'options' => array(
-							'route' => '/invoice-list[/:account_id]',
+							'route' => '/invoice-list[/:place_identifier][/:account_id]',
 							'defaults' => array(
 								'action' => 'invoiceList',
 							),

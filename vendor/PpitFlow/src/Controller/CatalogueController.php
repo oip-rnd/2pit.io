@@ -21,6 +21,29 @@ use Zend\View\Model\ViewModel;
 
 class CatalogueController extends AbstractActionController
 {
+	public static function getContent($place_identifier)
+	{
+		$context = Context::getCurrent();
+		
+		$content = null;
+		if ($context->getConfig('specificationMode') == 'database') {
+			$config = Config::get($place_identifier.'_catalogue', 'identifier');
+			if ($config) $content = $config->content;
+		}
+		if (!$content) {		
+			$content = $context->getConfig('catalogue/'.$place_identifier);
+			if (!$content) $content = $context->getConfig('catalogue/generic');
+		}
+		
+		foreach ($content['complete']['recipient_properties'] as $propertyId => &$property) {
+			if ($property['definition'] != 'inline') {
+				$definition = $context->getConfig($property['definition']);
+				foreach ($definition as $itemId => $item) $property[$itemId] = $item;
+			}
+		}
+		return $content;
+	}
+	
 	public function notifyNew($content, $account, $place, $property_1)
 	{
 		// Retrieve the context
@@ -59,30 +82,6 @@ class CatalogueController extends AbstractActionController
 	
 		return $data;
 	}
-
-	public static function getContent()
-	{
-		$context = Context::getCurrent();
-		$place_identifier = $context->getPlace()->identifier;
-		
-		$content = null;
-		if ($context->getConfig('specificationMode') == 'database') {
-			$config = Config::get($place_identifier.'_catalogue', 'identifier');
-			if ($config) $content = $config->content;
-		}
-		if (!$content) {		
-			$content = $context->getConfig('catalogue/'.$place_identifier);
-			if (!$content) $content = $context->getConfig('catalogue/generic');
-		}
-		
-		foreach ($content['complete']['recipient_properties'] as $propertyId => &$property) {
-			if ($property['definition'] != 'inline') {
-				$definition = $context->getConfig($property['definition']);
-				foreach ($definition as $itemId => $item) $property[$itemId] = $item;
-			}
-		}
-		return $content;
-	}
 	
 	public function indexAction()
 	{
@@ -90,8 +89,9 @@ class CatalogueController extends AbstractActionController
 		$context = Context::getCurrent();
 
 		$type = $this->params()->fromRoute('type', 'generic');
+		$place_identifier = $this->params()->fromRoute('place_identifier', $context->getPlace()->identifier);
 		$rates = $context->getConfig('catalogue/product/rates');
-		$content = CatalogueController::getContent();
+		$content = CatalogueController::getContent($place_identifier);
 
 		// Account and commitments
 		$profile = $context->getProfile();
@@ -144,6 +144,7 @@ class CatalogueController extends AbstractActionController
 		$view = new ViewModel(array(
 			'context' => $context,
 			'type' => $type,
+			'place_identifier' => $place_identifier,
 			'content' => $content,
 			'rates' => $rates,
 			'profile' => $profile,
@@ -169,8 +170,9 @@ class CatalogueController extends AbstractActionController
 		// Retrieve the context, the content and the parameters
 		$context = Context::getCurrent();
 		$type = $this->params()->fromRoute('type', 'generic');
+		$place_identifier = $this->params()->fromRoute('place_identifier');
 		$rates = $context->getConfig('catalogue/product/rates');
-		$content = CatalogueController::getContent();
+		$content = CatalogueController::getContent($place_identifier);
 		$product = $this->params()->fromQuery('product');
 	
 		// Return the view
@@ -190,7 +192,8 @@ class CatalogueController extends AbstractActionController
 		// Retrieve the context and the parameters
 		$context = Context::getCurrent();
 		$type = $this->params()->fromRoute('type', 'generic');
-		$content = CatalogueController::getContent();
+		$place_identifier = $this->params()->fromRoute('place_identifier');
+		$content = CatalogueController::getContent($place_identifier);
 		$account = $context->getProfile();
 		if (!$account) $account = Account::instanciate($type);
 	
@@ -270,13 +273,14 @@ class CatalogueController extends AbstractActionController
 	{
 		// Context and parameters
 		$context = Context::getCurrent();
+		$place_identifier = $this->params()->fromRoute('place_identifier');
 		$rates = $context->getConfig('catalogue/product/rates');
 
 		$subscription_amount = 0;
 		$subscriptions = array();
 		
 		// Retrieve the request content
-		$content = json_decode($this->request->getContent(), true);
+		$content = json_decode($this->request->getContent($place_identifier), true);
 		
 		// Retrieve the quantities of subscribed products, compute the products amount and log the subscriptions
 		foreach ($content['products'] as $productId => &$row) {
@@ -340,8 +344,9 @@ class CatalogueController extends AbstractActionController
 		// Retrieve the context and the parameters
 		$context = Context::getCurrent();
 		$type = $this->params()->fromRoute('type', 'generic');
+		$place_identifier = $this->params()->fromRoute('place_identifier');
 		$rates = $context->getConfig('catalogue/product/rates');
-		$content = CatalogueController::getContent();
+		$content = CatalogueController::getContent($place_identifier);
 		$account = $context->getProfile();
 		if (!$account) $account = Account::instanciate($type);
 		$commitment_id = null;
@@ -496,8 +501,9 @@ class CatalogueController extends AbstractActionController
 	{
 		// Retrieve the context and the parameters
 		$context = Context::getCurrent();
+		$place_identifier = $this->params()->fromRoute('place_identifier');
 		$locale = $this->params()->fromQuery('locale');
-		$content = CatalogueController::getContent();
+		$content = CatalogueController::getContent($place_identifier);
 		$account = Account::get($context->getContactId(), 'contact_1_id');
 		$commitment_id = $this->params()->fromRoute('commitment_id');
 		$commitment = Commitment::get($commitment_id);
@@ -571,7 +577,8 @@ class CatalogueController extends AbstractActionController
 	{
 		// Retrieve context and parameters
 		$context = Context::getCurrent();
-		$content = CatalogueController::getContent();
+		$place_identifier = $this->params()->fromRoute('place_identifier');
+		$content = CatalogueController::getContent($place_identifier);
 		$account_id = $this->params()->fromRoute('account_id');
 
 		// Account and commitments

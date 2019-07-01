@@ -20,7 +20,7 @@ function processContact(product) {
   formData.append('email', $('#register-email').val());
   formData.append('tel_cell', $('#register-tel_cell').val());
   formData.append('property_1', product);
-xhttp.open('POST', '<?php echo $this->url('catalogue/contact', ['type' => $type]) ?>', true);
+xhttp.open('POST', '<?php echo $this->url('catalogue/contact', ['type' => $type, 'place_identifier' => $place_identifier]) ?>', true);
 xhttp.onload = function () {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
       $('#modalContactContent').html(xhttp.responseText);
@@ -31,7 +31,7 @@ xhttp.onload = function () {
 
 function showContact(product) {
   var xhttp = new XMLHttpRequest(), formData = new FormData();
-  xhttp.open('POST', '<?php echo $this->url('catalogue/calculate') ?>', true);
+  xhttp.open('POST', '<?php echo $this->url('catalogue/calculate', ['place_identifier' => $place_identifier]) ?>', true);
   xhttp.setRequestHeader("Content-Type", "application/json");
   xhttp.onload = function () {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
@@ -39,7 +39,7 @@ function showContact(product) {
       xhttp = new XMLHttpRequest();
         formData.append('complete', 0);
         formData.append('product', product);
-        xhttp.open('POST', '<?php echo $this->url('catalogue/contact', ['type' => $type]) ?>', true);
+        xhttp.open('POST', '<?php echo $this->url('catalogue/contact', ['type' => $type, 'place_identifier' => $place_identifier]) ?>', true);
         xhttp.onload = function () {
           if (xhttp.readyState == 4) {
             if (xhttp.status == 200) {
@@ -72,7 +72,7 @@ moment.locale('fr');
 
 function calculate(product, content) {
   var xhttp = new XMLHttpRequest();
-  xhttp.open('POST', '<?php echo $this->url('catalogue/calculate') ?>', true);
+  xhttp.open('POST', '<?php echo $this->url('catalogue/calculate', ['place_identifier' => $place_identifier]) ?>', true);
   xhttp.setRequestHeader("Content-Type", "application/json");
   xhttp.onload = function () {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
@@ -122,7 +122,7 @@ function showSubscribe(product) {
     options: new Object()
   };
   var xhttp = new XMLHttpRequest();
-  xhttp.open('GET', '<?php echo $this->url('catalogue/subscribe') ?>?product=' + product, true);
+  xhttp.open('GET', '<?php echo $this->url('catalogue/subscribe', ['type' => $type, 'place_identifier' => $place_identifier]) ?>?product=' + product, true);
   xhttp.onload = function () {
     if (xhttp.readyState == 4) {
       if (xhttp.status == 200) {
@@ -249,7 +249,7 @@ console.log(JSON.stringify(cart));
   formData.append('adr_zip', $('#register-adr_zip').val());
   formData.append('adr_city', $('#register-adr_city').val());
   formData.append('cart', JSON.stringify(cart));
-  xhttp.open('POST', '<?php echo $this->url('catalogue/cart', ['type' => $type]) ?>', true);
+  xhttp.open('POST', '<?php echo $this->url('catalogue/cart', ['type' => $type, 'place_identifier' => $place_identifier]) ?>', true);
   xhttp.onload = function () {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
       $('#modalCartContent').html(xhttp.responseText);
@@ -265,7 +265,7 @@ console.log(JSON.stringify(cart));
 
 function showCart() {
   var xhttp = new XMLHttpRequest(), formData = new FormData();
-  xhttp.open('POST', '<?php echo $this->url('catalogue/calculate') ?>', true);
+  xhttp.open('POST', '<?php echo $this->url('catalogue/calculate', ['place_identifier' => $place_identifier]) ?>', true);
   xhttp.setRequestHeader("Content-Type", "application/json");
   xhttp.onload = function () {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
@@ -273,7 +273,7 @@ function showCart() {
       xhttp = new XMLHttpRequest();
       formData.append('complete', 0);
       formData.append('cart', JSON.stringify(cart));
-      xhttp.open('POST', '<?php echo $this->url('catalogue/cart', ['type' => $type]) ?>', true);
+      xhttp.open('POST', '<?php echo $this->url('catalogue/cart', ['type' => $type, 'place_identifier' => $place_identifier]) ?>', true);
       xhttp.onload = function () {
         if (xhttp.readyState == 4) {
           if (xhttp.status == 200) {
@@ -362,7 +362,7 @@ $('#modalCartForm').on('show.bs.modal', showCart);
 
 function showInvoiceList(id) {
 var xhttp = new XMLHttpRequest();
-xhttp.open('GET', '<?php echo $this->url('catalogue/invoiceList', ['account_id' => $profile->id]) ?>', true);
+xhttp.open('GET', '<?php echo $this->url('catalogue/invoiceList', ['place_identifier' => $place_identifier, 'account_id' => $profile->id]) ?>', true);
 xhttp.onload = function () {
  if (xhttp.readyState == 4) {
    if (xhttp.status == 200) {
@@ -397,7 +397,7 @@ function complete() {
   <?php endif;?>
 <?php endforeach;?>
 
-  xhttp.open('POST', '<?php echo $this->url('catalogue/complete', ['commitment_id' => $commitment_id]) ?>', true);
+  xhttp.open('POST', '<?php echo $this->url('catalogue/complete', ['place_identifier' => $place_identifier, 'commitment_id' => $commitment_id]) ?>', true);
   xhttp.onload = function () {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
       $('#modalCompleteContent').html(xhttp.responseText);
@@ -408,7 +408,7 @@ function complete() {
 
 function showComplete(id) {
 var xhttp = new XMLHttpRequest();
-xhttp.open('GET', '<?php echo $this->url('catalogue/complete', ['commitment_id' => $commitment_id]) ?>', true);
+xhttp.open('GET', '<?php echo $this->url('catalogue/complete', ['place_identifier' => $place_identifier, 'commitment_id' => $commitment_id]) ?>', true);
 xhttp.onload = function () {
  if (xhttp.readyState == 4) {
    if (xhttp.status == 200) {
