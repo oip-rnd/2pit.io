@@ -923,9 +923,12 @@ class CommitmentController extends AbstractActionController
     			$invoice['bank_details'] = $invoiceBankDetails;
 	    	}
     	}
-		$invoice['footer_mention_1'] = $context->getConfig('commitment/invoice_footer_mention_1');
-		$invoice['footer_mention_2'] = $context->getConfig('commitment/invoice_footer_mention_2');
-		$invoice['footer_mention_3'] = $context->getConfig('commitment/invoice_footer_mention_3');
+    	if ($commitment->account->place->getConfig('commitment/invoice_footer_mention_1')) $invoice['footer_mention_1'] = $commitment->account->place->getConfig('commitment/invoice_footer_mention_1');
+    	else $invoice['footer_mention_1'] = $context->getConfig('commitment/invoice_footer_mention_1');
+		if ($commitment->account->place->getConfig('commitment/invoice_footer_mention_2')) $invoice['footer_mention_2'] = $commitment->account->place->getConfig('commitment/invoice_footer_mention_2');
+    	else $invoice['footer_mention_2'] = $context->getConfig('commitment/invoice_footer_mention_2');
+		if ($commitment->account->place->getConfig('commitment/invoice_footer_mention_3')) $invoice['footer_mention_3'] = $commitment->account->place->getConfig('commitment/invoice_footer_mention_3');
+    	else $invoice['footer_mention_3'] = $context->getConfig('commitment/invoice_footer_mention_3');
     	return $invoice;
     }
     
