@@ -1097,13 +1097,19 @@ class UserController extends AbstractActionController
 				$identity = $this->getRequest()->getPost('identity');
 				$password = $this->getRequest()->getPost('password');
 				$token = $this->params()->fromQuery('hash');
-				$vcard = Vcard::get($identity, 'email');
+/*				$vcard = Vcard::get($identity, 'email');
 				if (!$vcard) {
 					$this->getResponse()->setStatusCode('400');
 					return $this->getResponse();
 				}
 				$userContact = UserContact::get($vcard->id, 'vcard_id');
-				$user = User::getTable()->transGet($userContact->user_id);
+				$user = User::getTable()->transGet($userContact->user_id);*/
+				$user = User::get($identity, 'username');
+				if (!$user) {
+					$this->getResponse()->setStatusCode('401');
+					$this->getResponse()->setReasonPhrase('Not exists');
+					return $this->getResponse();
+				}
 				$rc = $context->getSecurityAgent()->initPassword($user, $token, $user->username, $password, null);
 				if ($rc != 'OK') {
 					$this->getResponse()->setStatusCode('401');
