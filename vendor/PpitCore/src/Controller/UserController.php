@@ -970,8 +970,8 @@ class UserController extends AbstractActionController
 					return $this->getResponse();
 				}
 				$token = $context->getSecurityAgent()->requestPasswordInit($user, false, $this->url());
-				$userContact = UserContact::transget($user->user_id, 'user_id');
-				$vcard = Vcard::transget($userContact->vcard_id);
+				$userContact = UserContact::transGet($user->user_id, 'user_id');
+				$vcard = Vcard::transGet($userContact->vcard_id);
 
 				// Send the OTP by email
 				$email_body = $context->localize($context->getConfig('user/messages/lost_password/text'));
