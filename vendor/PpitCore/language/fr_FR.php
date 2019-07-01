@@ -74,6 +74,7 @@
 			'Download' => 'Télécharger',
 			'Duplicate' => 'Dupliquer',
 			'Email' => 'Email',
+			'Email or identifier' => 'Email ou identifiant',
 			'End' => 'Fin',
 			'Erase' => 'Effacer',
 			'Ethical charter' => 'Charte déontologique',
