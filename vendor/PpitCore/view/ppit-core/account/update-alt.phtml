@@ -83,11 +83,7 @@ table.structured-data tr.period {
   <?php if ($account->id && !$action) : ?>
   <div class="my-3">
     <button type="button" class="btn btn-outline-primary" id="account-update-anchor" data-toggle="tooltip" title="<?php echo $this->translate('Modifier', 'ppit-core', $context->getLocale()) ?>"><i class="fa fa-edit"></i></button>
-
-<?php if ($context->hasRole('admin')) : ?>
     <button type="button" class="btn btn-outline-primary" id="account-delete-anchor" data-toggle="tooltip" title="<?php echo $this->translate('Supprimer', 'ppit-core', $context->getLocale()) ?>"><i class="fa fa-trash-alt"></i></button>
-<?php endif;?>
-
     <a class="btn btn-default" href="<?php echo $this->url('account/indexCard', array('id' => $account->id, 'type' => $type)) ?>" target="_blank" data-toggle="tooltip" title="<?php echo $this->translate('Print the index card', 'ppit-commitment', $context->getLocale()) ?>"><i class="fa fa-print"></i></a>
   </div>
   <?php endif;?>
