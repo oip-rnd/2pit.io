@@ -44,9 +44,11 @@ table.structured-data tr.period {
 			<span class="glyphicon glyphicon-edit"></span>
 		</button>
 
+<?php if ($context->hasRole('admin')) : ?>
 		<button type="button" class="btn btn-default action-btn" id="account-delete-anchor" title="<?php echo $this->translate('Delete', 'ppit-core', $context->getLocale()) ?>" <?php if (!$account->isDeletable()) echo 'disabled="disabled"' ?>>
 			<span class="glyphicon glyphicon-trash"></span>
 		</button>
+<?php endif;?>
 
 		<a href="<?php echo $this->url('account/indexCard', array('id' => $account->id, 'type' => $type)) ?>" target="_blank" title="<?php echo $this->translate('Print the index card', 'ppit-commitment', $context->getLocale()) ?>">
 			<span class="glyphicon glyphicon-print"></span>
