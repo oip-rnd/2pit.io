@@ -1404,14 +1404,14 @@ return array_merge(
 	),
 	'core_account/business/property/n_title' => array(
 		'definition' => 'inline',
-		'type' => 'select',
-		'modalities' => array(
+		'type' => 'input',
+/*		'modalities' => array(
 			'Mr' => array('fr_FR' => 'M.', 'en_US' => 'Mr'),
 			'Mrs' => array('fr_FR' => 'Mme', 'en_US' => 'Mrs'),
 			'Ms' => array('fr_FR' => 'Melle', 'en_US' => 'Ms'),
 			'mr-mrs' => array('fr_FR' => 'Mr et Mme', 'en_US' => 'Mr & Mrs'),
 			'Maître' => array('fr_FR' => 'Maître', 'en_US' => 'Maître'),
-		),
+		),*/
 		'labels' => array(
 			'en_US' => 'Title',
 			'fr_FR' => 'Titre',

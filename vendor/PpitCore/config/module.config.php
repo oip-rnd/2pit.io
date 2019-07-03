@@ -3544,7 +3544,7 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 			'todoTitle' => array('en_US' => 'todo list', 'fr_FR' => 'todo list'),
 			'properties' => array(
 //					'place_id' => [],
-					'status' => [],
+					'status' => ['multiple' => true],
 					'name' => [],
 					'email' => [],
 					'opening_date' => [],

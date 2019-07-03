@@ -987,6 +987,8 @@ function getAccountSearch()
             $(this).removeClass('btn-secondary').addClass('btn-default').removeClass('active');
             $('#' + check).val('0');
             $('#search-' + propertyId).val('');
+            $('#search_min-' + propertyId).val('');
+            $('#search_max-' + propertyId).val('');
             $('#search-' + propertyId).selectpicker('refresh');
           }
           else {
