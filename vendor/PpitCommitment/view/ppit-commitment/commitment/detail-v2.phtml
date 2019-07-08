@@ -86,7 +86,11 @@
                       <i class="fas fa-edit" id="<?php echo $commitment->id ?>-glyphicon"></i>
                     </button>
                   </td>
-                  <td>&nbsp;</td>
+                 <td>
+                    <button type="button" class="btn btn-outline-primary action-btn btn-sm row-clear-anchor" title="<?php echo $this->translate('Clear', 'ppit-core', $context->getLocale()) ?>" id="row-clear-anchor" <?php if (in_array($commitment->status, array('invoiced', 'settled')) && !$context->hasRole('admin') || $commitment->status == 'registered') echo 'disabled="disabled"' ?>>
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </td>
                   <td><?php echo $commitment->product_identifier ?></td>
                   <td><?php echo $commitment->product_caption ?></td>
                   <td class="text-right"><?php echo $commitment->quantity ?></td>
@@ -277,12 +281,9 @@
                   <div class="card">
                     <div class="card-body">
                       <div class="card-title text-muted">
-                        <?php echo $this->translate('Term', 'ppit-commitment', $context->getLocale()) ?>
-                        <div class="btn-group pull-right">
                           <button type="button" class="btn btn-default detail-remove-anchor" title="<?php echo $this->translate('Return to list', 'ppit-core', $context->getLocale()) ?>">
                             <i class="fa fa-times"></i>
                           </button>
-                        </div>
                         <input type="hidden" id="term_id-<?php echo $i ?>" value="<?php echo $term->id ?>" />
                         <div class="panel-body" id="term-update-panel_<?php echo $i ?>"></div>
                       </div>

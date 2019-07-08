@@ -547,7 +547,106 @@ class CommitmentController extends AbstractActionController
 
     public function updateV2Action()
     {
-    	return $this->updateAction();
+   		// Retrieve the context
+    	$context = Context::getCurrent();
+    
+    	// Retrieve the type
+    	$type = $this->params()->fromRoute('type', null);
+		$description = Commitment::getDescription($type);
+    	$updatePage = $description['update'];
+
+    	// Retrieve the account
+    	$account_id = $this->params()->fromQuery('account_id', null);
+    	$id = (int) $this->params()->fromRoute('id', 0);
+    	$action = $this->params()->fromRoute('act', null);
+    	if ($id) {
+    		$commitment = Commitment::get($id);
+    		$type = $commitment->type;
+    	}
+    	else $commitment = Commitment::instanciate($type);
+
+    	$accountStatuses = array();
+    	foreach ($context->getConfig('commitment/generic/property/account_status')['modalities'] as $modalityId => $unused) $accountStatuses[] = $modalityId;
+//    	$accounts = Account::getList(null, ['status' => implode(',', $accountStatuses)], '+name', null);
+    	$accounts = Account::getList(null, ['status' => 'active,interested,converted,committed,undefined,retention,canceled'], '+name', null);
+    	 
+    	// Instanciate the csrf form
+    	$csrfForm = new CsrfForm();
+    	$csrfForm->addCsrfElement('csrf');
+    	$error = null;
+    	if ($action == 'delete') $message = 'confirm-delete';
+    	elseif ($action) $message =  'confirm-update';
+    	else $message = null;
+    	$request = $this->getRequest();
+    	if ($request->isPost()) {
+    		$message = null;
+    		$csrfForm->setInputFilter((new Csrf('csrf'))->getInputFilter());
+    		$csrfForm->setData($request->getPost());
+    		 
+    		if ($csrfForm->isValid()) { // CSRF check
+    
+    			// Retrieve the data from the request
+    			$data = array();
+    			if (!$commitment->id) $data['account_id'] = $account_id;
+				if (!$id) $data['type'] = $type;
+    			foreach ($updatePage as $propertyId => $unused) {
+					$property = $description['properties'][$propertyId];
+					if ($property['type'] == 'file' && array_key_exists($propertyId, $request->getFiles()->toArray())) $files = $request->getFiles()->toArray()[$propertyId];
+					else $data[$propertyId] = $request->getPost('commitment-'.$propertyId);
+    			}
+    			
+    			$rc = $commitment->loadData($data, $request->getFiles()->toArray());
+    			if ($rc != 'OK') throw new \Exception('View error');
+
+    			// Atomically save
+    			$connection = Commitment::getTable()->getAdapter()->getDriver()->getConnection();
+    			$connection->beginTransaction();
+    			try {
+    				if (!$commitment->id) {
+    					$rc = $commitment->add();
+    					$connection->commit();
+    					echo $commitment->id;
+    					return $this->response;
+    				}
+	    			elseif ($action == 'delete') $rc = $commitment->delete($request->getPost(null /*'update_time'*/));
+    				else {
+    					$rc = $commitment->update(null/*$request->getPost('update_time')*/);
+    				}
+    
+    				if ($rc != 'OK') {
+    					$connection->rollback();
+    					$error = $rc;
+    				}
+    				else {
+    					$connection->commit();
+    					$message = 'OK';
+    				}
+    			}
+    			catch (\Exception $e) {
+    				$connection->rollback();
+    				throw $e;
+    			}
+    			$action = null;
+    		}
+    	}
+
+    	$view = new ViewModel(array(
+    			'context' => $context,
+				'configProperties' => $description['properties'],
+    			'config' => $context->getconfig(),
+    			'type' => $commitment->type,
+    			'id' => $id,
+    			'action' => $action,
+    			'accounts' => $accounts,
+//    			'properties' => $context->getConfig('commitment'.(($type) ? '/'.$type : ''))['properties'],
+    			'commitment' => $commitment,
+    			'csrfForm' => $csrfForm,
+    			'error' => $error,
+    			'message' => $message,
+    			'updatePage' => $updatePage,
+    	));
+    	$view->setTerminal(true);
+    	return $view;
     }
     
     public function updateProductAction()
@@ -580,10 +679,15 @@ class CommitmentController extends AbstractActionController
     			$data['quantity'] = $request->getPost('quantity');
     			$data['unit_price'] = $request->getPost('unit_price');
     			$data['amount'] = round($data['quantity'] * $data['unit_price'], 2);
-    			$product = Product::get($data['product_identifier'], 'identifier');
-    			if ($product->tax_1_share) $data['taxable_1_amount'] = round($data['amount'] * $product->tax_1_share, 2);
-    			if ($product->tax_2_share) $data['taxable_2_amount'] = round($data['amount'] * $product->tax_2_share, 2);
-    			if ($product->tax_3_share) $data['taxable_3_amount'] = round($data['amount'] * $product->tax_3_share, 2);
+    			if ($data['product_identifier']) {
+	    			$product = Product::get($data['product_identifier'], 'identifier');
+	    			if ($product->tax_1_share) $data['taxable_1_amount'] = round($data['amount'] * $product->tax_1_share, 2);
+	    			if ($product->tax_2_share) $data['taxable_2_amount'] = round($data['amount'] * $product->tax_2_share, 2);
+	    			if ($product->tax_3_share) $data['taxable_3_amount'] = round($data['amount'] * $product->tax_3_share, 2);
+    			}
+    			else {
+    				$data['taxable_1_amount'] = $data['amount'];
+    			}
     			$rc = $commitment->loadData($data, $request->getFiles()->toArray());
     			if ($rc != 'OK') throw new \Exception('View error');
     
@@ -1266,7 +1370,7 @@ class CommitmentController extends AbstractActionController
     			$data = array();
     			$options = array();
     			for ($i = 0; $i < $number; $i++) {
-    				if ($request->getPost('option_identifier-'.$i)) {
+    				if ($request->getPost('option_caption-'.$i)) {
 		    			$option = array();
 	    				$option['identifier'] = $request->getPost('option_identifier-'.$i);
 	    				$option['caption'] = $request->getPost('option_caption-'.$i);

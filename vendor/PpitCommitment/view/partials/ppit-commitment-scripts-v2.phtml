@@ -291,7 +291,8 @@ function postForm(id, action)
       if (xhttp.readyState == 4) {
         if (xhttp.status == 200) {
           getCommitmentList(getSearchParams(''));
-          $('#commitment-update-panel').html(xhttp.responseText);
+//          $('#commitment-update-panel').html(xhttp.responseText);
+          getCommitmentDetail(xhttp.responseText);
         }
         else {
           console.log(xhttp.status + ' ' + xhttp.statusText);
@@ -895,6 +896,7 @@ function getCommitmentDetail(id) {
 
 			$('#row-anchor').click(function () {
 				$('.row-anchor').removeClass('btn-warning').addClass('btn-default');
+                $('.row-clear-anchor').removeClass('btn-warning').addClass('btn-default');
 				$('.row-update-anchor').removeClass('btn-warning').addClass('btn-default');
 				$('.row-delete-anchor').removeClass('btn-warning').addClass('btn-default');
 				$('.row-add-anchor').removeClass('btn-warning').addClass('btn-default');
@@ -903,8 +905,25 @@ function getCommitmentDetail(id) {
 				$('#row-tr').show();
 			});
 
+            $('#row-clear-anchor').click(function () {
+              $('.row-anchor').removeClass('btn-warning').addClass('btn-default');
+              $('.row-clear-anchor').removeClass('btn-warning').addClass('btn-default');
+              $('.row-update-anchor').removeClass('btn-warning').addClass('btn-default');
+              $('.row-delete-anchor').removeClass('btn-warning').addClass('btn-default');
+              $('.row-add-anchor').removeClass('btn-warning').addClass('btn-default');
+              $(this).removeClass('btn-default').addClass('btn-warning');
+              $('.row-tr').hide();
+              $('#row-tr').show();
+              $('#product_identifier').val('');
+              $('#product_brand').val('');
+              $('#product_caption').val('');
+              $('#input_quantity').val('');
+              $('#input_unit_price').val('');
+            });
+
 			$('.row-update-anchor').click(function () {
 				$('.row-anchor').removeClass('btn-warning').addClass('btn-default');
+                $('.row-clear-anchor').removeClass('btn-warning').addClass('btn-default');
 				$('.row-update-anchor').removeClass('btn-warning').addClass('btn-default');
 				$('.row-delete-anchor').removeClass('btn-warning').addClass('btn-default');
 				$('.row-add-anchor').removeClass('btn-warning').addClass('btn-default');
@@ -916,6 +935,7 @@ function getCommitmentDetail(id) {
 
 			$('#row-add-anchor').click(function () {
 				$('.row-anchor').removeClass('btn-warning').addClass('btn-default');
+                $('.row-clear-anchor').removeClass('btn-warning').addClass('btn-default');
 				$('.row-update-anchor').removeClass('btn-warning').addClass('btn-default');
 				$('.row-delete-anchor').removeClass('btn-warning').addClass('btn-default');
 				$('.row-add-anchor').removeClass('btn-warning').addClass('btn-default');
@@ -926,6 +946,7 @@ function getCommitmentDetail(id) {
 
 			$('.row-delete-anchor').click(function () {
 				$('.row-anchor').removeClass('btn-warning').addClass('btn-default');
+                $('.row-clear-anchor').removeClass('btn-warning').addClass('btn-default');
 				$('.row-update-anchor').removeClass('btn-warning').addClass('btn-default');
 				$('.row-delete-anchor').removeClass('btn-warning').addClass('btn-default');
 				$('.row-add-anchor').removeClass('btn-warning').addClass('btn-default');
@@ -933,6 +954,7 @@ function getCommitmentDetail(id) {
 				$('.row-tr').hide();
 				i = $(this).attr('id').split('_')[1]
 				$('#option_identifier-' + i).val('');
+                $('#option_caption-' + i).val('');
 				$('#input_option_quantity-' + i).val('');
 				$('#input_option_unit_price-' + i).val('');
 				$('#row-tr_' + i).show();

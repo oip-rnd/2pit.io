@@ -379,11 +379,11 @@ class AccountController extends AbstractActionController
 		\PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
 		 
 		$workbook = new \PHPExcel;
-		(new SsmlAccountViewHelper)->formatXls($description, $workbook, $view->accounts);		
+		(new SsmlAccountViewHelper)->formatXls($description, $workbook, $view->accounts);
 		$writer = new \PHPExcel_Writer_Excel2007($workbook);
 		
 		header('Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-		header('Content-Disposition:inline;filename=P-Pit_Comptes.xlsx ');
+		header('Content-Disposition:inline;filename=P-Pit_Comptes.xlsx');
 		ob_end_clean();
 		$writer->save('php://output');
 

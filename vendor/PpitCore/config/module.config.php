@@ -3610,7 +3610,7 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 							'definition' => 'inline',
 							'route' => 'account/updateContact',
 							'params' => array('type' => '', 'contactNumber' => 2),
-							'labels' => array('en_US' => 'Invoicing', 'fr_FR' => 'Facturation'),
+							'labels' => array('en_US' => 'Invoicing', 'fr_FR' => 'Contact facturation'),
 					),
 			),
 	),
