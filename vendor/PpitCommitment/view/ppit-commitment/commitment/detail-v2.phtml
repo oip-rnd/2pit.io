@@ -221,7 +221,7 @@
                   <td class="text-right"><?php echo $context->formatFloat($commitment->including_options_amount, 2) ?></td>
                 </tr>
 
-  	<?php if ($context->getConfig('commitment'.(($commitment->type) ? '/'.$commitment->type : ''))['tax'] == 'excluding') : ?>
+  	<?php if ($tax == 'excluding') : ?>
       <?php $settlementTotal = $commitment->tax_inclusive ?>
                 <tr style="font-weight: bold;">
                   <td colspan="6" class="text-right"><?php echo $this->translate('Tax incl.', 'ppit-commitment', $context->getLocale()) ?></td>
@@ -229,6 +229,9 @@
                 </tr>
 	<?php else : ?>
       <?php $settlementTotal = $commitment->including_options_amount ?>
+                <tr style="font-weight: bold;">
+                  <td colspan="7" class="text-center"><?php echo $this->translate('Tax not applicable', 'ppit-commitment', $context->getLocale()) ?></td>
+                </tr>
 	<?php endif;?>
               </table>
               <input type="hidden" id="optionCount" value="<?php echo ++$i ?>" />

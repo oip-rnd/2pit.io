@@ -136,6 +136,7 @@
 			'Tax excl. unit price' => 'Prix unitaire HT',
 			'Tax incl.' => 'TTC',
 			'Tax incl. amount to divide' => 'Montant TTC à répartir',
+			'Tax not applicable' => 'TVA non applicable',
 			'Term' => 'Echéance',
 			'Terms' => 'Echéances',
 			'Terms and conditions' => 'Conditions Générales de Vente',

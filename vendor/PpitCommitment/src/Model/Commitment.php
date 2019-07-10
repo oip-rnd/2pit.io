@@ -314,7 +314,7 @@ class Commitment
 		$description['list'] = Commitment::getConfigList($type, $description['properties']);
 		$description['update'] = Commitment::getConfigUpdate($type, $description['properties']);
 		$description['group'] = Commitment::getConfigGroup($type, $description['properties']);
-		$description['export'] = Commitment::getConfigEXport($type, $description['properties']);
+		$description['export'] = Commitment::getConfigExport($type, $description['properties']);
 		return $description;
 	}
 	

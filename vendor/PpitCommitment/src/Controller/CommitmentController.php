@@ -275,14 +275,20 @@ class CommitmentController extends AbstractActionController
     	// Retrieve the type
 		$type = $this->params()->fromRoute('type', 0);
 		$termProperties = Term::getConfig($type);
-
 		$id = (int) $this->params()->fromRoute('id', 0);
     	if ($id) $commitment = Commitment::get($id);
     	else $commitment = Commitment::instanciate($type);
+
+		// Retrieve the tax regime
+		$place = Place::get($commitment->place_id);
+		if ($place->getConfig('commitment/tax')) $tax = $place->getConfig('commitment/tax');
+		else $tax = $context->getConfig('commitment/'.$type)['tax'];
+
     	$view = new ViewModel(array(
     		'context' => $context,
 			'config' => $context->getconfig(),
     		'type' => $type,
+    		'tax' => $tax,
     		'id' => $commitment->id,
     		'commitment' => $commitment,
     		'termProperties' => $termProperties,
@@ -896,7 +902,8 @@ class CommitmentController extends AbstractActionController
     	}
     	
     	$invoice['currency_symbol'] = $context->getConfig('commitment')['currencySymbol'];
-    	$invoice['tax'] = $context->getConfig('commitment/'.$type)['tax'];
+    	if ($commitment->account->place->getConfig('commitment/tax')) $invoice['tax'] = $commitment->account->place->getConfig('commitment/invoice_header');
+    	else $invoice['tax'] = $context->getConfig('commitment/'.$type)['tax'];
     	 
     	// Lines
     	

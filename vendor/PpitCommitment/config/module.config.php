@@ -2499,6 +2499,8 @@ table.note-report td {
 	'commitment/generic/property/account_property_14' => ['definition' => 'core_account/generic/property/property_14'],
 	'commitment/generic/property/account_property_15' => ['definition' => 'core_account/generic/property/property_15'],
 	'commitment/generic/property/account_property_16' => ['definition' => 'core_account/generic/property/property_16'],
+
+	'commitment/generic/property/email' => ['definition' => 'core_account/generic/property/email'],
 	
 	'commitment/generic/property/invoice_n_fn' => array(
 		'definition' => 'inline',
@@ -2724,7 +2726,7 @@ table.note-report td {
 		'currencySymbol' => '€',
 		'tax' => 'excluding',
 		'properties' => array(
-			'year', 'status', 'place_id', 'account_id', 'account_status', 'account_name', 'account_identifier', 'invoice_n_fn',
+			'year', 'status', 'place_id', 'account_id', 'account_status', 'account_name', 'account_identifier', 'email', 'invoice_n_fn',
 			'caption', 'description', 'product_caption',
 			'quantity', 'unit_price', 'amount', 'including_options_amount', 'invoice_identifier', 'invoice_date', 'tax_amount', 'tax_inclusive',
 			'default_means_of_payment', 'update_time',
