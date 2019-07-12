@@ -281,7 +281,7 @@ class CommitmentController extends AbstractActionController
 
 		// Retrieve the tax regime
 		$place = Place::get($commitment->place_id);
-		if ($place->getConfig('commitment/tax')) $tax = $place->getConfig('commitment/tax');
+		if ($place && $place->getConfig('commitment/tax')) $tax = $place->getConfig('commitment/tax');
 		else $tax = $context->getConfig('commitment/'.$type)['tax'];
 
     	$view = new ViewModel(array(
