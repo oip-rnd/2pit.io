@@ -276,19 +276,20 @@ class CommitmentController extends AbstractActionController
 		$type = $this->params()->fromRoute('type', 0);
 		$termProperties = Term::getConfig($type);
 		$id = (int) $this->params()->fromRoute('id', 0);
-    	if ($id) $commitment = Commitment::get($id);
-    	else $commitment = Commitment::instanciate($type);
-
-		// Retrieve the tax regime
-		$place = Place::get($commitment->place_id);
-		if ($place && $place->getConfig('commitment/tax')) $tax = $place->getConfig('commitment/tax');
-		else $tax = $context->getConfig('commitment/'.$type)['tax'];
+    	if ($id) {
+    		$commitment = Commitment::get($id);
+			$place = Place::get($commitment->place_id);
+    	}
+    	else {
+    		$commitment = Commitment::instanciate($type);
+			$place = $context->getPlace();
+    	}
 
     	$view = new ViewModel(array(
     		'context' => $context,
 			'config' => $context->getconfig(),
     		'type' => $type,
-    		'tax' => $tax,
+    		'place' => $place,
     		'id' => $commitment->id,
     		'commitment' => $commitment,
     		'termProperties' => $termProperties,
@@ -687,14 +688,21 @@ class CommitmentController extends AbstractActionController
     			$data['amount'] = round($data['quantity'] * $data['unit_price'], 2);
     			if ($data['product_identifier']) {
 	    			$product = Product::get($data['product_identifier'], 'identifier');
-	    			if ($product->tax_1_share) $data['taxable_1_amount'] = round($data['amount'] * $product->tax_1_share, 2);
-	    			if ($product->tax_2_share) $data['taxable_2_amount'] = round($data['amount'] * $product->tax_2_share, 2);
-	    			if ($product->tax_3_share) $data['taxable_3_amount'] = round($data['amount'] * $product->tax_3_share, 2);
+	    			$tax_1_share = $product->tax_1_share;
+	    			$tax_2_share = $product->tax_2_share;
+	    			$tax_3_share = $product->tax_3_share;
     			}
     			else {
-    				$data['taxable_1_amount'] = $data['amount'];
+    				$place = Place::get($commitment->place_id);
+    				$tax_1_share = ($place->tax_regime == 1) ? 1 : 0;
+	    			$tax_2_share = 0;
+	    			$tax_3_share = 0;
     			}
-    			$rc = $commitment->loadData($data, $request->getFiles()->toArray());
+	    		$data['taxable_1_amount'] = round($data['amount'] * $tax_1_share, 2);
+	    		$data['taxable_2_amount'] = round($data['amount'] * $tax_2_share, 2);
+	    		$data['taxable_3_amount'] = round($data['amount'] * $tax_3_share, 2);
+
+	    		$rc = $commitment->loadData($data, $request->getFiles()->toArray());
     			if ($rc != 'OK') throw new \Exception('View error');
     
     			// Atomically save
@@ -902,7 +910,7 @@ class CommitmentController extends AbstractActionController
     	}
     	
     	$invoice['currency_symbol'] = $context->getConfig('commitment')['currencySymbol'];
-    	if ($commitment->account->place->getConfig('commitment/tax')) $invoice['tax'] = $commitment->account->place->getConfig('commitment/invoice_header');
+    	if ($commitment->account->place->getConfig('commitment/tax')) $invoice['tax'] = $commitment->account->place->getConfig('commitment/tax');
     	else $invoice['tax'] = $context->getConfig('commitment/'.$type)['tax'];
     	 
     	// Lines

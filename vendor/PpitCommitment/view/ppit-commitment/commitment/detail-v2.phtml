@@ -221,7 +221,7 @@
                   <td class="text-right"><?php echo $context->formatFloat($commitment->including_options_amount, 2) ?></td>
                 </tr>
 
-  	<?php if ($tax == 'excluding') : ?>
+  	<?php if ($place->tax_regime) : ?>
       <?php $settlementTotal = $commitment->tax_inclusive ?>
                 <tr style="font-weight: bold;">
                   <td colspan="6" class="text-right"><?php echo $this->translate('Tax incl.', 'ppit-commitment', $context->getLocale()) ?></td>
