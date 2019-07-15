@@ -1384,13 +1384,19 @@ class CommitmentController extends AbstractActionController
     			// Retrieve the data from the request
     			$data = array();
     			$options = array();
+    			$place = Place::get($commitment->place_id);
+    			 
     			for ($i = 0; $i < $number; $i++) {
     				if ($request->getPost('option_caption-'.$i)) {
-		    			$option = array();
-	    				$option['identifier'] = $request->getPost('option_identifier-'.$i);
+    					$productOptionId = $request->getPost('option_identifier-'.$i);
+    					$productOption = ProductOption::get($productOptionId, 'reference');
+    					$vat_id = ($productOption) ? $productOption->vat_id : ($place->tax_regime == 1) ? 1 : 0;
+    					$option = array();
+	    				$option['identifier'] = $productOptionId;
 	    				$option['caption'] = $request->getPost('option_caption-'.$i);
 	    				$option['quantity'] = $request->getPost('option_quantity-'.$i);
 		    			$option['unit_price'] = $request->getPost('option_unit_price-'.$i);
+		    			$option['vat_id'] = $vat_id;
 		    			$options[] = $option;
     				}
     			}

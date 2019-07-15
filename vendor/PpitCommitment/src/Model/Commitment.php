@@ -1440,7 +1440,7 @@ class Commitment
 				$option['unit_price'] = $entry['unit_price'];
 				$option['quantity'] = $entry['quantity'];
 				$option['amount'] = $option['unit_price'] * $option['quantity']; // Redundancy to solve
-				$option['vat_id'] = ($productOption) ? $productOption->vat_id : 1; // Redundancy to solve
+				$option['vat_id'] = $entry['vat_id']; // ($productOption) ? $productOption->vat_id : 1; // Redundancy to solve
 				$this->options[] = $option;
     		}
 		}

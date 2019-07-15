@@ -288,7 +288,7 @@ class TermController extends AbstractActionController
     			$amountToDivide = $request->getPost('amountToDivide');
     			$paymentMean = $request->getPost('means_of_payment');
 				$toDivide = ($amountToDivide) ? $amountToDivide : $quantityToDivide;
-    			$termShare = round($toDivide / $numberOfTerms, 2);
+				$termShare = round($toDivide / $numberOfTerms, 2);
     			$cumulativeAmount = 0;
 
 		    	$data = array();

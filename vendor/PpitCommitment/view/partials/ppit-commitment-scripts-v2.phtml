@@ -556,6 +556,7 @@ function connectCommitmentGenerateTermForm(id)
 	form.onsubmit = function(event) {
 		
 		event.preventDefault();
+        var validity = true;
 			
 	// Number of terms
 		var numberOfTerms = $('#number_of_terms').val();
@@ -653,7 +654,7 @@ function connectCommitmentGenerateTermForm(id)
 	
 			// Create a new FormData object.
 			var formData = new FormData();
-/*            formData.append('term-invoice_account_id', $('#term-invoice_account_id').val());
+            formData.append('term-invoice_account_id', $('#term-invoice_account_id').val());
 			formData.append('number_of_terms', $('#number_of_terms').val());
 			formData.append('first_term_date', $('#first_term_date').val());
             formData.append('term-status', $('#term-status').val());
@@ -662,7 +663,7 @@ function connectCommitmentGenerateTermForm(id)
             formData.append('amountToDivide', $('#amountToDivide').val());
 			formData.append('means_of_payment', $('#means_of_payment').val());
 			formData.append('periodicity', $('#periodicity').val());
-            formData.append('same_day_of_month', (document.getElementById('same_day_of_month').checked) ? 1 : 0);*/
+            formData.append('same_day_of_month', (document.getElementById('same_day_of_month').checked) ? 1 : 0);
 
             $('.term_update_check').each(function () {
               let propertyId = $(this).attr('id').split('-')[1];
