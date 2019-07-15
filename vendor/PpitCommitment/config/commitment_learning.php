@@ -98,9 +98,9 @@ define('COMMITMENT_LEARNING', [
 		'definition' => 'inline',
 		'type' => 'select',
 		'modalities' => array(
-			'f4a' => array('default' => 'Enseignement formation'),
-			'f4b' => array('default' => 'Développement capacités organisation'),
-			'f4c' => array('default' => 'Développement capacités orientation / insertion'),
+			'f4a' => array('default' => '333 - Enseignement formation'),
+			'f4b' => array('default' => '414 - Développement capacités organisation'),
+			'f4c' => array('default' => '415 - Développement capacités orientation / insertion'),
 		),
 		'labels' => array('default' => 'F-4. Spécialité de la formation'),
 	),
