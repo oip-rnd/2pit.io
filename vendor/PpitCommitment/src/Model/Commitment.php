@@ -1935,9 +1935,17 @@ class Commitment
     	// Isolation check
     	if ($commitment->update_time > $update_time) return 'Isolation';
  
-    	Term::getTable()->multipleDelete(array('commitment_id' => $this->id));
-    	Commitment::getTable()->delete($this->id);
-    
+/*    	Term::getTable()->multipleDelete(array('commitment_id' => $this->id));
+    	Commitment::getTable()->delete($this->id);*/
+
+    	// Mark as deleted the terms associated to this commitment
+		$terms = Term::getList(null, ['commitment_id' => $this->id]);
+		foreach ($terms as $term) $term->delete(null);
+		
+		// Mark the commitment as deleted
+    	$this->status = 'deleted';
+    	Commitment::getTable()->save($this);
+    	 
     	return 'OK';
     }
 

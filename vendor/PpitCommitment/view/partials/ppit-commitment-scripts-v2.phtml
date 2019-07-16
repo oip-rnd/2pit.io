@@ -291,8 +291,8 @@ function postForm(id, action)
       if (xhttp.readyState == 4) {
         if (xhttp.status == 200) {
           getCommitmentList(getSearchParams(''));
-//          $('#commitment-update-panel').html(xhttp.responseText);
-          getCommitmentDetail(xhttp.responseText);
+          $('#commitment-update-panel').html(xhttp.responseText);
+//          getCommitmentDetail(xhttp.responseText);
         }
         else {
           console.log(xhttp.status + ' ' + xhttp.statusText);
