@@ -909,7 +909,7 @@ class CommitmentController extends AbstractActionController
     		if ($value) $invoice['description'][]  = array('title' => $context->localize($line['left']), 'value' => $value);
     	}
     	
-    	$invoice['currency_symbol'] = $context->getConfig('commitment')['currencySymbol'];
+    	$invoice['currency_symbol'] = '€'; // $context->getConfig('commitment')['currencySymbol'];
     	if ($commitment->account->place->getConfig('commitment/tax')) $invoice['tax'] = $commitment->account->place->getConfig('commitment/tax');
     	else $invoice['tax'] = $context->getConfig('commitment/'.$type)['tax'];
     	 

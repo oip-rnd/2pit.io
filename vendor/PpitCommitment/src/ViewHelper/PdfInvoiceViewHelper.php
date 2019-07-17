@@ -21,6 +21,9 @@ class PdfInvoiceViewHelper
     	$invoiceSpecs = $context->getConfig('commitment/invoice');
     	$taxRegime = $place->tax_regime;
 
+    	// Fixes the missing currency symbol
+    	if (!$invoice['currency_symbol']) $invoice['currency_symbol'] = '€';
+    	
     	// create new PDF document
     	$pdf->footer = ($place->legal_footer) ? $place->legal_footer : $context->getConfig('headerParams')['footer']['value'];
     	$pdf->footer_2 = ($place->legal_footer_2) ? $place->legal_footer_2 : ((array_key_exists('footer_2', $context->getConfig('headerParams'))) ? $context->getConfig('headerParams')['footer_2']['value'] : null);
@@ -137,7 +140,7 @@ class PdfInvoiceViewHelper
     	$pdf->Cell(110, 7, 'Libellé', 1, 0, 'C', 1);
     	$pdf->Cell(25, 7, 'Prix unit.'.$invoice['currency_symbol'].(($taxRegime) ? ' ('.$taxComputing . ')' : ''), 1, 0, 'C', 1);
     	$pdf->Cell(20, 7, 'Quantité', 1, 0, 'C', 1);
-    	$pdf->Cell(25, 7, 'Montant'.$invoice['currency_symbol'].(($taxRegime) ? ' ('.$taxComputing . ')' : ''), 1, 0, 'R', 1);
+    	$pdf->Cell(25, 7, 'Montant '.$invoice['currency_symbol'].(($taxRegime) ? ' ('.$taxComputing . ')' : ''), 1, 0, 'R', 1);
     	// Color and font restoration
     	$pdf->SetFillColor(239, 239, 239);
     	$pdf->SetTextColor(0);
