@@ -53,11 +53,14 @@ if (!$mdbCss) $mdbCss = 'MDB-Pro';
 	body,
 	header,
 
+<?php if (array_key_exists('intro_height', $header)) : ?>
     #intro {
       height: <?php echo $header['intro_height'] ?>;
       max-width: 100%;
     }
+<?php endif;?>
   
+<?php if (array_key_exists('background_image', $header)) : ?>
 	#intro {
       background: url("<?php echo $this->basePath($context->localize($header['background_image']['src'])) ?>") no-repeat center center;
       -webkit-background-size: contain;
@@ -66,6 +69,7 @@ if (!$mdbCss) $mdbCss = 'MDB-Pro';
       background-size: <?php echo array_key_exists('background-size', $header) ? $header['background-size'] : 'contain' ?>;
       background-color: <?php echo array_key_exists('background-color', $header) ? $header['background-color'] : '' ?>;
 	}
+<?php endif;?>
 	
 	@include media-breakpoint-up(sm) {
 	  html {
