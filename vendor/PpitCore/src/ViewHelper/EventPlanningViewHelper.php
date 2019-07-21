@@ -137,24 +137,26 @@ class EventPlanningViewHelper
 					}
 				}
 				if ($account['availability_begin'] <= $day['date'] && (!$account['availability_end'] || $account['availability_end'] >= $day['date'])) {
-					$constraints = $account['availability_constraints'][0];
-					if (array_key_exists($dayOfWeek, $constraints)) {
-						if ($constraints[$dayOfWeek] == 'morning' || $constraints[$dayOfWeek] == 'day') {
-							if (!array_key_exists('color', $day) || !array_key_exists('morning', $day['color'])) {
-								$day['color']['morning'] = 'Green';
-								$day['n_fn'] = $account['n_fn'];
+					foreach ($account['availability_constraints'] as $constraints) {
+//					$constraints = $account['availability_constraints'][0];
+						if (array_key_exists($dayOfWeek, $constraints)) {
+							if ($constraints[$dayOfWeek] == 'morning' || $constraints[$dayOfWeek] == 'day') {
+								if (!array_key_exists('color', $day) || !array_key_exists('morning', $day['color'])) {
+									$day['color']['morning'] = 'Green';
+									$day['n_fn'] = $account['n_fn'];
+								}
 							}
-						}
-						if ($constraints[$dayOfWeek] == 'afternoon' || $constraints[$dayOfWeek] == 'day') {
-							if (!array_key_exists('color', $day) || !array_key_exists('afternoon', $day['color'])) {
-								$day['color']['afternoon'] = 'Green';
-								$day['n_fn'] = $account['n_fn'];
+							if ($constraints[$dayOfWeek] == 'afternoon' || $constraints[$dayOfWeek] == 'day') {
+								if (!array_key_exists('color', $day) || !array_key_exists('afternoon', $day['color'])) {
+									$day['color']['afternoon'] = 'Green';
+									$day['n_fn'] = $account['n_fn'];
+								}
 							}
-						}
-						if ($constraints[$dayOfWeek] == 'evening') {
-							if (!array_key_exists('color', $day) || !array_key_exists('evening', $day['color'])) {
-								$day['color']['evening'] = 'Green';
-								$day['n_fn'] = $account['n_fn'];
+							if ($constraints[$dayOfWeek] == 'evening') {
+								if (!array_key_exists('color', $day) || !array_key_exists('evening', $day['color'])) {
+									$day['color']['evening'] = 'Green';
+									$day['n_fn'] = $account['n_fn'];
+								}
 							}
 						}
 					}
