@@ -137,6 +137,9 @@ if ($event->id && $action != 'update' || $message == 'OK') $isDisabled = true; e
 			<input type="hidden" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
 			<input class="form-control update_date updatable-control <?php if ($first) echo 'focused-control' ?>" id="input_<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php echo $context->decodeDate($event->properties[$propertyId]) ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
 
+            <?php elseif ($property['type'] == 'time') : ?>
+            <input class="form-control update_time updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" value="<?php echo $event->properties[$propertyId] ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+
 			<?php elseif ($property['type'] == 'number') : ?>
 			<input type="hidden" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
 			<input class="form-control updatable-control <?php if ($first) echo 'focused-control' ?>" id="input_<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php echo $context->formatFloat($event->properties[$propertyId], 2) ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
