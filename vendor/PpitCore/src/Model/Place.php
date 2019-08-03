@@ -316,6 +316,7 @@ class Place
 			return $this->config[$key];
 		}
 		elseif (array_key_exists($key, $context->getConfig('place_config/default'))) return $context->getConfig('place_config/default')[$key];
+		else return $context->getConfig($key);
 	}
     
     /**

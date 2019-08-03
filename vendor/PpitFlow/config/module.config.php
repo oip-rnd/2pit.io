@@ -14,6 +14,7 @@ return array (
 	'controllers' => array(
 		'invokables' => array(
 			'PpitFlow\Controller\Account' => 'PpitFlow\Controller\AccountController',
+			'PpitFlow\Controller\Blog' => 'PpitFlow\Controller\BlogController',
 			'PpitFlow\Controller\Catalogue' => 'PpitFlow\Controller\CatalogueController',
 			'PpitFlow\Controller\Contact' => 'PpitFlow\Controller\ContactController',
 			'PpitFlow\Controller\Emailing' => 'PpitFlow\Controller\EmailingController',
@@ -224,6 +225,37 @@ return array (
 						'options' => array(
 							'route' => '/repair',
 							'defaults' => array('action' => 'repair'),
+						),
+					),
+				),
+			),
+			'blog' => array(
+				'type'    => 'literal',
+				'options' => array(
+					'route'    => '/blog',
+					'defaults' => array(
+						'controller' => 'PpitFlow\Controller\Blog',
+						'action'     => 'index',
+					),
+				),
+				'may_terminate' => true,
+				'child_routes' => array(
+					'index' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/index[/:place_identifier]',
+							'defaults' => array(
+								'action' => 'index',
+							),
+						),
+					),
+					'detail' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/index[/:identifier]',
+							'defaults' => array(
+								'action' => 'index',
+							),
 						),
 					),
 				),
@@ -774,6 +806,10 @@ return array (
 				array('route' => 'flowAccount/signOut', 'roles' => array('user')),
 				array('route' => 'flowAccount/repair', 'roles' => array('admin')),
 
+				array('route' => 'blog', 'roles' => array('guest')),
+				array('route' => 'blog/index', 'roles' => array('guest')),
+				array('route' => 'blog/detail', 'roles' => array('guest')),
+				
 				array('route' => 'catalogue', 'roles' => array('guest')),
 				array('route' => 'catalogue/index', 'roles' => array('guest')),
 				array('route' => 'catalogue/subscribe', 'roles' => array('guest')),

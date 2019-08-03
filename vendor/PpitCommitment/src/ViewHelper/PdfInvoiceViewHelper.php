@@ -219,7 +219,7 @@ class PdfInvoiceViewHelper
 		    	$pdf->Ln();
 		    	$pdf->Cell(60, 6, $term['caption'], 'LR', 0, 'L', $color);
 		    	$pdf->Cell(30, 6, $context->decodeDate($term['due_date']), 'LR', 0, 'C', $color);
-		    	$pdf->Cell(30, 6, $context->localize(['expected' => ['default' => 'Attendu'], 'settled' => ['default' => 'Réglé'], 'collected' => ['default' => 'Encaissé']][$term['status']]), 'LR', 0, 'C', $color);
+		    	$pdf->Cell(30, 6, $context->localize(['expected' => ['default' => 'Attendu'], 'settled' => ['default' => 'Réglé'], 'collected' => ['default' => 'Encaissé'], 'rejected' => ['default' => 'Rejeté']][$term['status']]), 'LR', 0, 'C', $color);
 		    	$pdf->Cell(30, 6, ($term['means_of_payment']) ? $context->localize($context->getConfig('commitment/generic/property/default_means_of_payment')['modalities'][$term['means_of_payment']]) : '', 'LR', 0, 'L', $color);
 		    	$pdf->Cell(30, 6, $context->formatFloat($term['amount'], 2), 'LR', 0, 'R', $color);
 		    	$color = ($color+1)%2;

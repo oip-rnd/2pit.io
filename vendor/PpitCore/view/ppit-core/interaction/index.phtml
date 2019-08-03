@@ -56,7 +56,11 @@ echo $this->partial('/partials/ppit-controller')
 ?>
 
 <?php foreach ($context->getConfig('menus/p-pit-admin')['entries'] as $entryId => $entryDef) : ?>
-$('#<?php echo $entryId ?>-anchor').click(function () { $(location).attr('href', '<?php echo $this->url($entryDef['route']) ?>'); });
+	<?php 
+    $arguments = '?';
+    if (array_key_exists('urlParams', $entryDef)) foreach ($entryDef['urlParams'] as $argument => $value) $arguments .= '&' . $argument . '=' . $value;
+    ?>
+$('#<?php echo $entryId ?>-anchor').click(function () { $(location).attr('href', '<?php echo $this->url($entryDef['route']) . $arguments ?>'); });
 <?php endforeach;?>
 
 activateInteraction();

@@ -243,6 +243,17 @@ class SecurityAgent
 	    return $user->update($update_time);
     }
     
+    public function batchReactivate()
+    {
+    	$select = User::getTable()->getSelect()->where(['state' => 2]);
+    	$users = User::getTable()->transSelectWith($select);
+    	foreach ($users as $user) {
+    		echo $user->username . ' has state ' . $user->state . "\n";
+    		$user->state = 1;
+    		$user->update(null);
+    	}
+    }
+    
     public function authenticate($identity, $credential)
     {
     	$context = Context::getCurrent();
@@ -266,7 +277,7 @@ class SecurityAgent
     		$user = User::getTable()->transget($identity, 'username');
     		if ($user){
     			$user->nb_trials++;
-    			if ($user->nb_trials == 5) $user->state = 0;
+    			if ($user->nb_trials == 5) $user->state = 2;
     			User::getTable()->save($user);
     		}
     		return 'Authentication';
@@ -274,7 +285,7 @@ class SecurityAgent
     	else {
     		$user = User::getTable()->transGet($result->getIdentity(), 'username');
     	    $contact = Vcard::getTable()->transGet($user->vcard_id);
-	    	if ($user->state == 0) return 'Activation';
+	    	if ($user->state != 1) return 'Activation';
     		else {
     			// Reset the number of login trials
     			$user->nb_trials = 0;

@@ -163,7 +163,7 @@
   <?php elseif ($property['type'] == 'date') : ?>
   
     <input type="hidden" id="term-<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
-    <input class="form-control" id="input_term-<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php echo $context->decodeDate($term->properties[$propertyId]) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+    <input class="form-control update_date" id="input_term-<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php echo $context->decodeDate($term->properties[$propertyId]) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
 
   <?php elseif ($property['type'] == 'number') : ?>
 

@@ -49,7 +49,7 @@
 			<div class="form-group" id="state_group">
 				<label class="col-sm-5 control-label"><?php echo $this->translate('Revoke or reactivate', 'ppit-core', $context->getLocale()) ?></label>
 				<div class="col-sm-7">
-					<input type="checkbox" name="state" id="state" class="form-control" value="1"<?php if ($user->state) echo ' checked="checked"' ?><?php if (isset($isDisabled) && $isDisabled) echo ' disabled ="disabled"' ?>>
+					<input type="checkbox" name="state" id="state" class="form-control" value="1"<?php if ($user->state == 1) echo ' checked="checked"' ?><?php if (isset($isDisabled) && $isDisabled) echo ' disabled ="disabled"' ?>>
 				</div>
 				<div class="col-sm-12"><p class="help-block" id="state_error"></p></div>
 			</div>

@@ -346,6 +346,20 @@ class UserController extends AbstractActionController
    		return $view;
     }
 
+    public function batchReactivateAction()
+    {
+    	$context = Context::getCurrent();
+    	
+    	// Authentication
+    	if (!$context->wsAuthenticate($this->getEvent())) {
+    		$this->getResponse()->setStatusCode('401');
+    		return $this->getResponse();
+    	}
+
+    	$context->getSecurityAgent()->batchReactivate();
+    	return $this->response;
+    }
+    
     public function deleteAction()
     {
     	// Retrieve the context

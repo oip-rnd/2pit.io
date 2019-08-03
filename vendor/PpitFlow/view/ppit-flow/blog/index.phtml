@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <!--Google Analytics-->
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  
+  ga('create', 'UA-82264844-1', 'auto');
+  <?php if (array_key_exists('sendHitTask', $context->getConfig()['analytics']) && !$context->getConfig()['analytics']['sendHitTask']) : ?>
+  ga('set', 'sendHitTask', null);
+  <?php endif;?>
+  ga('send', 'pageview');
+  </script>
+  <!--/Google Analytics-->
+
+  <title>P-Pit - Transition numérique pour les petites entreprises</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="description" content="TPE, PME, associations, maîtrisez votre transition numérique en conformité avec la protection des données personnelles (RGPD) que vous gérez dans vos applications numériques">
+  <meta name="robots" content="index, follow">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <!-- Favicon -->      
+  <link rel="shortcut icon" href="<?php echo $this->basePath('/img/favicon.ico') ?>">
+
+  <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+    <!-- Bootstrap core CSS -->
+    <link href="<?php echo $this->basePath('/bootstrap-4-2/css/bootstrap.min.css') ?>" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="<?php echo $this->basePath('MDB-Pro/css/mdb.min.css') ?>" rel="stylesheet">
+  
+  <!-- medium editor -->
+  <link rel="stylesheet" href="<?php echo $this->basePath('medium-editor-master/dist/css/medium-editor.css') ?>">
+  <link rel="stylesheet" href="<?php echo $this->basePath('medium-editor-master/dist/css/themes/default.css" id="medium-editor-theme') ?>">
+
+  <!-- Custom style cart-v1-->
+   <style>
+  html,
+  body,
+  header,
+ 
+    #intro {
+      height: 75%;
+      max-width: 100%;
+    }
+  
+  #intro {
+      background: url("<?php echo $this->basePath('/img/2pit.io/notes-coul.png') ?>") no-repeat center center;
+      -webkit-background-size: contain;
+      -moz-background-size: contain;
+      -o-background-size: contain;
+      background-size: contain;
+  }
+   
+  <style>
+    .navbar { background-color: transparent; }
+    .top-nav-collapse { background-color: #ffffff; }
+    body.modal-open {
+      overflow: hidden;
+      position: fixed;
+    }
+  </style>
+        
+<body>
+
+    <!--Main Navigation-->
+    <header>
+    
+      <!--Navbar-->
+
+        <nav class="navbar navbar-expand-lg fixed-top scrolling-navbar">
+
+                <!-- Navbar brand -->
+                <a href="<?php echo $this->url('home') ?>" class="navbar-brand">
+                  <img height="40" src="<?php echo $this->basePath('/logos/p-pit/p-pit-200.png') ?>" alt="p-pit logo" />
+                </a>
+                <a href="<?php echo $this->url('home') ?>" class="navbar-brand">
+                  <img width="280px" style="margin-left: auto; margin-right: auto" src="<?php echo $this->basePath('/logos/p-pit/p-pit-2024-baseline.png') ?>" alt="p-pit baseline" />
+                </a>
+    
+                  <!-- Collapsible content -->
+                  <!-- Links -->
+                  <ul class="nav navbar-nav nav-flex-icons ml-auto">
+                   
+<?php if ($context->isAuthenticated()) : ?>
+                    <li class="nav-item">
+                      <a class="nav-link dark-grey-text font-weight-bold" id="login-anchor" data-toggle="modal" data-target="#modalLogoutForm">
+                        <i class="fa fa-sign-out-alt blue-text" aria-hidden="true"></i>
+                        <span class="clearfix d-none d-sm-inline-block">Se déconnecter</span>
+                      </a>
+                    </li>
+
+<?php else : ?>
+                    <li class="nav-item">
+                      <a class="nav-link dark-grey-text font-weight-bold" id="register-anchor" data-toggle="modal" data-target="#modalRegisterForm">
+                        <i class="fa fa-user blue-text" aria-hidden="true"></i>
+                        <span class="clearfix d-none d-sm-inline-block">Créer un compte</span>
+                      </a>
+                    </li>
+
+                    <li class="nav-item">
+                      <a class="nav-link dark-grey-text font-weight-bold" id="login-anchor" data-toggle="modal" data-target="#modalLoginForm">
+                        <i class="fa fa-sign-in-alt blue-text" aria-hidden="true"></i>
+                        <span class="clearfix d-none d-sm-inline-block">Se connecter</span>
+                      </a>
+                    </li>
+
+<?php endif;?>
+
+                    <li class="nav-item">
+                      <a class="nav-link dark-grey-text font-weight-bold" href="mailto:contact@p-pit.fr"> <i class="fa fa-envelope ml-1"></i> <span class="clearfix d-none d-sm-inline-block">Nous contacter</span></a>
+                    </li>
+                  </ul>
+                  <!-- Links -->
+
+
+        </nav>
+        <!--/.Navbar-->    
+ 
+    <!-- Mask -->
+    <div id="intro" class="view h-100"> 
+      <div class="d-block h-100 w-lg-100 rgba-alpha">
+        <div class="full-bg-img flex-center">
+          <div class="col-md-8 justify-content-center text-center">
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--/Mask-->
+
+    </header>
+    
+  <!--Main Layout-->
+  <main style="padding-top: 0.5rem">
+
+    <!-- Main Container -->
+    <div class="container">
+
+<!-- Section: Blog v.1 -->
+<section>
+
+  <!-- Section heading -->
+  <h2 class="dark-grey-text h2-responsive font-weight-bold text-center my-3">Articles récents</h2>
+  <!-- Section description -->
+  <p class="dark-grey-text text-center w-responsive mx-auto mb-5" id="blog-description">La transition numérique pour les petites entreprises, associations, commerçants, artisans en 2 minutes de lecture</p>
+
+<?php foreach ($documents as $document) : ?>
+  <!-- Grid row -->
+  <div class="row">
+
+    <!-- Grid column -->
+    <div class="col-lg-5">
+
+      <!-- Featured image -->
+      <div class="view overlay rounded z-depth-0 mb-lg-0 mb-4">
+        <img class="img-fluid" src="<?php echo $this->basePath($context->localize($document->content['img-src'])) ?>" alt="<?php echo $context->localize($document->content['img-alt']) ?>">
+        <a>
+          <div class="mask rgba-white-slight"></div>
+        </a>
+      </div>
+
+    </div>
+    <!-- Grid column -->
+
+    <!-- Grid column -->
+    <div class="col-lg-7">
+      <div <?php if ($context->isAllowed('document/update')) : ?>class="editable"<?php endif;?> id="0_text"><?php echo $context->localize($document->content['text']) ?>
+      </div>
+      <!-- Read more button -->
+      <a class="btn btn-orange btn-md" data-toggle="modal" data-target="#modalShowArticle-2019-06-29">Foncer</a>
+
+    </div>
+    <!-- Grid column -->
+
+  </div>
+  <!-- Grid row -->
+<?php endforeach;?>
+
+  <hr class="my-5">
+
+  <!-- Grid row -->
+  <div class="row">
+
+    <!-- Grid column -->
+    <div class="col-lg-7">
+
+      <!-- Category -->
+      <h6 class="font-weight-bold indigo-text mb-3"><i class="fas fa-gavel pr-2"></i>Conformité</h6>
+      <!-- Post title -->
+      <h3 class="dark-grey-text font-weight-bold mb-3"><strong>Protection des données</strong></h3>
+      <!-- Excerpt -->
+      <p class="dark-grey-text text-justify">Le RGPD peut paraître un peu obscur pour les non techniciens mais il ne faut pas se faire peur outre-mesure car c’est une problématique qui peut se traiter de façon très pragmatique. La preuve en 4 points...</p>
+      <!-- Read more button -->
+      <a class="btn btn-indigo btn-md" data-toggle="modal" data-target="#modalShowArticle">Se rassurer</a>
+
+    </div>
+    <!-- Grid column -->
+
+    <!-- Grid column -->
+    <div class="col-lg-5">
+
+      <!-- Featured image -->
+      <div class="view overlay rounded z-depth-0 mb-lg-0 mb-4">
+        <img class="img-fluid" src="<?php echo $this->basePath('/img/p-pit/datacenter-petit.jpg') ?>" alt="iphone avec P-Pit">
+        <a>
+          <div class="mask rgba-white-slight"></div>
+        </a>
+      </div>
+
+    </div>
+    <!-- Grid column -->
+
+  </div>
+  <!-- Grid row -->
+
+  <hr class="my-5">
+
+</section>
+<!-- Section: Blog v.1 -->
+
+    </div>
+    
+  </main>
+
+<div class="modal fade" id="modalShowArticle-2019-06-29" tabindex="-1" role="dialog" aria-labelledby="article" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+              <div class="modal-header text-center">
+                  <h4 class="modal-title w-100 font-weight-bold"></h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body mx-3">
+
+    <!-- Main Container -->
+    <div class="container">
+
+<!-- Section: Blog v.1 -->
+<section>
+
+  <!-- Grid row -->
+  <div class="row">
+
+    <!-- Grid column -->
+    <div class="col-lg-12">
+
+      <!-- Featured image -->
+      <div class="view overlay rounded z-depth-0 mb-lg-0 mb-4"><a href="https://unsplash.com/photos/hpjSkU2UYSU" target="_blank">
+        <img class="img-fluid" src="<?php echo $this->basePath('/img/p-pit/carlos-muza-hpjSkU2UYSU-unsplash.jpg') ?>" alt="iphone avec P-Pit">
+        </a>
+      </div>
+
+    </div>
+    <!-- Grid column -->
+
+    <!-- Grid column -->
+    <div class="col-lg-12 mt-3">
+
+      <!-- Category -->
+      <span class="h6-responsive font-weight-bold orange-text mb-3"><i class="fas fa-chart-line pr-2"></i>Stratégie marketing</span>
+      <!-- Post title -->
+      <h3 class="dark-grey-text font-weight-bold mb-3"><strong>Présence sur le web ? Utilisation des réseaux sociaux ? Campagnes de mails ? Quelle stratégie numérique adopter ?</strong></h3>
+      <!-- Excerpt -->
+      <div class="dark-grey-text text-justify">
+        <p>Ce n’est pas la même question selon que vous tenez une boutique, que vous êtes dans la restauration, que vous proposez des services à des professionnels ou que vous êtes un organisme de formation.</p>
+        <p>La première question doit être : <strong>Quelle part le numérique doit-il avoir dans ma stratégie commerciale&nbsp;?</strong> Par exemple dans le cas du service aux pros (B2B pour <em>business to business</em>) les prestations seront par nature plus personnalisées que pour du service à la personne. <strong>Le réseau direct reste souvent essentiel</strong>. Le numérique intervient surtout en amont pour capter l’intérêt mais sitôt le contact pris, la suite de la relation sera plus personnifiée. Dans le cas de la prospection vers des particuliers (voire des professionnels en tant qu’individus), il faut par ailleurs de plus en plus intégrer le fait que <strong>l’utilisation des données personnelles est de plus en plus réglementée</strong>.</p>
+        <p>Une fois déterminée l’importance du canal numérique dans sa stratégie, la question de la différenciation est plus que jamais d’actualité. Avec le web, tout le monde est virtuellement accessible c’est cool. Mais la contrepartie est que <strong>les frontières disparaissent, donc aussi les pré-carrés</strong>. Les distances s’annulent aussi vis-à-vis de nos concurrents, et les clients changent plus facilement de crèmerie. La seule façon d’être visible, et surtout que ce soit bien l’offre de valeur que l’on propose qui soit perçue, c’est que les messages proposés soient clairs, et que les techniques listées dans ce qui suit captent effectivement les visiteurs qui ont intérêt à cette offre de valeur.</p>
+        <p>La boîte à outils disponibles pour faire de l’acquisition numérique est vaste et complexe à maîtriser. Pour démarrer, le mieux est encore de faire des choses simples et éprouvées :</p>
+        <ol>
+          <li class="mt-2"><strong>Vérifiez vos sites Internet et sites e-commerce</strong> :
+            Un site web structuré en quelques rubriques (vos produits, de l’actualité, du contenu intéressant pour vos visiteurs) et qui mettent immédiatement en avant votre offre produit ou services, présentée simplement en page d’accueil, avec une <strong>bouton d’invitation</strong> (à en savoir plus, à être contacté, à télécharger du contenu de valeur proposé gracieusement…)</li>
+          <li class="mt-3">
+            <strong>Une newsletter</strong>, bi-mensuelle, c’est suffisant et pour ne pas être trop ambitieux tout de suite, envoyée uniquement aux personnes qui l’ont explicitement demandé.
+          </li>
+          <li class="mt-3">
+            <strong>Un référencement réalisé avec l’aide d’un expert</strong>, et nous vous encourageons vivement en tant que dirigeant à vous y impliquer et ne pas juste sous-traiter.
+          </li>
+          <li class="mt-3">
+            <strong>Un engagement personnel de vos « ambassadeurs »</strong> (votre responsable produit ou commercial ou toute personne clé de votre entreprise) et de vous-même sur les réseaux sociaux et des liens intelligents entre ces contributions personnifiées et vos pages entreprises sur ces mêmes réseaux et bien-sûr votre site web.
+          </li>
+          <li class="mt-3">
+            <strong>Des interactions fréquentes entre votre présence numérique et vos actions de réseaux et/ou événementielles sur le terrain</strong>. Par exemple, mentionnez vos événements dans votre actualité web et relayez-les dans votre réseau Facebook, LinkedIn ou autre. Et bien-sûr n’oubliez pas de donner les liens vers vos pages Web dans tout document distribué (carte de visite, flyers...) ou projetés.
+          </li>
+          <li class="mt-3">
+            <strong>Un parcours webmarketing bien compris</strong>, depuis l’acquisition jusqu’à la vente, la fidélisation et la recommandation avec des objectifs définis et suivis, et la mise en place avec votre expert numérique des outils de tracking appropriés, a minima Google Analytics.
+          </li>
+        </ol>
+        <p>En suivant ces quelques principes de bon sens, vous pouvez avoir très rapidement des premiers résultats. <strong>N’oubliez pas que la clé de la visibilité et de l’acquisition numérique est avant tout la régularité de vos actions et interactions.</strong> Une doctrine eficace peut être de se donner l’objectif de faire une action simple par semaine en y consacrant deux heures sur un créneau plus calme.<p>
+        </p>Bonne chance !</p>
+      </div>
+
+      <!-- Post data -->
+      <p><a href="https://www.linkedin.com/in/brunolartillot/" target="_blank"><strong>Bruno Lartillot</strong></a>, 29/06/2019</p>
+
+    </div>
+    <!-- Grid column -->
+
+  </div>
+  <!-- Grid row -->
+
+</section>
+<!-- Section: Blog v.1 -->
+
+    </div>
+
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+            <button type="button" class="btn btn-link" data-dismiss="modal" aria-label="Close">Fermer</button>
+              </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalShowArticle" tabindex="-1" role="dialog" aria-labelledby="article" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+              <div class="modal-header text-center">
+                  <h4 class="modal-title w-100 font-weight-bold"></h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body mx-3">
+
+    <!-- Main Container -->
+    <div class="container">
+
+<!-- Section: Blog v.1 -->
+<section>
+
+  <!-- Grid row -->
+  <div class="row">
+
+    <!-- Grid column -->
+    <div class="col-lg-12">
+
+      <!-- Featured image -->
+      <div class="view overlay rounded z-depth-0 mb-lg-0 mb-4">
+        <img class="img-fluid" src="<?php echo $this->basePath('/img/p-pit/datacenter-petit.jpg') ?>" alt="iphone avec P-Pit">
+      </div>
+
+    </div>
+    <!-- Grid column -->
+
+    <!-- Grid column -->
+    <div class="col-lg-12 mt-3">
+
+      <!-- Category -->
+      <a href="#!" class="indigo-text">
+        <span class="h6-responsive font-weight-bold mb-3"><i class="fas fa-gavel pr-2"></i>Conformité</span>
+      </a>
+      <!-- Post title -->
+      <h3 class="dark-grey-text font-weight-bold mb-3"><strong>Protection des données</strong></h3>
+      <!-- Excerpt -->
+      <div class="dark-grey-text text-justify">
+        <p>Le <strong>règlement général pour la protection des données</strong> (RGPD) est en vigueur dans toute l’union européenne depuis le 25 mai 2018.</p>
+        <p>Même si ce sujet peut paraître un peu obscur pour les non techniciens et que les pénalités potentielles en jeu sont conséquentes et potentiellement rédhibitoires pour une entreprise, il ne faut pas se faire peur outre-mesure car c’est une problématique qui peut se traiter de façon très pragmatique.</p>
+        <p>Parmi les points à vérifier et traiter (liste non exhaustive) :</p>
+        <ol>
+          <li class="mt-2">Vérifiez vos sites Internet et sites e-commerce :
+            <ul>
+              <li class="mt-2">Présence de <strong>mentions légales</strong> reprenant l’identification de la société (nom et SIREN), l’adresse du siège social, le nom du Directeur de la Publication (le dirigeant) et l'identification de l’hébergeur du site,</li>
+              <li class="mt-2">L’<strong>objet du site</strong> (ex. informations sur la société et ses produits, demande de contacts…) et mention que les données collectées sont exclusivement destinées à la réalisation de cet objet,</li>
+              <li class="mt-2">Collectez-vous ou non des données personnelles : nom, email, téléphone… ?  qui en est <strong>destinataire</strong> (ex. administrateur du site) et <strong>combien de temps</strong> les conservez-vous ?</li>
+              <li class="mt-2">Un rappel des <strong>droits de l’utilisateur</strong> : accès à ces données, rectification, suppression (droit à l’oubli).</li>
+            </ul>
+          </li>
+          <li class="mt-3">
+            Pensez à mettre en place une <strong>procédure périodique de purge</strong> des données personnelles des anciens clients/prospects dans vos bases de données qui soit conforme à ce qui est annoncé dans vos mentions légales ;
+          </li>
+          <li class="mt-3">
+            Faites faire un petit audit sur la <strong>sécurisation de vos applications</strong> qui gèrent des données personnelles : anti-virus, identifiants/mots de passe propres à chaque utilisateur, engagement de vos fournisseurs informatiques sur la sécurisation de leurs applications ;
+          </li>
+          <li class="mt-3">
+            Renoncez aux campagnes de <strong>e-mailing non sollicité</strong> vers des particuliers. Pour les professionnels, c’est à réfléchir mais envisagez de travailler de plus en plus votre présence web (ex. réseaux sociaux) afin d’amener vos prospects à venir d'eux-mêmes s’inscrire sur votre site.
+          </li>
+        </ol>
+      </div>
+
+      <!-- Post data -->
+      <p><a href="https://www.linkedin.com/in/brunolartillot/" target="_blank"><strong>Bruno Lartillot</strong></a>, 20/05/2019</p>
+
+    </div>
+    <!-- Grid column -->
+
+  </div>
+  <!-- Grid row -->
+
+</section>
+<!-- Section: Blog v.1 -->
+
+    </div>
+
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+            <button type="button" class="btn btn-link" data-dismiss="modal" aria-label="Close">Fermer</button>
+              </div>
+        </div>
+    </div>
+</div>
+  
+<div class="modal fade" id="modalRegisterForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content" id="modalRegisterContent"></div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalLoginForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modalLoginContent"></div>
+    </div>
+</div>
+  
+<div class="modal fade" id="modalLostPasswordForm" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('Lost password', 'ppit-core', $context->getLocale()) ?></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="lost-password-form">
+              <span id="login-csrf"></span>
+              <div class="modal-body mx-3">
+                  <div class="md-form mb-5">
+                      <i class="fa fa-envelope prefix grey-text"></i>
+                      <input type="text" id="lost_password-identity" class="form-control validate modal_input" required="required">
+                      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" for="lost_password-identity"><?php echo $this->translate('Email', 'ppit-core', $context->getLocale()) ?></label>
+                  </div>
+  
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary"><?php echo $this->translate('Send', 'ppit-core', $context->getLocale()) ?></button>
+              </div>
+          </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalInitPasswordForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('New password', 'ppit-core', $context->getLocale()) ?></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="init-password-form">
+              <div class="modal-body mx-3">
+                  <div class="md-form mb-5">
+                      <input type="email" id="init_password-identity" class="form-control validate modal_input" required="required">
+                      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" for="init_password-identity">* <?php echo $this->translate('Email', 'ppit-core', $context->getLocale()) ?></label>
+                  </div>
+                    
+                  <div class="md-form mb-4">
+                      <input type="password" id="init_password-password" class="form-control validate modal_input" required="required">
+                      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" for="lost_password-password">* <?php echo $this->translate('Choose a password', 'ppit-core', $context->getLocale()) ?></label>
+                  </div>
+  
+                  <div class="md-form mb-4">
+                      <input type="password" id="init_password-password2" class="form-control validate modal_input" required="required">
+                      <label data-error="<?php echo $this->translate('Invalid', 'ppit-core', $context->getLocale()) ?>" for="lost_password-password2">* <?php echo $this->translate('Confirm the password', 'ppit-core', $context->getLocale()) ?></label>
+                  </div>
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+                  <button type="submit" class="btn btn-primary"><?php echo $this->translate('Submit', 'ppit-core', $context->getLocale()) ?></button>
+              </div>
+            </form>
+        </div>
+    </div>
+</div>
+  
+<div class="modal fade" id="modalRequestActivationForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" id="modalRequestActivationContent"></div>
+  </div>
+</div>
+  
+<div class="modal fade" id="modalLogoutForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form id="logout-form">
+              <div class="modal-header text-center">
+                  <h4 class="modal-title w-100 font-weight-bold"><?php echo $this->translate('Log Out', 'ppit-flow', $context->getLocale()) ?></h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+                  <button class="btn btn-primary btn-rounded btn-sm" id="logout-button">Confirmer la déconnexion</button>
+              </div>
+      </form>
+        </div>
+    </div>
+</div>
+
+    <!--Footer-->
+    <footer class="page-footer stylish-color pt-4 mt-4 text-center text-md-left">
+
+      <!--Footer Links-->
+      <div class="container">
+        <div class="row">
+
+          <!--First column-->
+          <div class="col-md-3">
+            <h5 class="title">Resources</h5>
+            <ul class="list-unstyled">
+
+          <hr class="w-100 clearfix d-md-none">
+
+              <li>
+             <a data-toggle="modal" data-target="#modalShowGtouForm">Mentions légales</a>
+
+              </li>
+            </ul>
+          </div>
+          <!--/First column-->
+
+        </div>
+      </div>
+
+      <!--Copyright-->
+      <div class="footer-copyright py-3 text-center container-fluid">
+        © 2018 Copyright: <a href="https://www.p-pit.fr"> www.p-pit.fr </a>&nbsp;&nbsp;|&nbsp;&nbsp;Graphisme <a href="https://illustration-lopresti.com" target="_blank">illustration-lopresti.com</a>
+      </div>
+      <!--/Copyright-->
+ 
+    </footer>
+    <!--/ Footer -->
+
+<div class="modal fade" id="modalShowGtouForm" tabindex="-1" role="dialog" aria-labelledby="generalTermsOfUse" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+              <div class="modal-header text-center">
+                  <h4 class="modal-title w-100 font-weight-bold"></h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body mx-3">
+                  <div id="show_gtou_content"></div>
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+            <button type="button" class="btn btn-link" data-dismiss="modal" aria-label="Close">Fermer</button>
+              </div>
+        </div>
+    </div>
+</div>
+
+    <!-- SCRIPTS -->
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="<?php echo $this->basePath('MDB-Pro/js/jquery-3.3.1.min.js') ?>"></script>
+
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="<?php echo $this->basePath('MDB-Pro/js/popper.min.js') ?>"></script>
+
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="<?php echo $this->basePath('/bootstrap-4-2/js/bootstrap.min.js') ?>"></script>
+
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="<?php echo $this->basePath('MDB-Pro/js/mdb.min.js') ?>"></script>
+
+    <script src="<?php echo $this->basePath('/js/moment-with-locales.min.js') ?>"></script>
+
+    <script>
+        //Animation init
+        new WOW().init();
+
+        // MDB Lightbox Init
+        $(function () {
+          $("#mdb-lightbox-ui").load("mdb-addons/mdb-lightbox-ui.html");
+        });
+
+        //Modal
+        $('#myModal').on('shown.bs.modal', function () {
+            $('#myInput').focus()
+        })
+
+        // Material Select Initialization
+        $(document).ready(function () {
+            $('.mdb-select').material_select();
+        });
+
+        // Tooltips Initialization
+        $(function () {
+          $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+
+<!-- Medium editor -->
+<script src="<?php echo $this->basePath('medium-editor-master/dist/js/medium-editor.js') ?>"></script>
+<script>
+  //Returns a function, that, as long as it continues to be invoked, will not
+  //be triggered. The function will be called after it stops being called for
+  //N milliseconds. If `immediate` is passed, trigger the function on the
+  //leading edge, instead of the trailing.
+  function debounce(func, wait, immediate) {
+    var timeout;
+    return function() {
+    var context = this, args = arguments;
+    var later = function() {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+    var callNow = immediate && !timeout;
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+      if (callNow) func.apply(context, args);
+    };
+  };
+  var editor = new MediumEditor('.editable', {
+    buttonLabels: 'fontawesome'
+  });
+  function triggerAutoSave(event, editable) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("POST", '<?php echo $this->url('document/update') ?>/' + editable.id, true);
+    xhttp.onreadystatechange = function() {
+      if (xhttp.readyState == 4 && xhttp.status == 200) {
+      }
+    }
+    var content = { content: {} };
+    content.content[editable.id] = editable.innerHTML;
+    xhttp.send(JSON.stringify(content));
+  }
+  var throttledAutoSave = debounce(triggerAutoSave, 1000);
+  editor.subscribe('editableInput', throttledAutoSave);
+</script>
+<!--/ medium editor -->
+
+<?php echo $this->partial($viewController) ?>
+
+</body>
+
+</html>

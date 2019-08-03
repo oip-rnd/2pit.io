@@ -346,6 +346,18 @@ function getCommitmentUpdate(id, action) {
         postForm(id, action);
       });
 
+      $('#commitment-account_id').change(function () {
+<?php foreach ($updatePage as $propertyId => $property) : ?>
+  <?php if (array_key_exists('account-initial-value', $property['options'])) : ?>
+    <?php foreach ($accounts as $account_id => $account) : ?>
+      if ($('#commitment-account_id').val() == <?php echo $account_id ?>) {
+          $('#commitment-<?php echo $propertyId ?>').val('<?php echo $account->properties[$property['options']['account-initial-value']] ?>');
+      }
+    <?php endforeach; ?>
+  <?php endif;?>
+<?php endforeach; ?>
+      });
+      
       $('[data-toggle="tooltip"]').tooltip();
     }
   }

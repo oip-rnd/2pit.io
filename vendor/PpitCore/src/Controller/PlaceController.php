@@ -239,6 +239,57 @@ class PlaceController extends AbstractActionController
     	return $view;
     }
 
+    public function adminAction()
+    {
+    	$context = Context::getCurrent();
+    	$place_id = $this->params()->fromRoute('place_id');
+    	if (!$place_id) $place_id = $context->getPlaceId();
+    	$app = $this->params()->fromQuery('app');
+		$applicationId = 'p-pit-admin';
+		$applicationName = $context->localize($context->getConfig('menus/'.$applicationId)['labels']);
+    	$place = Place::get($place_id);
+
+    	// Instanciate the csrf form
+    	$csrfForm = new CsrfForm();
+    	$csrfForm->addCsrfElement('csrf');
+    	$error = null;
+    	$message = null;
+    	$request = $this->getRequest();
+    	if ($request->isPost()) {
+    		$csrfForm->setInputFilter((new Csrf('csrf'))->getInputFilter());
+    		$csrfForm->setData($request->getPost());
+    	
+    		if ($csrfForm->isValid()) { // CSRF check
+				foreach ($context->getConfig('admin/'.$app) as $propertyId) {
+					$id = str_replace('/', '_', $propertyId);
+	    			$property = $context->getConfig($propertyId);
+	    			$modalities = [];
+	    			foreach ($property['modalities'] as $modalityId => $modality) {
+						$mid = str_replace('.', '_', $modalityId);
+	    				if ($request->getPost('check_'.$id.'_'.$mid)) $modalities[$modalityId] = $modality;
+					}
+					if ($modalities) $place->config[$propertyId]['modalities'] = $modalities;
+					else unset($place->config[$propertyId]);
+				}
+				$place->update(null);
+				return $this->redirect()->toRoute('place/admin', ['place_id' => $place_id], ['query' => ['app' => $app]]);
+    		}
+    	}
+
+    	return new ViewModel(array(
+    			'context' => $context,
+    			'config' => $context->getConfig(),
+    			'applicationName' => $applicationName,
+    			'applicationId' => $applicationId,
+    			'app' => $app,
+				'places' => Place::getList(array()),
+    			'place' => $place,
+    			'csrfForm' => $csrfForm,
+    			'message' => $message,
+    			'error' => $error,
+    	));
+    }
+	
     /**
      * Restfull implementation
      * TODO : authorization + error description
@@ -396,13 +447,6 @@ class PlaceController extends AbstractActionController
     	$place->config = $context->getConfig('place_config/'.$place_identifier);
 //    	$place->update(null);
     	echo json_encode($place->config, JSON_PRETTY_PRINT);
-    	return $this->response;
-    }
-    
-    public function adminAction()
-    {
-    	$context = Context::getCurrent();
-    	echo json_encode(['commitmentTerm/debit' => $context->getConfig('commitmentTerm/debit')], JSON_PRETTY_PRINT);
     	return $this->response;
     }
 }

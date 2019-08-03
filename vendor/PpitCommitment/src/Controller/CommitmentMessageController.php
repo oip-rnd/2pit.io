@@ -7,14 +7,12 @@ use PpitCommitment\ViewHelper\PdfInvoiceViewHelper;
 use PpitCommitment\ViewHelper\XmlXcblOrderViewHelper;
 use PpitCommitment\ViewHelper\PpitPDF;
 use PpitCore\Model\Account;
-use PpitCore\Model\Document;
 use PpitCore\Model\Community;
 use PpitCore\Form\CsrfForm;
 use PpitCore\Model\Context;
 use PpitCore\Model\Csrf;
 use PpitCore\Model\Place;
 use PpitCore\ViewHelper\SsmlGenericViewHelper;
-use PpitDocument\Model\DocumentPart;
 use Zend\Http\Client;
 use Zend\View\Model\ViewModel;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -719,10 +717,6 @@ class CommitmentMessageController extends AbstractActionController
 			 
 			// Close and output PDF document
 			// This method has several options, check the source code documentation for more information.
-/*			$document = Document::instanciate(0);
-			$document->type = 'application/pdf';
-			$document->add();
-	    	$handle = fopen('data/documents/'.$document->id.'.pdf', 'I');*/
 	    	$content = $pdf->Output('invoice-'.$context->getInstance()->caption.'-'.$commitment->invoice_identifier.'.pdf', 'I');
 			$this->getResponse()->setContent(json_encode($commitment));
     	}

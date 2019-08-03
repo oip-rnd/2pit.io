@@ -49,9 +49,20 @@ echo $this->partial('/partials/header');
 		    <div class="col-md-6 col-md-offset-3" id="index_action">
 				<div class="panel panel-default">
 					<div class="panel-heading" style="background: <?php echo $context->getConfig('styleSheet')['panelHeadingBackground'] ?>; color: <?php echo $context->getConfig('styleSheet')['panelHeadingColor'] ?>">
-						<strong>Instance administration</strong>
+						<strong><?php echo $this->translate('Value list restrictions at place level', 'ppit-core', $context->getLocale()) ?></strong>
 					</div>
 				    <div class="panel-body">
+			            <div class="form-group">
+			              <label class="col-sm-5 control-label" style="text-align: right"><?php echo $this->translate('Place', 'ppit-core', $context->getLocale()) ?>
+			              </label>
+			              <div class="col-sm-7">
+			                <select name="place_id" id="place_id">
+<?php foreach ($places as $place_id => $placeDef) : ?>
+                              <option value="<?php echo $place_id ?>" <?php if ($place_id == $place->id) : ?>selected="selected"<?php endif;?>><?php echo $placeDef->caption ?></option>
+<?php endforeach;?>
+                            </select>
+			              </div>
+			            </div>
 <?php 
 $isDisabled = true;
 ?>
@@ -59,30 +70,32 @@ $isDisabled = true;
 	<?php 
 	$property = $context->getConfig($propertyId);
 	$id = str_replace('/', '_', $propertyId);
+
+	if (!array_key_exists($propertyId, $place->config)) $restriction = false;
+	else $restriction = true;
 	?>
+
 						<h4><?php echo $property['labels'][$context->getLocale()] ?></h4>
+    <?php if (!$restriction) : ?>
+                        <h5 class="alert alert-info my-3 text-center"><?php echo $this->translate('No restriction currently defined on this list', 'ppit-core', $context->getLocale()) ?></h5>
+    <?php endif;?>
 	<?php foreach ($property['modalities'] as $modalityId => $modality) : ?>
 		<?php
 		$mid = str_replace('.', '_', $modalityId);
+		if (!$restriction) $checked = false;
+		elseif (array_key_exists($modalityId, $place->config[$propertyId]['modalities'])) $checked = true;
+		else $checked = false;
 		?>
 						<input type="hidden" name="<?php echo $id ?>_updated" value="0" />
 						<div class="form-group">
 							<label class="col-sm-2 control-label" style="text-align: right">
-								<input type="checkbox" name="check_<?php echo $id ?>_<?php echo $mid ?>" id="check_<?php echo $id ?>_<?php echo $mid ?>" value="1" <?php if (!array_key_exists('hidden', $modality) || !$modality['hidden']) echo ' checked="checked"' ?>>
+								<input type="checkbox" name="check_<?php echo $id ?>_<?php echo $mid ?>" id="check_<?php echo $id ?>_<?php echo $mid ?>" value="1" <?php if ((!array_key_exists('hidden', $modality) || !$modality['hidden']) && $checked) echo ' checked="checked"' ?>>
 							</label>
 							<div class="col-sm-10">
 								<input class="form-control" name="<?php echo $id ?>_<?php echo $mid ?>" id="<?php echo $id ?>_<?php echo $mid ?>" value="<?php echo $context->localize($modality) ?>" disabled="disabled" title="<?php echo $modalityId ?>" />
 							</div>
 						</div>
 	<?php endforeach;?>
-						<div class="form-group">
-							<label class="col-sm-2 control-label" style="text-align: right">
-							</label>
-							<div class="col-sm-10">
-								<input class="form-control" name="<?php echo $id ?>" id="<?php echo $id ?>" />
-							</div>
-						</div>
-						<h4>&nbsp;</h4>
 <?php endforeach;?>
 					    <div class="form-group">
 							<div class="col-sm-2">&nbsp;</div>
@@ -99,8 +112,16 @@ $isDisabled = true;
 
 <script>
 
+$('#place_id').change(function() {
+  $(location).attr('href', '<?php echo $this->url('place/admin') ?>/' + $(this).val() + '?app=<?php echo $app ?>');
+});
+
 <?php foreach ($context->getConfig('menus/p-pit-admin')['entries'] as $entryId => $entryDef) : ?>
-$('#<?php echo $entryId ?>-anchor').click(function () { $(location).attr('href', '<?php echo $this->url($entryDef['route']) ?>'); });
+	<?php 
+    $arguments = '?';
+    if (array_key_exists('urlParams', $entryDef)) foreach ($entryDef['urlParams'] as $argument => $value) $arguments .= '&' . $argument . '=' . $value;
+    ?>
+$('#<?php echo $entryId ?>-anchor').click(function () { $(location).attr('href', '<?php echo $this->url($entryDef['route'], $entryDef['params']) . $arguments ?>'); });
 <?php endforeach;?>
 
 <?php foreach ($context->getConfig('admin/'.$app) as $propertyId) : ?>
@@ -125,7 +146,7 @@ $('#<?php echo $entryId ?>-anchor').click(function () { $(location).attr('href',
 	<?php endforeach;?>
 
 $('#submit').click(function () {
-	$.post('<?php echo $this->url('instance/admin', ['app' => $app]) ?>', $("#form").serialize(), function(data) {});
+	$.post('<?php echo $this->url('place/admin', ['app' => $app]) ?>', $("#form").serialize(), function(data) {});
 });
 
 </script>

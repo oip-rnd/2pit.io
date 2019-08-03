@@ -1,0 +1,294 @@
+<script src="https://js.stripe.com/v3/"></script>
+
+<script>
+
+<?php if ($message == 'Already activated') : ?>
+toastr.success('<?php echo $this->translate('This account has already been activated, you can log in now.', 'ppit-core', $context->getLocale()) ?>');
+$('#modalLoginForm').modal('show');
+showLogin();
+
+<?php elseif ($error == 'Authentication') : ?>
+toastr.error('<?php echo $this->translate('Invalid authentication', 'ppit-core', $context->getLocale()) ?>');
+<?php endif; ?>
+
+// Register
+
+function register() {
+  var xhttp = new XMLHttpRequest(), formData = new FormData(), route = '<?php echo $this->url('profile/register') ?>';
+  formData.append('csrf', $('#csrf').val());
+  formData.append('email', $('#register-email').val());
+  formData.append('n_first', $('#register-n_first').val());
+  formData.append('n_last', $('#register-n_last').val());
+  formData.append('password', $('#register-password').val());
+  formData.append('origine', $('#register-origine').val());
+  formData.append('locale', '<?php echo $context->getLocale() ?>');
+  xhttp.open('POST', route, true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4) {
+      $('#modalRegisterContent').html(xhttp.responseText);
+    }
+  };
+  xhttp.send(formData);
+}
+
+function showRegister() {
+var xhttp = new XMLHttpRequest(), route = '<?php echo $this->url('profile/register') ?>?';
+
+<?php if ($profile) : ?>
+route += 'email=<?php echo $profile->email ?>&n_first=<?php echo $profile->n_first ?>&n_last=<?php echo $profile->n_last ?>';
+<?php endif;?>
+
+xhttp.open('GET', route, true);
+xhttp.onload = function () {
+ if (xhttp.readyState == 4) {
+   if (xhttp.status == 200) {
+     $('#modalRegisterContent').html(xhttp.responseText);
+     $('.mdb-select').material_select();
+
+     var form = document.getElementById('registerForm');
+     form.onsubmit = function(event) {
+       event.preventDefault();
+       register();
+     }
+   }
+   else toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+ }
+};
+xhttp.send();
+}
+
+$('#modalRegisterForm').on('show.bs.modal', showRegister);
+
+// Login
+
+function login() {
+  var xhttp = new XMLHttpRequest(), formData = new FormData(), route = '<?php echo $this->url('profile/login') ?>';
+<?php if ($redirect) : ?>
+  route += '?redirect=<?php echo $redirect ?>';
+<?php endif;?>
+  formData.append('identity', $('#login-identity').val());
+  formData.append('credential', $('#login-credential').val());
+  xhttp.open('POST', route, true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4) {
+      if (xhttp.status == 200) {
+        document.location.href = '<?php echo $this->url($redirect) ?>';
+      }
+      else if (xhttp.status == 401 && xhttp.statusText == 'Activation') {
+        $('#modalLoginForm').modal('hide');
+        showRequestActivation($('#login-identity').val());
+      }
+      else if (xhttp.status == 401) {
+          $('#modalLoginContent').html(xhttp.responseText);
+
+          var form = document.getElementById('loginForm');
+          form.onsubmit = function(event) {
+            event.preventDefault();
+            login();
+          }
+      }
+      else toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+    }
+  };
+  xhttp.send(formData);
+}
+
+function showLogin() {
+  var xhttp = new XMLHttpRequest(), route = '<?php echo $this->url('profile/login') ?>';
+<?php if ($email) : ?>
+  route += '?identity=<?php echo $email ?>';
+<?php endif;?> 
+  xhttp.open('GET', route, true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4) {
+      if (xhttp.status == 200) {
+        $('#modalLoginContent').html(xhttp.responseText);
+
+	     // Lost password
+	
+	     $('#lost_password_anchor').click(function () {
+	         $('#modalLoginForm').modal('hide');
+	         $('#modalLostPasswordForm').modal('show');
+	     });
+
+        var form = document.getElementById('loginForm');
+        form.onsubmit = function(event) {
+          event.preventDefault();
+          login();
+        }
+      }
+      else toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+    }
+  };
+  xhttp.send();
+}
+
+$('#modalLoginForm').on('show.bs.modal', showLogin);
+
+$('#modalLostPasswordForm').on('hide.bs.modal', function () { 
+ $('.modal_input').val('');
+});
+
+function lostPassword() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.open('GET', '<?php echo $this->url('user/v1') ?>?request=lost-password&identity=' + $('#lost_password-identity').val(), true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4) {
+       if (xhttp.status == 200) {
+         toastr.success("<?php echo $this->translate('Your request has been registered. Please check you emails with a link to follow in order to set your new password.', 'ppit-core', $context->getLocale()) ?>");
+         $('#modalLostPasswordForm').modal('hide');
+       }
+       else {
+         toastr.error("<?php echo $this->translate('This account is not registered. Please register before login.', 'ppit-core', $context->getLocale()) ?>");
+         $('#modalRequestActivationForm').modal('hide');
+         $('#modalRegisterForm').modal('show');
+       }
+    }
+  };
+  xhttp.send();
+}
+
+var form = document.getElementById('lost-password-form');
+form.onsubmit = function(event) {
+  event.preventDefault();
+  lostPassword();
+}
+
+<?php if ($token) : ?>
+
+// Init password
+
+$('#modalInitPasswordForm').on('hide.bs.modal', function () { 
+  $('.modal_input').val('');
+});
+
+function initPassword() {
+  if ($('#init_password-password').val() != $('#init_password-password2').val()) {
+    toastr.error('<?php echo $this->translate('Both new passwords should be identical', 'ppit-core', $context->getLocale()) ?>');
+  }
+  else {
+    var xhttp = new XMLHttpRequest(), formData = new FormData();
+    formData.append('identity', $('#init_password-identity').val());
+    formData.append('password', $('#init_password-password').val());
+    xhttp.open('POST', '<?php echo $this->url('user/v1') ?>?request=init-password&hash=<?php echo $token ?>', true);
+    xhttp.onload = function () {
+      if (xhttp.readyState == 4) {
+        if (xhttp.status == 200) {
+          toastr.success("<?php echo $this->translate('Your password has been changed', 'ppit-core', $context->getLocale()) ?>");
+        }
+        else if (xhttp.status == 401) {
+          if (xhttp.statusText == 'Expiry') {
+            location.href = '<?php echo $this->url('landing/template2') ?>?message=expired';
+          }
+          else {
+            toastr.error('<?php echo $this->translate('Invalid authentication', 'ppit-core', $context->getLocale()) ?>');
+          }
+        }
+        else {
+          toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+        }
+        $('#modalInitPasswordForm').modal('hide');
+      }
+    }
+  };
+  xhttp.send(formData);
+}
+
+var form = document.getElementById('init-password-form');
+form.onsubmit = function(event) {
+  event.preventDefault();
+  initPassword();
+}
+
+<?php endif; ?>
+
+<?php if ($message == 'expired') : ?>
+toastr.error('<?php echo $this->translate('The link expired, please renew the request', 'ppit-core', $context->getLocale()) ?>');
+<?php endif;?>
+
+// Activated
+
+<?php if (!$context->isAuthenticated() && $message == 'activated') : ?>
+toastr.success('<?php echo $this->translate('Your account has been activated. Please login', 'ppit-core', $context->getLocale()) ?>');
+$('#modalLoginForm').modal('show');
+<?php endif; ?>  
+
+// Request activation
+
+function requestActivation() {
+  var xhttp = new XMLHttpRequest(), formData = new FormData(), route = '<?php echo $this->url('profile/requestActivation') ?>';
+  formData.append('csrf', $('#csrf').val());
+  formData.append('email', $('#request_activation-email').val());
+  xhttp.open('POST', route, true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4) {
+      $('#modalRequestActivationContent').html(xhttp.responseText);
+    }
+  };
+  xhttp.send(formData);
+}
+
+function showRequestActivation(email) {
+  var xhttp = new XMLHttpRequest(), route = '<?php echo $this->url('profile/requestActivation') ?>?email=' + email;
+  xhttp.open('GET', route, true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4) {
+      if (xhttp.status == 200) {
+        $('#modalRequestActivationContent').html(xhttp.responseText);
+        $('#modalRequestActivationForm').modal('show');
+        var form = document.getElementById('requestActivationForm');
+        form.onsubmit = function(event) {
+          event.preventDefault();
+          requestActivation();
+        }
+      }
+      else toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+    }
+  };
+  xhttp.send();
+}
+
+
+$('#modalShowCharterForm').on('show.bs.modal', function () { 
+  var xhttp = new XMLHttpRequest();
+  xhttp.open('GET', '<?php echo $this->url('instance/charter') . '?locale=' . $context->getLocale() ?>', true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4 && xhttp.status == 200) $('#show_charter_content').html(xhttp.responseText);
+    else toastr.error("Une erreur technique est survenue. Veuillez essayer ultérieurement.");
+  };
+  xhttp.send();
+});
+
+$('#modalShowGtouForm').on('show.bs.modal', function () { 
+  var xhttp = new XMLHttpRequest();
+  xhttp.open('GET', '<?php echo $this->url('instance/generalTermsOfUse') . '?locale=' . $context->getLocale() ?>', true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4 && xhttp.status == 200) $('#show_gtou_content').html(xhttp.responseText);
+    else toastr.error("Une erreur technique est survenue. Veuillez essayer ultérieurement.");
+  };
+  xhttp.send();
+});
+
+function logout() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.open('GET', '<?php echo $this->url('user/v1') ?>?request=logout', true);
+  xhttp.onload = function () {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      document.location.href = '<?php echo $this->url('home') ?>';
+    }
+  };
+  xhttp.send();
+}
+
+var form = document.getElementById('logout-form');
+form.onsubmit = function(event) {
+  console.log('In logout form.onsubmit');
+  event.preventDefault();
+  logout();
+}
+    
+<?php if ($panel) : ?>
+  $('#<?php echo $panel ?>').modal('show');
+<?php endif;?>
+
+</script>

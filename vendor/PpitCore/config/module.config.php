@@ -19,7 +19,7 @@ return array(
 			Controller\ConfigController::class => InvokableFactory::class,
 			Controller\CreditController::class => InvokableFactory::class,
 			Controller\HomeController::class => InvokableFactory::class,
-			Controller\Controller::class => InvokableFactory::class,
+			Controller\DocumentController::class => InvokableFactory::class,
 			Controller\EventController::class => InvokableFactory::class,
 			Controller\InteractionController::class => InvokableFactory::class,
 			Controller\InstanceController::class => InvokableFactory::class,
@@ -387,6 +387,15 @@ return array(
 							),
 							'defaults' => array(
 								'action' => 'download',
+							),
+						),
+					),
+					'update' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/update[/:identifier]',
+							'defaults' => array(
+								'action' => 'update',
 							),
 						),
 					),
@@ -783,7 +792,7 @@ return array(
 							),
 						),
 					),
-					'accept' => array(
+/*					'accept' => array(
 						'type' => 'segment',
 						'options' => array(
 							'route' => '/accept',
@@ -791,7 +800,7 @@ return array(
 								'action' => 'accept',
 							),
 						),
-					),
+					),*/
 					'charter' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -852,15 +861,6 @@ return array(
 							'route' => '/add-logo',
 							'defaults' => array(
 								'action' => 'addLogo',
-							),
-						),
-					),
-					'admin' => array(
-						'type' => 'segment',
-						'options' => array(
-							'route' => '/admin[/:app]',
-							'defaults' => array(
-								'action' => 'admin',
 							),
 						),
 					),
@@ -952,6 +952,18 @@ return array(
 							),
 							'defaults' => array(
 								'action' => 'update',
+							),
+						),
+					),
+					'admin' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/admin[/:place_id]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'admin',
 							),
 						),
 					),
@@ -1334,6 +1346,15 @@ return array(
 							),
 						),
 					),
+					'batchReactivate' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/batch-reactivate',
+							'defaults' => array(
+								'action' => 'batchReactivate',
+							),
+						),
+					),
 					'login' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -1650,6 +1671,7 @@ return array(
 				
 				array('route' => 'document', 'roles' => array('user')),
 				array('route' => 'document/download', 'roles' => array('user')),
+				array('route' => 'document/update', 'roles' => array('admin')),
 				
 				array('route' => 'event', 'roles' => array('user')),
 				array('route' => 'event/v1', 'roles' => array('guest')),
@@ -1692,7 +1714,7 @@ return array(
 				array('route' => 'instance/update', 'roles' => array('admin')),
 				array('route' => 'instance/try', 'roles' => array('guest')),
 				array('route' => 'instance/tryAdd', 'roles' => array('guest')),
-				array('route' => 'instance/accept', 'roles' => array('admin')),
+//				array('route' => 'instance/accept', 'roles' => array('admin')),
 				array('route' => 'instance/charter', 'roles' => array('guest')),
 				array('route' => 'instance/validateCharter', 'roles' => array('user')),
 				array('route' => 'instance/generalTermsOfUse', 'roles' => array('guest')),
@@ -1700,7 +1722,6 @@ return array(
 				array('route' => 'instance/legalNotices', 'roles' => array('guest')),
 				array('route' => 'instance/addImage', 'roles' => array('admin')),
 				array('route' => 'instance/addLogo', 'roles' => array('admin')),
-				array('route' => 'instance/admin', 'roles' => array('admin')),
 				array('route' => 'instance/serialize', 'roles' => array('admin')),
 				array('route' => 'instance/v1', 'roles' => array('guest')),
 				
@@ -1712,6 +1733,7 @@ return array(
 				array('route' => 'place/export', 'roles' => array('admin')),
             	array('route' => 'place/list', 'roles' => array('admin')),
 				array('route' => 'place/update', 'roles' => array('admin')),
+				array('route' => 'place/admin', 'roles' => array('admin')),
 				array('route' => 'place/v1', 'roles' => array('guest')),
 				array('route' => 'place/serialize', 'roles' => array('admin')),
 				
@@ -1763,6 +1785,7 @@ return array(
 				array('route' => 'user/lostPassword', 'roles' => array('guest')),
 				array('route' => 'user/initpassword', 'roles' => array('guest')),
 				array('route' => 'user/revoke', 'roles' => array('admin', 'manager')),
+				array('route' => 'user/batchReactivate', 'roles' => array('guest')),
 				array('route' => 'user/changeContact', 'roles' => array('user')),
 				array('route' => 'user/delete', 'roles' => array('admin', 'manager')),
 				array('route' => 'user/authenticate', 'roles' => array('guest')),
@@ -2085,8 +2108,9 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 				),
 			),
 			'admin' => array(
-				'route' => 'instance/admin',
-				'params' => array('app' => 'p-pit-admin'),
+				'route' => 'place/admin',
+				'params' => array(),
+				'urlParams' => array('app' => 'p-pit-studies'),
 				'glyphicon' => 'glyphicon-cog',
 				'label' => array(
 					'en_US' => 'Admin',

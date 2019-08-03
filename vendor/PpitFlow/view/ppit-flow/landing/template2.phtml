@@ -92,7 +92,7 @@
       <?php endif;?>
 
       <?php if (array_key_exists('text', $paragraph)) : ?>
-	                  <span class="editable" id="presentation/<?php echo $sectionId ?>/rows/<?php echo $rowId ?>/<?php echo $paragraphId ?>/text<?php if (array_key_exists('text', $paragraph)) echo '/'.$context->getLocaleFor($paragraph['text']) ?>">
+	                  <span class="editable" id="presentation/<?php echo $sectionId ?>/rows/<?php echo $rowId ?>/<?php echo $columnId ?>/paragraphs/<?php echo $paragraphId ?>/text<?php if (array_key_exists('text', $paragraph)) echo '/'.$context->getLocaleFor($paragraph['text']) ?>">
                         <?php echo $context->localize($paragraph['text'], $locale) ?>
                       </span>
 

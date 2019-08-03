@@ -140,7 +140,6 @@ class Config
 				}
 				if (!$current || $current != $value) {
 	    			$previous[$level] = $value;
-	    			$auditRow['content/'.$key] = json_encode($value, JSON_PRETTY_PRINT);
 				}
 			}
 		}
@@ -186,11 +185,11 @@ class Config
     	// Load the data
     	$rc = $this->loadData($data);
     	if ($rc != 'OK') return ['500', $rc];
-    	
+print_r($this->content);
     	// Save the data
-    	$this->update(null);
+    	$rc = $this->update(null);
     	if ($rc != 'OK') return ['500', 'config->update: '.$rc];
-    	
+
     	return ['200', $this->identifier];
     }
 

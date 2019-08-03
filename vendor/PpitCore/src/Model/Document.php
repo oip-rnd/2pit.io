@@ -11,24 +11,14 @@ class Document
     public $id;
     public $instance_id;
     public $status;
-    public $locale_1;
-    public $locale_2;
     public $type;
+    public $place_id;
+    public $identifier;
     public $parent_id;
     public $name;
     public $acl;
-    public $summary;
-    public $summary_locale_1;
-    public $summary_locale_2;
-    public $image;
-    public $image_locale_1;
-    public $image_locale_2;
-    public $first_part_id;
     public $mime;
-    public $url;
- 	public $properties;
-    public $properties_locale_1;
-    public $properties_locale_2;
+    public $content;
     public $audit;
     public $update_time;
     
@@ -40,10 +30,20 @@ class Document
     public $destinationPath;
     
     // Deprecated
+    public $locale_1;
+    public $locale_2;
+    public $summary;
+    public $summary_locale_1;
+    public $summary_locale_2;
+    public $image;
+    public $image_locale_1;
+    public $image_locale_2;
+    public $first_part_id;
     public $community_id;
     public $lock;
     public $properties_en_us = array();
     public $properties_fr_fr = array();
+    public $url;
     
     protected $inputFilter;
     
@@ -60,12 +60,20 @@ class Document
         $this->id = (isset($data['id'])) ? $data['id'] : null;
         $this->instance_id = (isset($data['instance_id'])) ? $data['instance_id'] : null;
         $this->status = (isset($data['status'])) ? $data['status'] : null;
-        $this->locale_1 = (isset($data['locale_1'])) ? $data['locale_1'] : null;
-        $this->locale_2 = (isset($data['locale_2'])) ? $data['locale_2'] : null;
         $this->type = (isset($data['type'])) ? $data['type'] : null;
+        $this->place_id = (isset($data['place_id'])) ? $data['place_id'] : null;
+        $this->identifier = (isset($data['identifier'])) ? $data['identifier'] : null;
         $this->parent_id = (isset($data['parent_id'])) ? $data['parent_id'] : null;
         $this->name = (isset($data['name'])) ? $data['name'] : null;
         $this->acl = (isset($data['acl'])) ? json_decode($data['acl'],true) : null;
+        $this->mime = (isset($data['mime'])) ? $data['mime'] : null;
+        $this->content = (isset($data['content'])) ? json_decode($data['content'], true) : array();
+        $this->audit = (isset($data['audit'])) ? json_decode($data['audit'],true) : null;
+        $this->update_time = (isset($data['update_time'])) ? $data['update_time'] : null;
+
+	    // Deprecated
+        $this->locale_1 = (isset($data['locale_1'])) ? $data['locale_1'] : null;
+        $this->locale_2 = (isset($data['locale_2'])) ? $data['locale_2'] : null;
         $this->summary = (isset($data['summary'])) ? $data['summary'] : null;
         $this->summary_locale_1 = (isset($data['summary_locale_1'])) ? $data['summary_locale_1'] : null;
         $this->summary_locale_2 = (isset($data['summary_locale_2'])) ? $data['summary_locale_2'] : null;
@@ -73,15 +81,10 @@ class Document
         $this->image_locale_1 = (isset($data['image_locale_1'])) ? json_decode($data['image_locale_1'], true) : array();
         $this->image_locale_2 = (isset($data['image_locale_2'])) ? json_decode($data['image_locale_2'], true) : array();
         $this->first_part_id = (isset($data['first_part_id'])) ? $data['first_part_id'] : null;
-        $this->mime = (isset($data['mime'])) ? $data['mime'] : null;
         $this->url = (isset($data['url'])) ? $data['url'] : null;
         $this->properties = (isset($data['properties'])) ? json_decode($data['properties'], true) : null;
         $this->properties_locale_1 = (isset($data['properties_locale_1'])) ? json_decode($data['properties_locale_1'], true) : null;
         $this->properties_locale_2 = (isset($data['properties_locale_2'])) ? json_decode($data['properties_locale_2'], true) : null;
-        $this->audit = (isset($data['audit'])) ? json_decode($data['audit'],true) : null;
-        $this->update_time = (isset($data['update_time'])) ? $data['update_time'] : null;
-
-	    // Deprecated
         $this->community_id = (isset($data['community_id'])) ? $data['community_id'] : null;
         $this->lock = (isset($data['lock'])) ? $data['lock'] : null;
         $this->properties_en_us = (isset($data['properties_en_us'])) ? json_decode($data['properties_en_us'], true) : null;
@@ -94,12 +97,19 @@ class Document
     	$data['id'] = (int) $this->id;
     	$data['instance_id'] = (int) $this->instance_id;
     	$data['status'] = $this->status;
-    	$data['locale_1'] = $this->locale_1;
-    	$data['locale_2'] = $this->locale_2;
     	$data['type'] = $this->type;
+    	$data['place_id'] = (int) $this->place_id;
+    	$data['identifier'] = (int) $this->identifier;
     	$data['parent_id'] = (int) $this->parent_id;
     	$data['name'] = $this->name;
     	$data['acl'] = $this->acl;
+    	$data['mime'] = $this->mime;
+    	$data['content'] = $this->content;
+    	$data['audit'] = $this->audit;
+
+    	// Deprecated
+    	$data['locale_1'] = $this->locale_1;
+    	$data['locale_2'] = $this->locale_2;
     	$data['summary'] = $this->summary;
     	$data['summary_locale_1'] = $this->summary_locale_1;
     	$data['summary_locale_2'] = $this->summary_locale_2;
@@ -107,12 +117,11 @@ class Document
     	$data['image_locale_1'] = $this->image_locale_1;
     	$data['image_locale_2'] = $this->image_locale_2;
     	$data['first_part_id'] = (int) $this->first_part_id;
-    	$data['mime'] = $this->mime;
     	$data['url'] = $this->url;
     	$data['properties'] = $this->properties;
     	$data['properties_locale_1'] = $this->properties_locale_1;
     	$data['properties_locale_2'] = $this->properties_locale_2;
-    	$data['audit'] = $this->audit;
+    	 
     	return $data;
     }
     
@@ -120,15 +129,16 @@ class Document
     {
     	$data = $this->getProperties();
     	$data['acl'] = json_encode($this->acl);
+    	$data['content'] = json_encode($this->content, JSON_PRETTY_PRINT);
+    	$data['audit'] = json_encode($this->audit);
+
+	    // Deprecated
     	$data['image'] = json_encode($this->image);
     	$data['image_locale_1'] = json_encode($this->image_locale_1);
     	$data['image_locale_2'] = json_encode($this->image_locale_2);
     	$data['properties'] = json_encode($this->properties);
     	$data['properties_locale_1'] = json_encode($this->properties_locale_1);
     	$data['properties_locale_2'] = json_encode($this->properties_locale_2);
-    	$data['audit'] = json_encode($this->audit);
-
-	    // Deprecated
     	$data['community_id'] = (int) $this->community_id;
     	$data['properties'] = json_encode($this->properties);
     	$data['lock'] = (boolean) $this->lock;
@@ -137,15 +147,6 @@ class Document
     
     	return $data;
     }
-/*
-    public static function getDropboxClient() {
-    	$context = Context::getCurrent();
- 		if (array_key_exists('dropbox', $context->getConfig('ppitDocument'))) {
-	    	require_once "vendor/dropbox/dropbox-sdk/lib/Dropbox/autoload.php";
-			$dropbox = $context->getConfig('ppitDocument')['dropbox'];
-	    	return new \Dropbox\Client($dropbox['credential'], $dropbox['clientIdentifier']);
- 		}
-    }*/
     
     protected function getParents($document, &$result, $root_id = 0) {
     	$context = Context::getCurrent();
@@ -184,7 +185,7 @@ class Document
     	return $this->authorization;
     }
 
-    public static function getList($parent, $params, $major, $dir)
+    public static function getList($parent, $params, $major = 'update_time', $dir = 'desc')
     {
 		$select = Document::getTable()->getSelect()
 			->order(array($major.' '.$dir, 'name', 'update_time DESC'));
@@ -214,9 +215,11 @@ class Document
 			$document->retrieveAuthorization();
 
     		// Set the inherited authorization where unspecified
-    		if (!$document->authorization) $document->authorization = $parent->authorization;
-
-			if ($document->authorization) $documents[$document->id] = $document;
+    		if (!$parent) $documents[$document->id] = $document;
+    		else {
+	    		if (!$document->authorization) $document->authorization = $parent->authorization;
+				if ($document->authorization) $documents[$document->id] = $document;
+    		}
 		}
 
 		return $documents;
@@ -265,14 +268,18 @@ class Document
 		$document->status = 'new';
     	$document->parent_id = $parent_id;
     	$document->acl = array();
+    	$document->content = array();
+    	$document->audit = array();
+    	 
+    	// Deprecated
     	$document->image = array();
     	$document->image_locale_1 = array();
     	$document->image_locale_2 = array();
     	$document->properties = array();
     	$document->properties_locale_1 = array();
     	$document->properties_locale_2 = array();
-    	$document->audit = array();
     	$document->parts = array();
+
     	return $document;
     }
 /*    
@@ -284,7 +291,7 @@ class Document
     		$part_id = $part->next_part_id;
     		$this->parts[] = $part;
     	}
-    }
+    }*/
 
 	public function loadData($data)
 	{
@@ -298,20 +305,19 @@ class Document
 			if ($status == '' || strlen($status) > 255) return 'Integrity';
 			if ($this->status != $status) $auditRow['status'] = $this->status = $status;
 		}
-		if (array_key_exists('locale_1', $data)) {
-			$locale_1 = trim(strip_tags($data['locale_1']));
-			if ($locale_1 == '' || strlen($locale_1) > 255) return 'Integrity';
-			if ($this->locale_1 != $locale_1) $auditRow['locale_1'] = $this->locale_1 = $locale_1;
-		}
-		if (array_key_exists('locale_2', $data)) {
-			$locale_2 = trim(strip_tags($data['locale_2']));
-			if ($locale_2 == '' || strlen($locale_2) > 255) return 'Integrity';
-			if ($this->locale_2 != $locale_2) $auditRow['locale_2'] = $this->locale_2 = $locale_2;
-		}
 		if (array_key_exists('type', $data)) {
 			$type = trim(strip_tags($data['type']));
 			if ($type == '' || strlen($type) > 255) return 'Integrity';
 			if ($this->type != $type) $auditRow['type'] = $this->type = $type;
+		}
+		if (array_key_exists('place_id', $data)) {
+			$place_id = $data['place_id'];
+			if ($this->place_id != $place_id) $auditRow['place_id'] = $this->place_id = $place_id;
+		}
+		if (array_key_exists('identifier', $data)) {
+			$identifier = trim(strip_tags($data['identifier']));
+			if ($identifier == '' || strlen($identifier) > 255) return 'Integrity';
+			if ($this->identifier != $identifier) $auditRow['identifier'] = $this->identifier = $identifier;
 		}
 		if (array_key_exists('parent_id', $data)) {
 			$parent_id = $data['parent_id'];
@@ -322,9 +328,32 @@ class Document
 			if ($name == '' || strlen($name) > 255) return 'Integrity';
 			if ($this->name != $name) $auditRow['name'] = $this->name = $name;
 		}
+		if (array_key_exists('mime', $data)) {
+			$mime = trim(strip_tags($data['mime']));
+			if ($mime == '' || strlen($mime) > 255) return 'Integrity';
+			if ($this->mime != $mime) $auditRow['mime'] = $this->mime = $mime;
+		}
 		if (array_key_exists('acl', $data)) {
 			$acl = $data['acl'];
 			if ($this->acl != $acl) $auditRow['acl'] = $this->acl = $acl;
+		}
+		if (array_key_exists('content', $data)) {
+			if (!is_array($data['content'])) return 'Integrity';
+			foreach ($data['content'] as $key => $value) {
+				$this->content[$key] = $value;
+			}
+		}
+		
+		// Deprecated
+		if (array_key_exists('locale_1', $data)) {
+			$locale_1 = trim(strip_tags($data['locale_1']));
+			if ($locale_1 == '' || strlen($locale_1) > 255) return 'Integrity';
+			if ($this->locale_1 != $locale_1) $auditRow['locale_1'] = $this->locale_1 = $locale_1;
+		}
+		if (array_key_exists('locale_2', $data)) {
+			$locale_2 = trim(strip_tags($data['locale_2']));
+			if ($locale_2 == '' || strlen($locale_2) > 255) return 'Integrity';
+			if ($this->locale_2 != $locale_2) $auditRow['locale_2'] = $this->locale_2 = $locale_2;
 		}
 		if (array_key_exists('summary', $data)) {
 			$summary = $data['summary'];
@@ -353,11 +382,6 @@ class Document
 		if (array_key_exists('first_part_id', $data)) {
 			$first_part_id = $data['first_part_id'];
 			if ($this->first_part_id != $first_part_id) $auditRow['first_part_id'] = $this->first_part_id = $first_part_id;
-		}
-		if (array_key_exists('mime', $data)) {
-			$mime = trim(strip_tags($data['mime']));
-			if ($mime == '' || strlen($mime) > 255) return 'Integrity';
-			if ($this->mime != $mime) $auditRow['mime'] = $this->mime = $mime;
 		}
 		if (array_key_exists('url', $data)) {
 			$url = trim(strip_tags($data['url']));
@@ -388,7 +412,7 @@ class Document
 		$this->audit[] = $auditRow;
 		return 'OK';
 	}
-
+/*
 	public function saveContent()
 	{
 		DocumentPart::getTable()->multipleDelete(array('document_id' => $this->id));
@@ -411,8 +435,8 @@ class Document
 	{
 		$this->id = 0;
 		Document::getTable()->save($this);
-		$this->saveContent();
-		Document::getTable()->save($this);
+/*		$this->saveContent();
+		Document::getTable()->save($this);*/
 		return 'OK';
 	}
 	

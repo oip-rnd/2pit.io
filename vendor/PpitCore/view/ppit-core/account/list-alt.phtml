@@ -132,7 +132,7 @@ table td {
       <img height="20" src="<?php echo $this->basePath('/img'.(($type) ? '/'.$type : '').'/'.$account->properties[$propertyId].'.png') ?>" title="<?php echo $label ?>" alt="<?php echo $label ?>" /><br>
     </td>
       <?php else : ?>
-    <td style="; <?php if ($backgroundColor) echo 'font-weight: bold; background-color: '.$backgroundColor.';' ?>"><?php if ($account->properties[$propertyId]) echo $context->localize($property['modalities'][$account->properties[$propertyId]]) ?></td>
+    <td style="; <?php if ($backgroundColor) echo 'font-weight: bold; background-color: '.$backgroundColor.';' ?>"><?php if (array_key_exists($account->properties[$propertyId], $property['modalities'])) echo $context->localize($property['modalities'][$account->properties[$propertyId]]) ?></td>
       <?php endif;?>
 	
     <?php elseif ($property['type'] == 'multiselect') : ?>

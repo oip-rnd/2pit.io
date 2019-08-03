@@ -14,7 +14,6 @@ use PpitCore\Model\Context;
 use PpitCore\Model\Credit;
 use PpitCore\Model\Csrf;
 use PpitCore\Model\Account;
-use PpitCore\Model\Document;
 use PpitCore\Model\Instance;
 use PpitCore\Model\Place;
 use PpitCore\Model\Vcard;
@@ -320,63 +319,6 @@ class InstanceController extends AbstractActionController
     	$view->setTerminal(true);
     	return $view;
     }
-/*    
-    public function acceptAction()
-    {
-    	// Retrieve the context
-    	$context = Context::getCurrent();
-    
-    	// Retrieve the instance and place
-    	$instance = Instance::get($context->getInstanceId());
-    	$place = Place::get($context->getPlaceId());
-    	
-    	$document = Document::getTable()->transGet($context->getConfig()['document/ethicalCharter']);
-    	$document->retrieveContent();
-
-    	// Instanciate the csrf form
-    	$csrfForm = new CsrfForm();
-    	$csrfForm->addCsrfElement('csrf');
-    	$message = null;
-    	$error = null;
-    	$request = $this->getRequest();
-    	if ($request->isPost()) {
-    
-    		$csrfForm->setInputFilter((new Csrf('csrf'))->getInputFilter());
-    		$csrfForm->setData($request->getPost());
-    
-    		if ($csrfForm->isValid()) { // CSRF check
-    
-				$data = array();
-    			$data['validated_ethical_charter_id'] = $document->id;
-				$data['status'] = 'accepted';
-				$instance->loadData($data);
-
-    			// Atomically save
-    			try {
-    				$connection = Instance::getTable()->getAdapter()->getDriver()->getConnection();
-    				$connection->beginTransaction();
-					$instance->update($request->getPost('update_time'));
-    				$connection->commit();
-    				$message = 'OK';
-    			}
-    			catch (Exception $e) {
-    				$connection->rollback();
-    				throw $e;
-    			}
-    		}
-    	}
-    	$view = new ViewModel(array(
-    			'context' => $context,
-    			'config' => $context->getconfig(),
-    			'instance' => $instance,
-    			'place' => $place,
-    			'document' => $document,
-    			'csrfForm' => $csrfForm,
-    			'message' => $message,
-    			'error' => $error,
-    	));
-    	return $view;
-    }*/
 
     public function charterAction()
     {
@@ -541,53 +483,6 @@ class InstanceController extends AbstractActionController
     	));
     	$view->setTerminal(true);
     	return $view;
-    }
-    
-    public function adminAction()
-    {
-    	$context = Context::getCurrent();
-    	$app = $this->params()->fromRoute('app');
-    	$place = Place::get($context->getPlaceId());
-
-    	// Instanciate the csrf form
-    	$csrfForm = new CsrfForm();
-    	$csrfForm->addCsrfElement('csrf');
-    	$error = null;
-    	$message = null;
-    	$request = $this->getRequest();
-    	if ($request->isPost()) {
-    		$csrfForm->setInputFilter((new Csrf('csrf'))->getInputFilter());
-    		$csrfForm->setData($request->getPost());
-    	
-    		if ($csrfForm->isValid()) { // CSRF check
-    			$instance = $context->getInstance();
-				foreach ($context->getConfig('admin/'.$app) as $propertyId) {
-					$id = str_replace('/', '_', $propertyId);
-					if ($request->getPost($id.'_updated')) {
-		    			$property = $context->getConfig($propertyId);
-		    			foreach ($property['modalities'] as $modalityId => &$modality) {
-							$mid = str_replace('.', '_', $modalityId);
-		    				if (!$request->getPost('check_'.$id.'_'.$mid)) $modality['masked'] = true;
-						}
-						if ($request->getPost($id)) $property['modalities'][time()] = ['fr_FR' => $request->getPost($id)];
-						$instance->specifications[$propertyId] = $property;
-					}
-				}
-				$instance->update($instance->update_time);
-				return $this->redirect()->toRoute('instance/admin', ['app' => $app]);
-    		}
-    	}
-
-    	return new ViewModel(array(
-    			'context' => $context,
-    			'config' => $context->getConfig(),
-    			'app' => $app,
-				'places' => Place::getList(array()),
-    			'place' => $place,
-    			'csrfForm' => $csrfForm,
-    			'message' => $message,
-    			'error' => $error,
-    	));
     }
 	
 	/**

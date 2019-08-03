@@ -36,7 +36,7 @@ echo $this->partial('/partials/header');
 <?php endif;?>
 
 <!--  Access suspended error -->
-<?php if ($error == 'Suspended') : ?>
+<?php if ($error == 'Activation') : ?>
 				<div class="alert alert-danger" style="text-align: center">
 					<strong><?php echo $this->translate('The access to the service is unavailable for the moment. Please contact the support.', 'ppit-core', 'fr_FR') ?></strong>
 				</div>

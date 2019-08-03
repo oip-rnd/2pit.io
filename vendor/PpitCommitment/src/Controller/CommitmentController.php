@@ -21,8 +21,6 @@ use PpitCore\Model\Csrf;
 use PpitCore\Model\Instance;
 use PpitCore\Model\Place;
 use PpitCore\Model\Vcard;
-use PpitCore\Model\Document;
-use PpitDocument\Model\DocumentPart;
 use PpitCore\Model\Product;
 use PpitCore\Model\ProductOption;
 use PpitCore\Model\User;
@@ -44,7 +42,7 @@ class CommitmentController extends AbstractActionController
     {
     	$context = Context::getCurrent();
     	$place = Place::get($context->getPlaceId());
-
+    	 
     	$type = $this->params()->fromRoute('type', null);
 		$app = $this->params()->fromRoute('app');
     	$applicationId = 'p-pit-engagements';
@@ -62,7 +60,7 @@ class CommitmentController extends AbstractActionController
 			'termProperties' => $termDescription['properties'],
     		'config' => $context->getConfig(),
 			'place' => $place,
-			'app' => $app,
+    		'app' => $app,
 			'active' => 'application',
 			'applicationId' => $applicationId,
 			'applicationName' => $applicationName,
@@ -88,7 +86,8 @@ class CommitmentController extends AbstractActionController
 		$context = Context::getCurrent();
     	$type = $this->params()->fromRoute('type', null);
     	$place = Place::get($context->getPlaceId());
-
+    	$accounts = Account::getList(null, ['status' => 'active,interested,converted,committed,undefined,retention,canceled'], '+name', null);
+    	 
     	// Transient: Serialize a list of the entries from all menus
     	$menuEntries = [];
     	foreach ($context->getApplications() as $applicationId => $application) {
@@ -114,6 +113,7 @@ class CommitmentController extends AbstractActionController
 			'context' => Context::getCurrent(),
 			'type' => $type,
 			'place' => $place,
+			'accounts' => $accounts,
 			'tab' => $tab,
 			'app' => $app,
 			'active' => 'application',
@@ -611,14 +611,12 @@ class CommitmentController extends AbstractActionController
     			try {
     				if (!$commitment->id) {
     					$rc = $commitment->add();
-    					$connection->commit();
+/*    					$connection->commit();
     					echo $commitment->id;
-    					return $this->response;
+    					return $this->response;*/
     				}
 	    			elseif ($action == 'delete') $rc = $commitment->delete($request->getPost(null /*'update_time'*/));
-    				else {
-    					$rc = $commitment->update(null/*$request->getPost('update_time')*/);
-    				}
+    				else $rc = $commitment->update(null/*$request->getPost('update_time')*/);
     
     				if ($rc != 'OK') {
     					$connection->rollback();
@@ -1013,12 +1011,12 @@ class CommitmentController extends AbstractActionController
 	    foreach(Term::getList($type, array('commitment_id' => $commitment->id), '+due_date') as $term) {
 	    	
 	    	if ($term->status == 'settled') $settledAmount += $term->amount;
-	    	elseif (!(in_array($term->status, ['expected', 'settled']))) $collectedAmount += $term->amount;
+	    	elseif (!(in_array($term->status, ['expected', 'rejected']))) $collectedAmount += $term->amount;
 	    	
 	    	if (array_key_exists('terms', $invoiceSpecs)) {
 		    	$line[] = array();
 	    		$line['caption'] = $term->caption;
-	    		$line['status'] = (!(in_array($term->status, ['expected', 'settled']))) ? 'collected' : $term->status;
+	    		$line['status'] = (!(in_array($term->status, ['expected', 'settled', 'rejected']))) ? 'collected' : $term->status;
 	    		$line['due_date'] = $term->due_date;
 	    		$line['settlement_date'] = $term->settlement_date;
 	    		$line['means_of_payment'] = $term->means_of_payment;
