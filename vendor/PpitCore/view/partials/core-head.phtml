@@ -1,12 +1,11 @@
 <head>
     
+<?php if ($this->title) : ?>
+    <title><?php echo $context->localize($this->title) ?></title>
+<?php endif;?>
+    
     <meta charset="utf-8">
-        <?php echo $this->headTitle()->setSeparator('')->setAutoEscape(false) ?>
 
-        <?php echo $this->headMeta()
-            ->appendName('viewport', 'width=device-width, initial-scale=1.0')
-            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
-        ?>
 <?php if ($this->description) : ?>
     <meta name="description" content="<?php echo $this->description ?>">
 <?php endif;?>
@@ -16,7 +15,7 @@
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="<?php echo $this->basePath('/fontawesome-free-5.2.0-web/css/all.min.css') ?>">
-  <link rel="stylesheet" href="<?php echo $this->basePath('/bootstrap-4-2/css/bootstrap.min.css') ?>">
+    <link rel="stylesheet" href="<?php echo $this->basePath('/bootstrap-4.3.1-dist/css/bootstrap.min.css') ?>">
     <link rel="stylesheet" href="<?php echo $this->basePath('/bootstrap-select-1.13.1/dist/css/bootstrap-select.min.css') ?>">
   <link rel="stylesheet" href="<?php echo $this->basePath('/css/ppit-style.css') ?>">
   <link rel="stylesheet" href="<?php echo $this->basePath('/jquery-ui-1.11.4/jquery-ui.css') ?>">

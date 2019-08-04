@@ -350,9 +350,11 @@ function getCommitmentUpdate(id, action) {
 <?php foreach ($updatePage as $propertyId => $property) : ?>
   <?php if (array_key_exists('account-initial-value', $property['options'])) : ?>
     <?php foreach ($accounts as $account_id => $account) : ?>
+      <?php if ($account->type == $type) : ?>
       if ($('#commitment-account_id').val() == <?php echo $account_id ?>) {
           $('#commitment-<?php echo $propertyId ?>').val('<?php echo $account->properties[$property['options']['account-initial-value']] ?>');
       }
+      <?php endif;?>
     <?php endforeach; ?>
   <?php endif;?>
 <?php endforeach; ?>

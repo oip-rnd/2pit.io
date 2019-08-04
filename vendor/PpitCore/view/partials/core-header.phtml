@@ -78,12 +78,6 @@
 		</nav>
 
 <div class="container-fluid">
-
-<?php
-$title = $context->localize($context->getConfig('event/index'.(($type) ? '/'.$type : ''))['title']);
-$this->headTitle($title);
-?>
-
   <div class="my-4" id="main_menu">
     <ul class="nav nav-pills nav-justified">
 <?php foreach ($context->getConfig('menus/' . $app)['entries'] as $entryId => $entryDef) : ?>

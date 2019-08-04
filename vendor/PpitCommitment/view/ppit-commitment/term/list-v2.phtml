@@ -23,7 +23,7 @@ table td {
       <th>&nbsp;</th>
       <th>&nbsp;</th>
 	
-<?php $first = true; foreach ($listPage['properties'] as $propertyId => $property) : ?>
+<?php foreach ($listPage['properties'] as $propertyId => $property) : ?>
 
       <th align="center">
         <a type="button" class="btn btn-sm sort_anchor <?php if ($major == $propertyId) echo 'btn-secondary active '.(($major == $propertyId) ? (($dir == 'ASC') ? 'sort_anchor_up' : 'sort_anchor_down') : '') ?>" role="button" id="<?php echo $propertyId ?>-anchor">
@@ -96,7 +96,7 @@ table td {
       <td><?php echo $context->decodeDate($term->properties[$propertyId]) ?></td>
 
     <?php elseif ($property['type'] == 'number') : ?>
-      <td style="text-align: right"><?php echo $context->formatFloat($term->properties[$propertyId], 2) ?></td>
+      <td class="text-right"><?php echo $context->formatFloat($term->properties[$propertyId], 2) ?></td>
 
     <?php else : ?>
       <td><?php echo $term->properties[$propertyId] ?></td>
@@ -119,7 +119,7 @@ table td {
         <input type="checkbox" class="term-checkbox" id="down-term-checkbox" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Check all', 'ppit-core', $context->getLocale()) ?>"></input>
       </td>
 
-      <td style="text-align: center">
+      <td class="text-center">
         <div class="input-group input-group-sm">
           <button type="button" class="btn btn-sm btn-outline-primary index-btn term-group-anchor" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Grouped actions', 'ppit-core', $context->getLocale())?>" id="down-term-group-anchor">
             <i class="fas fa-list" id="group-glyphicon"></i>
