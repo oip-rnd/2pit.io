@@ -1016,7 +1016,7 @@ class CommitmentController extends AbstractActionController
 	    	if (array_key_exists('terms', $invoiceSpecs)) {
 		    	$line[] = array();
 	    		$line['caption'] = $term->caption;
-	    		$line['status'] = (!(in_array($term->status, ['expected', 'settled', 'rejected']))) ? 'collected' : $term->status;
+	    		$line['status'] = ((in_array($term->status, ['to_invoice']))) ? 'expected' : $term->status;
 	    		$line['due_date'] = $term->due_date;
 	    		$line['settlement_date'] = $term->settlement_date;
 	    		$line['means_of_payment'] = $term->means_of_payment;

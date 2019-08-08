@@ -71,7 +71,7 @@
 
 <div class="my-3">
 
-  <?php if (!$term->invoice_id) : ?>
+  <?php if ($term->invoice_id) : ?>
 &nbsp;&nbsp;<a href="<?php echo $this->url('commitmentMessage/downloadInvoice', array('id' => $term->invoice_id)) ?>"><?php echo $this->translate('Download the invoice', 'ppit-commitment', $context->getLocale())?></a>&nbsp;&nbsp;|
   <?php endif;?>
 

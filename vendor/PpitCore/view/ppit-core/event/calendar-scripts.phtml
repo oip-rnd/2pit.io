@@ -1,11 +1,6 @@
-/**
- * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
- *
- * @link      https://github.com/p-pit/PpitCore
- * @copyright Copyright (c) 2016 Bruno Lartillot
- * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
- */
+<?php echo $this->partial('/ppit-core/account/event-account-scripts', ['type' => $content_description['options']['account_type'], 'category' => $category, 'group' => $group]) ?>
 
+<script>
 var viewBeginDate = '<?php echo date('Y-m-d') ?>';
 
 function getAvailability() {
@@ -408,7 +403,15 @@ function createCalendar(print) {
 		    start: '08:00',
 		    end: '18:00'
 	    },
-		customButtons: {
+
+        buttonText: {
+          today: '<?php echo $this->translate('Today', 'ppit-core', $context->getLocale()) ?>',
+          month: '<?php echo $this->translate('Month', 'ppit-core', $context->getLocale()) ?>',
+          week: '<?php echo $this->translate('Week', 'ppit-core', $context->getLocale()) ?>',
+          day: '<?php echo $this->translate('Day', 'ppit-core', $context->getLocale()) ?>',
+        },
+
+    	customButtons: {
 	        addButton: {
 	            text: '<?php echo $context->localize(['default' => 'Add', 'fr_FR' => 'Ajouter']) ?>',
 	            click: function() {
@@ -453,3 +456,7 @@ function createCalendar(print) {
 	  
 	getPlanning();
 }
+
+activateCalendar();
+
+</script>

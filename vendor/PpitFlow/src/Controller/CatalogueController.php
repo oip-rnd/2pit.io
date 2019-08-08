@@ -89,9 +89,11 @@ class CatalogueController extends AbstractActionController
 		$context = Context::getCurrent();
 
 		$type = $this->params()->fromRoute('type', 'generic');
-		$place_identifier = $this->params()->fromRoute('place_identifier', $context->getPlace()->identifier);
-		$rates = $context->getConfig('catalogue/product/rates');
+		$place = $context->getPlace();
+		$place_identifier = $this->params()->fromRoute('place_identifier', $place->identifier);
+		$rates = $place->getConfig('catalogue/product/rates');
 		$content = CatalogueController::getContent($place_identifier);
+		$constraints = $place->getConfig('catalogue/constraints');
 
 		// Account and commitments
 		$profile = $context->getProfile();
@@ -145,8 +147,10 @@ class CatalogueController extends AbstractActionController
 			'context' => $context,
 			'type' => $type,
 			'place_identifier' => $place_identifier,
+			'place' => $place,
 			'content' => $content,
 			'rates' => $rates,
+			'constraints' => $constraints,
 			'profile' => $profile,
 			'commitments' => $commitments,
 			'commitment_id' => $commitment_id,
@@ -171,7 +175,8 @@ class CatalogueController extends AbstractActionController
 		$context = Context::getCurrent();
 		$type = $this->params()->fromRoute('type', 'generic');
 		$place_identifier = $this->params()->fromRoute('place_identifier');
-		$rates = $context->getConfig('catalogue/product/rates');
+		$place = Place::get($place_identifier, 'identifier');
+		$rates = $place->getConfig('catalogue/product/rates');
 		$content = CatalogueController::getContent($place_identifier);
 		$product = $this->params()->fromQuery('product');
 	
@@ -274,7 +279,8 @@ class CatalogueController extends AbstractActionController
 		// Context and parameters
 		$context = Context::getCurrent();
 		$place_identifier = $this->params()->fromRoute('place_identifier');
-		$rates = $context->getConfig('catalogue/product/rates');
+		$place = Place::get($place_identifier, 'identifier');
+		$rates = $place->getConfig('catalogue/product/rates');
 
 		$subscription_amount = 0;
 		$subscriptions = array();
@@ -345,7 +351,8 @@ class CatalogueController extends AbstractActionController
 		$context = Context::getCurrent();
 		$type = $this->params()->fromRoute('type', 'generic');
 		$place_identifier = $this->params()->fromRoute('place_identifier');
-		$rates = $context->getConfig('catalogue/product/rates');
+		$place = Place::get($place_identifier, 'identifier');
+		$rates = $place->getConfig('catalogue/product/rates');
 		$content = CatalogueController::getContent($place_identifier);
 		$account = $context->getProfile();
 		if (!$account) $account = Account::instanciate($type);
@@ -502,6 +509,7 @@ class CatalogueController extends AbstractActionController
 		// Retrieve the context and the parameters
 		$context = Context::getCurrent();
 		$place_identifier = $this->params()->fromRoute('place_identifier');
+		$place = Place::get($place_identifier, 'identifier');
 		$locale = $this->params()->fromQuery('locale');
 		$content = CatalogueController::getContent($place_identifier);
 		$account = Account::get($context->getContactId(), 'contact_1_id');
@@ -535,7 +543,7 @@ class CatalogueController extends AbstractActionController
 
 				$first = true; 
 				foreach ($commitment->options as &$option) {
-				    if (array_key_exists($option['identifier'], $context->getConfig('catalogue/product/rates')['variants'])) {
+				    if (array_key_exists($option['identifier'], $place->getConfig('catalogue/product/rates')['variants'])) {
 						for ($i = 0; $i < $option['quantity']; $i++) {
 	
 							foreach ($content['complete']['recipient_properties'] as $property_id => $property) {
@@ -562,6 +570,7 @@ class CatalogueController extends AbstractActionController
 		// Return the view
 		$view = new ViewModel(array(
 			'context' => $context,
+			'place' => $place,
 			'content' => $content,
 			'locale' => $locale,
 			'account' => $account,

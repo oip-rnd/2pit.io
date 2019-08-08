@@ -68,7 +68,7 @@ function connectTermUpdateForm(commitment_id, id, action, target)
 }
 
 function getTermInvoiceForm(id) {
-  $('#term-invoice-anchor').removeClass('btn-default').addClass('btn-danger');
+  $('#term-invoice-anchor').removeClass('btn-outline-primary').addClass('btn-danger');
   $('#term-invoice-alert').show();
   $('#term-invoice-anchor').click(function () { invoice(id, 'GET'); });
 }

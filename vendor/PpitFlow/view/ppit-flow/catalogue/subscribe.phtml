@@ -76,7 +76,16 @@ $inputs = $content['inputs'];
   
 <?php endforeach;?>
 
-   <div class="md-form">
+  <div class="row">
+    <div class="col-md-8" id="calendar"></div>
+    <div class="col-md-4">
+      <div><span class="chip chip-lg green my-3"><?php echo $this->translate('Available date', 'ppit-flow', $context->getLocale()) ?></span></div>
+      <div><span class="chip chip-lg red my-3"><?php echo $this->translate('Full date', 'ppit-flow', $context->getLocale()) ?></span></div>
+      <div><span class="chip chip-lg blue my-3"><?php echo $this->translate('Your selection', 'ppit-flow', $context->getLocale()) ?></span></div>
+    </div>
+  </div>
+
+  <div class="md-form">
     <h4 class="mt-2 text-right">
       <strong id="<?php echo $product?>-subscribe-amount"></strong>
     </h4>

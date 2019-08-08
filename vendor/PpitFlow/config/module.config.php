@@ -8,6 +8,7 @@
  */
 
 include('catalogue_product_rates.php');
+include('catalogue_constraints.php');
 include('catalogue_generic.php');
 
 return array (
@@ -2048,6 +2049,8 @@ table.note-report td {
 
 	// Default catalogue
 
+	'catalogue/constraints' => CATALOGUE_CONSTRAINTS,
+	
 	'catalogue/product/rates' => CATALOGUE_PRODUCT_RATES,
 	
 	'catalogue/generic' => CATALOGUE_GENERIC,

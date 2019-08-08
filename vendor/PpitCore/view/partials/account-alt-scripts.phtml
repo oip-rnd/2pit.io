@@ -549,7 +549,7 @@ function addToGroup()
 			document.getElementById('add-to-group-panel').innerHTML = xhttp.responseText;
 			$('#add-to-group-alert').hide();
 			$('#add-to-group-button').click(function () {
-				$('#add-to-group-button').removeClass('btn-default').addClass('btn-warning');
+				$('#add-to-group-button').removeClass('btn-outline-warning').addClass('btn-warning');
 				$('#add-to-group-alert').show();
 				$('#add-to-group-button').click(function () { connectAddToGroupForm(); });
 			});
@@ -645,7 +645,7 @@ function connectSendMessageForm(id)
 }
 
 function getSendMessageForm() {
-	$('#send-message-button').removeClass('btn-default').addClass('btn-warning');
+	$('#send-message-button').removeClass('btn-outline-warning').addClass('btn-warning');
 	$('#send-message-alert').show();
 	$('#send-message-button').click(function () { connectSendMessageForm(); });
 }

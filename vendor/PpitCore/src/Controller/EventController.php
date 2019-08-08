@@ -78,16 +78,30 @@ class EventController extends AbstractActionController
     public function calendarAction()
     {
     	$context = Context::getCurrent();
-    	 
+    	$place = $context->getPlace(); 
+    	
     	// Retrieve parameters
     	$type = $this->params()->fromRoute('type', $context->getConfig('event/type')['default']);
     	$category = $this->params()->fromRoute('category');
-    	$app = $this->params()->fromRoute('app');
+
+    	// Transient: Serialize a list of the entries from all menus
+    	$menuEntries = [];
+    	foreach ($context->getApplications() as $applicationId => $application) {
+    		if ($context->getConfig('menus/'.$applicationId)) {
+    			foreach ($context->getConfig('menus/' . $applicationId)['entries'] as $entryId => $entryDef) {
+    				$menuEntries[$entryId] = ['menuId' => $applicationId, 'menu' => $application, 'definition' => $entryDef];
+    			}
+    		}
+    	}
+    	$tab = $this->params()->fromRoute('entryId', 'account');
+    	
+    	// Retrieve the application
+    	$app = $menuEntries[$tab]['menuId'];
+    	$applicationName = $context->localize($menuEntries[$tab]['menu']['labels']);
+
     	$group_identifier = $this->params()->fromQuery('group');
     	$group = Account::get($group_identifier, 'identifier', 'group', 'type');
     	$group_id = ($group) ? $group->id : null;
-    	$applicationId = ($app) ? $app : 'synapps';
-    	$applicationName = $context->localize($context->getConfig('menus/'.$applicationId)['labels']);
 
     	$description = Event::getDescription($type);
     	if (array_key_exists('options', $description) && array_key_exists('internal_identifier', $description['options'])) $internalIdentifier = $description['options']['internal_identifier'];
@@ -97,6 +111,23 @@ class EventController extends AbstractActionController
 
     	$eventAccountSearchPage = $context->getConfig('core_account/event_account_search/'.$type);
     	if (!$eventAccountSearchPage) $eventAccountSearchPage = $context->getConfig('core_account/event_account_search/generic');
+
+    	// Feed the layout
+    	$this->layout('/layout/core-layout');
+    	$this->layout()->setVariables(array(
+    		'context' => $context,
+    		'type' => $type,
+    		'place' => $place,
+    		'tab' => $tab,
+    		'app' => $app,
+    		'active' => 'application',
+    		'applicationName' => $applicationName,
+			'content_description' => $description,
+    		'category' => $category,
+    		'group' => $group_id,
+    		'planningMap' => $planningMap,
+    		'pageScripts' => 'ppit-core/event/calendar-scripts',
+    	));
     	 
     	$view = new ViewModel(array(
     		'context' => $context,
@@ -105,14 +136,9 @@ class EventController extends AbstractActionController
     		'app' => $app,
     		'applicationId' => $applicationId,
     		'applicationName' => $applicationName,
-    		'category' => $category,
-    		'group' => $group_id,
-			'content_description' => $description,
-    		'planningMap' => $planningMap,
 			'configProperties' => Account::getConfig('teacher'),
     		'eventAccountSearchPage' => $eventAccountSearchPage,
     	));
-    	$view->setTerminal(true);
     	return $view;
     }
     

@@ -2,6 +2,7 @@
 return array(
 	'%s gave you this feedback:' => '%s vous a donné le feedback suivant :',
 	'Accepted' => 'Accepté',
+	'Available date' => 'Date disponible',
 	'Concerning the request <em>%s</em>,' => 'Au sujet de la demande <em>%s</em>,',
 	'Confirm Log Out' => 'Confirmer la déconnexion',
 	'Contact' => 'Contacter',
@@ -12,6 +13,7 @@ return array(
 	'Feedback expected' => 'Feedback attendu',
 	'Feedback given' => 'Feedback donné',
 	'Feedback received' => 'Feedback reçu',
+	'Full date' => 'Date complète',
 	'How did you know us?' => 'Comment nous avez-vous connu ?',
 	'Invite to a test' => 'Inviter à un test',
 	'Log In' => 'Se connecter',
@@ -38,4 +40,5 @@ return array(
 	'Validate and Sign In' => 'Valider et s\'enregistrer',
 	'View/update a request' => 'Visualiser/modifier une demande',
 	'Your answer' => 'Votre réponse',
+	'Your selection' => 'Votre sélection',
 );

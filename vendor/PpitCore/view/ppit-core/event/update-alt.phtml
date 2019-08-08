@@ -7,11 +7,13 @@
  * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
  */
 -->
-      
+
+<div class="container">
+
 <!-- Global message -->
 <?php if ($message == 'OK') : ?>
   <div id="message">
-    <div class="alert alert-success my-3"><h4><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h4></div>
+    <h5 class="alert alert-success my-3 text-center"><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h5>
   </div>
 <?php endif;?>
 
@@ -208,3 +210,5 @@ if ($event->id && $action != 'update' || $message == 'OK') $isDisabled = true; e
     </div>
   </div>
 <?php endif;?>
+
+</div>

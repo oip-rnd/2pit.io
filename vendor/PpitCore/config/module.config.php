@@ -442,7 +442,7 @@ return array(
 					'calendar' => array(
 						'type' => 'segment',
 						'options' => array(
-							'route' => '/calendar[/:type][/:app][/:category]',
+							'route' => '/calendar[/:type][/:category][/:entryId]',
 							'defaults' => array(
 								'action' => 'calendar',
 							),
@@ -1641,10 +1641,10 @@ return array(
 //				array('route' => 'account/contactIndex', 'roles' => array('operational_management', 'sales_manager')),
 				array('route' => 'account/search', 'roles' => array('operational_management', 'sales_manager', 'manager')),
 				array('route' => 'account/searchAlt', 'roles' => array('operational_management', 'sales_manager', 'manager')),
-				array('route' => 'account/group', 'roles' => array('operational_management', 'sales_manager')),
-				array('route' => 'account/groupAlt', 'roles' => array('operational_management', 'sales_manager')),
-				array('route' => 'account/addToGroup', 'roles' => array('operational_management', 'sales_manager')),
-				array('route' => 'account/sendMessage', 'roles' => array('operational_management', 'sales_manager')),
+				array('route' => 'account/group', 'roles' => array('operational_management', 'sales_manager', 'manager')),
+				array('route' => 'account/groupAlt', 'roles' => array('operational_management', 'sales_manager', 'manager')),
+				array('route' => 'account/addToGroup', 'roles' => array('operational_management', 'sales_manager', 'manager')),
+				array('route' => 'account/sendMessage', 'roles' => array('operational_management', 'sales_manager', 'manager')),
 				array('route' => 'account/dropboxLink', 'roles' => array('guest')),
 				array('route' => 'account/detail', 'roles' => array('operational_management', 'sales_manager', 'manager')),
 				array('route' => 'account/detailAlt', 'roles' => array('operational_management', 'sales_manager', 'manager')),
@@ -5407,7 +5407,7 @@ table.note-report td {
 			'location' => [],
 		],
 	),
-	
+/*	
 	'event/update/calendar' => array(
 		'status' => ['mandatory' => true],
 //		'category' => ['mandatory' => true],
@@ -5422,7 +5422,7 @@ table.note-report td {
 		'begin_time' => array('mandatory' => false),
 		'end_time' => array('mandatory' => false),
 		'location' => array('mandatory' => false),
-	),
+	),*/
 	
 	
 	// Emails

@@ -8,11 +8,6 @@
  */
 -->
 
-<br>
-<h4 style="text-align: center">
-	<strong><?php echo $this->translate('Send an email', 'ppit-contact', $context->getLocale()) ?></strong>
-</h4>
-
 <!-- Form header -->
 <?php echo $this->partial('/partials/form-header', array(
 		'update_time' => $mail->update_time,
@@ -29,18 +24,18 @@ if ($message == 'OK') $isDisabled = true; else $isDisabled = false;
 	<div class="panel-body">
 		<input type="hidden" id="mail_update_time" value="<?php echo $mail->update_time ?>" />
 
-		<div class="form-group" id="mask_recipients_group">
-			<label class="col-sm-5 control-label">
+		<div class="form-group row" id="mask_recipients_group">
+			<label class="col-sm-5 col-form-label">
 				<?php echo $this->translate('Mask recipients', 'ppit-contact', $context->getLocale()) ?>
 			</label>
 			<div class="col-sm-7">
 				<input type="checkbox" id="mask_recipients" class="form-control" value="1" <?php if ($isDisabled) echo 'disabled="disabled"'?> />
+                <div class="invalid-feedback" id="mask_recipients_error"></div>
 			</div>
-			<div class="col-sm-12"><p class="help-block" id="mask_recipients_error"></p></div>
 		</div>
 
-		<div class="form-group" id="template_id_group">
-			<label class="col-sm-5 control-label">
+		<div class="form-group row" id="template_id_group">
+			<label class="col-sm-5 col-form-label">
 				<?php echo $this->translate('Mail template', 'ppit-commitment', $context->getLocale()) ?>
 			</label>
 			<div class="col-sm-7">
@@ -49,8 +44,8 @@ if ($message == 'OK') $isDisabled = true; else $isDisabled = false;
 					<option value="<?php echo $templateId ?>" <?php if ($templateId == $selectedTemplateId) echo 'selected="selected"'?>><?php echo $context->localize($template['labels']) ?></option>
 <?php endforeach;?>
 				</select>
+                <div class="invalid-feedback" id="template_id_error"></div>
 			</div>
-			<div class="col-sm-12"><p class="help-block" id="template_id_error"></p></div>
 		</div>
 
 		<hr>
@@ -65,28 +60,28 @@ if ($message == 'OK') $isDisabled = true; else $isDisabled = false;
 	    <strong><?php echo $this->translate('Subject', 'ppit-contact', $context->getLocale()).': '.$context->localize($template['subject']) ?></strong>
 	    <p><a href="<?php echo $this->url($template['route'])?>" target="_blank"><?php echo $this->translate('Preview', 'ppit-core', $context->getLocale()) ?></a></p>
 	<?php else : ?>
-			<div class="form-group" id="<?php echo $templateId ?>_subject_group">
-				<label class="col-sm-5 control-label">
+			<div class="form-group row" id="<?php echo $templateId ?>_subject_group">
+				<label class="col-sm-5 col-form-label">
 					* <?php echo $this->translate('Subject', 'ppit-contact', $context->getLocale()) ?>
 				</label>
 				<div class="col-sm-7">
 					<input class="form-control" id="<?php echo $templateId ?>_subject" value="<?php echo $context->localize($template['subject']) ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?> />
+                    <div class="invalid-feedback" id="<?php echo $templateId ?>_subject_error"></div>
 				</div>
-				<div class="col-sm-12"><p class="help-block" id="<?php echo $templateId ?>_subject_error"></p></div>
 			</div>
 		
 			<div class="form-group" id="<?php echo $templateId ?>_text_group">
 				<div class="col-sm-12">
 					<?php echo $context->localize($template['text']) ?>
+                    <div class="invalid-feedback" id="<?php echo $templateId ?>_text_error"></div>
 				</div>
-				<div class="col-sm-12"><p class="help-block" id="<?php echo $templateId ?>_text_error"></p></div>
 			</div>
 	<?php endif;?>
 		</div>
 <?php endforeach;?>
 		<div>&nbsp;</div>
-		<div class="form-group" id="attachment_group">
-			<label class="col-sm-5 control-label">
+		<div class="form-group row" id="attachment_group">
+			<label class="col-sm-5 col-form-label">
 				<?php echo $this->translate('Attachment', 'ppit-contact', $context->getLocale()) ?>
 			</label>
 			<div class="col-sm-6">
@@ -102,13 +97,13 @@ if ($message == 'OK') $isDisabled = true; else $isDisabled = false;
 		</div>
 
 	<?php if ($message != 'OK') : ?>
-	    <div class="form-group">
+	    <div class="form-group row">
 			<div class="col-sm-5">&nbsp;</div>
 			<div class="col-sm-7">
-				<input id="send-message-button" class="btn btn-default" value="<?php echo $this->translate('Send', 'ppit-core', $context->getLocale()) ?>">
+				<button type="button" id="send-message-button" class="btn btn-outline-warning"><?php echo $this->translate('Send', 'ppit-core', $context->getLocale()) ?></button>
 			</div>
 		</div>
-		<div class="form-group">
+		<div class="form-group row">
 			<div class="col-sm-12">
 				<div class="alert alert-warning" id="send-message-alert" style="text-align: center">
 					<strong><?php echo $this->translate('Please confirm', 'ppit-core', $context->getLocale()) ?></strong>

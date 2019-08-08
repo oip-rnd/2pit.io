@@ -7,6 +7,8 @@ var cart = {
   options: new Object(),  
 }
 
+var constraints = <?php echo json_encode($constraints) ?>;
+
 $('#cartLink').hide();
 
 // Contact
@@ -66,6 +68,46 @@ function showContact(product) {
   xhttp.send(JSON.stringify(cart));
 }
 
+// Calendar
+
+function createCalendar(callback) {
+
+  let events = [];
+  constraints.forEach(function (element) {
+    if (element.fullDates) {
+      element.fullDates.forEach(function (date) {
+        events.push({
+          start: date,
+          end: date,
+          rendering: 'background',
+          color: 'red'
+        });
+      });
+    }
+  });
+
+  return new FullCalendar.Calendar(document.getElementById('calendar'), {
+	plugins: [ 'interaction', 'dayGrid' ],
+	defaultView: 'dayGridMonth',
+
+	lang: '<?php echo substr($context->getLocale(), 0, 2) ?>',
+    locale: '<?php echo substr($context->getLocale(), 0, 2) ?>',
+    firstDay: 1,
+
+	businessHours: {
+      dow: [ 1, 2, 3, 4, 5], // Monday - Thursday
+    },
+
+    buttonText: {
+      today: '<?php echo $this->translate('Today', 'ppit-core', $context->getLocale()) ?>',
+    },
+      
+	events: events,
+
+    dateClick: callback
+  });
+}
+
 // Subscribe
 
 moment.locale('fr');
@@ -117,9 +159,10 @@ function subscribe(content) {
 }
 
 function showSubscribe(product) {
-  var content = {
+  let content = {
     products: new Object(), 
-    options: new Object()
+    options: new Object(),
+    selection: null
   };
   var xhttp = new XMLHttpRequest();
   xhttp.open('GET', '<?php echo $this->url('catalogue/subscribe', ['type' => $type, 'place_identifier' => $place_identifier]) ?>?product=' + product, true);
@@ -127,25 +170,29 @@ function showSubscribe(product) {
     if (xhttp.readyState == 4) {
       if (xhttp.status == 200) {
         $('#modal-' + product + '-Content').html(xhttp.responseText);
-        $('.datepicker').pickadate({
-          monthsFull: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre',
-                       'Novembre', 'Décembre'],
-          monthsShort: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'],
-          weekdaysFull: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
-          weekdaysShort: ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'],
-          today: 'aujourd\'hui',
-          clear: 'effacer',
-          close: 'Fermer',
-//          format: 'd mmmm yyyy',
-          format: 'yyyy-mm-dd',
-          formatSubmit: 'yyyy-mm-dd'
-        });
 
-        $('.datepicker').change(function () {
-            var subscriptionDate = moment.max($(this).val(), moment(new Date()).add(7, 'days'));
-            $(this).val(subscriptionDate);
-            content['subscription_date'] = subscriptionDate;
+        let calendar = createCalendar(function(info) {
+          if (content.selection) calendar.getEventById('selection').remove();
+          content.selection = null;
+
+          let matched = true;
+
+          // Check that the solution is a business day
+          if (![1, 2, 3, 4, 5].includes(moment(info.dateStr).day())) matched = false;
+          constraints.forEach(function (element) {
+              if (element.fullDates && element.fullDates.includes(info.dateStr)) matched = false;
+          });
+
+          if (matched) {
+            content.selection = info.dateStr;
+            calendar.addEvent({
+              id: 'selection',
+              start: content.selection,
+              end: content.selection,
+            });
+          }
         });
+        calendar.render();
 
         // Hide or show the form parts associated with a radio buttons according to their checked or unchecked status
 <?php foreach ($content['inputs'] as $inputId => $input) : ?>
@@ -178,34 +225,6 @@ function showSubscribe(product) {
   
             // Compute the price
             calculate(product, content);
-
-            // Compute the week
-            var subscriptionStart, subscriptionEnd, weekDay = moment(content['subscription_date']).isoWeekday();
-            if (weekDay == 7) weekDay = 0;
-            if (!content.hebergement) {
-              subscriptionStart = moment(content['subscription_date']).subtract(weekDay - 1, 'days');
-              subscriptionEnd = moment(content['subscription_date']).add(5 - weekDay, 'days');
-            }
-            else {
-              subscriptionStart = moment(content['subscription_date']).subtract(weekDay, 'days');
-              subscriptionEnd = moment(content['subscription_date']).add(6 - weekDay, 'days');
-            }
-            content.products.<?php echo $productId ?>.description = 'Du ' + moment(subscriptionStart).format('dddd D MMMM') + ' au ' + moment(subscriptionEnd).format('dddd D MMMM');
-            content.products.<?php echo $productId ?>.start = moment(subscriptionStart).format('YYYY-MM-DD');
-            content.products.<?php echo $productId ?>.end = moment(subscriptionEnd).format('YYYY-MM-DD');
-            $('#' + product + '-hebergement_mention').html(content.products.<?php echo $productId ?>.description);
-          }
-        });
-  <?php endforeach;?>
-
-  <?php foreach ($rates['options'] as $optionId => $unused) : ?>
-        $('#subscribeOption-' + product + '-<?php echo $optionId ?>').change(function () { 
-          if ($('#subscribeOption-' + product + '-<?php echo $optionId ?>').val() < 0) {
-            $('#subscribeOption-' + product + '-<?php echo $optionId ?>').val(0);
-          }
-          else {
-	        content.options.prise_en_charge = { quantity: $('#subscribeOption-' + product + '-<?php echo $optionId ?>').val() };
-	        calculate(product, content);
           }
         });
   <?php endforeach;?>
@@ -388,7 +407,7 @@ function complete() {
   formData.append('csrf', $('#csrf').val());
 
 <?php $first = true; foreach ($commitment->options as $option) : ?>
-  <?php if (array_key_exists($option['identifier'], $context->getConfig('catalogue/product/rates')['variants'])) : ?>
+  <?php if (array_key_exists($option['identifier'], $place->getConfig('catalogue/product/rates')['variants'])) : ?>
     <?php for ($i = 0; $i < $option['quantity']; $i++) : ?>
       <?php foreach ($content['complete']['recipient_properties'] as $propertyId => $property) : ?>
   formData.append('complete-<?php echo $propertyId ?>-<?php echo $option['identifier'] . '-' . $i ?>', $('#complete-<?php echo $propertyId ?>-<?php echo $option['identifier'] . '-' . $i ?>').val());

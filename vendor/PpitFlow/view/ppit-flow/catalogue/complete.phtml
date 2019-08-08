@@ -51,7 +51,7 @@
         <tbody>
 
   <?php $first = true; foreach ($commitment->options as $option) : ?>
-    <?php if (array_key_exists($option['identifier'], $context->getConfig('catalogue/product/rates')['variants'])) : ?>
+    <?php if (array_key_exists($option['identifier'], $place->getConfig('catalogue/product/rates')['variants'])) : ?>
       <?php for ($i = 0; $i < $option['quantity']; $i++) : ?>
 
           <tr>

@@ -201,7 +201,7 @@ function connectCgvPanel()
 
 function connectCommitmentInvoiceForm(id)
 {			
-		$('#commitment-invoice-anchor').removeClass('btn-default').addClass('btn-warning');
+		$('#commitment-invoice-anchor').removeClass('btn-danger').addClass('btn-warning');
 
 		// Create a new FormData object.
 		var formData = new FormData();
@@ -220,7 +220,7 @@ function connectCommitmentInvoiceForm(id)
 }
 
 function getCommitmentInvoiceForm(id) {
-	$('#commitment-invoice-anchor').removeClass('btn-default').addClass('btn-danger');
+	$('#commitment-invoice-anchor').removeClass('btn-outline-primary').addClass('btn-danger');
 	$('#commitment-invoice-alert').show();
 	$('#commitment-invoice-anchor').click(function () { connectCommitmentInvoiceForm(id); });
 }
