@@ -126,7 +126,7 @@ table td {
     <td><?php echo $account->properties[$propertyId] ?></td>
 
     <?php elseif (in_array($property['type'], ['select', 'computed'])) : ?>
-      <?php if (array_key_exists('rendering', $property['options']) && $property['options']['rendering'] == 'image') : ?>
+      <?php if (array_key_exists('rendering', $property['options']) && $property['options']['rendering'] == 'image' && $account->properties[$propertyId]) : ?>
     <td style="text-align: center">
         <?php $label = (array_key_exists($account->properties[$propertyId], $property['modalities'])) ? $property['modalities'][$account->properties[$propertyId]][$context->getLocale()] : $account->properties[$propertyId] ?>
       <img height="20" src="<?php echo $this->basePath('/img'.(($type) ? '/'.$type : '').'/'.$account->properties[$propertyId].'.png') ?>" title="<?php echo $label ?>" alt="<?php echo $label ?>" /><br>

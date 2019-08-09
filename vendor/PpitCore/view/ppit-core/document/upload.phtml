@@ -1,0 +1,44 @@
+<!-- 
+/**
+ * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
+ *
+ * @link      https://github.com/p-pit/PpitCore
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
+ */
+-->
+
+<form action="<?php echo $this->url('document/upload', ['folder' => $folder], ['query' => ['place_id' => $place_id]]) ?>" id="form_document_upload" method="post" class="form-horizontal" enctype="multipart/form-data">
+			
+<!-- Global message -->
+<?php if ($message == 'OK') : ?>
+	<div id="message">
+      <h5 class="alert alert-success my-3 text-center"><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h5>
+	</div>
+<?php endif;?>
+
+<?php 
+if ($message == 'OK') $isDisabled = true; else $isDisabled = false;
+?>
+
+<div class="panel-body">
+
+  <div class="form-group row">
+    <label class="col-sm-5 col-form-label"><?php echo $this->translate('Select the group', 'ppit-core', $context->getLocale()) ?></label>
+    <div class="col-sm-7">
+      <input type="file" id="file" name="file" class="form-control" />
+    </div>
+  </div>
+
+<?php if (!$message) : ?>
+<div class="form-group row">
+    <div class="col-sm-5">&nbsp;</div>
+    <div class="col-sm-7">
+      <button type="submit" id="upload-button" class="btn btn-warning"><?php echo $this->translate('Upload', 'ppit-core', $context->getLocale()) ?></button>
+    </div>
+  </div>
+<?php endif;?>
+
+</div>
+
+</form>

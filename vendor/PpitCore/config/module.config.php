@@ -378,6 +378,15 @@ return array(
 				),
 				'may_terminate' => true,
 				'child_routes' => array(
+					'upload' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/upload[/:folder]',
+							'defaults' => array(
+								'action' => 'upload',
+							),
+						),
+					),
 					'download' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -396,6 +405,17 @@ return array(
 							'route' => '/update[/:identifier]',
 							'defaults' => array(
 								'action' => 'update',
+							),
+						),
+					),
+
+					// Restfull implementation
+					'get' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/get[/:type]',
+							'defaults' => array(
+								'action' => 'get',
 							),
 						),
 					),
@@ -1670,8 +1690,10 @@ return array(
 				array('route' => 'config/v1', 'roles' => array('guest')),
 				
 				array('route' => 'document', 'roles' => array('user')),
+				array('route' => 'document/upload', 'roles' => array('user')),
 				array('route' => 'document/download', 'roles' => array('user')),
 				array('route' => 'document/update', 'roles' => array('admin')),
+				array('route' => 'document/get', 'roles' => array('user')),
 				
 				array('route' => 'event', 'roles' => array('user')),
 				array('route' => 'event/v1', 'roles' => array('guest')),
@@ -2065,6 +2087,8 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 		),
 	),
 
+	'ppitDocument' => [],
+	
 	'perimeters' => array(
 		'p-pit-admin' => array(),
 	),

@@ -79,7 +79,7 @@
 
 <div class="container-fluid">
   <div class="my-4" id="main_menu">
-    <ul class="nav nav-pills nav-justified">
+    <ul class="nav nav-pills nav-justified flex-column flex-sm-row">
 <?php foreach ($context->getConfig('menus/' . $app)['entries'] as $entryId => $entryDef) : ?>
   <?php if ($context->isAllowed($entryDef['route'])) : ?>
     <?php if (isset($tab) && array_key_exists('entryId', $entryDef['params']) && $tab == $entryDef['params']['entryId']) $active = true; else $active = false ?>

@@ -13,12 +13,14 @@ class Document
     public $status;
     public $type;
     public $place_id;
+    public $folder;
     public $identifier;
     public $parent_id;
     public $name;
     public $acl;
     public $mime;
     public $content;
+    public $binary_content;
     public $audit;
     public $update_time;
     
@@ -62,12 +64,14 @@ class Document
         $this->status = (isset($data['status'])) ? $data['status'] : null;
         $this->type = (isset($data['type'])) ? $data['type'] : null;
         $this->place_id = (isset($data['place_id'])) ? $data['place_id'] : null;
+        $this->folder = (isset($data['folder'])) ? $data['folder'] : null;
         $this->identifier = (isset($data['identifier'])) ? $data['identifier'] : null;
         $this->parent_id = (isset($data['parent_id'])) ? $data['parent_id'] : null;
         $this->name = (isset($data['name'])) ? $data['name'] : null;
         $this->acl = (isset($data['acl'])) ? json_decode($data['acl'],true) : null;
         $this->mime = (isset($data['mime'])) ? $data['mime'] : null;
         $this->content = (isset($data['content'])) ? json_decode($data['content'], true) : array();
+        $this->binary_content = (isset($data['binary_content'])) ? $data['binary_content'] : null;
         $this->audit = (isset($data['audit'])) ? json_decode($data['audit'],true) : null;
         $this->update_time = (isset($data['update_time'])) ? $data['update_time'] : null;
 
@@ -99,12 +103,14 @@ class Document
     	$data['status'] = $this->status;
     	$data['type'] = $this->type;
     	$data['place_id'] = (int) $this->place_id;
-    	$data['identifier'] = (int) $this->identifier;
+    	$data['folder'] = $this->folder;
+    	$data['identifier'] = $this->identifier;
     	$data['parent_id'] = (int) $this->parent_id;
     	$data['name'] = $this->name;
     	$data['acl'] = $this->acl;
     	$data['mime'] = $this->mime;
     	$data['content'] = $this->content;
+    	$data['binary_content'] = $this->binary_content;
     	$data['audit'] = $this->audit;
 
     	// Deprecated
@@ -185,51 +191,46 @@ class Document
     	return $this->authorization;
     }
 
-    public static function getList($parent, $params, $major = 'update_time', $dir = 'desc')
+    public static function getList($type, $params, $order = '+name')
     {
-		$select = Document::getTable()->getSelect()
-			->order(array($major.' '.$dir, 'name', 'update_time DESC'));
+    	
+    	$order = explode(',', $order);
+    	foreach ($order as &$criterion) $criterion = substr($criterion, 1).' '.((substr($criterion, 0, 1) == '-') ? 'DESC' : 'ASC');
+
+    	$select = Document::getTable()->getSelect()
+			->order($order);
 
 		$where = new Where;
 		$where->notEqualTo('core_document.status', 'deleted');
 		
-		// Todo list vs search modes
-		if ($parent) {
-			$where->equalTo('core_document.parent_id', $parent->id);
-		}
-		else {
-		
-			// Set the filters
-			foreach ($params as $propertyId => $property) {
-				if (substr($propertyId, 0, 4) == 'min_') $where->greaterThanOrEqualTo('core_document.'.substr($propertyId, 4), $params[$propertyId]);
-				elseif (substr($propertyId, 0, 4) == 'max_') $where->lessThanOrEqualTo('core_document.'.substr($propertyId, 4), $params[$propertyId]);
-				else $where->like('core_document.'.$propertyId, '%'.$params[$propertyId].'%');
-			}
+		// Set the filters
+		foreach ($params as $propertyId => $property) {
+			$where->like('core_document.'.$propertyId, '%'.$property.'%');
 		}
 
 		$select->where($where);
 		$cursor = Document::getTable()->selectWith($select);
 		$documents = array();
 		foreach ($cursor as $document) {
-
+/*
 			$document->retrieveAuthorization();
 
     		// Set the inherited authorization where unspecified
     		if (!$parent) $documents[$document->id] = $document;
     		else {
 	    		if (!$document->authorization) $document->authorization = $parent->authorization;
-				if ($document->authorization) $documents[$document->id] = $document;
-    		}
+				if ($document->authorization)*/ $documents[$document->id] = $document;
+//    		}
 		}
 
 		return $documents;
     }
 
-    public static function get($id, $column = 'id', $root_id = 0)
+    public static function get($id, $column = 'id', $id2 = false, $column2 = false, $id3 = false, $column3 = false, $id4 = false, $column4 = false)
     {
     	$context = Context::getCurrent();
-		$document = Document::getTable()->get($id, $column);
-
+		$document = Document::getTable()->get($id, $column, $id2, $column2, $id3, $column3, $id4, $column4);
+/*
 	    // Recursively retrieve the parents
 	    $document->parents = array();
 	    $document->getParents($document, $document->parents, $root_id);
@@ -242,7 +243,7 @@ class Document
 	    		$document->authorization = $authorization;
 	    		break;
 	    	}
-	    }
+	    }*/
 
     	return $document;
     }
@@ -314,6 +315,11 @@ class Document
 			$place_id = $data['place_id'];
 			if ($this->place_id != $place_id) $auditRow['place_id'] = $this->place_id = $place_id;
 		}
+		if (array_key_exists('folder', $data)) {
+			$folder = trim(strip_tags($data['folder']));
+			if ($folder == '' || strlen($folder) > 255) return 'Integrity';
+			if ($this->folder != $folder) $auditRow['folder'] = $this->folder = $folder;
+		}
 		if (array_key_exists('identifier', $data)) {
 			$identifier = trim(strip_tags($data['identifier']));
 			if ($identifier == '' || strlen($identifier) > 255) return 'Integrity';
@@ -333,6 +339,16 @@ class Document
 			if ($mime == '' || strlen($mime) > 255) return 'Integrity';
 			if ($this->mime != $mime) $auditRow['mime'] = $this->mime = $mime;
 		}
+		
+		if (array_key_exists('binary_content', $data)) {
+			$filename = $data['binary_content']['tmp_name'];
+			if (!is_uploaded_file($filename)) return 'Integrity';
+			if ($data['binary_content']['size'] > 1024000) return 'Integrity';
+			$handle = fopen($filename, "r");
+			$this->binary_content = fread($handle, filesize($filename));
+			fclose($handle);
+		}
+
 		if (array_key_exists('acl', $data)) {
 			$acl = $data['acl'];
 			if ($this->acl != $acl) $auditRow['acl'] = $this->acl = $acl;

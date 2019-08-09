@@ -28,7 +28,7 @@ class BlogController extends AbstractActionController
 		}
 
 		// Retrieve the blog entries for this place
-		$documents = Document::getList(null, ['type' => 'blog', 'place_id' => $place->id]);
+		$documents = Document::getList('blog', ['place_id' => $place->id]);
 //print_r($documents);
 		if (!$documents) {
 			$content = [

@@ -1139,6 +1139,7 @@ class AccountController extends AbstractActionController
 	    					if ($photo) {
 								$account->contact_1->savePhoto($photo);
 								$account->contact_1->photo_link_id = null;
+								$account->contact_1->update(null);
 							}
 							if (!array_key_exists('status', $data) || $data['status']) { // Temporary : Bug 04/2019
 								$rc = $account->loadAndUpdate($data, $configProperties, $account->contact_1->update_time);
