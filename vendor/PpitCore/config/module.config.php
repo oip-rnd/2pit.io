@@ -7,6 +7,11 @@
  * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
  */
 
+namespace PpitCore;
+
+use Zend\Router\Http\Literal;
+use Zend\ServiceManager\Factory\InvokableFactory;
+
 include('config_vcard.php');
 
 return array_merge(
