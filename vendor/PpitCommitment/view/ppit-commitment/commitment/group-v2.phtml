@@ -8,85 +8,76 @@
  */
 -->
 
-<div class="modal-dialog modal-lg" role="document">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h5 class="modal-title"><?php echo $this->translate('Grouped actions', 'ppit-core', $context->getLocale()) ?></h5>
-      <div>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" title="<?php echo $this->translate('Cancel', 'ppit-core', $context->getLocale()) ?>">
-          <span aria-hidden="true">&times;</span>
-        </button>
+<div class="modal-body">
+  <div class="card mt-3">
+    <div class="card-body">
+      <div class="container">
+
+        <h5 class="card-title text-muted"><?php echo $this->translate('Selected commitments', 'ppit-commitment', $context->getLocale()) ?></h5>
+
+<?php $i = 0; foreach ($commitments as $commitment) : ?>
+        <input type="hidden"  id="group-commitment_<?php echo $i ?>" value="<?php echo $commitment->id ?>" />
+  
+        <div class="form-group">
+          <div class="col-sm-12">
+            <input class="form-control" disabled="disabled" value="<?php echo $commitment->account_name ?> - <?php echo $commitment->caption ?>" />
+          </div>
+        </div>
+<?php $i++; endforeach;?>
+
+			<input type="hidden" id="group-nb-commitment" value="<?php echo count($commitments) ?>" />
       </div>
-	</div>
-    <div class="modal-body">
-		<form id="group-form" class="form-horizontal">
+    </div>
+  </div>
 			
+  <div class="card my-4">
+    <div class="card-header">
+      <ul class="nav nav-tabs card-header-tabs">
+        <li class="nav-item"><a class="nav-link commitment_group_tab active" id="commitment_group_update_tab"><?php echo $this->translate('Duplicate', 'ppit-core', $context->getLocale()) ?></a></li>
+        <li class="nav-item"><a class="nav-link commitment_group_tab" id="commitment_group_send_message_tab"><?php echo $this->translate('Send the invoice by email', 'ppit-commitment', $context->getLocale()) ?></a></li>
+        <li class="nav-item"><a class="nav-link commitment_group_tab" id="commitment_group_download_invoices_tab"><?php echo $this->translate('Download the invoices', 'ppit-commitment', $context->getLocale()) ?></a></li>
+<?php if ($context->hasRole('accountant')) : ?>
+        <li class="nav-item"><a class="nav-link commitment_group_tab" id="commitment_group_register_sales_tab"><?php echo $this->translate('Register sales', 'ppit-accounting', $context->getLocale()) ?></a></li>
+<?php endif;?>
+      </ul>
+    </div>
+    <div class="card-body">
+      <div class="commitment_group_panel" id="commitment_group_update_panel">
+        <form id="group-form" class="form-horizontal">
+      
 <!-- Global message -->
 <?php if ($message == 'OK') : ?>
-			<div id="message">
-				<div class="alert alert-success"><h4><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h4></div>
-			</div>
+      <div id="message">
+        <div class="alert alert-success"><h4><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h4></div>
+      </div>
 <?php endif;?>
 
 <!-- Isolation error -->
-			<input type="hidden" id="update_time" name="update_time" value="<?php echo (isset($update_time)) ? $update_time : 0 ?>" />
+      <input type="hidden" id="update_time" name="update_time" value="<?php echo (isset($update_time)) ? $update_time : 0 ?>" />
 <?php if ($error == 'Isolation') : ?>
-			<div class="alert alert-danger" style="text-align: center">
-				<strong><?php echo $this->translate('The database has evolved in the meantime, please input again', 'ppit-core', $context->getLocale()) ?></strong>
-			</div>
+      <div class="alert alert-danger" style="text-align: center">
+        <strong><?php echo $this->translate('The database has evolved in the meantime, please input again', 'ppit-core', $context->getLocale()) ?></strong>
+      </div>
 <?php endif;?>
 
 <!-- Consistency error -->
-			<input type="hidden" id="update_time" name="update_time" value="<?php echo (isset($update_time)) ? $update_time : 0 ?>" />
+      <input type="hidden" id="update_time" name="update_time" value="<?php echo (isset($update_time)) ? $update_time : 0 ?>" />
 <?php if ($error == 'Consistency') : ?>
-			<div class="alert alert-danger" style="text-align: center">
-				<strong><?php echo $this->translate('The data are not consistent', 'ppit-core', $context->getLocale()) ?></strong>
-			</div>
+      <div class="alert alert-danger" style="text-align: center">
+        <strong><?php echo $this->translate('The data are not consistent', 'ppit-core', $context->getLocale()) ?></strong>
+      </div>
 <?php endif;?>
 
 <!--  CSRF -->
 <?php $element = $csrfForm->get('csrf') ?>
-		    <div class="form-group">
-				<?php echo $this->formElement($element) ?>
+        <div class="form-group">
+        <?php echo $this->formElement($element) ?>
 <?php if ($this->formElementErrors($element)) : ?>
-				<div class="alert alert-danger" style="text-align: center">
-					<strong><?php echo $this->translate('The form has expired, please input again', 'ppit-core', $context->getLocale()) ?></strong>
-				</div>
+        <div class="alert alert-danger" style="text-align: center">
+          <strong><?php echo $this->translate('The form has expired, please input again', 'ppit-core', $context->getLocale()) ?></strong>
+        </div>
 <?php endif;?>
-			</div>
-
-			<hr>
-			<div class="form-group">
-				<label class="col-sm-5 control-label"><?php echo $this->translate('Selected commitments', 'ppit-commitment', $context->getLocale()) ?></label>
-				<div class="col-sm-7">&nbsp;</div>
-			</div>
-
-			<input type="hidden" id="group-nb-commitment" value="<?php echo count($commitments) ?>" />
-			
-<div class="card">
-  <div class="card-header">
-			<ul class="nav nav-tabs card-header-tabs">
-			  <li class="nav-item"><a class="nav-link commitment_group_tab active" id="commitment_group_update_tab"><?php echo $this->translate('Duplicate', 'ppit-core', $context->getLocale()) ?></a></li>
-			  <li class="nav-item"><a class="nav-link commitment_group_tab" id="commitment_group_send_message_tab"><?php echo $this->translate('Send the invoice by email', 'ppit-commitment', $context->getLocale()) ?></a></li>
-              <li class="nav-item"><a class="nav-link commitment_group_tab" id="commitment_group_download_invoices_tab"><?php echo $this->translate('Download the invoices', 'ppit-commitment', $context->getLocale()) ?></a></li>
-<?php if ($context->hasRole('accountant')) : ?>
-              <li class="nav-item"><a class="nav-link commitment_group_tab" id="commitment_group_register_sales_tab"><?php echo $this->translate('Register sales', 'ppit-accounting', $context->getLocale()) ?></a></li>
-<?php endif;?>
-			</ul>
-  </div>
-  <div class="card-body">
-
-			<div class="commitment_group_panel" id="commitment_group_update_panel">
-
-<?php $i = 0; foreach ($commitments as $commitment) : ?>
-				<input type="hidden"  id="group-commitment_<?php echo $i ?>" value="<?php echo $commitment->id ?>" />
-	
-				<div class="form-group">
-					<div class="col-sm-12">
-						<input class="form-control" disabled="disabled" value="<?php echo $commitment->account_name ?> - <?php echo $commitment->caption ?>" />
-					</div>
-				</div>
-<?php $i++; endforeach;?>
+      </div>
 
 				<div>&nbsp;</div>
 <?php 
@@ -155,16 +146,15 @@ if ($message == 'OK') $isDisabled = true; else $isDisabled = false;
 						<input name="submit" type="submit" id="submit-button" class="btn btn-warning" value="<?php echo $this->translate('Duplicate', 'ppit-core', $context->getLocale()) ?>">
 					</div>
 				</div>
-			</div>
+        </form>
+      </div>
 			
-			<div class="commitment_group_panel" id="commitment_group_send_message_panel"></div>
+      <div class="commitment_group_panel" id="commitment_group_send_message_panel"></div>
+
 <?php if ($context->hasRole('accountant')) : ?>
-            <div class="commitment_group_panel" id="commitment_group_register_sales_panel"></div>
+      <div class="commitment_group_panel" id="commitment_group_register_sales_panel"></div>
 <?php endif;?>
-      </div>
-      </div>
-      </form>
+
+    </div>
   </div>
 </div>
-</div>
-	

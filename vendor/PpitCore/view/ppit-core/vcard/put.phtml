@@ -1,0 +1,38 @@
+<!-- CSRF -->
+<?php $element = $csrfForm->get('csrf') ?>
+  <div class="form-group">
+    <?php echo $this->formElement($element) ?>
+<?php if ($this->formElementErrors($element)) : ?>
+    <h5 class="alert alert-danger my-3 text-center"><?php echo $this->translate('The form has expired, please input again', 'ppit-core', $context->getLocale()) ?></h5>
+<?php endif;?>
+  </div>
+
+<?php if ($put && $statusCode == '200') : ?>
+
+<!-- Put status OK -->
+<div id="message">
+  <h5 class="alert alert-success my-3 text-center"><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h5>
+</div>
+
+<?php endif;?>
+
+<?php if ($put && $statusCode == '400') : ?>
+
+<!-- Put status 400 -->
+
+  <?php if ($reasonCode == 'Duplicate') : ?>
+<!-- Duplicate error -->
+<div class="alert alert-danger my-3 text-center"><?php echo $this->translate('This record already exist', 'ppit-core', $context->getLocale()) ?></div>
+  <?php endif;?>
+
+  <?php if ($reasonCode == 'Isolation') : ?>
+<!-- Isolation error -->
+<div class="alert alert-danger my-3 text-center"><?php echo $this->translate('The database has evolved in the meantime, please input again', 'ppit-core', $context->getLocale()) ?></div>
+  <?php endif;?>
+
+  <?php if ($reasonCode == 'Consistency') : ?>
+<!-- Consistency error -->
+<div class="alert alert-danger my-3 text-center"><?php echo $this->translate('The data are not consistent', 'ppit-core', $context->getLocale()) ?></div>
+  <?php endif;?>
+
+<?php endif;?>

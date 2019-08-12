@@ -1,0 +1,136 @@
+<!-- 
+/**
+ * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
+ *
+ * @link      https://github.com/p-pit/PpitCore
+ * @copyright Copyright (c) 2016 Bruno Lartillot
+ * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
+ */
+-->
+
+<script>
+
+function checkFormValidity(prefix)
+{
+  let validity = true;
+
+  // Check mandatory properties
+  $('.' + prefix + 'update-mandatory').each(function () {
+    let propertyId = $(this).attr('id').split('_')[1];
+    let val = $('#' + propertyId).val();
+    if (!val) {
+      $('#' + propertyId + '_error').html('<?php echo $this->translate('Please input a value', 'ppit-core', $context->getLocale()) ?>');
+      validity = false;
+    }
+  });
+
+  
+  $('.' + prefix + 'update-maxlength').each(function () {
+    let propertyId = $(this).attr('id').split('_')[1];
+    let val = $('#' + propertyId).val();
+    let maxlength = $('#' + propertyId).attr('maxlength');
+    if (val.length > maxlength) {
+      $('#' + propertyId + '_error').html('<?php echo $this->translate('The input is too long', 'ppit-core', $context->getLocale()) ?>');
+      validity = false;
+    }
+  });
+
+  // Check numbers
+  $('.' + prefix + 'update-number').each(function () {
+    let propertyId = $(this).attr('id').split('_')[1];
+    let val = $('#' + propertyId).val(), min = $('#' + propertyId).attr('min'), max = $('#' + propertyId).attr('max');
+
+    if (val) {
+      let error = checkNumber(val, min, max);
+      if (error) {
+        $('#' + propertyId + '_error').html(error);
+        validity = false;
+      }
+    }
+  });
+
+  // Check dates
+  $('.' + prefix + 'update-date').each(function () {
+    let propertyId = $(this).attr('id').split('_')[1];
+    let val = $('#' + propertyId).val();
+
+    if (val) {
+      let error = checkDate(val);
+      if (error) {
+        $('#' + propertyId + '_error').html(error);
+        validity = false;
+      }
+    }
+  });
+
+  // Check email
+  $('.' + prefix + 'update-email').each(function () {
+    let propertyId = $(this).attr('id').split('_')[1];
+    let val = $('#' + propertyId).val();
+
+    if (val) {
+      let error = checkEmail(val);
+      if (error) {
+        $('#' + propertyId + '_error').html(error);
+        validity = false;
+      }
+      else {
+        $(propertyId).val(val);
+      }
+    }
+  });
+
+  // Check phone
+  $('.' + prefix + 'update-phone').each(function () {
+    let propertyId = $(this).attr('id').split('_')[1];
+    let val = $('#' + propertyId).val();
+
+    if (val) {
+      let error = checkPhone(val);
+      if (error) {
+        $('#' + propertyId + '_error').html(error);
+        validity = false;
+      }
+      else {
+        $(propertyId).val(val);
+      }
+    }
+  });
+
+  return validity;
+}
+
+function getFormData(prefix)
+{
+  // Create a new FormData object.
+  var formData = new FormData();
+
+  $('.' + prefix + 'update-input').each(function () {
+    let propertyId = $(this).attr('id').split('_')[1];
+    let val = $('#' + propertyId).val();
+    formData.append(propertyId, val);
+  });
+
+  $('.' + prefix + 'update-date').each(function () {
+    let propertyId = $(this).attr('id').split('_')[1];
+    let val = $('#' + propertyId).val();
+<?php $dateFormat = $context->dateFormat() ?>
+<?php if ($dateFormat[0] == 0 && $dateFormat[1] == 1 && $dateFormat[2] == 2) : ?>
+    val = val.substr(0, 4) + "-" + val.substr(5, 2) + "-" + val.substr(8, 2);
+<?php elseif ($dateFormat[0] == 1 && $dateFormat[1] == 2 && $dateFormat[2] == 0) : ?>
+    val = val.substr(6, 4) + "-" + val.substr(0, 2) + "-" + val.substr(3, 2);
+<?php else : ?>
+    val = val.substr(6, 4) + "-" + val.substr(3, 2) + "-" + val.substr(0, 2);
+<?php endif;?>
+    formData.append(propertyId, val);
+  });
+
+  $('.' + prefix + 'update-checkbox').each(function () {
+    let propertyId = $(this).attr('id').split('_')[1];
+    let val = $('#' + propertyId).attr('checked');
+    formData.append(propertyId, val);
+  });
+  
+}
+
+</script>

@@ -1,171 +1,23 @@
-<?php 
-$spa = true;
-$anchorStyle = ($spa) ? $context->getAnchorStyle() : 'classic';
-?>
+<!-- 
+/**
+ * 2pit V2.0
+ *
+ * @link      https://github.com/2pit-io/2pit.io/tree/master/vendor/PpitCore
+ * @license   https://github.com/2pit-io/2pit.io/blob/master/vendor/PpitCore/license.txt GNU-GPL license
+ */
+-->
 
-<!-- Display header on MPA mode -->
-<?php if (!$spa) : ?>
-	<?php 
-		$this->current = 'vcard';
-		echo $this->partial('/partials/menu'); 
-	?>
-<div class="row">
-    <div class="col-md-6 col-md-offset-3">
-<?php endif;?>
+<div class="container-fluid">
 
-		<div class="panel panel-default">
-            <div class="panel-heading">
-				<strong><?php echo $this->translate('Contacts', 'ppit-contact', $context->getLocale()).(($community) ? ' '.$community->name : '') ?></strong>
-				&nbsp;&nbsp;
-				<span class="glyphicon glyphicon-search"></span>
-				&nbsp;&nbsp;
-				<input type="search" id="search" autocomplete="off"/>
-			</div>
-           	<div class="panel-body">
-				<table class="table-condensed">
-					<tr>
-						<td>
-
-<!-- Go to communities -->
-							<?php echo $this->partial('/partials/anchor-widget.phtml', array(
-									'text' => $this->translate('Communities', 'ppit-contact', $context->getLocale()),
-									'id' => 'community-anchor',
-									'anchorStyle' => $anchorStyle,
-									'spa' => $spa,
-							)) ?>
-			    		</td>
-
-<!-- Go to messages -->
-			    		<td>
-							<?php echo $this->partial('/partials/anchor-widget.phtml', array(
-									'text' => $this->translate('Send a message', 'ppit-contact', $context->getLocale()),
-									'id' => 'message-anchor',
-									'anchorStyle' => $context->getAnchorStyle(),
-									'spa' => $spa,
-							)) ?>
-						</td>
-					</tr>
-				</table>
-
-				<table class="table table-striped">
-<!-- Column headers -->
-					<tr class="<?php echo $this->cycle(array("even", "odd"))->next();?>">
-						<td>&nbsp;</td>
-						<td>&nbsp;</td>
-						<td><strong>
-							<?php echo $this->partial('/partials/anchor-widget.phtml', array(
-									'text' => $this->translate('Name', 'ppit-contact', $context->getLocale()),
-									'id' => 'n_fn-anchor',
-									'anchorStyle' => $context->getAnchorStyle(),
-									'spa' => $spa,
-							)) ?>
-						</strong></td>
-						<td><strong><?php echo $this->translate('Email', 'ppit-contact', $context->getLocale());?></strong></td>
-						<td><strong><?php echo $this->translate('Phone', 'ppit-contact', $context->getLocale());?></strong></td>
-					</tr>
-					<tr>
-<!-- Add -->
-					<td colspan="6">
-						<?php echo $this->partial('/partials/anchor-widget.phtml', array(
-								'glyphicon' => 'glyphicon-plus',
-								'title' => $this->translate('Add', 'ppit-core', $context->getLocale()),
-								'id' => 'add-anchor',
-								'anchorStyle' => $context->getAnchorStyle(),
-								'spa' => $spa,
-						)) ?>
-					</td>
-					</tr>
-<!-- Rows -->
-<?php foreach ($vcards as $vcard) : ?>
-					<tr class="searchable">
-						<td>
-							<?php echo $this->partial('/partials/anchor-widget.phtml', array(
-									'glyphicon' => 'glyphicon-zoom-in',
-									'title' => $this->translate('Detail', 'ppit-core', $context->getLocale()),
-									'id' => 'zoom-anchor-'.$vcard->id,
-									'anchorStyle' => $context->getAnchorStyle(),
-									'spa' => $spa,
-							)) ?>
-						</td>
-						<td>
-							<span class="info">
-								<img height="40" src="<?php echo $this->url('vcard/photo', array('id' => $vcard->id)) ?>"/>
-								<span><img height="150" src="<?php echo $this->url('vcard/photo', array('id' => $vcard->id)) ?>"/></span>
-							</span>
-						</td>
-						<td><?php echo $vcard->n_fn ?></td>
-						<td><a href="mailto:<?php echo $vcard->email ?>"><?php echo $vcard->email ?></a></td>
-<?php $tel = ($vcard->tel_cell) ? $vcard->tel_cell : $vcard->tel_work ?>
-						<td><a href="tel:<?php echo $tel ?>"><?php echo $tel ?></a></td>
-					</tr>
-<?php endforeach; ?>
-				</table>
-			</div>
-		</div>
-
-<?php if (!$spa) : ?>
+	<!-- Main panel -->
+	<div class="row">
+		<div class="col-md-12" id="index_panel"></div>
 	</div>
+
 </div>
-<?php endif;?>
 
-<script id="vcard_script">
+<!-- Modal -->
 
-// Go to contacts
-<?php echo $this->partial('/partials/show-main-script', array(
-		'id' => 'community-anchor',
-		'route' => $this->url('community/index'),
-		'script' =>'community_index_script',
-		'hideForm' => true,
-		'spa' => $spa,
-)) ?>
-
-// Go to send a message
-<?php echo $this->partial('/partials/show-main-script', array(
-		'id' => 'message-anchor',
-		'route' => $this->url('message'),
-		'script' =>'message_script',
-		'hideForm' => true,
-		'spa' => $spa,
-)) ?>
-
-// Sort on name
-<?php echo $this->partial('/partials/show-main-script', array(
-		'id' => 'n_fn-anchor',
-		'route' => $this->url('vcard/index', array('instance_id' => $instance_id, 'community_id' => $community_id)).'?major=n_fn'.(($major == 'n_fn' && $dir =='ASC') ? '&dir=DESC' : ''),
-		'script' =>'vcard_script',
-		'hideForm' => true,
-		'spa' => $spa,
-)) ?>
-							
-// Add
-<?php echo $this->partial('/partials/show-form-script', array(
-		'id' => 'add-anchor',
-		'route' => $this->url('vcard/update', array('instance_id' => $instance_id, 'community_id' => $community_id)),
-		'script' =>'vcard_update_script',
-		'spa' => $spa,
-)) ?>
-
-// Zoom
-<?php foreach ($vcards as $vcard) : ?>
-	<?php echo $this->partial('/partials/show-form-script', array(
-			'id' => 'zoom-anchor-'.$vcard->id,
-			'route' => $this->url('vcard/update', array('instance_id' => $instance_id, 'community_id' => $community_id, 'id' => $vcard->id)),
-			'script' =>'vcard_update_script',
-			'spa' => $spa,
-	)) ?>
-<?php endforeach;?>
-
-// Override de la fonction "contains" pour permettre une recherche case-insensitive
-jQuery.expr[':'].contains = jQuery.expr.createPseudo(function(arg) {
-    return function( elem ) {
-        return jQuery(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
-    };
-});
-
-//Recherche basée sur le champs input "search"
-$("#search").bind("keyup", function(){
-	var strToSearch = $("#search").val();
-	$(".searchable").hide();
-	$(".searchable:contains('"+strToSearch+"')").show();
-});
-</script>
+<!-- Form opening tag -->
+<div class="modal fade" id="modalForm" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="modalFormLabel" aria-hidden="true">
+</div>

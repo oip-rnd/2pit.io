@@ -611,9 +611,9 @@ class CommitmentController extends AbstractActionController
     			try {
     				if (!$commitment->id) {
     					$rc = $commitment->add();
-/*    					$connection->commit();
+    					$connection->commit();
     					echo $commitment->id;
-    					return $this->response;*/
+    					return $this->response;
     				}
 	    			elseif ($action == 'delete') $rc = $commitment->delete($request->getPost(null /*'update_time'*/));
     				else $rc = $commitment->update(null/*$request->getPost('update_time')*/);
@@ -1113,14 +1113,12 @@ class CommitmentController extends AbstractActionController
     					$error = $rc;
     				}
     				if (!$error) {
-    					if (!$commitment->invoice_message_id) {
-    						$commitment->invoice_message_id = $commitmentMessage->id;
-		    				$rc = $commitment->update($request->getPost('update_time'));
-	    					if ($rc != 'OK') {
-		    					$connection->rollback();
-		    					$error = $rc;
-		    				}
-    					}
+    					if (!$commitment->invoice_message_id) $commitment->invoice_message_id = $commitmentMessage->id;
+		    			$rc = $commitment->update($request->getPost('update_time'));
+	    				if ($rc != 'OK') {
+		    				$connection->rollback();
+		    				$error = $rc;
+		    			}
     				}
     				if (!$error) {
 //    					if (array_key_exists('p-pit-finance', $context->getApplications())) $commitment->record('registration');
@@ -1140,6 +1138,123 @@ class CommitmentController extends AbstractActionController
     	return $this->response;
     }
 
+    public function invoiceV2Action()
+    {
+    	// Retrieve the context
+    	$context = Context::getCurrent();
+    
+    	// Retrieve the commitment
+    	$id = (int) $this->params()->fromRoute('id', 0);
+    	if (!$id) return $this->redirect()->toRoute('home');
+    	$commitment = Commitment::get($id);
+    
+    	// Retrieve the description
+    	$type = $commitment->type;
+    	$description = Commitment::getDescription($type);
+    	$updatePage = $description['update'];
+
+    	$accounts = Account::getList(null, ['status' => 'active,interested,converted,committed,undefined,retention,canceled'], '+name', null);
+
+    	// Instanciate the csrf form
+    	$csrfForm = new CsrfForm();
+    	$csrfForm->addCsrfElement('csrf');
+    	$error = null;
+    	$message = null;
+    	$request = $this->getRequest();
+    	if ($request->isPost()) {
+    		$csrfForm->setInputFilter((new Csrf('csrf'))->getInputFilter());
+    		$csrfForm->setData($request->getPost());
+    		 
+    		if ($csrfForm->isValid()) { // CSRF check
+
+    			// Retrieve the data from the request
+    			$data = array();
+    			if (!$commitment->id) $data['account_id'] = $account_id;
+    			if (!$id) $data['type'] = $type;
+    			foreach ($updatePage as $propertyId => $unused) {
+    				$property = $description['properties'][$propertyId];
+    				if ($property['type'] == 'file' && array_key_exists($propertyId, $request->getFiles()->toArray())) $files = $request->getFiles()->toArray()[$propertyId];
+    				else $data[$propertyId] = $request->getPost('commitment-'.$propertyId);
+    			}
+    			$data['status'] = 'invoiced';
+
+    			$rc = $commitment->loadData($data, $request->getFiles()->toArray());
+    			if ($rc != 'OK') throw new \Exception('View error');
+
+    			$year = CommitmentYear::getcurrent($commitment->place_id);
+    			if (!$year) $year = CommitmentYear::instanciate(date('Y'));
+    			$mask = $context->getConfig('commitment/invoice_identifier_mask');
+    			$arguments = array();
+    			foreach ($mask['params'] as $param) {
+    				if ($param == 'year') $arguments[] = substr($commitment->invoice_date, 0, 4);
+    				elseif ($param == 'month') $arguments[] = substr($commitment->invoice_date, 5, 2);
+    				elseif ($param == 'counter') $arguments[] = $year->next_value;
+    			}
+    			if ($commitment->invoice_message_id) {
+    				$commitmentMessage = CommitmentMessage::get($commitment->invoice_message_id);
+    			}
+    			else {
+    				$commitment->invoice_identifier = vsprintf($context->localize($mask['format']), $arguments);
+    				$commitmentMessage = CommitmentMessage::instanciate('invoice');
+    				$commitmentMessage->status = 'new';
+    				$commitmentMessage->authentication_token = md5(uniqid(rand(), true));
+    				$commitmentMessage->account_id = $commitment->account_id;
+    				$commitmentMessage->identifier = $context->getInstance()->fqdn.'_'.$commitment->invoice_identifier;
+    				$commitmentMessage->direction = 'O';
+    				$commitmentMessage->format = 'application/json';
+    			}
+    			$invoice = $this->generateInvoice($type, $commitment->account, $commitment);
+    
+    			// Atomically save
+    			$connection = Commitment::getTable()->getAdapter()->getDriver()->getConnection();
+    			$connection->beginTransaction();
+    			try {
+    				if (!$commitment->invoice_message_id) $year->increment();
+    				$commitmentMessage->content = json_encode($invoice, JSON_PRETTY_PRINT);
+    				if (!$commitmentMessage->id) $rc = $commitmentMessage->add();
+    				else $rc = $commitmentMessage->update(null);
+    
+    				if ($rc != 'OK') {
+    					$connection->rollback();
+    					$error = $rc;
+    				}
+    				if (!$error) {
+    					if (!$commitment->invoice_message_id) $commitment->invoice_message_id = $commitmentMessage->id;
+    					$rc = $commitment->update($request->getPost('update_time'));
+    					if ($rc != 'OK') {
+    						$connection->rollback();
+    						$error = $rc;
+    					}
+    				}
+    				if (!$error) {
+    					$connection->commit();
+    					$message = 'OK';
+    				}
+    			}
+    			catch (\Exception $e) {
+    				$connection->rollback();
+    				throw $e;
+    			}
+    		}
+    	}
+    
+    	$view = new ViewModel(array(
+    		'context' => $context,
+    		'configProperties' => $description['properties'],
+    		'config' => $context->getconfig(),
+    		'type' => $type,
+    		'id' => $id,
+    		'commitment' => $commitment,
+    		'accounts' => $accounts,
+    		'csrfForm' => $csrfForm,
+    		'error' => $error,
+    		'message' => $message,
+    		'updatePage' => $updatePage,
+    	));
+    	$view->setTerminal(true);
+    	return $view;
+    }
+    
     public function xmlUblInvoiceAction()
     {
     	// Retrieve the context

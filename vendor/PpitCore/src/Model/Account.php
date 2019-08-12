@@ -352,14 +352,14 @@ class Account
 		$context = Context::getCurrent();
 	
 		// Retrieve the group-updatable properties defined in the current instance config for the given account type
-		$configUpdate = $context->getConfig('core_account/groupUpdate/'.$type);
+		$configGroupUpdate = $context->getConfig('core_account/groupUpdate/'.$type);
 	
 		// If no update description is found for the given type retrieve the group-updatable properties for the generic type
-		if (!$configUpdate) $configUpdate = $context->getConfig('core_account/groupUpdate/generic');
+		if (!$configGroupUpdate) $configGroupUpdate = $context->getConfig('core_account/groupUpdate/generic');
 	
 		// Construct the resulting dictionary for each group-updatable property
 		$properties = array();
-		foreach ($configUpdate as $propertyId => $options) {
+		foreach ($configGroupUpdate as $propertyId => $options) {
 			if (array_key_exists($propertyId, $configProperties)) {
 	
 				// Retrieve the property description from the whole properties dictionary and merge it with the group-update options for this property
@@ -423,7 +423,7 @@ class Account
 		$description['list'] = Account::getConfigList($type, $description['properties']);
 		$description['update'] = Account::getConfigUpdate($type, $description['properties']);
 		$description['groupUpdate'] = Account::getConfigGroupUpdate($type, $description['properties']);
-		$description['export'] = Account::getConfigEXport($type, $description['properties']);
+		$description['export'] = Account::getConfigExport($type, $description['properties']);
 	
 		// Return the whole description
 		return $description;
@@ -485,13 +485,13 @@ class Account
 			elseif ($property['type'] == 'table') $where->equalTo($entity . '.' . $column, $value);
 			elseif ($property['type'] == 'multiselect') $where->like($entity . '.' . $column, '%' . $value . '%');
 			elseif (in_array($property['type'], ['date', 'datetime']) && !$value) $where->isNull($entity . '.' . $propertyId);
-			elseif ($value == 'eq') $where->equalTo($entity . '.' . $column, $value);
-			elseif ($value == 'ne') $where->notEqualTo($entity . '.' . $column, $value);
+			elseif ($operator == 'eq') $where->equalTo($entity . '.' . $column, $value);
+			elseif ($operator == 'ne') $where->notEqualTo($entity . '.' . $column, $value);
 			elseif ($operator == 'gt') $where->greaterThan($entity . '.' . $propertyId, $value);
 			elseif ($operator == 'ge') $where->greaterThanOrEqualTo($entity . '.' . $propertyId, $value);
 			elseif ($operator == 'lt') $where->lessThan($entity . '.' . $propertyId, $value);
 			elseif ($operator == 'le') $where->lessThanOrEqualTo($entity . '.' . $propertyId, $value);
-			elseif ($operator = 'in') {
+			elseif ($operator == 'in') {
 				$values = array_slice($predicate, 1);
 				$where->in($entity . '.' . $column, $values);
 			}
@@ -507,16 +507,20 @@ class Account
 		// Filter on authorized perimeter
 		if (array_key_exists('p-pit-admin', $context->getPerimeters())) {
 			foreach ($context->getPerimeters()['p-pit-admin'] as $propertyId => $values) {
-				$entity = Account::$model['properties'][$propertyId]['entity'];
-				$column = Account::$model['properties'][$propertyId]['column'];
-				$where->in($entity . '.' . $column, $values);
+				if (array_key_exists($propertyId, Account::$model['properties'])) {
+					$entity = Account::$model['properties'][$propertyId]['entity'];
+					$column = Account::$model['properties'][$propertyId]['column'];
+					$where->in($entity . '.' . $column, $values);
+				}
 			}
 		}
 		if (array_key_exists($type, $context->getPerimeters())) {
 			foreach ($context->getPerimeters()[$type] as $propertyId => $values) {
-				$entity = Account::$model['properties'][$propertyId]['entity'];
-				$column = Account::$model['properties'][$propertyId]['column'];
-				$where->in($entity . '.' . $column, $values);
+				if (array_key_exists($propertyId, Account::$model['properties'])) {
+					$entity = Account::$model['properties'][$propertyId]['entity'];
+					$column = Account::$model['properties'][$propertyId]['column'];
+					$where->in($entity . '.' . $column, $values);
+				}
 			}
 		}
 	

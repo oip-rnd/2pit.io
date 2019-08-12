@@ -272,6 +272,18 @@ return array_merge(
         								),
         						),
         				),
+        				'invoiceV2' => array(
+        						'type' => 'segment',
+        						'options' => array(
+        								'route' => '/invoice-v2[/:id]',
+        								'constraints' => array(
+        										'id'     => '[0-9]*',
+        								),
+        								'defaults' => array(
+        										'action' => 'invoiceV2',
+        								),
+        						),
+        				),
         				'xmlUblInvoice' => array(
         						'type' => 'segment',
         						'options' => array(
@@ -1124,6 +1136,7 @@ return array_merge(
             	array('route' => 'commitment/post', 'roles' => array('admin')),
             	array('route' => 'commitment/try', 'roles' => array('guest')),
             	array('route' => 'commitment/invoice', 'roles' => array('sales_manager', 'accountant')),
+            	array('route' => 'commitment/invoiceV2', 'roles' => array('sales_manager', 'accountant')),
             	array('route' => 'commitment/cancelInvoice', 'roles' => array('sales_manager', 'accountant')),
             	array('route' => 'commitment/xmlUblInvoice', 'roles' => array('sales_manager', 'accountant')),
 //            	array('route' => 'commitment/settle', 'roles' => array('sales_manager', 'accountant')),
@@ -2804,7 +2817,7 @@ table.note-report td {
 
 	'commitment/update/generic' => array(
 		'year' => array('mandatory' => true),
-		'invoice_date' => array('mandatory' => true),
+		'invoice_date' => array('mandatory' => false),
 		'account_id' => array('mandatory' => true),
 		'caption' => array('mandatory' => true),
 		'description' => array('mandatory' => false),
@@ -3142,7 +3155,7 @@ table.note-report td {
 		
 	'commitment/update/service' => array(
 		'year' => array('mandatory' => true),
-		'invoice_date' => array('mandatory' => true),
+		'invoice_date' => array('mandatory' => false),
 		'account_id' => array('mandatory' => true),
 		'caption' => array('mandatory' => true),
 		'description' => array('mandatory' => false),

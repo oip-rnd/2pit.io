@@ -22,6 +22,7 @@ $.widget.bridge('uitooltip', $.ui.tooltip);
 
 <!-- Load the common form javascript functions -->
 <?php echo $this->partial('/partials/common-form-js.phtml'); ?>
+<?php echo $this->partial('/ppit-core/view-controller/common-scripts.phtml'); ?>
 
 <script>
 <?php foreach ($context->getConfig('menus/' . $app)['entries'] as $entryId => $entryDef) : ?>

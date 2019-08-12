@@ -150,12 +150,12 @@
   ?>
 
 <div class="form-group row" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_' : '').'commitment-' . $propertyId ?>_group">
-  <label class="col-sm-5 col-form-label"><?php if ($mandatory) echo '* ' ?><?php echo $context->localize($property['labels']) ?></label>
+  <label class="col-sm-5 col-form-label col-form-label-sm"><?php if ($mandatory) echo '* ' ?><?php echo $context->localize($property['labels']) ?></label>
   <div class="col-sm-7">
 
   <?php if ($propertyId == 'account_id') : ?>
 
-    <select class="form-control" id="commitment-<?php echo $propertyId ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
+    <select class="form-control form-control-sm" id="commitment-<?php echo $propertyId ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
       <option />
 	
     <?php foreach ($accounts as $account) : ?>
@@ -166,17 +166,17 @@
 
   <?php elseif ($property['type'] == 'date') : ?>
     <input type="hidden" id="commitment-<?php echo $propertyId ?>" />
-    <input class="form-control update_date" id="input_commitment-<?php echo $propertyId ?>" value="<?php echo $context->decodeDate($commitment->properties[$propertyId]) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+    <input class="form-control form-control-sm update_date" id="input_commitment-<?php echo $propertyId ?>" value="<?php echo $context->decodeDate($commitment->properties[$propertyId]) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
 
   <?php elseif ($property['type'] == 'number') : ?>
     <input type="hidden" id="commitment-<?php echo $propertyId ?>" />
-    <input class="form-control" id="input_commitment-<?php echo $propertyId ?>" value="<?php echo $context->formatFloat($commitment->properties[$propertyId], 2) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+    <input class="form-control form-control-sm" id="input_commitment-<?php echo $propertyId ?>" value="<?php echo $context->formatFloat($commitment->properties[$propertyId], 2) ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
 
   <?php elseif ($property['type'] == 'textarea') : ?>
-    <textarea class="form-control" id="commitment-<?php echo $propertyId ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>><?php echo $commitment->properties[$propertyId] ?></textarea>
+    <textarea class="form-control form-control-sm" id="commitment-<?php echo $propertyId ?>" rows="5" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>><?php echo $commitment->properties[$propertyId] ?></textarea>
 
   <?php elseif ($property['type'] == 'select') : ?>
-    <select class="form-control" id="commitment-<?php echo $propertyId ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
+    <select class="form-control form-control-sm" id="commitment-<?php echo $propertyId ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
       <option />
 
     <?php foreach ($property['modalities'] as $key => $labels) : ?>
@@ -186,7 +186,7 @@
     </select>
 	
   <?php else : ?>
-    <input class="form-control" id="commitment-<?php echo $propertyId ?>" value="<?php echo $commitment->properties[$propertyId] ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+    <input class="form-control form-control-sm" id="commitment-<?php echo $propertyId ?>" value="<?php echo $commitment->properties[$propertyId] ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
 
   <?php endif;?>
 

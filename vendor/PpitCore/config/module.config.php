@@ -6,13 +6,11 @@
  * @copyright Copyright (c) 2016 Bruno Lartillot
  * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
  */
-namespace PpitCore;
 
-use Zend\Router\Http\Literal;
-use Zend\ServiceManager\Factory\InvokableFactory;
+include('config_vcard.php');
 
-return array(
-
+return array_merge(
+[
 	'controllers' => array(
 		'factories' => array(
 			Controller\AccountController::class => InvokableFactory::class,
@@ -1574,6 +1572,51 @@ return array(
 				),
 				'may_terminate' => true,
 				'child_routes' => array(
+					'get' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/get[/:id]',
+							'defaults' => array(
+								'action' => 'get',
+							),
+						),
+					),
+					'put' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/put[/:id]',
+							'defaults' => array(
+								'action' => 'put',
+							),
+						),
+					),
+					'post' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/post[/:id]',
+							'defaults' => array(
+								'action' => 'post',
+							),
+						),
+					),
+					'delete' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/delete[/:id]',
+							'defaults' => array(
+								'action' => 'delete',
+							),
+						),
+					),
+					'v1' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/v1[/:id]',
+							'defaults' => array(
+								'action' => 'v1',
+							),
+						),
+					),
 					'photo' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -1593,15 +1636,6 @@ return array(
 							'route' => '/demo-mode',
 							'defaults' => array(
 								'action' => 'demoMode',
-							),
-						),
-					),
-					'v1' => array(
-						'type' => 'segment',
-						'options' => array(
-							'route' => '/v1[/:id]',
-							'defaults' => array(
-								'action' => 'v1',
 							),
 						),
 					),
@@ -1815,10 +1849,14 @@ return array(
 				array('route' => 'user/fbwebhook', 'roles' => array('guest')),
 				array('route' => 'user/fbpageaccess', 'roles' => array('guest')),
 				
+				array('route' => 'vcard/get', 'roles' => array('user')),
+				array('route' => 'vcard/put', 'roles' => array('user')),
+				array('route' => 'vcard/post', 'roles' => array('user')),
+				array('route' => 'vcard/delete', 'roles' => array('user')),
+				array('route' => 'vcard/v1', 'roles' => array('guest')),
 				array('route' => 'vcard/photo', 'roles' => array('user')),
 				array('route' => 'vcard/demoMode', 'roles' => array('user')),
 				array('route' => 'vcard/dataRecovery', 'roles' => array('admin')),
-				array('route' => 'vcard/v1', 'roles' => array('guest')),
 			)
 		)
 	),
@@ -2278,147 +2316,7 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 	),
 
 	'accepted_tags_in_database' => '<h1><h2><h3><h4><h5><p><a><img><br><hr><span><div><em><strong>',
-
-	// Vcard: Deprecated => To be removed from updateContact
-
-	'vcard/properties' => array(
-		'n_title' => array(
-			'definition' => 'inline',
-			'type' => 'input',
-			'maxSize' => 255,
-			'labels' => array(
-				'en_US' => 'Title',
-				'fr_FR' => 'Civilité',
-			),
-		),
-		'n_first' => array(
-			'definition' => 'inline',
-			'type' => 'input',
-			'maxSize' => 255,
-			'labels' => array(
-				'en_US' => 'First name',
-				'fr_FR' => 'Prénom',
-			),
-		),
-		'n_last' => array(
-			'definition' => 'inline',
-			'type' => 'input',
-			'maxSize' => 255,
-			'labels' => array(
-				'en_US' => 'Last name',
-				'fr_FR' => 'Nom',
-			),
-		),
-		'n_fn' => array(
-			'definition' => 'inline',
-			'type' => 'input',
-			'maxSize' => 255,
-			'labels' => array(
-				'en_US' => 'Name',
-				'fr_FR' => 'Nom',
-			),
-		),
-		'tel_work' => array(
-			'definition' => 'inline',
-			'type' => 'phone',
-			'labels' => array(
-				'en_US' => 'Phone',
-				'fr_FR' => 'Téléphone',
-			),
-		),
-		'tel_cell' => array(
-			'definition' => 'inline',
-			'type' => 'phone',
-			'labels' => array(
-				'en_US' => 'Cellular',
-				'fr_FR' => 'Mobile',
-			),
-		),
-		'email' => array(
-			'definition' => 'inline',
-			'type' => 'email',
-			'labels' => array(
-				'en_US' => 'Email',
-				'fr_FR' => 'Email',
-			),
-		),
-		'adr_street' => array(
-			'definition' => 'inline',
-			'type' => 'input',
-			'maxSize' => 255,
-			'labels' => array(
-				'en_US' => 'Address - street',
-				'fr_FR' => 'Adresse - rue',
-			),
-		),
-		'adr_extended' => array(
-			'definition' => 'inline',
-			'type' => 'input',
-			'maxSize' => 255,
-			'labels' => array(
-				'en_US' => 'Address - extended',
-				'fr_FR' => 'Adresse - complément',
-			),
-		),
-		'adr_post_office_box' => array(
-			'definition' => 'inline',
-			'type' => 'input',
-			'maxSize' => 255,
-			'labels' => array(
-				'en_US' => 'Address - post office box',
-				'fr_FR' => 'Adresse - boîte postale',
-			),
-		),
-		'adr_zip' => array(
-			'definition' => 'inline',
-			'type' => 'input',
-			'maxSize' => 255,
-			'labels' => array(
-				'en_US' => 'Address - ZIP',
-				'fr_FR' => 'Adresse - Code postal',
-			),
-		),
-		'adr_city' => array(
-			'definition' => 'inline',
-			'type' => 'input',
-			'maxSize' => 255,
-			'labels' => array(
-				'en_US' => 'Address - city',
-				'fr_FR' => 'Adresse - ville',
-			),
-		),
-		'adr_state' => array(
-			'definition' => 'inline',
-			'type' => 'input',
-			'maxSize' => 255,
-			'labels' => array(
-				'en_US' => 'Address - state',
-				'fr_FR' => 'Adresse - état',
-			),
-		),
-		'adr_country' => array(
-			'definition' => 'inline',
-			'type' => 'input',
-			'maxSize' => 255,
-			'labels' => array(
-				'en_US' => 'Address - country',
-				'fr_FR' => 'Adresse - pays',
-			),
-		),
-		'locale' => array(
-			'definition' => 'inline',
-			'type' => 'select',
-			'modalities' => array(
-				'en_US' => array('en_US' => 'en_US', 'fr_FR' => 'en_US'),
-				'fr_FR' => array('en_US' => 'fr_FR', 'fr_FR' => 'fr_FR'),
-			),
-			'labels' => array(
-				'en_US' => 'Locale',
-				'fr_FR' => 'Traduction',
-			),
-		),
-	),
-
+	
 	// Profile
 	
 	'profile/generic/property/status' => array(
@@ -6623,4 +6521,7 @@ A bientôt sur la plateforme !
 					',
 			),
 	),
+],
+
+	CONFIG_VCARD
 );

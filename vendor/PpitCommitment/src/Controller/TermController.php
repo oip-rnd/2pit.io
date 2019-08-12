@@ -350,6 +350,7 @@ class TermController extends AbstractActionController
     		'unit_price' => $unit_price,
     		'amountToDivide' => $amountToDivide,
     		'term' => $term,
+    		'commitment' => $commitment,
     		'termProperties' => $termProperties,
     		'termGenerateConfig' => $termGenerateConfig,
     		'csrfForm' => $csrfForm,

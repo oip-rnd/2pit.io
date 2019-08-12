@@ -1,10 +1,9 @@
 <?php
 /**
- * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
+ * 2pit V2.0
  *
- * @link      https://github.com/p-pit/PpitCore
- * @copyright Copyright (c) 2016 Bruno Lartillot
- * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
+ * @link      https://github.com/2pit-io/2pit.io/tree/master/vendor/PpitCore
+ * @license   https://github.com/2pit-io/2pit.io/blob/master/vendor/PpitCore/license.txt GNU-GPL license
  */
 
 namespace PpitCore\Model;
@@ -25,8 +24,65 @@ use Zend\InputFilter\InputFilterInterface;
  */
 class Vcard
 {
-	public static function getConfig() { // Deprecated => To be removed from updateContact
+	/**
+	 * This section is the business logic part of vcards. It is functional oriented and has unit-testing associated
+	 */
+	
+	public static $model = [
+		'entities' => [
+			'core_vcard' => 	['table' => 'core_vcard'],
+		],
+		'properties' => [
+			'status' => 				['entity' => 'core_vcard', 'column' => 'status'],
+			'applications' => 			['entity' => 'core_vcard', 'column' => 'applications'],
+			'n_title' => 				['entity' => 'core_vcard', 'column' => 'n_title'],
+			'n_first' => 				['entity' => 'core_vcard', 'column' => 'n_first'],
+			'n_last' => 				['entity' => 'core_vcard', 'column' => 'n_last'],
+			'n_fn' => 					['entity' => 'core_vcard', 'column' => 'n_fn'],
+			'org' => 					['entity' => 'core_vcard', 'column' => 'org'],
+			'tel_work' => 				['entity' => 'core_vcard', 'column' => 'tel_work'],
+			'tel_cell' => 				['entity' => 'core_vcard', 'column' => 'tel_cell'],
+			'email' => 					['entity' => 'core_vcard', 'column' => 'email'],
+			'adr_street' => 			['entity' => 'core_vcard', 'column' => 'adr_street'],
+			'adr_extended' => 			['entity' => 'core_vcard', 'column' => 'adr_extended'],
+			'adr_post_office_box' => 	['entity' => 'core_vcard', 'column' => 'adr_post_office_box'],
+			'adr_zip' => 				['entity' => 'core_vcard', 'column' => 'adr_zip'],
+			'adr_city' => 				['entity' => 'core_vcard', 'column' => 'adr_city'],
+			'adr_state' => 				['entity' => 'core_vcard', 'column' => 'adr_state'],
+			'adr_country' => 			['entity' => 'core_vcard', 'column' => 'adr_country'],
+			'gender' => 				['entity' => 'core_vcard', 'column' => 'gender'],
+			'birth_date' => 			['entity' => 'core_vcard', 'column' => 'birth_date'],
+			'place_of_birth' => 		['entity' => 'core_vcard', 'column' => 'place_of_birth'],
+			'nationality' => 			['entity' => 'core_vcard', 'column' => 'nationality'],
+			'origine' => 				['entity' => 'core_vcard', 'column' => 'origine'],
+			'tiny_1' => 				['entity' => 'core_vcard', 'column' => 'tiny_1'],
+			'tiny_2' => 				['entity' => 'core_vcard', 'column' => 'tiny_2'],
+			'tiny_3' => 				['entity' => 'core_vcard', 'column' => 'tiny_3'],
+			'tiny_4' => 				['entity' => 'core_vcard', 'column' => 'tiny_4'],
+			'tiny_5' => 				['entity' => 'core_vcard', 'column' => 'tiny_5'],
+			'tiny_6' => 				['entity' => 'core_vcard', 'column' => 'tiny_6'],
+			'tiny_7' => 				['entity' => 'core_vcard', 'column' => 'tiny_7'],
+			'tiny_8' => 				['entity' => 'core_vcard', 'column' => 'tiny_8'],
+			'tiny_9' => 				['entity' => 'core_vcard', 'column' => 'tiny_9'],
+			'tiny_10' => 				['entity' => 'core_vcard', 'column' => 'tiny_10'],
+			'photo_link_id' => 			['entity' => 'core_vcard', 'column' => 'photo_link_id'],
+			'roles' => 					['entity' => 'core_vcard', 'column' => 'roles'],
+			'perimeters' => 			['entity' => 'core_vcard', 'column' => 'perimeters'],
+			'locale' => 				['entity' => 'core_vcard', 'column' => 'locale'],
+			'is_demo_mode_active' => 	['entity' => 'core_vcard', 'column' => 'is_demo_mode_active'],
+			'is_notified' => 			['entity' => 'core_vcard', 'column' => 'is_notified'],
+		],
+	];
+
+	/**
+	 * Returns a dictionary of each property associated with its description contextual to the current instance config.
+	 */
+	public static function getConfig()
+	{
+		// Retrieve the context
 		$context = Context::getCurrent();
+		
+		// Retrieve the properties description defined in the current instance config 
 		$properties = array();
 		foreach($context->getConfig('vcard/properties') as $propertyId => $property) {
 			if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
@@ -35,11 +91,471 @@ class Vcard
 		return $properties;
 	}
 
+	/**
+	 * Returns the restricted dictionary expected by the search engine
+	 */
+	public static function getConfigSearch($configProperties)
+	{
+		// Retrieve the context
+		$context = Context::getCurrent();
+	
+		// Retrieve the search properties defined in the current instance config for the given account type
+		$configSearch = $context->getConfig('vcard/search');
+	
+		// Construct the resulting dictionary for each search property
+		$properties = array();
+		foreach ($configSearch['properties'] as $propertyId => $options) {
+	
+			// Retrieve the property description from the whole properties dictionary and merge it with the search options for this property
+			$property = $configProperties[$propertyId];
+			$properties[$propertyId] = $property;
+			$properties[$propertyId]['options'] = $options;
+		}
+	
+		$configSearch['properties'] = $properties;
+	
+		// Return the search restricted dictionary
+		return $configSearch;
+	}
+	
+	/**
+	 * Returns the restricted dictionary to display on a list view
+	 */
+	public static function getConfigList($configProperties)
+	{
+		// Retrieve the context
+		$context = Context::getCurrent();
+	
+		// Retrieve the list properties defined in the current instance config for the given account type
+		$configList = $context->getConfig('vcard/list');
+	
+		// Construct the resulting dictionary for each list property
+		$properties = array();
+		foreach ($configList['properties'] as $propertyId => $options) {
+	
+			// Retrieve the property description from the whole properties dictionary and merge it with the list options for this property
+			$property = $configProperties[$propertyId];
+			$properties[$propertyId] = $property;
+			$properties[$propertyId]['options'] = $options;
+		}
+		$configList['properties'] = $properties;
+	
+		// Return the search restricted dictionary
+		return $configList;
+	}
+	
+	/**
+	 * Returns the restricted dictionary to diplay on a detailed view
+	 */
+	public static function getConfigDetail($configProperties)
+	{
+		// Retrieve the context
+		$context = Context::getCurrent();
+	
+		// Retrieve the updatable properties defined in the current instance config for the given account type
+		$configDetail = $context->getConfig('vcard/detail');
+	
+		// Construct the resulting dictionary for each updatable property
+		$properties = array();
+		foreach ($configDetail['properties'] as $propertyId => $options) {
+			if (array_key_exists($propertyId, $configProperties)) {
+	
+				// Retrieve the property description from the whole properties dictionary and merge it with the update options for this property
+				$property = $configProperties[$propertyId];
+				$property['options'] = $options;
+				$properties[$propertyId] = $property;
+			}
+		}
+	
+		// Return the updatable restricted dictionary
+		return $properties;
+	}
+	
+	/**
+	 * Returns the restricted dictionary of the properties that can be updated in group
+	 */
+	public static function getConfigGroupUpdate($configProperties)
+	{
+		// Retrieve the context
+		$context = Context::getCurrent();
+	
+		// Retrieve the group-updatable properties defined in the current instance config for the given account type
+		$configGroupUpdate = $context->getConfig('vcard/groupUpdate');
+	
+		// Construct the resulting dictionary for each group-updatable property
+		$properties = array();
+		foreach ($configGroupUpdate['properties'] as $propertyId => $options) {
+			if (array_key_exists($propertyId, $configProperties)) {
+	
+				// Retrieve the property description from the whole properties dictionary and merge it with the group-update options for this property
+				$property = $configProperties[$propertyId];
+				$property['options'] = $options;
+				$properties[$propertyId] = $property;
+			}
+		}
+	
+		// Return the group-updatable restricted dictionary
+		return $properties;
+	}
+	
+	/**
+	 * Returns the restricted dictionary of the properties that can be exported
+	 */
+	public static function getConfigExport($configProperties)
+	{
+		// Retrieve the context
+		$context = Context::getCurrent();
+	
+		// Retrieve the exportable properties defined in the current instance config for the given account type
+		$configExport = $context->getConfig('vcard/export');
+	
+		// Construct the resulting dictionary for each exportable property
+		$properties = array();
+		foreach ($configExport as $propertyId => $options) {
+			if (array_key_exists($propertyId, $configProperties)) {
+	
+				// Retrieve the property description from the whole properties dictionary and merge it with the export options for this property
+				$property = $configProperties[$propertyId];
+				$properties[$propertyId] = $property;
+				$properties[$propertyId]['options'] = $options;
+			}
+		}
+	
+		// Return the exportable restricted dictionary
+		return $properties;
+	}
+	
+	/**
+	 * Returns the dictionary of the properties along with global options and
+	 * along with the restricted dictionary for search, list, detail, group-update and export
+	 */
+	public static function getDescription()
+	{
+		// Retrieve the context
+		$context = Context::getCurrent();
+	
+		// Construct the whole description by aggregating all the dictionnaries and options
+		$description = array();
+		$description['properties'] = Vcard::getConfig();
+		$description['search'] = Vcard::getConfigSearch($description['properties']);
+		$description['list'] = Vcard::getConfigList($description['properties']);
+		$description['detail'] = Vcard::getConfigDetail($description['properties']);
+		$description['groupUpdate'] = Vcard::getConfigGroupUpdate($description['properties']);
+		$description['export'] = Vcard::getConfigExport($description['properties']);
+	
+		// Return the whole description
+		return $description;
+	}
+
+	/**
+	 * Constructs a Zend SQL Select object based on:
+	 * - columns as a list of properties defined in the vcard model
+	 * - filters as a dictionary of property => predicate
+	 * - order as an array of properties prefixed by + (ascending) or - (descending)
+	 * - limit as an int being null if no limitation is expected in the number of rows to be retrieved from the database
+	 *
+	 * The predicates in filters have the form of an array which first element is an operator compliant with a REST API filter followed by one or several values depending on the operator
+	 * The operator is one of 'eq', 'ne', 'gt', 'ge', 'lt', 'le', 'in', 'between', 'like', 'null' and 'not_null'
+	 *
+	 * @param array $columns
+	 * @param array $filters
+	 * @param string $order
+	 * @param int $limit
+	 * @return \Zend\Db\Sql\Select
+	 */
+	public static function getSelect($columns = null, $filters = [], $order = ['+name'], $limit = null)
+	{
+		// Retrieve the context and the account description for the given type
+		$context = Context::getCurrent();
+		$config = Vcard::getConfig();
+	
+		// Construct the select object and define the joins
+		$select = Vcard::getTable()->getSelect();
+	
+		// Specify the columns to retrieve (* if none)
+		if ($columns) $select->columns($columns);
+	
+		// Normalize the order by replacing the preceding '+' or '-' by trailing 'ASC' or 'DESC' and specify the order clause
+		foreach ($order as &$criterion) $criterion = substr($criterion, 1).' '.((substr($criterion, 0, 1) == '-') ? 'DESC' : 'ASC');
+		$select->order($order);
+	
+		// Set the fiters
+		$where = new Where;
+		foreach ($filters as $propertyId => $predicate) {
+			$operator = $predicate[0];
+			$value = $predicate[1];
+			$property = $config[$propertyId];
+			$entity = Vcard::$model['properties'][$propertyId]['entity'];
+			$column = Vcard::$model['properties'][$propertyId]['column'];
+	
+			if ($property['type'] == 'select') {
+				if (array_key_exists('multiple', $property) && $property['multiple']) $where->like($entity . '.' . $column, '%' . $value . '%');
+				else $where->equalTo($entity.'.'.$column, $value);
+			}
+			elseif ($property['type'] == 'multiselect') $where->like($entity . '.' . $column, '%' . $value . '%');
+			elseif (in_array($property['type'], ['date', 'datetime']) && !$value) $where->isNull($entity . '.' . $propertyId);
+			elseif ($operator == 'eq') $where->equalTo($entity . '.' . $column, $value);
+			elseif ($operator == 'ne') $where->notEqualTo($entity . '.' . $column, $value);
+			elseif ($operator == 'gt') $where->greaterThan($entity . '.' . $propertyId, $value);
+			elseif ($operator == 'ge') $where->greaterThanOrEqualTo($entity . '.' . $propertyId, $value);
+			elseif ($operator == 'lt') $where->lessThan($entity . '.' . $propertyId, $value);
+			elseif ($operator == 'le') $where->lessThanOrEqualTo($entity . '.' . $propertyId, $value);
+			elseif ($operator == 'in') {
+				$values = array_slice($predicate, 1);
+				$where->in($entity . '.' . $column, $values);
+			}
+			elseif ($operator = 'between') {
+				$value = $predicate[2];
+				$where->between($entity . '.' . $column, $value, $value2);
+			}
+			elseif ($operator == 'like') $where->like($entity . '.' . $column, '%' . $value . '%');
+			elseif ($operator == 'null') $where->isNull($entity . '.' . $column);
+			elseif ($operator == 'not_null') $where->isNotNull($entity . '.' . $column);
+		}
+	
+		// Filter on authorized perimeter
+		if (array_key_exists('p-pit-admin', $context->getPerimeters())) {
+			foreach ($context->getPerimeters()['p-pit-admin'] as $propertyId => $values) {
+				if (array_key_exists($propertyId, Vcard::$model['properties'])) {
+					$entity = Vcard::$model['properties'][$propertyId]['entity'];
+					$column = Vcard::$model['properties'][$propertyId]['column'];
+					$where->in($entity . '.' . $column, $values);
+				}
+			}
+		}
+		if (array_key_exists($type, $context->getPerimeters())) {
+			foreach ($context->getPerimeters()[$type] as $propertyId => $values) {
+				if (array_key_exists($propertyId, Vcard::$model['properties'])) {
+					$entity = Account::$model['properties'][$propertyId]['entity'];
+					$column = Account::$model['properties'][$propertyId]['column'];
+					$where->in($entity . '.' . $column, $values);
+				}
+			}
+		}
+	
+		$select->where($where);
+	
+		// Set the limit or no-limit
+		if ($limit) $select->limit($limit);
+	
+		// Return the SQL select
+		return $select;
+	}
+	
+	/**
+	 * Check the validity of the given time
+	 *
+	 * @param string $time
+	 * @return boolean
+	 */
+	public static function checktime($time) {
+		if ((int)substr($time, 0, 2) < 0) return false;
+		if ((int)substr($time, 0, 2) > 23) return false;
+		if (substr($time, 2, 1) != ':') return false;
+		if ((int)substr($time, 3, 2) < 0) return false;
+		if ((int)substr($time, 3, 2) > 59) return false;
+		if (substr($time, 5, 1) != ':') return false;
+		if ((int)substr($time, 6, 2) < 0) return false;
+		if ((int)substr($time, 6, 2) > 59) return false;
+		return true;
+	}
+	
+	/**
+	 * Check the validity of the given property => value dictionary as an input for inserting or updating the core_account table of the model
+	 *
+	 * @param string $type
+	 * @param [] $data
+	 * @return []
+	 */
+	public static function validate($data)
+	{
+		$context = Context::getCurrent();
+		$result = [];
+		$errors = [];
+	
+		// Retrieve the properties description for the given account type
+		$configProperties = Vcard::getConfig();
+	
+		// Iterates on the given pairs of property => value
+		foreach ($data as $propertyId => $value) {
+	
+			// Check that this property is managed for the given type
+			if (!array_key_exists($propertyId, $configProperties)) $errors[$propertyId] = 'The accounts of type $type does not manage the property ' . $propertyId;
+			else {
+	
+				// Retrieve the property description for the given type
+				$property = $configProperties[$propertyId];
+	
+				// Suppress white spaces and tags in the string values
+				if (in_array($property['type'], ['array', 'key_value', 'structure'])) $value = $data[$propertyId];
+				else $value = trim(strip_tags($data[$propertyId]));
+	
+				// Check for maximum sizes
+				if (in_array($property['type'], ['input', 'select', 'multiselect'])) {
+					if (strlen($value) > 255) $errors[$propertyId] = "$propertyId should not be longer than 255 characters";
+				}
+				elseif (in_array($property['type'], ['textarea', 'log'])) {
+					$maxLength = (array_key_exists('max_length', $property)) ? $property['max_length'] : 2047;
+					if (strlen($value) > $maxLength) $errors[$propertyId] = "$propertyId should not be longer than $maxLength characters";
+				}
+	
+				// Check for date validity
+				elseif (in_array($property['type'], ['date'])) {
+					if ($value && (strlen($value) < 10 || !checkdate(substr($value, 5, 2), substr($value, 8, 2), substr($value, 0, 4)))) $errors[$propertyId] = "$propertyId should be a valid date according to the format yyyy-mm-dd";
+				}
+	
+				// Check for time validity
+				elseif (in_array($property['type'], ['time'])) {
+					if ($value && !Account::checktime($value)) $errors[$propertyId] = "$propertyId should be a valid time according to the format hh:mm:ss";
+				}
+				elseif (in_array($property['type'], ['datetime'])) {
+					if ($value && (!checkdate(substr($value, 5, 2), substr($value, 8, 2), substr($value, 0, 4)) || !Account::checktime(substr($value, 11, 8)))) $errors[$propertyId] = "$propertyId should be a valid date & time according to the format yyyy-mm-dd hh:mm:ss";
+				}
+	
+				elseif ($property['type'] == 'id') $value = (int) $value;
+	
+				// Cast number to int or float depending on the precision defined for this property
+				elseif ($property['type'] == 'number') {
+					if (array_key_exists('precision', $property) && $property['precision'] > 0) $value = (float) $value;
+					else $value = (int) $value;
+				}
+	
+				// Private data protection
+				if ($property['private'] && $value) {
+					$value = $context->getSecurityAgent()->protectPrivateDataV2($value);
+				}
+	
+				// Log the comment in the contact history
+				if ($propertyId == 'contact_history') {
+					if ($data['contact_history']) {
+						$result['contact_history'] = array(
+							'time' => Date('Y-m-d G:i:s'),
+							'n_fn' => $context->getFormatedName(),
+							'comment' => $value,
+						);
+					}
+				}
+	
+				else $result[$propertyId] = $value;
+			}
+		}
+	
+		// Return either the errors or the resulting data if no error
+		return ($errors) ? ['errors' => $errors] : ['data' => $result];
+	}
+
+	public function loadDataV2($data)
+	{
+		$context = Context::getCurrent();
+		$errors = array();
+	
+		$auditRow = array(
+			'time' => Date('Y-m-d G:i:s'),
+			'n_fn' => $context->getFormatedName(),
+		);
+		$configProperties = Vcard::getConfig();
+		 
+		$validation = Vcard::validate($data);
+		foreach ($validation as $resultType => $result) {
+			if ($resultType == 'errors') return 'Integrity';
+			if ($resultType == 'data') $data = $result;
+		}
+	
+		// Retrieve the property description for the given type
+		$property = $configProperties[$propertyId];
+	
+		foreach ($data as $propertyId => $value) {
+			 
+			// Retrieve the property description for the given type
+			$property = $configProperties[$propertyId];
+			 
+			if ($propertyId == 'instance_id') $this->instance_id = $value;
+			if ($propertyId == 'status') $this->status = $value;
+			if ($propertyId == 'applications') $this->applications = $value;
+			if ($propertyId == 'n_title') $this->n_title = $value;
+			if ($propertyId == 'n_last') $this->n_last = $value;
+			if ($propertyId == 'n_first') $this->n_first = $value;
+			if ($propertyId == 'email') $this->email = $value;
+			if ($propertyId == 'tel_work') $this->tel_work = $value;
+			if ($propertyId == 'tel_cell') $this->tel_cell = $value;
+			if ($propertyId == 'adr_street') $this->adr_street = $value;
+			if ($propertyId == 'adr_extended') $this->adr_extended = $value;
+			if ($propertyId == 'adr_post_office_box') $this->adr_post_office_box = $value;
+			if ($propertyId == 'adr_zip') $this->adr_zip = $value;
+			if ($propertyId == 'adr_city') $this->adr_city = $value;
+			if ($propertyId == 'adr_state') $this->adr_state = $value;
+			if ($propertyId == 'adr_country') $this->adr_country = $value;
+			if ($propertyId == 'gender') $this->adr_gender = $value;
+			if ($propertyId == 'birth_date') $this->birth_date = $value;
+			if ($propertyId == 'place_of_birth') $this->place_of_birth = $value;
+			if ($propertyId == 'nationality') $this->nationality = $value;
+			if ($propertyId == 'tiny_1') $this->tiny_1 = $value;
+			if ($propertyId == 'tiny_2') $this->tiny_2 = $value;
+			if ($propertyId == 'tiny_3') $this->tiny_3 = $value;
+			if ($propertyId == 'tiny_4') $this->tiny_4 = $value;
+			if ($propertyId == 'tiny_5') $this->tiny_5 = $value;
+			if ($propertyId == 'tiny_6') $this->tiny_6 = $value;
+			if ($propertyId == 'tiny_7') $this->tiny_7 = $value;
+			if ($propertyId == 'tiny_8') $this->tiny_8 = $value;
+			if ($propertyId == 'tiny_9') $this->tiny_9 = $value;
+			if ($propertyId == 'tiny_10') $this->tiny_10 = $value;
+			if ($propertyId == 'locale') $this->locale = $value;
+			if ($propertyId == 'is_notified') $this->is_notified = $value;
+			if ($propertyId == 'is_demo_mode_active') $this->is_demo_mode_active = $value;
+			if ($propertyId == 'roles') $this->roles = $value;
+			if ($propertyId == 'perimeters') $this->perimeters = $value;
+	
+			$this->n_fn = $this->n_last.', '.$this->n_first;
+
+			if ($propertyId && $this->properties[$propertyId] != $value) $auditRow[$propertyId] = $value;
+		}
+		
+		// Update the audit
+		$this->audit[] = $auditRow;
+
+		$this->properties = $this->getProperties();
+		
+		return 'OK';
+	}
+/*
+	public function loadAndAdd($data)
+	{
+		$context = Context::getCurrent();
+		$rc = $this->loadDataV2($data);
+		if ($rc != 'OK') return ['500', 'vcard->loadData: '.$rc];
+	
+		$rc = $this->add((array_key_exists('instance_id', $data)) ? true : false);
+		if ($rc == 'Authorization') return ['401', 'vcard->add: '.$rc];
+		if ($rc != 'OK') return ['500', 'vcard->add: '.$rc];
+	
+		return ['200', $this->id];
+	}
+
+	public function loadAndUpdate($data, $update_time = null)
+	{
+		$context = Context::getCurrent();
+	
+		$rc = $this->loadData($data);
+		if ($rc != 'OK') return ['500', 'vcard->loadData: '.$rc];
+	
+		// Save the data
+		$this->update($update_time, (array_key_exists('instance_id', $data)) ? true : false);
+		if ($rc == 'Authorization') return ['401', 'vcard->update: '.$rc];
+		if ($rc != 'OK') return ['500', 'vcard->update: '.$rc];
+	
+		$this->properties = $this->getProperties();
+		return ['200', $this->id];
+	}*/
+
+	/**
+	 * This section is intended to be progressively deprecated in 2pit2 while the whole framework is to be simplified and
+	 * less and less dependant of the Zend historical foundation
+	 */
+	
 	/** @var int */ public $id;
 	/** @var int */ public $instance_id;
 	/** @var int */ public $status;
 	/** @var array */ public $applications;
-	/** @var array */ public $communities;
 	/** @var string */ public $n_title;
     /** @var string */ public $n_first;
     /** @var string */ public $n_last;
@@ -76,21 +592,15 @@ class Vcard
     /** @var string */ public $locale;
     /** @var boolean */ public $is_demo_mode_active;
     /** @var boolean */ public $is_notified;
-    /** @var string */ public $specifications;
 	/** @var string */ public $update_time;
-
-    // Additional properties from joined tables
-    /** @var string */ public $community_name;
-    
-    // Transient properties
-    /** @var string */ public $previous_n_last;
-    /** @var string */ public $previous_n_first;
-    /** @var string */ public $previous_email;
-    /** @var string */ public $previous_tel_cell;
-    /** @var array */ public $properties;
     
 	// Deprecated
 	/** @var int */ public $community_id;
+    /** @var string */ public $community_name;
+	/** @var array */ public $communities;
+	/** @var string */ public $specifications;
+	
+	public $properties;
 	
     /** 
      * Ignored 
@@ -118,7 +628,6 @@ class Vcard
         $this->instance_id = (isset($data['instance_id'])) ? $data['instance_id'] : null;
         $this->status = (isset($data['status'])) ? $data['status'] : null;
         $this->applications = (isset($data['applications'])) ? json_decode($data['applications'], true) : null;
-        $this->communities = (isset($data['communities'])) ? json_decode($data['communities'], true) : null;
         $this->n_title = (isset($data['n_title'])) ? $data['n_title'] : null;
         $this->n_first = (isset($data['n_first'])) ? $data['n_first'] : null;
         $this->n_last = (isset($data['n_last'])) ? $data['n_last'] : null;
@@ -138,7 +647,6 @@ class Vcard
         $this->birth_date = (isset($data['birth_date'])) ? $data['birth_date'] : null;
         $this->place_of_birth = (isset($data['place_of_birth'])) ? $data['place_of_birth'] : null;
         $this->nationality = (isset($data['nationality'])) ? $data['nationality'] : null;
-        $this->origine = (isset($data['origine'])) ? $data['origine'] : null;
         $this->tiny_1 = (isset($data['tiny_1'])) ? $data['tiny_1'] : null;
         $this->tiny_2 = (isset($data['tiny_2'])) ? $data['tiny_2'] : null;
         $this->tiny_3 = (isset($data['tiny_3'])) ? $data['tiny_3'] : null;
@@ -155,14 +663,14 @@ class Vcard
         $this->is_notified = (isset($data['is_notified'])) ? $data['is_notified'] : null;
         $this->is_demo_mode_active = (isset($data['is_demo_mode_active'])) ? $data['is_demo_mode_active'] : null;
         $this->photo_link_id = (isset($data['photo_link_id'])) ? $data['photo_link_id'] : null;
-        $this->specifications = (isset($data['specifications'])) ? json_decode($data['specifications'], true) : null;
         $this->update_time = (isset($data['update_time'])) ? $data['update_time'] : null;
-
-    	// Additional properties from joined tables
-	    $this->community_name = (isset($data['community_name'])) ? $data['community_name'] : null;
 	    
 	    // Deprecated
         $this->community_id = (isset($data['community_id'])) ? $data['community_id'] : null;
+	    $this->community_name = (isset($data['community_name'])) ? $data['community_name'] : null;
+        $this->communities = (isset($data['communities'])) ? json_decode($data['communities'], true) : null;
+        $this->origine = (isset($data['origine'])) ? $data['origine'] : null;
+        $this->specifications = (isset($data['specifications'])) ? json_decode($data['specifications'], true) : null;
     }
 
     /**
@@ -176,7 +684,6 @@ class Vcard
     	$data['instance_id'] = (int) $this->instance_id;
     	$data['status'] = $this->status;
     	$data['applications'] = $this->applications;
-    	$data['communities'] = $this->communities;
     	$data['n_title'] = $this->n_title;
     	$data['n_first'] = $this->n_first;
     	$data['n_last'] = $this->n_last;
@@ -196,7 +703,6 @@ class Vcard
     	$data['birth_date'] = ($this->birth_date) ? $this->birth_date : null;
     	$data['place_of_birth'] = $this->place_of_birth;
     	$data['nationality'] = $this->nationality;
-    	$data['origine'] = $this->origine;
     	$data['tiny_1'] = $this->tiny_1;
     	$data['tiny_2'] = $this->tiny_2;
     	$data['tiny_3'] = $this->tiny_3;
@@ -213,11 +719,13 @@ class Vcard
     	$data['is_notified'] = $this->is_notified;
     	$data['is_demo_mode_active'] = (int) $this->is_demo_mode_active;
     	$data['photo_link_id'] = $this->photo_link_id;
-    	$data['specifications'] = $this->specifications;
     	
     	// Deprecated
     	$data['community_id'] = (int) $this->community_id;
-
+    	$data['communities'] = $this->communities;
+    	$data['origine'] = $this->origine;
+    	$data['specifications'] = $this->specifications;
+    	 
     	return $data;
     }
 
@@ -229,10 +737,13 @@ class Vcard
     {
     	$data = $this->getProperties();
     	$data['applications'] = json_encode($this->applications);
-    	$data['communities'] = json_encode($this->communities);
     	$data['roles'] = json_encode($this->roles);
     	$data['perimeters'] = json_encode($this->perimeters);
+
+    	// Deprecated
+    	$data['communities'] = json_encode($this->communities);
     	$data['specifications'] = json_encode($this->specifications);
+    	 
     	return $data;
     }
 
@@ -298,26 +809,17 @@ class Vcard
     	}
     	return $vcards;
     }
-
-    public static function get($id, $column = 'id')
+    
+    public static function get($id, $column = 'id', $id2 = false, $column2 = false, $id3 = false, $column3 = false, $id4 = false, $column4 = false)
     {
     	$context = Context::getCurrent();
-    	$vcard = Vcard::getTable()->get($id, $column);
+    	$vcard = Vcard::getTable()->get($id, $column, $id2, $column2, $id3, $column3, $id4, $column4);
     	if ($vcard) {
-	    	$instance_id = $vcard->instance_id;
-/*	    	$community_id = $vcard->community_id;
-	    	if ($community_id) {
-	    		$community = Community::getTable()->get($community_id);
-	    		if (!$community) return null;
-	    	}
-	    
-	    	if ($community_id) $vcard->community_name = $community->name;*/
-
 	    	$roles = array();
 	    	foreach ($vcard->roles as $role) $roles[$role] = $role;
 	    	$vcard->roles = $roles;
 	
-			$vcard->properties = $vcard->toArray();
+			$vcard->properties = $vcard->getProperties();
     	}
     	return $vcard;
     }
@@ -326,49 +828,48 @@ class Vcard
     {
     	$vcard = new Vcard;
     	$vcard->status = 'new';
-    	$vcard->community_id = $community_id; // Deprecated
     	$vcard->applications = array();
-    	$vcard->communities = array();
     	$vcard->roles = array();
     	$vcard->perimeters = array();
-    	$vcard->specifications = array();
     	$vcard->locale = 'fr_FR';
     	$vcard->photo_link_id = 'no-photo.png';
     	$vcard->properties = $vcard->toArray();
+
+    	// Deprecated
+    	$vcard->community_id = $community_id; 
+    	$vcard->communities = array();
+    	$vcard->specifications = array();
+    	 
     	return $vcard;
     }
-    
+
     public function loadData($data)
     {
     	$context = Context::getCurrent();
+    	$errors = array();
+    
     	$auditRow = array(
-    			'time' => Date('Y-m-d G:i:s'),
-    			'n_fn' => $context->getFormatedName(),
+    		'time' => Date('Y-m-d G:i:s'),
+    		'n_fn' => $context->getFormatedName(),
     	);
-
-    	// Save the identifying previous data
-    	$this->previous_n_last = $this->n_last;
-    	$this->previous_n_first = $this->n_first;
-    	$this->previous_email = $this->email;
-    	$this->previous_tel_cell = $this->tel_cell;
-
-        if (array_key_exists('instance_id',$data)) {
-	    	$instance_id = (int) $data['instance_id'];
+    
+    	if (array_key_exists('instance_id',$data)) {
+    		$instance_id = (int) $data['instance_id'];
     		if ($this->instance_id != $instance_id) $auditRow['instance_id'] = $this->instance_id = $instance_id;
-		}
+    	}
     	if (array_key_exists('applications', $data)) {
     		$applications = $data['applications'];
     		if ($this->applications != $applications) $auditRow['applications'] = $this->applications = $applications;
-    	}    	
-        if (array_key_exists('communities', $data)) {
+    	}
+    	if (array_key_exists('communities', $data)) {
     		$communities = $data['communities'];
     		if ($this->communities != $communities) $auditRow['communities'] = $this->communities = $communities;
-    	}    	
+    	}
     	if (array_key_exists('community_id', $data)) { // Deprecated
     		$community_id = (int) $data['community_id'];
     		if ($this->community_id != $community_id) $auditRow['community_id'] = $this->community_id = $community_id;
     	}
-        if (array_key_exists('status', $data)) {
+    	if (array_key_exists('status', $data)) {
     		$status = trim(strip_tags($data['status']));
     		if (strlen($status) > 255) return 'Integrity';
     		if ($this->status != $status) $auditRow['status'] = $this->status = $status;
@@ -396,14 +897,14 @@ class Vcard
     	}
     	if (array_key_exists('tel_work', $data)) {
     		$tel_work =  trim(strip_tags($data['tel_work']));
-	    	if (strlen($tel_work) > 255) return 'Integrity';
-//	    	if ($tel_work && !preg_match(Vcard::$telRegex, $tel_work)) return 'Integrity';
+    		if (strlen($tel_work) > 255) return 'Integrity';
+    		//	    	if ($tel_work && !preg_match(Vcard::$telRegex, $tel_work)) return 'Integrity';
     		if ($this->tel_work != $tel_work) $auditRow['tel_work'] = $this->tel_work = $tel_work;
     	}
     	if (array_key_exists('tel_cell', $data)) {
     		$tel_cell =  trim(strip_tags($data['tel_cell']));
-	    	if (strlen($tel_cell) > 255) return 'Integrity';
-//	    	if ($tel_cell && !preg_match(Vcard::$telRegex, $tel_cell)) return 'Integrity';
+    		if (strlen($tel_cell) > 255) return 'Integrity';
+    		//	    	if ($tel_cell && !preg_match(Vcard::$telRegex, $tel_cell)) return 'Integrity';
     		if ($this->tel_cell != $tel_cell) $auditRow['tel_cell'] = $this->tel_cell = $tel_cell;
     	}
     	if (array_key_exists('adr_street', $data)) {
@@ -448,7 +949,7 @@ class Vcard
     	}
     	if (array_key_exists('birth_date', $data)) {
     		$birth_date = trim(strip_tags($data['birth_date']));
-			if ($birth_date && !checkdate(substr($birth_date, 5, 2), substr($birth_date, 8, 2), substr($birth_date, 0, 4))) return 'Integrity';
+    		if ($birth_date && !checkdate(substr($birth_date, 5, 2), substr($birth_date, 8, 2), substr($birth_date, 0, 4))) return 'Integrity';
     		if ($this->birth_date != $birth_date) $auditRow['birth_date'] = $this->birth_date = $birth_date;
     	}
     	if (array_key_exists('place_of_birth', $data)) {
@@ -461,52 +962,52 @@ class Vcard
     		if (strlen($nationality) > 255) return 'Integrity';
     		if ($this->nationality != $nationality) $auditRow['nationality'] = $this->nationality = $nationality;
     	}
-        if (array_key_exists('tiny_1', $data)) {
+    	if (array_key_exists('tiny_1', $data)) {
     		$tiny_1 = trim(strip_tags($data['tiny_1']));
     		if (strlen($tiny_1) > 255) return 'Integrity';
     		if ($this->tiny_1 != $tiny_1) $auditRow['tiny_1'] = $this->tiny_1 = $tiny_1;
     	}
-        if (array_key_exists('tiny_2', $data)) {
+    	if (array_key_exists('tiny_2', $data)) {
     		$tiny_2 = trim(strip_tags($data['tiny_2']));
     		if (strlen($tiny_2) > 255) return 'Integrity';
     		if ($this->tiny_2 != $tiny_2) $auditRow['tiny_2'] = $this->tiny_2 = $tiny_2;
     	}
-        if (array_key_exists('tiny_3', $data)) {
+    	if (array_key_exists('tiny_3', $data)) {
     		$tiny_3 = trim(strip_tags($data['tiny_3']));
     		if (strlen($tiny_3) > 255) return 'Integrity';
     		if ($this->tiny_3 != $tiny_3) $auditRow['tiny_3'] = $this->tiny_3 = $tiny_3;
     	}
-        if (array_key_exists('tiny_4', $data)) {
+    	if (array_key_exists('tiny_4', $data)) {
     		$tiny_4 = trim(strip_tags($data['tiny_4']));
     		if (strlen($tiny_4) > 255) return 'Integrity';
     		if ($this->tiny_4 != $tiny_4) $auditRow['tiny_4'] = $this->tiny_4 = $tiny_4;
     	}
-        if (array_key_exists('tiny_5', $data)) {
+    	if (array_key_exists('tiny_5', $data)) {
     		$tiny_5 = trim(strip_tags($data['tiny_5']));
     		if (strlen($tiny_5) > 255) return 'Integrity';
     		if ($this->tiny_5 != $tiny_5) $auditRow['tiny_5'] = $this->tiny_5 = $tiny_5;
     	}
-        if (array_key_exists('tiny_6', $data)) {
+    	if (array_key_exists('tiny_6', $data)) {
     		$tiny_6 = trim(strip_tags($data['tiny_6']));
     		if (strlen($tiny_6) > 255) return 'Integrity';
     		if ($this->tiny_6 != $tiny_6) $auditRow['tiny_6'] = $this->tiny_6 = $tiny_6;
     	}
-        if (array_key_exists('tiny_7', $data)) {
+    	if (array_key_exists('tiny_7', $data)) {
     		$tiny_7 = trim(strip_tags($data['tiny_7']));
     		if (strlen($tiny_7) > 255) return 'Integrity';
     		if ($this->tiny_7 != $tiny_7) $auditRow['tiny_7'] = $this->tiny_7 = $tiny_7;
     	}
-        if (array_key_exists('tiny_8', $data)) {
+    	if (array_key_exists('tiny_8', $data)) {
     		$tiny_8 = trim(strip_tags($data['tiny_8']));
     		if (strlen($tiny_8) > 255) return 'Integrity';
     		if ($this->tiny_8 != $tiny_8) $auditRow['tiny_8'] = $this->tiny_8 = $tiny_8;
     	}
-        if (array_key_exists('tiny_9', $data)) {
+    	if (array_key_exists('tiny_9', $data)) {
     		$tiny_9 = trim(strip_tags($data['tiny_9']));
     		if (strlen($tiny_9) > 255) return 'Integrity';
     		if ($this->tiny_9 != $tiny_9) $auditRow['tiny_9'] = $this->tiny_9 = $tiny_9;
     	}
-        if (array_key_exists('tiny_10', $data)) {
+    	if (array_key_exists('tiny_10', $data)) {
     		$tiny_10 = trim(strip_tags($data['tiny_10']));
     		if (strlen($tiny_10) > 255) return 'Integrity';
     		if ($this->tiny_10 != $tiny_10) $auditRow['tiny_10'] = $this->tiny_10 = $tiny_10;
@@ -536,15 +1037,17 @@ class Vcard
     		$specifications = $data['specifications'];
     		if ($this->specifications != $specifications) $auditRow['specifications'] = $this->specifications = $specifications;
     	}
-    	 
-    	$this->n_fn = $this->n_last.', '.$this->n_first;
-
-		// Update the audit
-		$this->audit[] = $auditRow;
-    	
-		return 'OK';
-    }
     
+    	$this->n_fn = $this->n_last.', '.$this->n_first;
+    
+    	// Update the audit
+    	$this->audit[] = $auditRow;
+
+    	$this->properties = $this->getProperties();
+    	 
+    	return 'OK';
+    }
+
     public function add($crossInstance = false)
     {
     	$context = Context::getCurrent();
@@ -555,23 +1058,6 @@ class Vcard
 		}
 		else Vcard::getTable()->save($this);
     	return 'OK';
-    }
-
-    /**
-     * Restfull implementation
-     */
-    public function loadAndAdd($data)
-    {
-    	$context = Context::getCurrent();
-    	$rc = $this->loadData($data);
-    	if ($rc != 'OK') return ['500', 'vcard->loadData: '.$rc];
-    
-    	$rc = $this->add((array_key_exists('instance_id', $data)) ? true : false);
-    	if ($rc == 'Authorization') return ['401', 'vcard->add: '.$rc];
-    	if ($rc != 'OK') return ['500', 'vcard->add: '.$rc];
-    
-    	$this->properties = $this->getProperties();
-    	return ['200', $this->id];
     }
     
     public function update($update_time, $crossInstance = false)
@@ -587,22 +1073,6 @@ class Vcard
 		}
 		else Vcard::getTable()->save($this);
 	    return 'OK';
-    }
-
-    public function loadAndUpdate($data, $update_time = null)
-    {
-    	$context = Context::getCurrent();
-    
-    	$rc = $this->loadData($data);
-    	if ($rc != 'OK') return ['500', 'vcard->loadData: '.$rc];
-    
-    	// Save the data
-    	$this->update($update_time, (array_key_exists('instance_id', $data)) ? true : false);
-    	if ($rc == 'Authorization') return ['401', 'vcard->update: '.$rc];
-    	if ($rc != 'OK') return ['500', 'vcard->update: '.$rc];
-    
-    	$this->properties = $this->getProperties();
-    	return ['200', $this->id];
     }
     
     public function savePhoto($file) {

@@ -100,14 +100,6 @@ function getCommitmentList(params) {
 			document.getElementById('commitment-list-panel').innerHTML = xhttp.responseText;
 
 			$('#export-button').click(function () { exportCommitmentList(); });
-			
-			$(function () {
-			    $('.tip').tooltip({
-			        content: function () {
-			            return $(this).prop('title');
-			        }
-			    });
-			});
 
 			$('.to-mask').hide();
 			
@@ -141,14 +133,15 @@ function getCommitmentList(params) {
 			// Connect the grouped actions anchors
 			$('.commitment-group-anchor').click(function () {
 				getGroup();
+                $(this).removeClass("btn-outline-primary").addClass("btn-primary");
 			});
 			
 			// Connect the detail anchors
 			$('.commitment-detail-anchor').click(function () {
               var id = $(this).attr('id').split('_')[1];
               getCommitmentDetail(id);
-              $('#modalForm').modal('toggle');
               $(this).removeClass("btn-outline-primary").addClass("btn-primary");
+              $('#modalForm').modal('toggle');
 			});
 			
 			// Connect the distribution anchor
@@ -167,6 +160,8 @@ function getCommitmentList(params) {
 
 $('#modalForm').on('hidden.bs.modal', function (e) {
   $('.commitment-detail-anchor').addClass("btn-outline-primary").removeClass("btn-primary");
+  $('.commitment-group-anchor').addClass("btn-outline-primary").removeClass("btn-primary");
+  getCommitmentList(getSearchParams(''));
 })
 
 function connectAuditPanel()
@@ -197,32 +192,6 @@ function connectCgvPanel()
 			$('#cgv-label').text('<?php echo $this->translate('Show', 'ppit-core', $context->getLocale()) ?>');
 		}
 	});
-}
-
-function connectCommitmentInvoiceForm(id)
-{			
-		$('#commitment-invoice-anchor').removeClass('btn-danger').addClass('btn-warning');
-
-		// Create a new FormData object.
-		var formData = new FormData();
-		formData.append('update_time', $('#update_time').val());
-
-		var xhttp = new XMLHttpRequest();
-		var route, target;
-		route = '<?php echo $this->url('commitment/invoice') ?>/' + id;
-		xhttp.open('POST', route, true);
-		xhttp.onload = function () {
-			if (xhttp.readyState == 4 && xhttp.status == 200) {
-				getCommitmentDetail(id);
-			}
-		};
-		xhttp.send(formData);
-}
-
-function getCommitmentInvoiceForm(id) {
-	$('#commitment-invoice-anchor').removeClass('btn-outline-primary').addClass('btn-danger');
-	$('#commitment-invoice-alert').show();
-	$('#commitment-invoice-anchor').click(function () { connectCommitmentInvoiceForm(id); });
 }
 
 /////////////////////////////
@@ -290,9 +259,8 @@ function postForm(id, action)
     xhttp.onload = function () {
       if (xhttp.readyState == 4) {
         if (xhttp.status == 200) {
-          getCommitmentList(getSearchParams(''));
-          $('#commitment-update-panel').html(xhttp.responseText);
-//          getCommitmentDetail(xhttp.responseText);
+          if (action == 'add') getCommitmentDetail(xhttp.responseText);
+          else $('#commitment-update-panel').html(xhttp.responseText);
         }
         else {
           console.log(xhttp.status + ' ' + xhttp.statusText);
@@ -325,7 +293,7 @@ function getCommitmentUpdate(id, action) {
           $('[data-toggle="tooltip"]').tooltip('hide');
           getCommitmentUpdate(id, 'delete');
         });
-        $('#commitment-invoice-anchor').click(function () { getCommitmentInvoiceForm(id); });
+        $('#commitment-invoice-anchor').click(function () { getInvoiceForm(id); });
         $('#commitment-invoice-alert').hide();
         $('#up-cancel-button').click(function () { getCommitmentUpdate(id, ''); });
         $('#commitment-cancel-button').click(function () { getCommitmentUpdate(id, ''); });
@@ -402,23 +370,6 @@ function connectCommitmentUpdateProductForm(id)
 		var validity = true, error, number, val;
 		$('#rows-error').text('');
 		$('#rows-error').hide();
-		
-// Product identifier
-/*		val = $('#product_identifier').val();
-		if (!val) {
-			$('#rows-error').text('<?php echo $this->translate('Please input a value', 'ppit-core', $context->getLocale()) ?>');
-			$('#rows-error').show();
-			document.getElementById('product_identifier').focus();
-			validity = false;
-		}
-		else {
-		    if (val.length > 255) {
-				$('#rows-error').text('<?php echo $this->translate('The input is too long', 'ppit-core', $context->getLocale()) ?>');
-				$('#rows-error').show();
-				document.getElementById('product_identifier').focus();
-				validity = false;
-			}
-		}*/
 		
 // Product caption
 		val = $('#product_caption').val();
@@ -562,14 +513,10 @@ function connectCommitmentUpdateOptionForm(id)
 	}
 }
 
-function connectCommitmentGenerateTermForm(id)
+function postCommitmentGenerateTermForm(id)
 {
     $('#term_input_date').datepicker();
 
-	var form = document.getElementById('generate-term-form');
-	form.onsubmit = function(event) {
-		
-		event.preventDefault();
         var validity = true;
 			
 	// Number of terms
@@ -701,7 +648,6 @@ function connectCommitmentGenerateTermForm(id)
 			xhttp.send(formData);
 		}
 		else return false;
-	}
 }
 
 function getCommitmentGenerateTerm(id)
@@ -716,7 +662,8 @@ function getCommitmentGenerateTerm(id)
 			$('#input_first_term_date').datepicker();
 			$('#quantityToDivide').change(function() { $('#amountToDivide').val(''); });
             $('#amountToDivide').change(function() { $('#quantityToDivide').val(''); $('#term-unit_price').val(''); });
-			connectCommitmentGenerateTermForm(id);
+			$('#generate-up-submit-button').click(function () { postCommitmentGenerateTermForm(id); });
+            $('#generate-submit-button').click(function () { postCommitmentGenerateTermForm(id); });
 		}
 	};
 	xhttp.send();
@@ -889,6 +836,97 @@ function connectCommitmentUpdateTermForm(id)
 	}
 }
 
+function postInvoice(id)
+{
+  // Check validity
+  let validity;
+  validity = checkCommitmentUpdateProperties(id);
+  val = $('#commitment-invoice_date').val();
+  if (!val) {
+    renderElement("input_commitment-invoice_date", "Veuillez saisir une valeur");
+    validity = false;
+  }
+
+  if (validity) {
+
+    // Create a new FormData object.
+    let formData = new FormData();
+
+    // Get the properties values
+<?php foreach ($properties as $propertyId => $property) : ?>
+
+  <?php if ($property['type'] == 'checkbox') : ?>
+        formData.append('<?php echo $propertyId ?>', ((document.getElementById('<?php echo $propertyId ?>').checked) ? 1 : 0));
+
+  <?php elseif ($property['type'] == 'file') : ?>
+        var fileSelect = document.getElementById('order_form');
+        if (fileSelect) {
+          var files = fileSelect.files;
+          for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            formData.append('order_form', file, file.name);
+          }
+        }
+
+  <?php else : ?>
+        formData.append('<?php echo $propertyId ?>', document.getElementById('<?php echo $propertyId ?>').value);
+
+  <?php endif ?>
+
+<?php endforeach ?>
+
+    formData.append('csrf', $('#csrf').val());
+
+    let xhttp = new XMLHttpRequest(), route, target;
+    route = '<?php echo $this->url('commitment/invoiceV2') ?>/' + id;
+    target = 'commitment-update-panel';
+    xhttp.open('POST', route, true);
+    xhttp.onload = function () {
+      if (xhttp.readyState == 4) {
+        if (xhttp.status == 200) {
+          $('#commitment-update-panel').html(xhttp.responseText);
+        }
+        else {
+          console.log(xhttp.status + ' ' + xhttp.statusText);
+          toastr.error("<?php echo $this->translate('A technical error has occured. PLease try again later', 'ppit-core', $context->getLocale()) ?>");
+        }
+      }
+    };
+    xhttp.send(formData);
+  }
+  else return false;
+}
+
+function getInvoiceForm(id) {
+  var xhttp = new XMLHttpRequest();
+  var route = '<?php echo $this->url('commitment/invoiceV2') ?>/' + id;
+
+  xhttp.open('GET', route, true);
+  xhttp.onreadystatechange = function() {
+    if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+
+      $('#commitment-update-panel').html(xhttp.responseText);
+      $('#up-cancel-button').click(function () { getInvoice(id); });
+      $('#commitment-cancel-button').click(function () { getInvoice(id); });
+
+      $('.update_date').datepicker();
+      $('.update_time').timepicker({ 'timeFormat':'H:i:s', 'step': 15, 'scrollDefault': 'now' });
+      $('.update_selectpicker').selectpicker();
+
+      $('#commitment-up-submit-button').click(function () { 
+        postInvoice(id); 
+      });
+      $('#commitment-submit-button').click(function () {
+        postInvoice(id);
+      });
+      
+      $('[data-toggle="tooltip"]').tooltip();
+    }
+  }
+  xhttp.send();
+}
+
 // Load the detail panel
 function getCommitmentDetail(id) {
 
@@ -907,26 +945,26 @@ function getCommitmentDetail(id) {
 
 			getCommitmentUpdate(id, '');
 			
-			$('.detail-remove-anchor').click(function () { getCommitmentDetail(id); });
+			$('.detail-remove-anchor').click(function () { $('.term-tr').hide(); });
 
 			$('#row-anchor').click(function () {
-				$('.row-anchor').removeClass('btn-warning').addClass('btn-default');
-                $('.row-clear-anchor').removeClass('btn-warning').addClass('btn-default');
-				$('.row-update-anchor').removeClass('btn-warning').addClass('btn-default');
-				$('.row-delete-anchor').removeClass('btn-warning').addClass('btn-default');
-				$('.row-add-anchor').removeClass('btn-warning').addClass('btn-default');
-				$(this).removeClass('btn-default').addClass('btn-warning');
+				$('.row-anchor').removeClass('btn-warning').addClass('btn-outline-primary');
+                $('.row-clear-anchor').removeClass('btn-warning').addClass('btn-outline-primary');
+				$('.row-update-anchor').removeClass('btn-warning').addClass('btn-outline-primary');
+				$('.row-delete-anchor').removeClass('btn-warning').addClass('btn-outline-primary');
+				$('.row-add-anchor').removeClass('btn-warning').addClass('btn-outline-primary');
+				$(this).removeClass('btn-outline-primary').addClass('btn-warning');
 				$('.row-tr').hide();
 				$('#row-tr').show();
 			});
 
             $('#row-clear-anchor').click(function () {
-              $('.row-anchor').removeClass('btn-warning').addClass('btn-default');
-              $('.row-clear-anchor').removeClass('btn-warning').addClass('btn-default');
-              $('.row-update-anchor').removeClass('btn-warning').addClass('btn-default');
-              $('.row-delete-anchor').removeClass('btn-warning').addClass('btn-default');
-              $('.row-add-anchor').removeClass('btn-warning').addClass('btn-default');
-              $(this).removeClass('btn-default').addClass('btn-warning');
+              $('.row-anchor').removeClass('btn-warning').addClass('btn-outline-primary');
+              $('.row-clear-anchor').removeClass('btn-warning').addClass('btn-outline-primary');
+              $('.row-update-anchor').removeClass('btn-warning').addClass('btn-outline-primary');
+              $('.row-delete-anchor').removeClass('btn-warning').addClass('btn-outline-primary');
+              $('.row-add-anchor').removeClass('btn-warning').addClass('btn-outline-primary');
+              $(this).removeClass('btn-outline-primary').addClass('btn-warning');
               $('.row-tr').hide();
               $('#row-tr').show();
               $('#product_identifier').val('');
@@ -937,35 +975,35 @@ function getCommitmentDetail(id) {
             });
 
 			$('.row-update-anchor').click(function () {
-				$('.row-anchor').removeClass('btn-warning').addClass('btn-default');
-                $('.row-clear-anchor').removeClass('btn-warning').addClass('btn-default');
-				$('.row-update-anchor').removeClass('btn-warning').addClass('btn-default');
-				$('.row-delete-anchor').removeClass('btn-warning').addClass('btn-default');
-				$('.row-add-anchor').removeClass('btn-warning').addClass('btn-default');
-				$(this).removeClass('btn-default').addClass('btn-warning');
+				$('.row-anchor').removeClass('btn-warning').addClass('btn-outline-primary');
+                $('.row-clear-anchor').removeClass('btn-warning').addClass('btn-outline-primary');
+				$('.row-update-anchor').removeClass('btn-warning').addClass('btn-outline-primary');
+				$('.row-delete-anchor').removeClass('btn-warning').addClass('btn-outline-primary');
+				$('.row-add-anchor').removeClass('btn-warning').addClass('btn-outline-primary');
+				$(this).removeClass('btn-outline-primary').addClass('btn-warning');
 				$('.row-tr').hide();
 				i = $(this).attr('id').split('_')[1]
 				$('#row-tr_' + i).show();
 			});
 
 			$('#row-add-anchor').click(function () {
-				$('.row-anchor').removeClass('btn-warning').addClass('btn-default');
-                $('.row-clear-anchor').removeClass('btn-warning').addClass('btn-default');
-				$('.row-update-anchor').removeClass('btn-warning').addClass('btn-default');
-				$('.row-delete-anchor').removeClass('btn-warning').addClass('btn-default');
-				$('.row-add-anchor').removeClass('btn-warning').addClass('btn-default');
-				$(this).removeClass('btn-default').addClass('btn-warning');
+				$('.row-anchor').removeClass('btn-warning').addClass('btn-outline-primary');
+                $('.row-clear-anchor').removeClass('btn-warning').addClass('btn-outline-primary');
+				$('.row-update-anchor').removeClass('btn-warning').addClass('btn-outline-primary');
+				$('.row-delete-anchor').removeClass('btn-warning').addClass('btn-outline-primary');
+				$('.row-add-anchor').removeClass('btn-warning').addClass('btn-outline-primary');
+				$(this).removeClass('btn-outline-primary').addClass('btn-warning');
 				$('.row-tr').hide();
 				$('#row-tr-add').show();
 			});
 
 			$('.row-delete-anchor').click(function () {
-				$('.row-anchor').removeClass('btn-warning').addClass('btn-default');
-                $('.row-clear-anchor').removeClass('btn-warning').addClass('btn-default');
-				$('.row-update-anchor').removeClass('btn-warning').addClass('btn-default');
-				$('.row-delete-anchor').removeClass('btn-warning').addClass('btn-default');
-				$('.row-add-anchor').removeClass('btn-warning').addClass('btn-default');
-				$(this).removeClass('btn-default').addClass('btn-warning');
+				$('.row-anchor').removeClass('btn-warning').addClass('btn-outline-primary');
+                $('.row-clear-anchor').removeClass('btn-warning').addClass('btn-outline-primary');
+				$('.row-update-anchor').removeClass('btn-warning').addClass('btn-outline-primary');
+				$('.row-delete-anchor').removeClass('btn-warning').addClass('btn-outline-primary');
+				$('.row-add-anchor').removeClass('btn-warning').addClass('btn-outline-primary');
+				$(this).removeClass('btn-outline-primary').addClass('btn-warning');
 				$('.row-tr').hide();
 				i = $(this).attr('id').split('_')[1]
 				$('#option_identifier-' + i).val('');
@@ -1010,9 +1048,6 @@ function getCommitmentDetail(id) {
 		}
 	}
 	xhttp.send();
-
-	// Highlight the clicked button (and only it in its class)
-	$('#commitment-detail-anchor_' + id).removeClass("btn-default").addClass("btn-primary");
 }
 
 // Grouped actions
@@ -1189,7 +1224,6 @@ function postGroup()
 			xhttp.open('POST', route, true);
 			xhttp.onload = function () {
 				if (xhttp.readyState == 4 && xhttp.status == 200) {
-                  getCommitmentList(getSearchParams(''));
                   $('#modalForm').html(xhttp.responseText);
 				}
 			};
@@ -1219,7 +1253,7 @@ function getGroup() {
 		if (xhttp.readyState == 4) {
 		  if (xhttp.status == 200) {
 
-			$('#modalForm').html(xhttp.responseText);
+			$('#modalFormContent').html(xhttp.responseText);
 
 			postGroup();
 			getSendMessage();
@@ -1269,15 +1303,11 @@ function getGroup() {
               let propertyId = $(this).attr('id').split('-')[1];
               document.getElementById('commitment_group_update_check-' + propertyId).checked = true;
             });
-
-            $('#modalForm').modal('toggle');
 		  }
 		}
+        $('#modalForm').modal('toggle');
 	}
 	xhttp.send(formData);
-
-	// Highlight the clicked button (and only it in its class)
-	$('.commitment-group-anchor').removeClass("btn-default").addClass("btn-primary");
 }
 
 getSearch();

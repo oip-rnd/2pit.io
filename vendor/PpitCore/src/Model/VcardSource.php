@@ -83,10 +83,6 @@ class VcardSource
     /** @var string */ public $community_name;
     
     // Transient properties
-    /** @var string */ public $previous_n_last;
-    /** @var string */ public $previous_n_first;
-    /** @var string */ public $previous_email;
-    /** @var string */ public $previous_tel_cell;
     /** @var array */ public $properties;
     
 	// Deprecated
@@ -345,12 +341,6 @@ class VcardSource
     			'time' => Date('Y-m-d G:i:s'),
     			'n_fn' => $context->getFormatedName(),
     	);
-
-    	// Save the identifying previous data
-    	$this->previous_n_last = $this->n_last;
-    	$this->previous_n_first = $this->n_first;
-    	$this->previous_email = $this->email;
-    	$this->previous_tel_cell = $this->tel_cell;
 
     	if (array_key_exists('applications', $data)) {
     		$applications = $data['applications'];
