@@ -253,13 +253,12 @@ function postForm(id, action)
     let xhttp = new XMLHttpRequest(), route, target;
     route = '<?php echo $this->url('commitment/updateV2', array('type' => ($type) ? $type : 'generic')) ?>/' + id;
     if (action) route += '/' + action;
-    target = 'commitment-update-panel';
     xhttp.open('POST', route, true);
     // Set up a handler for when the request finishes.
     xhttp.onload = function () {
       if (xhttp.readyState == 4) {
         if (xhttp.status == 200) {
-          if (action == 'add') getCommitmentDetail(xhttp.responseText);
+          if (id == 0) getCommitmentDetail(xhttp.responseText);
           else $('#commitment-update-panel').html(xhttp.responseText);
         }
         else {
