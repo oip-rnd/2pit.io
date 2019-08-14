@@ -43,8 +43,8 @@
   <?php if ($commitment->id && !$action) : ?>
 
 <div class="my-3">
-  <button type="button" class="btn btn-outline-primary" id="commitment-update-anchor" data-toggle="tooltip" title="<?php echo $this->translate('Modifier', 'ppit-core', $context->getLocale()) ?>"><i class="fa fa-edit"></i></button>
-  <button type="button" class="btn btn-outline-primary" id="commitment-delete-anchor" data-toggle="tooltip" title="<?php echo $this->translate('Supprimer', 'ppit-core', $context->getLocale()) ?>"><i class="fa fa-trash-alt"></i></button>
+  <button type="button" class="btn btn-outline-primary" id="commitment-update-anchor" data-toggle="tooltip" title="<?php echo $this->translate('Modifier', 'ppit-core', $context->getLocale()) ?>" <?php if ((in_array($commitment->status, array('invoiced', 'settled')) && !$context->hasRole('admin')) || $commitment->status == 'registered') echo 'disabled="disabled"' ?>><i class="fa fa-edit"></i></button>
+  <button type="button" class="btn btn-outline-primary" id="commitment-delete-anchor" data-toggle="tooltip" title="<?php echo $this->translate('Supprimer', 'ppit-core', $context->getLocale()) ?>" <?php if ((in_array($commitment->status, array('invoiced', 'settled')) && !$context->hasRole('admin')) || $commitment->status == 'registered') echo 'disabled="disabled"' ?>><i class="fa fa-trash-alt"></i></button>
 
     <?php if (!in_array($commitment->status, ['invoiced', 'settled', 'registered'])) : ?>
   <button type="button" class="btn btn-outline-primary" id="commitment-invoice-anchor">
