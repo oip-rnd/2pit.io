@@ -30,7 +30,7 @@
                     <li class="nav-item">
                     	<a class="nav-link" href="<?php echo $this->url('home/index', ['instance_caption' => $context->getInstance()->caption]) ?>" rel="follow"><?php echo $this->translate('Home', 'ppit-core', $context->getLocale()) ?></a>
                     </li>
-					<li class="nav-item dropdown <?php if ($active != 'password') echo 'active' ?>">
+					<li class="nav-item dropdown active">
 						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAppLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							<?php echo $applicationName ?>
 						</a>
@@ -49,7 +49,7 @@
 <?php endforeach;?>
 						</div>
 					</li>
-					<li class="nav-item dropdown <?php if ($active == 'password') echo 'active' ?>">
+					<li class="nav-item dropdown">
 				        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownVcardLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 				        	<span class="far fa-lg fa-user"> </span><span class="caret"></span></a>
 				        <div class="dropdown-menu" aria-labelledby="navbarDropdownVcardLink">

@@ -7,10 +7,37 @@
  */
 -->
 
+<?php 
+
+// Retrieve the major ordering property and the direction
+$order = $arguments['order'];
+$major = $order[0];
+if (substr($major, 0, 1) == '-') {
+	$dir = 'DESC';
+	$major = substr($major, 1);
+}
+else $dir = 'ASC';
+$majorConfig = $config['list']['properties'][$major];
+
+// Compute the summation or distribution depending on the major property type
+$count = count($vcards);
+$sum = 0;
+$distribution = array();
+foreach ($vcards as $vcard) {
+	if ($majorConfig['type'] == 'number') $sum += $vcard[$major];
+	elseif ($majorConfig['type'] == 'select') {
+		if (array_key_exists($vcard[$major], $distribution)) $distribution[$vcard[$major]]++;
+		else $distribution[$vcard[$major]] = 1;
+	}
+}
+$average = (count($vcards)) ? round($sum / count($vcards), 1) : null;
+
+?>
+
 <style>
-/*table td { 
+table td { 
   font-size: 0.9rem;
-}*/
+}
 </style>
 
 <div class="col-md-12">
@@ -22,10 +49,10 @@
       <th>&nbsp;</th>
       <th>&nbsp;</th>
 	
-<?php foreach ($listPage['properties'] as $propertyId => $property) : ?>
+<?php foreach ($config['list']['properties'] as $propertyId => $property) : ?>
 
       <th align="center">
-        <a type="button" class="btn btn-sm sort_anchor <?php if ($major == $propertyId) echo 'btn-secondary active '.(($major == $propertyId) ? (($dir == 'ASC') ? 'sort_anchor_up' : 'sort_anchor_down') : '') ?>" role="button" id="<?php echo $propertyId ?>-anchor">
+        <a type="button" class="btn btn-sm vcard-sort-anchor <?php if ($major == $propertyId) echo 'btn-secondary active '.(($major == $propertyId) ? (($dir == 'ASC') ? 'sort_anchor_up' : 'sort_anchor_down') : '') ?>" role="button" id="<?php echo $propertyId ?>-anchor">
           <span><?php echo $context->localize($property['labels']) ?></span>
   <?php if ($major == $propertyId) : ?>
           <i class="fas fa-caret-<?php echo ($dir == 'ASC') ? 'up' : 'down' ?>"></i>
@@ -51,13 +78,13 @@
 
       <td class="text-center">
         <div class="input-group input-group-sm">
-          <button type="button" class="btn btn-sm btn-outline-primary index-btn vcard-detail-anchor" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale())?>" id="commitment-detail-anchor_0">
+          <button type="button" class="btn btn-sm btn-outline-primary index-btn vcard-detail-anchor" id="vcard-detail-anchor_0" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Add', 'ppit-core', $context->getLocale())?>">
             <span class="fas fa-plus"></span>
           </button>
         </div>
       </td>
   
-      <td colspan="<?php echo count($listPage['properties']) - 1 ?>"></td>
+      <td colspan="<?php echo count($config['list']['properties']) - 1 ?>"></td>
     </tr>
 
 <?php $i = 0; foreach ($vcards as $vcard) : ?>
@@ -68,24 +95,21 @@
       </td>
 
       <td>
-        <input type="hidden" class="vcard_id" value="<?php echo $vcard->id ?>" />
+        <input type="hidden" class="vcard_id" value="<?php echo $vcard['id'] ?>" />
         <div class="input-group input-group-sm">
-          <button type="button" class="btn btn-sm btn-outline-primary index-btn term-detail-anchor" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Detail', 'ppit-core', $context->getLocale())?>">
+          <button type="button" class="btn btn-sm btn-outline-primary index-btn vcard-detail-anchor" id="vcard-detail-anchor_<?php echo $vcard['id'] ?>" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Detail', 'ppit-core', $context->getLocale())?>">
             <i class="fas fa-search"></i>
           </button>
         </div>
       </td>
 
-  <?php foreach ($listPage['properties'] as $propertyId => $property) : ?>
+  <?php foreach ($config['list']['properties'] as $propertyId => $property) : ?>
 
-    <?php if ($propertyId == 'place_id') : ?>
-      <td><?php if ($vcard[$propertyId]) echo $places[$vcard[$propertyId]]->caption ?></td>
-
-    <?php elseif ($property['type'] == 'text') : ?>
+    <?php if ($property['type'] == 'text') : ?>
       <td><?php echo $vcard[$propertyId] ?></td>
 
     <?php elseif ($property['type'] == 'select') : ?>
-      <td><?php echo $property['modalities'][$vcard[$propertyId]][$context->getLocale()] ?></td>
+      <td><?php if ($vcard[$propertyId]) echo $property['modalities'][$vcard[$propertyId]][$context->getLocale()] ?></td>
 
     <?php elseif ($property['type'] == 'date') : ?>
       <td><?php echo $context->decodeDate($vcard[$propertyId]) ?></td>
@@ -117,7 +141,7 @@
         </div>
       </td>
 
-<?php if ($mode == 'todo' && count($vcard) >= '20') : ?>
+<?php if (count($vcards) >= '20') : ?>
       <td style="text-align: center">
         <div class="input-group input-group-sm">
           <button type="button" class="btn btn-sm btn-outline-primary more-btn" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Display the entire list', 'ppit-core', $context->getLocale())?>">
@@ -131,14 +155,14 @@
 
 <?php endif;?>
 
-      <td colspan="<?php echo count($listPage['properties']) - 1 ?>">&nbsp;</td>
+      <td colspan="<?php echo count($config['list']['properties']) - 1 ?>">&nbsp;</td>
     </tr>
 
     <tr class="table-info">
       <th></th>
       <th></th>
 
-<?php foreach ($listPage['properties'] as $propertyId => $property) : ?>
+<?php foreach ($config['list']['properties'] as $propertyId => $property) : ?>
       <th>
 
   <?php if ($propertyId == $major) : ?>
@@ -151,8 +175,7 @@
 
       <?php foreach ($distribution as $modality => $value) : ?>
         <?php 
-        if ($propertyId == 'place_id') if ($modality) $label = $places[$modality]->caption; else $label = '';
-        else $label = $property['modalities'][$modality][$context->getLocale()];
+        $label = $property['modalities'][$modality][$context->getLocale()];
         ?>
           <option value="<?php echo $modality ?>"><?php echo $label ?></option>
 

@@ -8,7 +8,321 @@ use Zend\InputFilter\InputFilterInterface;
 
 class Document
 {
-    public $id;
+	/**
+	 * This section is the business logic part of documents. It is functional oriented and has unit-testing associated
+	 */
+	
+	public static $model = [
+		'entities' => [
+			'core_document' => 	['table' => 'core_document'],
+		],
+		'properties' => [
+			'status' => 				['entity' => 'core_document', 'column' => 'status'],
+			'type' => 					['entity' => 'core_document', 'column' => 'type'],
+			'place_id' => 				['entity' => 'core_document', 'column' => 'place_id'],
+			'folder' => 				['entity' => 'core_document', 'column' => 'folder'],
+			'identifier' => 			['entity' => 'core_document', 'column' => 'identifier'],
+			'name' => 					['entity' => 'core_document', 'column' => 'name'],
+			'acl' => 					['entity' => 'core_document', 'column' => 'acl'],
+			'mime' => 					['entity' => 'core_document', 'column' => 'mime'],
+			'content' => 				['entity' => 'core_document', 'column' => 'content'],
+			'binary_content' => 		['entity' => 'core_document', 'column' => 'binary_content'],
+		],
+	];
+
+	/**
+	 * Returns a dictionary of each property associated with its description contextual to the current instance config.
+	 */
+	public static function getConfig($type)
+	{
+		// Retrieve the context
+		$context = Context::getCurrent();
+
+		// Retrieve the properties description defined in the current instance config for the given account type
+		$description = $context->getConfig('document/'.$type);
+		
+		// If no description is found for the given type retrieve the properties description for the generic type
+		if (!$description) $description = $context->getConfig('document/generic');
+		
+		// Construct the resulting dictionary for each defined property
+		$properties = array();
+		foreach($description['properties'] as $propertyId) {
+		
+			// Retrieve the property description according to the given type, defaulting to the generic type
+			$property = $context->getConfig('document/'.$type.'/property/'.$propertyId);
+			if (!$property) $property = $context->getConfig('document/generic/property/'.$propertyId);
+		
+			// Overwrite the description with the referred description for non-inline property definition
+			if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
+		
+			if (!array_key_exists('private', $property)) $property['private'] = false;
+				
+			// Cache the place list retrieved from the database for the current instance in the place_id property description
+			if ($propertyId == 'place_id') {
+				$property['modalities'] = array();
+				foreach (Place::getList(array()) as $place) $property['modalities'][$place->id] = $place->caption;
+			}
+			
+			$properties[$propertyId] = $property;
+		}
+		return $properties;
+	}
+	
+	/**
+	 * Returns the restricted dictionary expected by the search engine
+	 */
+	public static function getConfigSearch($type, $configProperties)
+	{
+		// Retrieve the context
+		$context = Context::getCurrent();
+	
+		// Retrieve the search properties defined in the current instance config for the given account type
+		$configSearch = $context->getConfig('document/search/' . $type);
+
+		// If no search description is found for the given type retrieve the search properties for the generic type
+		if (!$configSearch) $configSearch = $context->getConfig('document/search/generic');
+		
+		// Construct the resulting dictionary for each search property
+		$properties = array();
+		foreach ($configSearch['properties'] as $propertyId => $options) {
+	
+			// Retrieve the property description from the whole properties dictionary and merge it with the search options for this property
+			$property = $configProperties[$propertyId];
+			$properties[$propertyId] = $property;
+			$properties[$propertyId]['options'] = $options;
+		}
+	
+		$configSearch['properties'] = $properties;
+	
+		// Return the search restricted dictionary
+		return $configSearch;
+	}
+	
+	/**
+	 * Returns the restricted dictionary to display on a list view
+	 */
+	public static function getConfigList($type, $configProperties)
+	{
+		// Retrieve the context
+		$context = Context::getCurrent();
+	
+		// Retrieve the list properties defined in the current instance config for the given account type
+		$configList = $context->getConfig('document/list/' . $type);
+
+		// If no list description is found for the given type retrieve the list properties for the generic type
+		if (!$configList) $configList = $context->getConfig('document/list/generic');
+		
+		// Construct the resulting dictionary for each list property
+		$properties = array();
+		foreach ($configList['properties'] as $propertyId => $options) {
+	
+			// Retrieve the property description from the whole properties dictionary and merge it with the list options for this property
+			$property = $configProperties[$propertyId];
+			$properties[$propertyId] = $property;
+			$properties[$propertyId]['options'] = $options;
+		}
+		$configList['properties'] = $properties;
+	
+		// Return the search restricted dictionary
+		return $configList;
+	}
+	
+	/**
+	 * Returns the restricted dictionary to diplay on a detailed view
+	 */
+	public static function getConfigDetail($type, $configProperties)
+	{
+		// Retrieve the context
+		$context = Context::getCurrent();
+	
+		// Retrieve the updatable properties defined in the current instance config for the given account type
+		$configDetail = $context->getConfig('document/detail/' . $type);
+
+		// If no update description is found for the given type retrieve the updatable properties for the generic type
+		if (!$configDetail) $configDetail = $context->getConfig('document/detail/generic');
+
+		// Construct the resulting dictionary for each updatable property
+		$properties = array();
+		foreach ($configDetail['properties'] as $propertyId => $options) {
+			if (array_key_exists($propertyId, $configProperties)) {
+	
+				// Retrieve the property description from the whole properties dictionary and merge it with the update options for this property
+				$property = $configProperties[$propertyId];
+				$property['options'] = $options;
+				$properties[$propertyId] = $property;
+			}
+		}
+		$configDetail['properties'] = $properties;
+	
+		// Return the updatable restricted dictionary
+		return $configDetail;
+	}
+	
+	/**
+	 * Returns the restricted dictionary of the properties that can be updated in group
+	 */
+	public static function getConfigGroupUpdate($type, $configProperties)
+	{
+		// Retrieve the context
+		$context = Context::getCurrent();
+	
+		// Retrieve the group-updatable properties defined in the current instance config for the given account type
+		$configGroupUpdate = $context->getConfig('document/groupUpdate/' . $type);
+
+		// If no update description is found for the given type retrieve the group-updatable properties for the generic type
+		if (!$configGroupUpdate) $configGroupUpdate = $context->getConfig('document/groupUpdate/generic');
+		
+		// Construct the resulting dictionary for each group-updatable property
+		$properties = array();
+		foreach ($configGroupUpdate['properties'] as $propertyId => $options) {
+			if (array_key_exists($propertyId, $configProperties)) {
+	
+				// Retrieve the property description from the whole properties dictionary and merge it with the group-update options for this property
+				$property = $configProperties[$propertyId];
+				$property['options'] = $options;
+				$properties[$propertyId] = $property;
+			}
+		}
+		$configGroupUpdate['properties'] = $properties;
+	
+		// Return the group-updatable restricted dictionary
+		return $configGroupUpdate;
+	}
+	
+	/**
+	 * Returns the restricted dictionary of the properties that can be exported
+	 */
+	public static function getConfigExport($type, $configProperties)
+	{
+		// Retrieve the context
+		$context = Context::getCurrent();
+	
+		// Retrieve the exportable properties defined in the current instance config for the given account type
+		$configExport = $context->getConfig('document/export/' . $type);
+
+		// If no export description is found for the given type retrieve the exportable properties for the generic type
+		if (!$configExport) $configExport = $context->getConfig('document/export/generic');
+
+		// Construct the resulting dictionary for each exportable property
+		$properties = array();
+		foreach ($configExport as $propertyId => $options) {
+			if (array_key_exists($propertyId, $configProperties)) {
+	
+				// Retrieve the property description from the whole properties dictionary and merge it with the export options for this property
+				$property = $configProperties[$propertyId];
+				$properties[$propertyId] = $property;
+				$properties[$propertyId]['options'] = $options;
+			}
+		}
+		$configExport['properties'] = $properties;
+	
+		// Return the exportable restricted dictionary
+		return $configExport;
+	}
+	
+	/**
+	 * Returns the dictionary of the properties along with global options and
+	 * along with the restricted dictionary for search, list, detail, group-update and export
+	 */
+	public static function getDescription($type)
+	{
+		// Retrieve the context
+		$context = Context::getCurrent();
+	
+		// Construct the whole description by aggregating all the dictionnaries and options
+		$description = array();
+		$description['properties'] = Document::getConfig($type);
+		$description['search'] = Document::getConfigSearch($type, $description['properties']);
+		$description['list'] = Document::getConfigList($type, $description['properties']);
+		$description['detail'] = Document::getConfigDetail($type, $description['properties']);
+		$description['groupUpdate'] = Document::getConfigGroupUpdate($type, $description['properties']);
+		$description['export'] = Document::getConfigExport($type, $description['properties']);
+	
+		// Return the whole description
+		return $description;
+	}
+	
+	public static function getSelect($type, $columns = [], $filters = [], $order = ['name'], $limit = null)
+	{
+		// Retrieve the context
+		$context = Context::getCurrent();
+		$config = Document::getConfig($type);
+		
+		// Construct the select object and define the joins
+		$select = Document::getTable()->getSelect();
+	
+		// Specify the columns to retrieve (* if none)
+		if ($columns) $select->columns(array_merge(['id'], $columns));
+	
+		// Normalize the order by replacing the preceding '+' or '-' by trailing 'ASC' or 'DESC' and specify the order clause
+		foreach ($order as &$criterion) {
+			if (substr($criterion, 0, 1) == '-') $criterion = substr($criterion, 1) . ' DESC';
+			else $criterion .= ' ASC';
+		}
+		$select->order($order);
+	
+		$where = new Where;
+		$where->notEqualTo('core_document.status', 'deleted');
+	
+		// Set the filters
+		foreach ($filters as $propertyId => $predicate) {
+			$operator = $predicate[0];
+			$value = $predicate[1];
+			$property = $config[$propertyId];
+			$entity = Document::$model['properties'][$propertyId]['entity'];
+			$column = Document::$model['properties'][$propertyId]['column'];
+	
+			if ($property['type'] == 'select') {
+				if (array_key_exists('multiple', $property) && $property['multiple']) $where->like($entity . '.' . $column, '%' . $value . '%');
+				else $where->equalTo($entity.'.'.$column, $value);
+			}
+			elseif ($property['type'] == 'multiselect') $where->like($entity . '.' . $column, '%' . $value . '%');
+			elseif (in_array($property['type'], ['date', 'datetime']) && !$value) $where->isNull($entity . '.' . $propertyId);
+			elseif ($operator == 'eq') $where->equalTo($entity . '.' . $column, $value);
+			elseif ($operator == 'ne') $where->notEqualTo($entity . '.' . $column, $value);
+			elseif ($operator == 'gt') $where->greaterThan($entity . '.' . $propertyId, $value);
+			elseif ($operator == 'ge') $where->greaterThanOrEqualTo($entity . '.' . $propertyId, $value);
+			elseif ($operator == 'lt') $where->lessThan($entity . '.' . $propertyId, $value);
+			elseif ($operator == 'le') $where->lessThanOrEqualTo($entity . '.' . $propertyId, $value);
+			elseif ($operator == 'in') {
+				$values = array_slice($predicate, 1);
+				$where->in($entity . '.' . $column, $values);
+			}
+			elseif ($operator == 'between') {
+				$value = $predicate[2];
+				$where->between($entity . '.' . $column, $value, $value2);
+			}
+			elseif ($operator == 'like') $where->like($entity . '.' . $column, '%' . $value . '%');
+			elseif ($operator == 'null') $where->isNull($entity . '.' . $column);
+			elseif ($operator == 'not_null') $where->isNotNull($entity . '.' . $column);
+		}
+	
+		// Filter on authorized perimeter
+		if (array_key_exists('p-pit-admin', $context->getPerimeters())) {
+			foreach ($context->getPerimeters()['p-pit-admin'] as $propertyId => $values) {
+				if (array_key_exists($propertyId, Document::$model['properties'])) {
+					$entity = Document::$model['properties'][$propertyId]['entity'];
+					$column = Document::$model['properties'][$propertyId]['column'];
+					$where->in($entity . '.' . $column, $values);
+				}
+			}
+		}
+
+		$select->where($where);
+		
+		// Set the limit or no-limit
+		if ($limit) $select->limit((int) $limit);
+		 
+		// Return the SQL select
+		return $select;
+	}
+	
+	/**
+	 * This section is intended to be progressively deprecated in 2pit2 while the whole framework is to be simplified and
+	 * less and less dependant of the Zend historical foundation
+	 */
+	
+	public $id;
     public $instance_id;
     public $status;
     public $type;
@@ -25,6 +339,7 @@ class Document
     public $update_time;
     
     // Transient properties
+    public $is_deletable;
 	public $authorization;
 	public $parents;
     public $parts;
@@ -189,41 +504,6 @@ class Document
     	elseif ($allAccess == 'read' || $communityAccess == 'read' || $vcardAccess == 'read') $this->authorization = 'read';
     	else $this->authorization = null;
     	return $this->authorization;
-    }
-
-    public static function getList($type, $params, $order = '+name')
-    {
-    	
-    	$order = explode(',', $order);
-    	foreach ($order as &$criterion) $criterion = substr($criterion, 1).' '.((substr($criterion, 0, 1) == '-') ? 'DESC' : 'ASC');
-
-    	$select = Document::getTable()->getSelect()
-			->order($order);
-
-		$where = new Where;
-		$where->notEqualTo('core_document.status', 'deleted');
-		
-		// Set the filters
-		foreach ($params as $propertyId => $property) {
-			$where->like('core_document.'.$propertyId, '%'.$property.'%');
-		}
-
-		$select->where($where);
-		$cursor = Document::getTable()->selectWith($select);
-		$documents = array();
-		foreach ($cursor as $document) {
-/*
-			$document->retrieveAuthorization();
-
-    		// Set the inherited authorization where unspecified
-    		if (!$parent) $documents[$document->id] = $document;
-    		else {
-	    		if (!$document->authorization) $document->authorization = $parent->authorization;
-				if ($document->authorization)*/ $documents[$document->id] = $document;
-//    		}
-		}
-
-		return $documents;
     }
 
     public static function get($id, $column = 'id', $id2 = false, $column2 = false, $id3 = false, $column3 = false, $id4 = false, $column4 = false)

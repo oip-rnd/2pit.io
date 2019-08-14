@@ -86,6 +86,7 @@ class Vcard
 		$properties = array();
 		foreach($context->getConfig('vcard/properties') as $propertyId => $property) {
 			if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
+			if (!array_key_exists('private', $property)) $property['private'] = false;
 			$properties[$propertyId] = $property;
 		}
 		return $properties;
@@ -166,9 +167,10 @@ class Vcard
 				$properties[$propertyId] = $property;
 			}
 		}
-	
+		$configDetail['properties'] = $properties;
+		
 		// Return the updatable restricted dictionary
-		return $properties;
+		return $configDetail;
 	}
 	
 	/**
@@ -193,9 +195,10 @@ class Vcard
 				$properties[$propertyId] = $property;
 			}
 		}
-	
+		$configGroupUpdate['properties'] = $properties;
+		
 		// Return the group-updatable restricted dictionary
-		return $properties;
+		return $configGroupUpdate;
 	}
 	
 	/**
@@ -220,9 +223,10 @@ class Vcard
 				$properties[$propertyId]['options'] = $options;
 			}
 		}
-	
+		$configExport['properties'] = $properties;
+		
 		// Return the exportable restricted dictionary
-		return $properties;
+		return $configExport;
 	}
 	
 	/**
@@ -263,7 +267,7 @@ class Vcard
 	 * @param int $limit
 	 * @return \Zend\Db\Sql\Select
 	 */
-	public static function getSelect($columns = null, $filters = [], $order = ['+name'], $limit = null)
+	public static function getSelect($columns = [], $filters = [], $order = ['n_fn'], $limit = null)
 	{
 		// Retrieve the context and the account description for the given type
 		$context = Context::getCurrent();
@@ -271,16 +275,21 @@ class Vcard
 	
 		// Construct the select object and define the joins
 		$select = Vcard::getTable()->getSelect();
-	
+
 		// Specify the columns to retrieve (* if none)
-		if ($columns) $select->columns($columns);
+		if ($columns) $select->columns(array_merge(['id'], $columns));
 	
 		// Normalize the order by replacing the preceding '+' or '-' by trailing 'ASC' or 'DESC' and specify the order clause
-		foreach ($order as &$criterion) $criterion = substr($criterion, 1).' '.((substr($criterion, 0, 1) == '-') ? 'DESC' : 'ASC');
+		foreach ($order as &$criterion) {
+			if (substr($criterion, 0, 1) == '-') $criterion = substr($criterion, 1) . ' DESC';
+			else $criterion .= ' ASC';
+		}
 		$select->order($order);
 	
 		// Set the fiters
 		$where = new Where;
+		$where->notEqualTo('core_vcard.status', 'deleted');
+		
 		foreach ($filters as $propertyId => $predicate) {
 			$operator = $predicate[0];
 			$value = $predicate[1];
@@ -304,7 +313,7 @@ class Vcard
 				$values = array_slice($predicate, 1);
 				$where->in($entity . '.' . $column, $values);
 			}
-			elseif ($operator = 'between') {
+			elseif ($operator == 'between') {
 				$value = $predicate[2];
 				$where->between($entity . '.' . $column, $value, $value2);
 			}
@@ -323,20 +332,11 @@ class Vcard
 				}
 			}
 		}
-		if (array_key_exists($type, $context->getPerimeters())) {
-			foreach ($context->getPerimeters()[$type] as $propertyId => $values) {
-				if (array_key_exists($propertyId, Vcard::$model['properties'])) {
-					$entity = Account::$model['properties'][$propertyId]['entity'];
-					$column = Account::$model['properties'][$propertyId]['column'];
-					$where->in($entity . '.' . $column, $values);
-				}
-			}
-		}
 	
 		$select->where($where);
-	
+
 		// Set the limit or no-limit
-		if ($limit) $select->limit($limit);
+		if ($limit) $select->limit((int) $limit);
 	
 		// Return the SQL select
 		return $select;
@@ -460,9 +460,6 @@ class Vcard
 			if ($resultType == 'errors') return 'Integrity';
 			if ($resultType == 'data') $data = $result;
 		}
-	
-		// Retrieve the property description for the given type
-		$property = $configProperties[$propertyId];
 	
 		foreach ($data as $propertyId => $value) {
 			 
@@ -592,6 +589,7 @@ class Vcard
     /** @var string */ public $locale;
     /** @var boolean */ public $is_demo_mode_active;
     /** @var boolean */ public $is_notified;
+	/** @var array */ public $audit;
 	/** @var string */ public $update_time;
     
 	// Deprecated
@@ -663,6 +661,7 @@ class Vcard
         $this->is_notified = (isset($data['is_notified'])) ? $data['is_notified'] : null;
         $this->is_demo_mode_active = (isset($data['is_demo_mode_active'])) ? $data['is_demo_mode_active'] : null;
         $this->photo_link_id = (isset($data['photo_link_id'])) ? $data['photo_link_id'] : null;
+        $this->audit = (isset($data['audit'])) ? json_decode($data['audit'], true) : null;
         $this->update_time = (isset($data['update_time'])) ? $data['update_time'] : null;
 	    
 	    // Deprecated
@@ -719,7 +718,9 @@ class Vcard
     	$data['is_notified'] = $this->is_notified;
     	$data['is_demo_mode_active'] = (int) $this->is_demo_mode_active;
     	$data['photo_link_id'] = $this->photo_link_id;
-    	
+    	$data['audit'] = $this->audit;
+    	$data['update_time'] = $this->update_time;
+    	 
     	// Deprecated
     	$data['community_id'] = (int) $this->community_id;
     	$data['communities'] = $this->communities;
@@ -743,7 +744,8 @@ class Vcard
     	// Deprecated
     	$data['communities'] = json_encode($this->communities);
     	$data['specifications'] = json_encode($this->specifications);
-    	 
+    	$data['audit'] = json_encode($this->audit);
+
     	return $data;
     }
 
@@ -769,7 +771,8 @@ class Vcard
     	$select = Vcard::getTable()->getSelect();
     	
     	$where = new Where();
-
+    	$where->notEqualTo('core_vcard.status', 'deleted');
+    	 
     	// Access control
     	$community = Community::get($community_id);
     	if ($community) $community_id = $community->id; else $community_id = 0;
@@ -813,7 +816,7 @@ class Vcard
     public static function get($id, $column = 'id', $id2 = false, $column2 = false, $id3 = false, $column3 = false, $id4 = false, $column4 = false)
     {
     	$context = Context::getCurrent();
-    	$vcard = Vcard::getTable()->get($id, $column, $id2, $column2, $id3, $column3, $id4, $column4);
+    	$vcard = Vcard::getTable()->get($id, $column, $id2, $column2, $id3, $column3, $id4, $column4, true);
     	if ($vcard) {
 	    	$roles = array();
 	    	foreach ($vcard->roles as $role) $roles[$role] = $role;
@@ -833,6 +836,7 @@ class Vcard
     	$vcard->perimeters = array();
     	$vcard->locale = 'fr_FR';
     	$vcard->photo_link_id = 'no-photo.png';
+		$vcard->audit = array();
     	$vcard->properties = $vcard->toArray();
 
     	// Deprecated
@@ -1124,10 +1128,15 @@ class Vcard
     
     public function isDeletable()
     {
-    	if (Generic::getTable()->cardinality('core_event', array('status != ?' => 'deleted', 'place_id' => $this->id)) > 0) return false;
-    	
+    	if (Generic::getTable()->cardinality('core_user_contact', array('status != ?' => 'deleted', 'vcard_id' => $this->id)) > 0) return false;
+    	if (Generic::getTable()->cardinality('core_account', array('status != ?' => 'deleted', 'contact_1_id' => $this->id)) > 0) return false;
+    	if (Generic::getTable()->cardinality('core_account', array('status != ?' => 'deleted', 'contact_2_id' => $this->id)) > 0) return false;
+    	if (Generic::getTable()->cardinality('core_account', array('status != ?' => 'deleted', 'contact_3_id' => $this->id)) > 0) return false;
+    	if (Generic::getTable()->cardinality('core_account', array('status != ?' => 'deleted', 'contact_4_id' => $this->id)) > 0) return false;
+    	if (Generic::getTable()->cardinality('core_account', array('status != ?' => 'deleted', 'contact_5_id' => $this->id)) > 0) return false;
+
     	$config = Context::getCurrent()->getConfig();
-    	foreach($config['ppitContactDependencies'] as $dependency) {
+    	foreach($config['ppitCoreDependencies'] as $dependency) {
     		if ($dependency->isUsed($this)) return false;
     	}
     	return true;
@@ -1138,7 +1147,8 @@ class Vcard
     	// Check isolation and save
     	$vcard = Vcard::getTable()->get($this->id);
     	if ($update_time && $vcard->update_time != $update_time) return 'Isolation';
-    	Vcard::getTable()->delete($this->id);
+    	$this->status = 'deleted';
+    	Vcard::getTable()->save($this);
     	return 'OK';
     }
     

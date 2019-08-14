@@ -16,34 +16,23 @@ function checkFormValidity(prefix)
 
   // Check mandatory properties
   $('.' + prefix + 'update-mandatory').each(function () {
-    let propertyId = $(this).attr('id').split('_')[1];
+    let propertyId = $(this).attr('id');
     let val = $('#' + propertyId).val();
     if (!val) {
-      $('#' + propertyId + '_error').html('<?php echo $this->translate('Please input a value', 'ppit-core', $context->getLocale()) ?>');
-      validity = false;
-    }
-  });
-
-  
-  $('.' + prefix + 'update-maxlength').each(function () {
-    let propertyId = $(this).attr('id').split('_')[1];
-    let val = $('#' + propertyId).val();
-    let maxlength = $('#' + propertyId).attr('maxlength');
-    if (val.length > maxlength) {
-      $('#' + propertyId + '_error').html('<?php echo $this->translate('The input is too long', 'ppit-core', $context->getLocale()) ?>');
+      $('#' + propertyId + '-error').html('<?php echo $this->translate('Please input a value', 'ppit-core', $context->getLocale()) ?>');
       validity = false;
     }
   });
 
   // Check numbers
   $('.' + prefix + 'update-number').each(function () {
-    let propertyId = $(this).attr('id').split('_')[1];
+    let propertyId = $(this).attr('id');
     let val = $('#' + propertyId).val(), min = $('#' + propertyId).attr('min'), max = $('#' + propertyId).attr('max');
 
     if (val) {
       let error = checkNumber(val, min, max);
       if (error) {
-        $('#' + propertyId + '_error').html(error);
+        $('#' + propertyId + '-error').html(error);
         validity = false;
       }
     }
@@ -51,13 +40,13 @@ function checkFormValidity(prefix)
 
   // Check dates
   $('.' + prefix + 'update-date').each(function () {
-    let propertyId = $(this).attr('id').split('_')[1];
+    let propertyId = $(this).attr('id');
     let val = $('#' + propertyId).val();
 
     if (val) {
       let error = checkDate(val);
       if (error) {
-        $('#' + propertyId + '_error').html(error);
+        $('#' + propertyId + '-error').html(error);
         validity = false;
       }
     }
@@ -65,13 +54,13 @@ function checkFormValidity(prefix)
 
   // Check email
   $('.' + prefix + 'update-email').each(function () {
-    let propertyId = $(this).attr('id').split('_')[1];
+    let propertyId = $(this).attr('id');
     let val = $('#' + propertyId).val();
 
     if (val) {
       let error = checkEmail(val);
       if (error) {
-        $('#' + propertyId + '_error').html(error);
+        $('#' + propertyId + '-error').html(error);
         validity = false;
       }
       else {
@@ -82,13 +71,13 @@ function checkFormValidity(prefix)
 
   // Check phone
   $('.' + prefix + 'update-phone').each(function () {
-    let propertyId = $(this).attr('id').split('_')[1];
+    let propertyId = $(this).attr('id');
     let val = $('#' + propertyId).val();
 
     if (val) {
       let error = checkPhone(val);
       if (error) {
-        $('#' + propertyId + '_error').html(error);
+        $('#' + propertyId + '-error').html(error);
         validity = false;
       }
       else {
@@ -103,17 +92,18 @@ function checkFormValidity(prefix)
 function getFormData(prefix)
 {
   // Create a new FormData object.
-  var formData = new FormData();
+  let formData = new FormData();
 
   $('.' + prefix + 'update-input').each(function () {
-    let propertyId = $(this).attr('id').split('_')[1];
-    let val = $('#' + propertyId).val();
+    let propertyId = $(this).attr('id').split('-')[1];
+    let val = $('#' + prefix + propertyId).val();
+console.log(propertyId, val);
     formData.append(propertyId, val);
   });
 
   $('.' + prefix + 'update-date').each(function () {
-    let propertyId = $(this).attr('id').split('_')[1];
-    let val = $('#' + propertyId).val();
+    let propertyId = $(this).attr('id').split('-')[1];
+    let val = $('#' + prefix + propertyId).val();
 <?php $dateFormat = $context->dateFormat() ?>
 <?php if ($dateFormat[0] == 0 && $dateFormat[1] == 1 && $dateFormat[2] == 2) : ?>
     val = val.substr(0, 4) + "-" + val.substr(5, 2) + "-" + val.substr(8, 2);
@@ -126,11 +116,15 @@ function getFormData(prefix)
   });
 
   $('.' + prefix + 'update-checkbox').each(function () {
-    let propertyId = $(this).attr('id').split('_')[1];
-    let val = $('#' + propertyId).attr('checked');
+    let propertyId = $(this).attr('id').split('-')[1];
+    let val = $('#' + prefix + propertyId).attr('checked');
     formData.append(propertyId, val);
   });
+
+  formData.append('csrf', $('#csrf').val());
+  formData.append('update_time', $('#' + prefix + 'update_time').val());
   
+  return formData;
 }
 
 </script>

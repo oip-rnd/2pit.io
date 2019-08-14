@@ -11,16 +11,16 @@
 <?php echo $this->partial('/partials/search-scripts-v2') ?>
 
 <script>
-var criterion = 'n_fn', dir = 'ASC';
+var criterion = 'name', dir = 'ASC';
 
-function vcardSearch()
+function documentSearch()
 {
   var xhttp = new XMLHttpRequest();
-  xhttp.open("GET", '<?php echo $this->url('vcard/search') ?>', true);
+  xhttp.open("GET", '<?php echo $this->url('document/search', ['type' => $type, 'folder' => $folder]) ?>', true);
   xhttp.onreadystatechange = function() {
     if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
     if (xhttp.readyState == 4 && (xhttp.status == 200 || xhttp.status == 400)) {
-      document.getElementById('index_panel').innerHTML = xhttp.responseText;
+      document.getElementById('document-search-panel').innerHTML = xhttp.responseText;
       
       // Connect the erase button that reset all the search engine inputs and checks and refresh the list
       $('#erase-button').click(function() {
@@ -30,7 +30,7 @@ function vcardSearch()
         $('.search_check').removeClass('btn-secondary').addClass('btn-default').removeClass('active');
         $('#erase-button').removeClass('btn-success').addClass('btn-default');
         $('#erase-button').attr('disabled', 'disabled');
-        getVcardList(getSearchParams(''));
+        getDocumentList(getSearchParams(''));
       });
 
       $('.search_selectpicker').selectpicker('refresh');
@@ -46,7 +46,7 @@ function vcardSearch()
           $('#erase-button').attr('disabled', false);
           $('#search_check-' + propertyId).removeClass('btn-default').addClass('btn-secondary').addClass('active');
           $('#search_check_value-' + propertyId).val('1');
-	      getVcardList(getSearchParams(''));
+	      getDocumentList(getSearchParams(''));
         }
       }); 
 
@@ -59,7 +59,7 @@ function vcardSearch()
             $('#erase-button').attr('disabled', false);
             $('#search_check-' + propertyId).removeClass('btn-default').addClass('btn-secondary').addClass('active');
             $('#search_check_value-' + propertyId).val('1');
-            getVcardList(getSearchParams(''));
+            getDocumentList(getSearchParams(''));
           }
         }
       });
@@ -81,53 +81,39 @@ function vcardSearch()
           $(this).removeClass('btn-default').addClass('btn-secondary').addClass('active');
           $('#' + check).val('1');
         }
-        getVcardList(getSearchParams(''));
+        getDocumentList(getSearchParams(''));
       });
 
-      getVcardList(getSearchParams(''));
+      getDocumentList(getSearchParams(''));
     }
   }
   xhttp.send();
 }
 
 // Export the list
-function vcardExport() {
+function documentExport() {
 
 	var params = getSearchParams('');
-	document.location.href = '<?php echo $this->url('vcard/export') ?>' + params;
+	document.location.href = '<?php echo $this->url('document/export', ['type' => $type, 'folder' => $folder]) ?>' + params;
 }
 
 // Load the list
-function getVcardList(params) {		
+function getDocumentList(params) {
 
   // Execute the ajax request
   let order = ((dir =='ASC') ? '' : '-') + criterion;
-  let route = '<?php echo $this->url('vcard/list') ?>' + params + '&order=' + order;
+  let route = '<?php echo $this->url('document/list', ['type' => $type, 'folder' => $folder]) ?>' + params + '&order=' + order;
   xhttp = new XMLHttpRequest();
   xhttp.open("GET", route, true);
   xhttp.onreadystatechange = function() {
     if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
     if (xhttp.readyState == 4 && (xhttp.status == 200 || xhttp.status == 400)) {
-        document.getElementById('vcard-list-panel').innerHTML = xhttp.responseText;
+        document.getElementById('document-list-panel').innerHTML = xhttp.responseText;
 
-        $('#export-button').click(function () { vcardExport(); });
-
-        // Connect the sort anchors
-        $('.vcard-sort-anchor').click(function () {
-          criterion = $(this).attr('id').split('-')[0];
-          ascCriterion = $('.sort_anchor_up').attr('id');
-          descCriterion = $('.sort_anchor_down').attr('id');
-          if (criterion + '-anchor' == ascCriterion) dir = 'DESC';
-          else if (criterion + '-anchor' == descCriterion) dir = 'ASC';
-          else dir = 'ASC';
-          getVcardList(getSearchParams(''));
-        });
-
-        // Connect the detail anchors
-        $('.vcard-detail-anchor').click(function () {
+        // Connect the download buttons
+        $('.document-download-btn').click(function () {
           var id = $(this).attr('id').split('_')[1];
-          vcardDetail($(this).attr('id').split('_')[1]);
-          $(this).removeClass("btn-outline-primary").addClass("btn-primary");
+          documentDownload($(this).attr('id').split('_')[1]);
         });
         
         $('[data-toggle="tooltip"]').tooltip()
@@ -138,92 +124,58 @@ function getVcardList(params) {
 }
 
 $('#modalForm').on('hidden.bs.modal', function (e) {
-  getVcardList(getSearchParams(''));
+  getDocumentList(getSearchParams(''));
 })
 
-function connectAuditPanel()
-{
-  $('#audit-panel').hide();
-  $('#audit-label').click(function () {
-    if ($('#audit-label').text() == '<?php echo $this->translate('Show', 'ppit-core', $context->getLocale()) ?>') {
-      $('#audit-panel').show();
-      $('#audit-label').text('<?php echo $this->translate('Mask', 'ppit-core', $context->getLocale()) ?>');
-    }
-    else {
-      $('#audit-panel').hide();
-      $('#audit-label').text('<?php echo $this->translate('Show', 'ppit-core', $context->getLocale()) ?>');
-    }
-  });
-}
-
-function connectPostBtn() {
-    let id = $('#vcard-id').val();
-	$('.vcard-cancel-btn').show();
-    $('.vcard-btn').attr('disabled', true);
-    $('.vcard-post-btn').attr('disabled', false);
-    $('.vcard-post-btn').removeClass('btn-outline-primary').addClass('btn-warning');
-    $('.vcard-post-btn').unbind('click');
-    $('.vcard-post-btn').click(function () { vcardPost(id); });
-    $('.vcard-updatable').attr('disabled', false);
-}
-
 function connectDeleteBtn() {
-    let id = $('#vcard-id').val();
-    $('.vcard-cancel-btn').show();
-    $('.vcard-btn').attr('disabled', true);
-    $('.vcard-delete-btn').attr('disabled', false);
-    $('.vcard-delete-btn').removeClass('btn-outline-primary').addClass('btn-danger');
-    $('.vcard-delete-btn').unbind('click');
-    $('.vcard-delete-btn').click(function () { vcardDelete(id); });
+    let id = $(this).attr('id').split('_')[1];
+    $('.document-cancel-btn').show();
+    $('.document-checkbox').attr('disabled', true);
+    $('.document-btn').attr('disabled', true);
+    $('#document-delete-btn_' + id).attr('disabled', false);
+    $('#document-delete-btn_' + id).removeClass('btn-outline-primary').addClass('btn-danger');
+    $('#document-delete-btn_' + id).unbind('click');
+    $('#document-delete-btn_' + id).click(function () { documentDelete(id); });
 }
 
 function connectCancelBtn() {
-    let id = $('#vcard-id').val();
-    $('.vcard-cancel-btn').hide();
-    $('.vcard-btn').attr('disabled', false);
-    $('.vcard-btn').removeClass('btn-warning').removeClass('btn-danger').addClass('btn-outline-primary');
-    $('.vcard-post-btn').unbind('click');
-    $('.vcard-post-btn').click(function () { connectPostBtn() });
-    $('.vcard-delete-btn').unbind('click');
-    $('.vcard-delete-btn').click(function () { connectDeleteBtn() });
-    $('.vcard-updatable').attr('disabled', true);
+    $('.document-cancel-btn').hide();
+    $('.document-checkbox').attr('disabled', false);
+    $('.document-btn').attr('disabled', false);
+    $('.document-btn').removeClass('btn-warning').removeClass('btn-danger').addClass('btn-outline-primary');
+    $('.document-delete-btn').unbind('click');
+    $('.document-delete-btn').click(function () { connectDeleteBtn() });
 }
 
 // Add a new vard or update an existing vcard
-function vcardPost(id)
+function documentUpload()
 {
-  // Check validity
-  let validity = checkFormValidity('vcard-');
-  if (validity) {
-
-	// Submit the formData in a POST request to the server
-    let xhttp = new XMLHttpRequest();
-    let route = '<?php echo $this->url('vcard/detail') ?>' + '/' + id;
-    xhttp.open('POST', route, true);
-    xhttp.onreadystatechange = function() {
-      if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
-      if (xhttp.readyState == 4 && (xhttp.status == 200 || xhttp.status == 400)) {
-        $('#vcard-detail-panel').html(xhttp.responseText);
-        connectAuditPanel();
-
-        $('.vcard-cancel-btn').hide();
-        $('.vcard-put-btn').click(function () { vcardPut(); });
-        $('.vcard-post-btn').click(function () { connectPostBtn() });
-        $('.vcard-delete-btn').click(function () { connectDeleteBtn() });
-        $('.vcard-cancel-btn').click(function () { connectCancelBtn() });
-      }
-    };
-    xhttp.send(getFormData('vcard-'));
+  // Submit the formData in a POST request to the server
+  formData = new FormData();
+  let fileSelect = document.getElementById('document-file');
+  if (fileSelect) {
+    let files = fileSelect.files;
+      formData.append('document-file', files[0], files[0].name);
   }
-  else return false;
+
+  let xhttp = new XMLHttpRequest();
+  let route = '<?php echo $this->url('document/upload', ['type' => $type, 'folder' => $folder]) ?>';
+  xhttp.open('POST', route, true);
+  xhttp.onreadystatechange = function() {
+    if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+    if (xhttp.readyState == 4 && (xhttp.status == 200 || xhttp.status == 400)) {
+      getDocumentList(getSearchParams(''));
+    }
+  };
+  xhttp.send(formData);
 }
 
 // Delete an existing vcard
-function vcardDelete(id)
+function documentDelete(id)
 {
   // Submit the DELETE request to the server
   let xhttp = new XMLHttpRequest();
-  let route = '<?php echo $this->url('vcard/detail') ?>' + '/' + id;
+  let route = '<?php echo $this->url('document/delete', ['type' => $type, 'folder' => $folder]) ?>' + '/' + id;
   xhttp.open('DELETE', route, true);
   xhttp.onreadystatechange = function() {
 	if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';

@@ -12,6 +12,7 @@ namespace PpitCore;
 use Zend\Router\Http\Literal;
 use Zend\ServiceManager\Factory\InvokableFactory;
 
+include('config_document.php');
 include('config_vcard.php');
 
 return array_merge(
@@ -381,15 +382,52 @@ return array_merge(
 				),
 				'may_terminate' => true,
 				'child_routes' => array(
+					'search' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/search[/:type][/:folder]',
+							'defaults' => array(
+								'action' => 'search',
+							),
+						),
+					),
+					'list' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/list[/:type][/:folder]',
+							'defaults' => array(
+								'action' => 'list',
+							),
+						),
+					),
 					'upload' => array(
 						'type' => 'segment',
 						'options' => array(
-							'route' => '/upload[/:folder]',
+							'route' => '/upload[/:type][/:folder]',
 							'defaults' => array(
 								'action' => 'upload',
 							),
 						),
 					),
+					'archive' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/archive[/:type][/:folder][/:id]',
+							'defaults' => array(
+								'action' => 'archive',
+							),
+						),
+					),
+					'delete' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/delete[/:type][/:folder][/:id]',
+							'defaults' => array(
+								'action' => 'delete',
+							),
+						),
+					),
+						
 					'download' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -408,17 +446,6 @@ return array_merge(
 							'route' => '/update[/:identifier]',
 							'defaults' => array(
 								'action' => 'update',
-							),
-						),
-					),
-
-					// Restfull implementation
-					'get' => array(
-						'type' => 'segment',
-						'options' => array(
-							'route' => '/get[/:type]',
-							'defaults' => array(
-								'action' => 'get',
 							),
 						),
 					),
@@ -1577,6 +1604,51 @@ return array_merge(
 				),
 				'may_terminate' => true,
 				'child_routes' => array(
+					'index' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/index[/:type][/:entryId]',
+							'defaults' => array(
+								'action' => 'index',
+							),
+						),
+					),
+					'search' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/search[/:type]',
+							'defaults' => array(
+								'action' => 'search',
+							),
+						),
+					),
+					'list' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/list[/:type]',
+							'defaults' => array(
+								'action' => 'list',
+							),
+						),
+					),
+					'export' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/export[/:type]',
+							'defaults' => array(
+								'action' => 'export',
+							),
+						),
+					),
+					'detail' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/detail[/:id]',
+							'defaults' => array(
+								'action' => 'detail',
+							),
+						),
+					),
 					'get' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -1729,10 +1801,15 @@ return array_merge(
 				array('route' => 'config/v1', 'roles' => array('guest')),
 				
 				array('route' => 'document', 'roles' => array('user')),
+				array('route' => 'document/search', 'roles' => array('user')),
+				array('route' => 'document/list', 'roles' => array('user')),
+				array('route' => 'document/export', 'roles' => array('user')),
 				array('route' => 'document/upload', 'roles' => array('user')),
 				array('route' => 'document/download', 'roles' => array('user')),
+				array('route' => 'document/archive', 'roles' => array('admin')),
+				array('route' => 'document/delete', 'roles' => array('admin')),
+				
 				array('route' => 'document/update', 'roles' => array('admin')),
-				array('route' => 'document/get', 'roles' => array('user')),
 				
 				array('route' => 'event', 'roles' => array('user')),
 				array('route' => 'event/v1', 'roles' => array('guest')),
@@ -1854,6 +1931,11 @@ return array_merge(
 				array('route' => 'user/fbwebhook', 'roles' => array('guest')),
 				array('route' => 'user/fbpageaccess', 'roles' => array('guest')),
 				
+				array('route' => 'vcard/index', 'roles' => array('user')),
+				array('route' => 'vcard/search', 'roles' => array('user')),
+				array('route' => 'vcard/list', 'roles' => array('user')),
+				array('route' => 'vcard/export', 'roles' => array('user')),
+				array('route' => 'vcard/detail', 'roles' => array('user')),
 				array('route' => 'vcard/get', 'roles' => array('user')),
 				array('route' => 'vcard/put', 'roles' => array('user')),
 				array('route' => 'vcard/post', 'roles' => array('user')),
@@ -2153,6 +2235,14 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 				'label' => array(
 					'en_US' => 'Places',
 					'fr_FR' => 'Etablissements',
+				),
+			),
+			'vcard' => array(
+				'route' => 'vcard/index',
+				'params' => array('entryId' => 'vcard'),
+				'label' => array(
+					'en_US' => 'Contacts',
+					'fr_FR' => 'Contacts',
 				),
 			),
 			'user' => array(
@@ -6528,5 +6618,7 @@ A bientôt sur la plateforme !
 	),
 ],
 
+	CONFIG_DOCUMENT,
+		
 	CONFIG_VCARD
 );

@@ -183,7 +183,7 @@ class GenericTable
 		        	return $id;
 	            }
 	            else {
-	                throw new \Exception('Form id does not exist');
+	                throw new \Exception('Form id does not exist: ' . $id);
 	            }
 	        }
 		}

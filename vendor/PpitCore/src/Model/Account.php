@@ -495,7 +495,7 @@ class Account
 				$values = array_slice($predicate, 1);
 				$where->in($entity . '.' . $column, $values);
 			}
-			elseif ($operator = 'between') {
+			elseif ($operator == 'between') {
 				$value = $predicate[2];
 				$where->between($entity . '.' . $column, $value, $value2);
 			}

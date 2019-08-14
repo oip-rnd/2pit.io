@@ -26,10 +26,11 @@ class VcardController extends AbstractActionController
     {
     	// Retrieve the context and parameters
     	$context = Context::getCurrent();
+    	$place = Place::get($context->getPlaceId());
     	$entry = $this->params()->fromRoute('entry', 'vcard');
 
     	// Retrieve the description
-    	$description = Vcard::getDescription();
+    	$config = Vcard::getDescription();
 
 		// Transient: Serialize a list of the entries from all menus
 		$menuEntries = [];
@@ -50,308 +51,116 @@ class VcardController extends AbstractActionController
 		$this->layout('/layout/core-layout');
 		$this->layout()->setVariables(array(
 			'context' => $context,
+			'place' => $place,
 			'entry' => $entry,
-			'description' => $description,
+			'config' => $config,
 			'tab' => $tab,
 			'app' => $app,
 			'applicationName' => $applicationName,
 			'pageScripts' => 'ppit-core/view-controller/vcard',
 		));
     	
-		$view = $this->indexAction();
+
+    	return new ViewModel(array(
+			'context' => $context,
+    	));
+		return $view;
+    }
+
+    public function searchAction()
+    {
+    	// Retrieve the context and description
+    	$context = Context::getCurrent();
+    	$config = Vcard::getDescription();
+    
+    	// Return the link list
+    	$view = new ViewModel(array(
+    		'context' => $context,
+    		'searchPage' => $config['search'],
+    	));
+    	$view->setTerminal(true);
     	return $view;
     }
-    
-	public function getAction()
-	{
-		return $this->v1Action();
-/*		$context = Context::getCurrent();
-		$id = $this->params()->fromRoute('id');
-		
-		if ($id) {
 
-			// Direct access mode
-			$vcard = Vcard::get($id);
-			if (!$vcard) {
-				$this->getResponse()->setStatusCode('400');
-				return $this->getResponse();
-			}
-			$content['data'] = $vcard->getProperties();
-		}
-		else {
+    public function listAction()
+    {
+    	// Retrieve the context and description
+    	$context = Context::getCurrent();
+    	$config = Vcard::getDescription();
+    	
+    	$content = [
+    		'context' => $context,
+			'config' => $config,
+    	];
+    		 
+    	// Get the list and description as content 
+		$content = array_merge($content, $this->v1Action());
 
-			// List mode
-			$filters = array();
-			$limit = $this->params()->fromQuery('limit');
-			$order = $this->params()->fromQuery('order', '+name');
-			$page = $this->params()->fromQuery('page');
-			$per_page = $this->params()->fromQuery('per_page');
-			$statusDef = $context->getConfig('core_account/'.$type.'/property/status');
-			if ($statusDef['definition'] != 'inline') $statusDef = $context->getConfig($statusDef['definition']);
-			if (!array_key_exists('status', $filters)) $filters['status'] = implode(',', $statusDef['perspectives'][$perspective]);
-			$vcards = Vcard::getList($type, $filters, $order, $limit, null, $page, $per_page);
-			$content['data'] = array();
-			foreach ($vcards as $vcard) $content['data'][$vcard->id] = $vcard->getProperties();
-		}
-		
-		return $content;*/
-	}
-/*	
-	public function processPut($data)
-	{
-		$context = Context::getCurrent();
-		$content = array();
-		
-		$vcard = Vcard::instanciate();
+    	// Return the link list
+    	$view = new ViewModel($content);
+    	$view->setTerminal(true);
+    	return $view;
+    }
 
-		// Database update
-		$connection = Vcard::getTable()->getAdapter()->getDriver()->getConnection();
-		$connection->beginTransaction();
-		try {
-			$rc = $vcard->loadAndAdd($data);
-			if ($rc[0] != '200') {
-				$connection->rollback();
-				$content['statusCode'] = $rc[0];
-				$this->getResponse()->setStatusCode($content['statusCode']);
-				$content['reasonCode'] = $rc[1];
-				$this->getResponse()->setReasonCode($content['reasonCode']);
-			}
-			else {
-				$connection->commit();
-				$content['statusCode'] = '200';
-				$this->getResponse()->setStatusCode($content['statusCode']);
-			}
-		}
-		catch (\Exception $e) {
-			$connection->rollback();
-			$content['statusCode'] = '500';
-			$this->getResponse()->setStatusCode($content['statusCode']);
-			$content['reasonCode'] = $e->getMessage();
-			$this->getResponse()->setReasonCode($content['reasonCode']);
-		}
-		
-		return $content;
-	}*/
-
-	public function putAction()
-	{
+    public function detailAction()
+    {
 		// Retrieve the context and parameters
 		$context = Context::getCurrent();
-		$put = true; // $this->request->isPut();
+    	$config = Vcard::getDescription();
+		$id = $this->params()->fromRoute('id');
+
+		if ($this->request->isGet()) $requestType = 'GET';
+		elseif ($this->request->isPost()) $requestType = 'POST';
+		elseif ($this->request->isDelete()) $requestType = 'DELETE';
 
 		// Instanciate the form token
 		$csrfForm = new CsrfForm();
 		$csrfForm->addCsrfElement('csrf');
-	
+		
 		// Build content for the view including the token to pass back
 		$content = [
 			'context' => $context,
+			'id' => $id,
+			'config' => $config,
 			'csrfForm' => $csrfForm,
-			'put' => $put,
+			'requestType' => $requestType,
 			'statusCode' => '200',
 		];
-		
-		// Process the put request with the valid form token against CSRF
-		if ($put) {
+
+		// Get the list and description as content
+		$content = array_merge($content, $this->v1Action('GET'));
+	
+		// Process the POST or DELETE request with the valid form token against CSRF
+		if ($requestType == 'POST' || $requestType == 'DELETE') {
 			$csrfForm->setInputFilter((new Csrf('csrf'))->getInputFilter());
 			$csrfForm->setData($this->getRequest()->getPost());
 			if (!$csrfForm->isValid()) { // CSRF check
-				$content['statusCode'] = '200';
+				$content['statusCode'] = '400';
 				$this->getResponse()->setStatusCode($content['statusCode']);
-				$content['reasonCode'] = 'Expired';
-				return $this->getResponse();
+				$content['reasonPhrase'] = 'Expired';
 			}
 			else {
-/*				$data = json_decode($this->request->getContent(), true);
-				$content = array_merge($content, $this->processPut($data));*/
-				$content = array_merge($content, json_decode($this->v1Action()->getContent(), true));
+				$content = array_merge($content, $this->v1Action());
+				if (array_key_exists('vcard', $content)) $content['id'] = $content['vcard']['id'];
+				else {
+					$content['vcard'] = Vcard::instanciate()->getProperties();
+					$content['vcard']['is_deletable'] = true;
+					$content['statusCode'] = '400';
+					$this->getResponse()->setStatusCode($content['statusCode']);
+					$content['reasonPhrase'] = 'Isolation';
+					$this->getResponse()->setReasonPhrase($content['reasonPhrase']);
+				}
 			}
 		}
-
+		// Return the link list
 		$view = new ViewModel($content);
 		$view->setTerminal(true);
 		return $view;
 	}
-/*	
-	public function processPost($id, $data)
+    
+	public function getAction()
 	{
-		$context = Context::getCurrent();
-		$content = [];
-		
-		// Retrieve the ressource to update
-		if (!$id) {
-			$content['statusCode'] = '400';
-			$this->getResponse()->setStatusCode($content['statusCode']);
-			$content['reasonCode'] = 'id is expected on a post request';
-			$this->getResponse()->setReasonCode($content['reasonCode']);
-			return $content;
-		}
-		$vcard = Vcard::get($id);
-		if (!$vcard) {
-			$content['statusCode'] = '400';
-			$this->getResponse()->setStatusCode($content['statusCode']);
-			$content['reasonCode'] = 'Resource not found for given id';
-			$this->getResponse()->setReasonCode($content['reasonCode']);
-			return $content;
-		}
-			
-		$connection = Vcard::getTable()->getAdapter()->getDriver()->getConnection();
-		$connection->beginTransaction();
-		try {
-			$rc = $vcard->loadAndUpdate($data, null);
-			if ($rc[0] != '200') {
-				$connection->rollback();
-				$content['statusCode'] = $rc[0];
-				$this->getResponse()->setStatusCode($content['statusCode']);
-				$content['reasonCode'] = $rc[1];
-				$this->getResponse()->setReasonCode($content['reasonCode']);
-			}
-			else {
-				$connection->commit();
-				$content['statusCode'] = '200';
-				$this->getResponse()->setStatusCode($content['statusCode']);
-			}
-		}
-		catch (\Exception $e) {
-			$connection->rollback();
-			$content['statusCode'] = '500';
-			$this->getResponse()->setStatusCode($content['statusCode']);
-			$content['reasonCode'] = $e->getMessage();
-			$this->getResponse()->setReasonCode($content['reasonCode']);
-		}
-	
-		return $content;
-	}*/
-	
-	public function postAction()
-	{
-		// Retrieve the context and parameters
-		$context = Context::getCurrent();
-		$id = $this->params()->fromRoute('id');
-		
-		// Instanciate the form token
-		$csrfForm = new CsrfForm();
-		$csrfForm->addCsrfElement('csrf');
-		
-		// Build content for the view including the token to pass back
-		$content = [
-			'context' => $context,
-			'id' => $id,
-			'csrfForm' => $csrfForm,
-			'post' => $this->request->isPost(),
-		];
-		
-		// Process the put request with the valid form token against CSRF
-		if ($this->getRequest()->isPost()) {
-    		$csrfForm->setInputFilter((new Csrf('csrf'))->getInputFilter());
-			$csrfForm->setData($this->getRequest()->getPost());
-			if (!$csrfForm->isValid()) { // CSRF check
-				$content['statusCode'] = '200';
-				$this->getResponse()->setStatusCode($content['statusCode']);
-				$content['reasonCode'] = 'Expired';
-				return $this->getResponse();
-			}
-			else {
-/*				$data = json_decode($this->request->getContent(), true);
-				$content = array_merge($content, $this->processPost($id, $data));*/
-				$content = array_merge($content, json_decode($this->v1Action()->getContent(), true));
-			}
-    	}
-    	
-    	$view = new ViewModel([$content]);
-    	$view->setTerminal(true);
-    	return $view;
-	}
-/*	
-	public function processDelete($id)
-	{
-		$context = Context::getCurrent();
-		$content = array();
-
-		// Retrieve the ressource to update
-		if (!$id) {
-			$content['statusCode'] = '400';
-			$this->getResponse()->setStatusCode($content['statusCode']);
-			$content['reasonCode'] = 'id is expected on a post request';
-			$this->getResponse()->setReasonCode($content['reasonCode']);
-			return $content;
-		}
-		$vcard = Vcard::get($id);
-		if (!$vcard) {
-			$content['statusCode'] = '400';
-			$this->getResponse()->setStatusCode($content['statusCode']);
-			$content['reasonCode'] = 'Resource not found for given id';
-			$this->getResponse()->setReasonCode($content['reasonCode']);
-			return $content;
-		}
-		
-		// Database update
-		$connection = Vcard::getTable()->getAdapter()->getDriver()->getConnection();
-		$connection->beginTransaction();
-		try {
-			$rc = $vcard->delete(null);
-			if ($rc != 'OK') {
-				$connection->rollback();
-				$content['statusCode'] = '400';
-				$this->getResponse()->setStatusCode($content['statusCode']);
-				$content['reasonCode'] = $rc;
-				$this->getResponse()->setReasonCode($content['reasonCode']);
-			}
-			else {
-				$connection->commit();
-				$content['statusCode'] = '200';
-				$this->getResponse()->setStatusCode($content['statusCode']);
-			}
-		}
-		catch (\Exception $e) {
-			$connection->rollback();
-			$content['statusCode'] = '500';
-			$this->getResponse()->setStatusCode($content['statusCode']);
-			$content['reasonCode'] = $e->getMessage();
-			$this->getResponse()->setReasonCode($content['reasonCode']);
-		}
-		
-		return $content;
-	}*/
-
-	public function deleteAction()
-	{
-		// Retrieve the context and parameters
-		$context = Context::getCurrent();
-		$id = $this->params()->fromRoute('id');
-	
-		// Instanciate the form token
-		$csrfForm = new CsrfForm();
-		$csrfForm->addCsrfElement('csrf');
-	
-		// Build content for the view including the token to pass back
-		$content = [
-			'context' => $context,
-			'id' => $id,
-			'csrfForm' => $csrfForm,
-			'delete' => $this->request->isDelete(),
-		];
-	
-		// Process the put request with the valid form token against CSRF
-		if ($this->getRequest()->isDelete()) {
-			$csrfForm->setInputFilter((new Csrf('csrf'))->getInputFilter());
-			$csrfForm->setData($this->getRequest()->getPost());
-			if (!$csrfForm->isValid()) { // CSRF check
-				$content['statusCode'] = '200';
-				$this->getResponse()->setStatusCode($content['statusCode']);
-				$content['reasonCode'] = 'Expired';
-				return $this->getResponse();
-			}
-			else {
-/*				$data = json_decode($this->request->getContent(), true);
-				$content = array_merge($content, $this->processDelete($id));*/
-				$content = array_merge($content, json_decode($this->v1Action()->getContent(), true));
-			}
-		}
-		 
-		$view = new ViewModel([$content]);
-		$view->setTerminal(true);
-		return $view;
+		return $this->v1Action();
 	}
 	
 	public function dataRecoveryAction()
@@ -427,259 +236,194 @@ class VcardController extends AbstractActionController
 	 * TODO : authorization
 	 */
 
-    /**
-     * Retrieve and format search parameters from the query. The search configuration (core_account/search/<type>) describes the
-     * search criteria. A simple criteria has the name of the property. A range criteria is a tuplet where the property name is
-     * prefixed by min_ and max_ respectively.
-     */
-    public static function getFilters($arguments, $description)
-    {
-    	$context = Context::getCurrent();
-    
-    	// Retrieve the query parameters
-    	$filters = array();
-    
-    	foreach ($description['search']['properties'] as $propertyId => $property) {
-    
-    		$argument = ($arguments($propertyId, null));
-    		if ($argument) {
-    			if (!in_array($property['type'], ['select', 'multiselect'])) $filters[$propertyId] = $argument;
-    			else {
-    				$argument = explode(',', $argument);
-    				if (!in_array($argument[0], ['eq', 'ne', 'gt', 'ge', 'lt', 'le', 'in', 'between', 'like', 'null', 'not_null'])) {
-    					$filters[$propertyId] = ['like', $argument];
-    				}
-    				else $filters[$propertyId] = $argument;
-    			}
-    		}
-    	}
-    	return $filters;
-    }
-    
-    public function v1Action()
-    {
-    	$context = Context::getCurrent();
-    
-    	// Authentication
-    	if (!$context->isAuthenticated() && !$context->wsAuthenticate($this->getEvent())) {
-    		$this->getResponse()->setStatusCode('401');
-    		return $this->getResponse();
-    	}
-    
-    	$id = $this->params()->fromRoute('id');
-    	$description = Vcard::getDescription();
-
-    	$content = array();
-    
-    	// Get
-    	if ($this->request->isGet()) {
-    		if ($id) {
-    
-    			// Direct access mode
-    			$vcard = Vcard::get($id);
-    			if (!$vcard) {
-    				$this->getResponse()->setStatusCode('400');
-					$content['reasonCode'] = 'Resource not found for given id';
-					$this->getResponse()->setReasonCode($content['reasonCode']);
-    				return $this->getResponse();
-    			}
-    			$content['data'] = $vcard->getProperties();
-    		}
-    		else {
-    
-    			// List mode
-    			$columns = $this->params()->fromQuery('limit');
-    			if ($columns) $columns = explode(',', $columns);
-    			$filters = $this->getFilters($this->params()->fromQuery(), $description);
-    			$order = $this->params()->fromQuery('order', '+n_fn');
-    			$limit = $this->params()->fromQuery('limit');
-    			$select = Vcard::getSelect($columns, $filters, $order, $limit);
-    			$vcards = Vcard::getTable()->selectWith($select);
-    			$content['data'] = array();
-    			foreach ($vcards as $vcard) $content['data'][$vcard->id] = $vcard->getProperties();
-    		}
-    	}
-    
-    	// Put
-    	elseif ($this->request->isPut()) {
-    		$vcard = Vcard::instanciate();
-    		$data = json_decode($this->request->getContent(), true);
-    		$rc = $vcard->loadDataV2($data);
-    		if ($rc != 'OK') {
-    			$content['statusCode'] = '500';
-    			$this->getResponse()->setStatusCode($content['statusCode']);
-    			$content['reasonCode'] = 'vcard->loadData: ' . $rc;
-    			$this->getResponse()->setReasonCode($content['reasonCode']);
-    			return $this->getResponse();
-    		}
-    		
-    		// Database update
-    		$connection = Vcard::getTable()->getAdapter()->getDriver()->getConnection();
-    		$connection->beginTransaction();
-    		try {
-    			$rc = $vcard->add();
-    			if ($rc[0] != '200') {
-					$connection->rollback();
-					$content['statusCode'] = $rc[0];
-					$this->getResponse()->setStatusCode($content['statusCode']);
-					$content['reasonCode'] = $rc[1];
-					$this->getResponse()->setReasonCode($content['reasonCode']);
-    				return $this->getResponse();
-    			}
-    			else {
-    				$content['data'] = ['id' => $rc[1]];
-    				$connection->commit();
-    			}
-    		}
-    		catch (\Exception $e) {
-				$connection->rollback();
-				$content['statusCode'] = '500';
-				$this->getResponse()->setStatusCode($content['statusCode']);
-				$content['reasonCode'] = $e->getMessage();
-				$this->getResponse()->setReasonCode($content['reasonCode']);
-    			return $this->getResponse();
-    		}
-    	}
-    
-    	// Post
-    	elseif ($this->request->isPost()) {
-    		if (!$id) {
-				$content['statusCode'] = '400';
-				$this->getResponse()->setStatusCode($content['statusCode']);
-				$content['reasonCode'] = 'id is expected on a post request';
-				$this->getResponse()->setReasonCode($content['reasonCode']);
-    			return $this->getResponse();
-    		}
-			$vcard = Vcard::get($id);
-			if (!$vcard) {
-				$content['statusCode'] = '400';
-				$this->getResponse()->setStatusCode($content['statusCode']);
-				$content['reasonCode'] = 'Resource not found for given id';
-				$this->getResponse()->setReasonCode($content['reasonCode']);
-    			return $this->getResponse();
-			}
-    
-    		$data = json_decode($this->request->getContent(), true);
-    		$rc = $vcard->loadDataV2($data);
-    		if ($rc != 'OK') {
-				$content['statusCode'] = '500';
-				$this->getResponse()->setStatusCode($content['statusCode']);
-				$content['reasonCode'] = 'vcard->loadData: ' . $rc;
-				$this->getResponse()->setReasonCode($content['reasonCode']);
-				return $this->getResponse();
-    		}
-    		
-    		$connection = Vcard::getTable()->getAdapter()->getDriver()->getConnection();
-    		$connection->beginTransaction();
-    		try {
-				$rc = $vcard->update(null);
-    			if ($rc[0] != '200') {
-					$connection->rollback();
-					$content['statusCode'] = $rc[0];
-					$this->getResponse()->setStatusCode($content['statusCode']);
-					$content['reasonCode'] = $rc[1];
-					$this->getResponse()->setReasonCode($content['reasonCode']);
-    				return $this->getResponse();
-    			}
-    			else $connection->commit();
-    		}
-    		catch (\Exception $e) {
-				$connection->rollback();
-				$content['statusCode'] = '500';
-				$this->getResponse()->setStatusCode($content['statusCode']);
-				$content['reasonCode'] = $e->getMessage();
-				$this->getResponse()->setReasonCode($content['reasonCode']);
-    			return $this->getResponse();
-    		}
-    	}
-    
-    	// Delete
-    	elseif ($this->request->isDelete()) {
-    	    if (!$id) {
-				$content['statusCode'] = '400';
-				$this->getResponse()->setStatusCode($content['statusCode']);
-				$content['reasonCode'] = 'id is expected on a post request';
-				$this->getResponse()->setReasonCode($content['reasonCode']);
-    			return $this->getResponse();
-    		}
-			$vcard = Vcard::get($id);
-			if (!$vcard) {
-				$content['statusCode'] = '400';
-				$this->getResponse()->setStatusCode($content['statusCode']);
-				$content['reasonCode'] = 'Resource not found for given id';
-				$this->getResponse()->setReasonCode($content['reasonCode']);
-    			return $this->getResponse();
-			}
-    		
-    		// Database update
-    		$connection = Vcard::getTable()->getAdapter()->getDriver()->getConnection();
-    		$connection->beginTransaction();
-    		try {
-    			$rc = $vcard->delete(null);
-    			if ($rc != 'OK') {
-					$connection->rollback();
-					$content['statusCode'] = '400';
-					$this->getResponse()->setStatusCode($content['statusCode']);
-					$content['reasonCode'] = $rc;
-					$this->getResponse()->setReasonCode($content['reasonCode']);
-    				return $this->getResponse();
-    			}
-    			$connection->commit();
-    		}
-    		catch (\Exception $e) {
-				$connection->rollback();
-				$content['statusCode'] = '500';
-				$this->getResponse()->setStatusCode($content['statusCode']);
-				$content['reasonCode'] = $e->getMessage();
-				$this->getResponse()->setReasonCode($content['reasonCode']);
-    			return $this->getResponse();
-    		}
-    	}
-
-    	// Output
-    	ob_start("ob_gzhandler");
-    	echo json_encode($content, JSON_PRETTY_PRINT);
-    	ob_end_flush();
-    	return $this->response;
-    }
-/*	
-	public function v1Action()
+	/**
+	 * Retrieve and format search parameters from the query. The search configuration (core_account/search/<type>) describes the
+	 * search criteria. A simple criteria has the name of the property. A range criteria is a tuplet where the property name is
+	 * prefixed by min_ and max_ respectively.
+	 */
+	public static function getFilters($arguments, $description)
 	{
 		$context = Context::getCurrent();
-	
+
+		// Retrieve the query parameters
+		$filters = array();
+    
+		foreach ($description['search']['properties'] as $propertyId => $property) {
+			$argument = ($arguments->fromQuery($propertyId, null));
+			if ($argument) {
+				$argument = explode(',', $argument);
+				if (!in_array($argument[0], ['eq', 'ne', 'gt', 'ge', 'lt', 'le', 'in', 'between', 'like', 'null', 'not_null'])) {
+					if (count($argument) > 1) $filters[$propertyId] = array_merge(['in'], $argument);
+					else $filters[$propertyId] = array_merge(['like'], $argument);
+				}
+				else $filters[$propertyId] = $argument;
+			}
+		}
+		return $filters;
+	}
+
+	public function v1Action($requestType = null)
+	{
+		$context = Context::getCurrent();
+		if (!$requestType) {
+			if ($this->request->isGet()) $requestType = 'GET';
+			elseif ($this->request->isPost()) $requestType = 'POST';
+			elseif ($this->request->isDelete()) $requestType = 'DELETE';
+		}
+		
 		// Authentication
 		if (!$context->isAuthenticated() && !$context->wsAuthenticate($this->getEvent())) {
 			$this->getResponse()->setStatusCode('401');
 			return $this->getResponse();
 		}
-		
+
+		$id = $this->params()->fromRoute('id');
+		$description = Vcard::getDescription();
+
+		$content = [];
+
 		// Get
-		if ($this->request->isGet()) {
-			$content = $this->getAction();
+		if ($requestType == 'GET') {
+			if ($id !== null) {
+
+				// Direct access mode
+				if ($id) $vcard = Vcard::get($id);
+				else $vcard = Vcard::instanciate();
+				$content['vcard'] = $vcard->getProperties();
+				$content['vcard']['is_deletable'] = $vcard->isDeletable();
+			}
+			else {
+
+				// List mode
+				$columns = $this->params()->fromQuery('columns');
+				if ($columns) $columns = explode(',', $columns);
+
+				$filters = $this->getFilters($this->params(), $description);
+
+				$order = $this->params()->fromQuery('order', 'n_fn');
+				if ($order) $order = explode(',', $order);
+
+				$limit = $this->params()->fromQuery('limit');
+
+				$select = Vcard::getSelect($columns, $filters, $order, $limit);
+				$vcards = Vcard::getTable()->selectWith($select);
+				$content['arguments'] = ['columns' => $columns, 'filters' => $filters, 'order' => $order, 'limit' => $limit];
+
+				$content['vcards'] = [];
+				foreach ($vcards as $vcard) {
+					if (!$columns) $data = $vcard->getProperties();
+					else {
+						$vcardProperties = $vcard->getProperties();
+						$data = [];
+						foreach ($columns as $column) $data[$column] = $vcardProperties[$column];
+					}
+					$content['vcards'][$vcard->id] = $data;
+				}
+			}
 		}
-	
-		// Put
-		elseif ($this->request->isPut()) {
-			$data = json_decode($this->getRequest()->getContent(), true);
-			$content = $this->processPut($data);
-		}
-	
+
 		// Post
-		elseif ($this->request->isPost()) {
-			$id = $this->params()->fromRoute('id');
-			$data = json_decode($this->getRequest()->getContent(), true);
-			$content = $this->processPost($id, $data);
+		elseif ($requestType == 'POST') {
+		
+			$data = [];
+			foreach ($description['detail']['properties'] as $propertyId => $property) {
+				$data[$propertyId] = $this->request->getPost($propertyId);
+			}
+			
+			if ($id) {
+				$vcard = Vcard::get($id);
+				if (!$vcard) {
+					$content['statusCode'] = '400';
+					$this->getResponse()->setStatusCode($content['statusCode']);
+					$content['reasonPhrase'] = 'Resource not found for given id';
+					$this->getResponse()->setReasonPhrase($content['reasonPhrase']);
+				}
+			}
+			else {
+				$vcard = Vcard::instanciate();
+			}
+			$rc = $vcard->loadDataV2($data);
+			if ($rc != 'OK') {
+				$content['statusCode'] = '500';
+				$this->getResponse()->setStatusCode($content['statusCode']);
+				$content['reasonPhrase'] = 'vcard->loadData: ' . $rc;
+				$this->getResponse()->setReasonPhrase($content['reasonPhrase']);
+			}
+			else {
+				$connection = Vcard::getTable()->getAdapter()->getDriver()->getConnection();
+				$connection->beginTransaction();
+				try {
+					$rc = $vcard->update($this->request->getPost('update_time'));
+					if ($rc != 'OK') {
+						$connection->rollback();
+						$content['statusCode'] = '400';
+						$this->getResponse()->setStatusCode($content['statusCode']);
+						$content['reasonPhrase'] = $rc;
+						$this->getResponse()->setReasonPhrase($content['reasonPhrase']);
+					}
+					else $connection->commit();
+				}
+				catch (\Exception $e) {
+					$content['statusCode'] = '500';
+					$this->getResponse()->setStatusCode($content['statusCode']);
+					$content['reasonPhrase'] = $e->getMessage();
+					$this->getResponse()->setReasonPhrase($content['reasonPhrase']);
+				}
+			}
+			$content['vcard'] = $vcard->getProperties();
+			$content['vcard']['is_deletable'] = $vcard->isDeletable();
 		}
-	
+
 		// Delete
-		elseif ($this->request->isDelete()) {
-			$content = $this->processDelete();
+		elseif ($requestType == 'DELETE') {
+			if (!$id) {
+				$content['statusCode'] = '400';
+				$this->getResponse()->setStatusCode($content['statusCode']);
+				$content['reasonPhrase'] = 'id is expected on a post request';
+				$this->getResponse()->setReasonPhrase($content['reasonPhrase']);
+			}
+			else {
+				$vcard = Vcard::get($id);
+				if (!$vcard) {
+					$content['statusCode'] = '400';
+					$this->getResponse()->setStatusCode($content['statusCode']);
+					$content['reasonPhrase'] = 'Resource not found for given id';
+					$this->getResponse()->setReasonPhrase($content['reasonPhrase']);
+				}
+				else {
+
+					// Database update
+					$connection = Vcard::getTable()->getAdapter()->getDriver()->getConnection();
+					$connection->beginTransaction();
+					try {
+						$rc = $vcard->delete(null);
+						if ($rc != 'OK') {
+							$connection->rollback();
+							$content['statusCode'] = '400';
+							$this->getResponse()->setStatusCode($content['statusCode']);
+							$content['reasonPhrase'] = $rc;
+							$this->getResponse()->setReasonPhrase($content['reasonPhrase']);
+						}
+						else {
+							$connection->commit();
+							$content['vcard'] = $vcard->getProperties();
+						}
+					}
+					catch (\Exception $e) {
+						$connection->rollback();
+						$content['statusCode'] = '500';
+						$this->getResponse()->setStatusCode($content['statusCode']);
+						$content['reasonPhrase'] = $e->getMessage();
+						$this->getResponse()->setReasonPhrase($content['reasonPhrase']);
+					}
+				}
+			}
 		}
-	
+return $content;
 		// Output
 		ob_start("ob_gzhandler");
 		echo json_encode($content, JSON_PRETTY_PRINT);
 		ob_end_flush();
-		return $this->getResponse();
-	}*/
+		return $this->response;
+	}
 }

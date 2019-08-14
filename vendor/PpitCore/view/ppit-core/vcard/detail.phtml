@@ -1,0 +1,173 @@
+<!-- 
+/**
+ * 2pit V2.0
+ *
+ * @link      https://github.com/2pit-io/2pit.io/tree/master/vendor/PpitCore
+ * @license   https://github.com/2pit-io/2pit.io/blob/master/vendor/PpitCore/license.txt GNU-GPL license
+ */
+-->
+
+<?php if ($context->hasRole('admin') && $id) : ?>
+
+<!-- Display the audit -->
+
+        <div class="card mt-2">
+          <div class="card-body">
+            <div class="card-title text-muted"><?php echo $this->translate('History', 'ppit-core', $context->getLocale()) ?> (<a id="audit-label"><?php echo $this->translate('Show', 'ppit-core', $context->getLocale()) ?></a>)</div>
+            <div id="audit-panel">
+    <?php foreach ($vcard['audit'] as $auditEvent) : ?>
+              <div class="row">
+                <div class="col-md-12">
+                  <strong><?php echo $context->decodeDate(substr($auditEvent['time'], 0, 10)).substr($auditEvent['time'], 10) ?>:</strong>&nbsp;
+                  (<?php echo $auditEvent['n_fn'] ?>)
+                </div>
+              </div>
+      <?php foreach ($auditEvent as $propertyId => $property) : ?>
+        <?php if ($propertyId != 'time' && $propertyId != 'n_fn') : ?>
+              <div class="row">
+                <div class="col-md-2" align="right">&nbsp;</div>
+                <div class="col-md-10"><em><?php echo $propertyId.': '.$property ?></em></div>
+              </div>
+        <?php endif;?>
+      <?php endforeach;?>
+    <?php endforeach;?>
+            </div>
+          </div>
+        </div>
+        <div>&nbsp;</div>
+
+<?php endif;?>
+
+<!-- CSRF -->
+<?php $element = $csrfForm->get('csrf') ?>
+        <div class="form-group">
+    <?php echo $this->formElement($element) ?>
+<?php if ($this->formElementErrors($element)) : ?>
+          <h5 class="alert alert-danger my-3 text-center"><?php echo $this->translate('The form has expired, please input again', 'ppit-core', $context->getLocale()) ?></h5>
+<?php endif;?>
+        </div>
+
+<?php if ($requestType != 'GET' && $statusCode == '200') : ?>
+
+<!-- Status OK on update -->
+        <div id="message">
+          <h5 class="alert alert-success my-3 text-center"><?php echo $this->translate('Your request has been registered', 'ppit-core', $context->getLocale()) ?></h5>
+        </div>
+
+<?php endif;?>
+
+<?php if (in_array($requestType, ['POST', 'DELETE']) && $statusCode == '400') : ?>
+
+<!-- Status 400 on update -->
+
+  <?php if ($reasonPhrase == 'Duplicate') : ?>
+<!-- Duplicate error -->
+        <div class="alert alert-danger my-3 text-center"><?php echo $this->translate('This record already exist', 'ppit-core', $context->getLocale()) ?></div>
+  <?php endif;?>
+
+  <?php if ($reasonPhrase == 'Isolation') : ?>
+<!-- Isolation error -->
+        <div class="alert alert-danger my-3 text-center"><?php echo $this->translate('The database has evolved in the meantime, please input again', 'ppit-core', $context->getLocale()) ?></div>
+  <?php endif;?>
+
+  <?php if ($reasonPhrase == 'Consistency') : ?>
+<!-- Consistency error -->
+        <div class="alert alert-danger my-3 text-center"><?php echo $this->translate('The data are not consistent', 'ppit-core', $context->getLocale()) ?></div>
+  <?php endif;?>
+
+<?php endif;?>
+
+<?php if ($statusCode == '200') : ?>
+  <?php if ($id) : ?>
+        <input type="hidden" id="vcard-id" value="<?php echo $vcard['id'] ?>" />
+        <input type="hidden" id="vcard-update_time" value="<?php echo $vcard['update_time'] ?>" />
+  <?php endif;?>
+
+        <div class="form-group row">
+          <div class="col-sm-5"></div>
+          <div class="col-sm-7">
+
+  <?php if (!$id) : ?>
+            <button type="button" class="btn btn-warning vcard-put-btn"><i class="fa fa-plus"></i>&nbsp;<?php echo $this->translate('Add', 'ppit-core', $context->getLocale()) ?></button>
+
+  <?php elseif ($vcard['status'] != 'deleted') : ?>
+            <button type="button" class="btn btn-outline-primary vcard-btn vcard-post-btn" data-toggle="tooltip" title="<?php echo $this->translate('Modifier', 'ppit-core', $context->getLocale()) ?>"><i class="fa fa-edit"></i></button>
+            <button type="button" class="btn btn-outline-primary <?php if ($vcard['is_deletable']) : ?>vcard-btn vcard-delete-btn<?php endif;?>" data-toggle="tooltip" <?php if (!$vcard['is_deletable']) : ?>disabled="disabled" title="<?php echo $this->translate('This data is used and cannot be deleted yet', 'ppit-core', $context->getLocale()) ?>" <?php else : ?>title="<?php echo $this->translate('Supprimer', 'ppit-core', $context->getLocale()) ?>" <?php endif;?>><i class="fa fa-trash-alt"></i></button>
+            <button type="button" class="btn btn-link vcard-cancel-btn"><?php echo $this->translate('Cancel', 'ppit-core', $context->getLocale()) ?></button>
+
+  <?php endif;?>
+
+          </div>
+        </div>
+
+        <div class="card my-3">
+          <div class="card-body">
+            <h5 class="card-title text-muted"><?php echo $this->translate('Header', 'ppit-core', $context->getLocale()) ?></h5>
+
+  <?php if ($id) $isDisabled = true; else $isDisabled = false; ?>
+
+  <?php foreach ($config['detail']['properties'] as $propertyId => $property) : ?>
+    <?php 
+    if (array_key_exists('readonly', $property['options']) && $property['options']['readonly']) $readonly = true;
+    else $readonly = false;
+
+    if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) $mandatory = true;
+    else $mandatory = false;
+    ?>
+
+            <div class="form-group row">
+              <label class="col-sm-5 col-form-label col-form-label-sm"><?php if ($mandatory) echo '* ' ?><?php echo $context->localize($property['labels']) ?></label>
+              <div class="col-sm-7">
+
+    <?php if ($property['type'] == 'date') : ?>
+                <input class="form-control form-control-sm <?php if (!$readonly) : ?>vcard-updatable<?php endif;?> <?php if ($mandatory) : ?>vcard-update-mandatory<?php endif;?> vcard-update-date" id="vcard-<?php echo $propertyId ?>" value="<?php echo $context->decodeDate($vcard[$propertyId]) ?>" <?php if ($id || $readonly) : ?>disabled="disabled"<?php endif;?> />
+
+    <?php elseif ($property['type'] == 'number') : ?>
+                <input class="form-control form-control-sm <?php if (!$readonly) : ?>vcard-updatable<?php endif;?> <?php if ($mandatory) : ?>vcard-update-mandatory<?php endif;?> vcard-update-input" id="vcard-<?php echo $propertyId ?>" value="<?php echo $context->formatFloat($vcard[$propertyId], 2) ?>" <?php if ($id || $readonly) : ?>disabled="disabled"<?php endif;?> />
+
+    <?php elseif ($property['type'] == 'textarea') : ?>
+                <textarea class="form-control form-control-sm <?php if (!$readonly) : ?>vcard-updatable<?php endif;?> <?php if ($mandatory) : ?>vcard-update-mandatory<?php endif;?> vcard-update-input" maxlength="65535" id="vcard-<?php echo $propertyId ?>" rows="5" <?php if ($id || $readonly) : ?>disabled="disabled"<?php endif;?>><?php echo $vcard[$propertyId] ?></textarea>
+
+    <?php elseif ($property['type'] == 'select') : ?>
+                <select class="form-control form-control-sm <?php if (!$readonly) : ?>vcard-updatable<?php endif;?> <?php if ($mandatory) : ?>vcard-update-mandatory<?php endif;?> vcard-update-input" id="vcard-<?php echo $propertyId ?>" <?php if ($id || $readonly) : ?>disabled="disabled"<?php endif;?>>
+                  <option />
+
+      <?php foreach ($property['modalities'] as $key => $labels) : ?>
+                  <option value="<?php echo $key ?>" <?php if ($vcard[$propertyId] == $key) : ?>selected="selected"<?php endif;?>><?php echo $context->localize($labels) ?></option>
+      <?php endforeach;?>
+  
+                </select>
+	
+    <?php else : ?>
+                <input class="form-control form-control-sm <?php if (!$readonly) : ?>vcard-updatable<?php endif;?> <?php if ($mandatory) : ?>vcard-update-mandatory<?php endif;?> vcard-update-input" maxlength="256" id="vcard-<?php echo $propertyId ?>" value="<?php echo $vcard[$propertyId] ?>" <?php if ($id || $readonly) : ?>disabled="disabled"<?php endif;?> />
+
+    <?php endif;?>
+
+                <div class="text-danger" id="vcard-<?php echo $propertyId ?>-error"></div>
+              </div>
+            </div>
+
+  <?php endforeach;?>
+  
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-5"></div>
+          <div class="col-sm-7">
+
+  <?php if (!$id) : ?>
+          <button type="button" class="btn btn-warning vcard-put-btn"><i class="fa fa-plus"></i>&nbsp;<?php echo $this->translate('Add', 'ppit-core', $context->getLocale()) ?></button>
+
+  <?php elseif ($vcard['status'] != 'deleted') : ?>
+          <button type="button" class="btn btn-outline-primary vcard-btn vcard-post-btn" data-toggle="tooltip" title="<?php echo $this->translate('Modifier', 'ppit-core', $context->getLocale()) ?>"><i class="fa fa-edit"></i></button>
+          <button type="button" class="btn btn-outline-primary <?php if ($vcard['is_deletable']) : ?>vcard-btn vcard-delete-btn<?php endif;?>" data-toggle="tooltip" <?php if (!$vcard['is_deletable']) : ?>disabled="disabled" title="<?php echo $this->translate('This data is used and cannot be deleted yet', 'ppit-core', $context->getLocale()) ?>" <?php else : ?>title="<?php echo $this->translate('Supprimer', 'ppit-core', $context->getLocale()) ?>" <?php endif;?>><i class="fa fa-trash-alt"></i></button>
+          <button type="button" class="btn btn-link vcard-cancel-btn"><?php echo $this->translate('Cancel', 'ppit-core', $context->getLocale()) ?></button>
+
+  <?php endif;?>
+
+          </div>
+        </div>
+
+<?php endif;?>
+	

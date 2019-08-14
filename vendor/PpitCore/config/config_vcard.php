@@ -205,7 +205,7 @@ define('CONFIG_VCARD', [
 			'definition' => 'inline',
 			'type' => 'select',
 			'modalities' => array(
-				'en_US' => array('default' => 'en_US'),
+				'default' => array('default' => 'en_US'),
 				'fr_FR' => array('default' => 'fr_FR'),
 			),
 			'labels' => array(
@@ -213,19 +213,28 @@ define('CONFIG_VCARD', [
 				'fr_FR' => 'Traduction',
 			),
 		),
+	
+		'update_time' => array(
+			'definition' => 'inline',
+			'type' => 'datetime',
+			'labels' => array(
+				'default' => 'Update time',
+				'fr_FR' => 'Heure de mise à jour',
+			),
+		),
 	),
 
 	'vcard/search' => [
 		'title' => ['default' => 'Contacts', 'fr_FR' => 'Contacts'],
 		'properties' => [
-			'status' => 'select',
-			'n_fn' => 'contains',
-			'email' => 'contains',
-			'tel_work' => 'contains',
-			'tel_cell' => 'contains',
-			'adr_zip' => 'contains',
-			'adr_city' => 'contains',
-			'adr_country' => 'contains',
+			'status' => [],
+			'n_fn' => [],
+			'email' => [],
+			'tel_work' => [],
+			'tel_cell' => [],
+			'adr_zip' => [],
+			'adr_city' => [],
+			'adr_country' => [],
 		],
 	],
 	
@@ -265,7 +274,7 @@ define('CONFIG_VCARD', [
 		],
 	],
 	
-	'vcard/group' => [
+	'vcard/groupUpdate' => [
 		'properties' => [
 			'status' => [],
 		],

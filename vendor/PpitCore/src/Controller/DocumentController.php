@@ -15,10 +15,39 @@ use Zend\View\Model\ViewModel;
 
 class DocumentController extends AbstractActionController
 {
+    public function searchAction()
+    {
+    	
+    }
+    
+	public function listAction()
+    {
+    	// Retrieve the context
+    	$context = Context::getCurrent();
+    	
+    	$content = [
+    		'context' => $context,
+    	];
+    		 
+    	// Get the list and description as content 
+		$content = array_merge($content, $this->v1Action());
+
+    	// Return the link list
+    	$view = new ViewModel($content);
+    	$view->setTerminal(true);
+    	return $view;
+    }
+
+    public function exportAction()
+    {
+    	
+    }
+    
 	public function uploadAction()
 	{
     	// Retrieve the context and parameters
     	$context = Context::getCurrent();
+    	$type = $this->params()->fromRoute('type');
     	$folder = $this->params()->fromRoute('folder');
     	$place_id = $this->params()->fromQuery('place_id');
     
@@ -38,7 +67,7 @@ class DocumentController extends AbstractActionController
 				$files = $request->getFiles()->toArray();
 				if ($files) {
 					$file = current($files);
-					$data['type'] = 'binary';
+					$data['type'] = $type;
 					$data['place_id'] = $place_id;
 					$data['folder'] = $folder;
 					$data['mime'] = $file['type'];
@@ -65,17 +94,54 @@ class DocumentController extends AbstractActionController
     		}
     	}
     	$view = new ViewModel(array(
-    			'context' => $context,
-    			'folder' => $folder,
-    			'place_id' => $place_id,
-	    		'csrfForm' => $csrfForm,
-    			'error' => $error,
-    			'message' => $message
+			'context' => $context,
+			'type' => $type,
+			'folder' => $folder,
+			'place_id' => $place_id,
+			'csrfForm' => $csrfForm,
+			'error' => $error,
+			'message' => $message
     	));
     	$view->setTerminal(true);
     	return $view;
 	}
 
+	public function archiveAction()
+	{
+		// Retrieve the context
+		$context = Context::getCurrent();
+		 
+		$content = [
+			'context' => $context,
+		];
+		 
+		// transmit the 'POST' request that switch the status between 'new' and 'archived' => Todo: Create a new request to send to 'document/v1' as a REST web-service
+		$content = array_merge($content, $this->v1Action());
+	
+		// Return the link list
+		$view = new ViewModel($content);
+		$view->setTerminal(true);
+		return $view;
+	}
+
+	public function deleteAction()
+	{
+		// Retrieve the context
+		$context = Context::getCurrent();
+			
+		$content = [
+			'context' => $context,
+		];
+			
+		// Transmit the 'DELETE' request => Todo: Create a new request to send to 'document/v1' as a REST web-service
+		$content = array_merge($content, $this->v1Action());
+	
+		// Return the link list
+		$view = new ViewModel($content);
+		$view->setTerminal(true);
+		return $view;
+	}
+	
 	public function downloadAction()
 	{
 		// Retrieve the context
@@ -168,54 +234,153 @@ class DocumentController extends AbstractActionController
 	 * Restfull implementation
 	 * TODO : authorization + error description
 	 */
-	public function getAction()
+
+    /**
+     * Retrieve and format search parameters from the query. The search configuration (core_account/search/<type>) describes the
+     * search criteria. A simple criteria has the name of the property. A range criteria is a tuplet where the property name is
+     * prefixed by min_ and max_ respectively.
+     */
+    public static function getFilters($arguments, $description)
+    {
+    	$context = Context::getCurrent();
+    
+    	// Retrieve the query parameters
+    	$filters = array();
+    
+    	foreach ($description['search']['properties'] as $propertyId => $property) {
+    		$argument = ($arguments->fromQuery($propertyId, null));
+    		if ($argument) {
+    			$argument = explode(',', $argument);
+    			if (!in_array($argument[0], ['eq', 'ne', 'gt', 'ge', 'lt', 'le', 'in', 'between', 'like', 'null', 'not_null'])) {
+    				if (count($argument) > 1) $filters[$propertyId] = array_merge(['in'], $argument);
+    				else $filters[$propertyId] = array_merge(['like'], $argument);
+    			}
+    			else $filters[$propertyId] = $argument;
+    		}
+    	}
+				
+		$type = $arguments->fromRoute('type');
+		if ($type) $filters['type'] = ['eq', $type];
+				
+		$folder = $arguments->fromQuery('folder');
+		if ($folder) $filters['folder'] = ['eq', $folder];
+    	
+		return $filters;
+    }
+    
+	public function v1Action($requestType = null)
 	{
 		$context = Context::getCurrent();
-	
-		// Parameters
+		if (!$requestType) {
+			if ($this->request->isGet()) $requestType = 'GET';
+			elseif ($this->request->isPost()) $requestType = 'POST';
+			elseif ($this->request->isDelete()) $requestType = 'DELETE';
+		}
+		
+		// Authentication
+		if (!$context->isAuthenticated() && !$context->wsAuthenticate($this->getEvent())) {
+			$this->getResponse()->setStatusCode('401');
+			return $this->getResponse();
+		}
+
 		$type = $this->params()->fromRoute('type');
+		$folder = $this->params()->fromRoute('folder');
 		$id = $this->params()->fromRoute('id');
 		$place_id = $this->params()->fromQuery('place_id');
-		$folder = $this->params()->fromQuery('folder');
-	
-		$content = array();
-	
+		$description = Document::getDescription($type);
+
+		$content = [];
+
 		// Get
-		if ($id) {
-
-		// Direct access mode
-			$document = Document::get($id);
-			if (!$document) {
-				$this->getResponse()->setStatusCode('400');
-				return $this->getResponse();
+		if ($requestType == 'GET') {
+			if ($id !== null) {
+		
+				// Direct access mode
+				if ($id) $document = Document::get($id);
+				else $document = Document::instanciate();
+				$content['document'] = $document->getProperties();
 			}
-			$content['data'] = $document->getProperties();
-		}
-		else {
+			else {
+	
+				// List mode
+				$columns = $this->params()->fromQuery('columns');
+				if ($columns) $columns = explode(',', $columns);
+				
+				$filters = $this->getFilters($this->params(), $description);
 
-			// List mode
-			$filters = array();
+				$order = $this->params()->fromQuery('order', 'name');
+				if ($order) $order = explode(',', $order);
 
-			$place_id = $this->params()->fromQuery('place_id');
-			if ($place_id) $filters['place_id'] = $place_id;
-			
-			$folder = $this->params()->fromQuery('folder');
-			if ($folder) $filters['folder'] = $folder;
-			
-			$order = $this->params()->fromQuery('order', '+name');
-			$limit = $this->params()->fromQuery('limit');
-			$columns = $this->params()->fromQuery('columns');
+				$limit = $this->params()->fromQuery('limit');
 
-			$documents = Document::getList($type, $filters, $order, $limit, $columns);
-
-			$content['data'] = array();
-			foreach ($documents as $document) {
-				$content['data'][$document->id] = $document->getProperties();
-				unset($content['data'][$document->id]['binary_content']);
+				$select = Document::getSelect($type, $columns, $filters, $order, $limit);
+				$documents = Document::getTable()->selectWith($select);
+				$content['arguments'] = ['columns' => $columns, 'filters' => $filters, 'order' => $order, 'limit' => $limit];
+				
+				$content['documents'] = [];
+				foreach ($documents as $document) {
+					if (!$columns) $data = $document->getProperties();
+					else {
+						$documentProperties = $document->getProperties();
+						$data = [];
+						foreach ($columns as $column) $data[$column] = $documentProperties[$column];
+					}
+					$content['documents'][$document->id] = $data;
+					$content['documents'][$document->id]['is_deletable'] = $document->isDeletable();
+				}
 			}
 		}
 	
+		// Delete
+		elseif ($requestType == 'DELETE') {
+			if (!$id) {
+				$content['statusCode'] = '400';
+				$this->getResponse()->setStatusCode($content['statusCode']);
+				$content['reasonPhrase'] = 'id is expected on a post request';
+				$this->getResponse()->setReasonPhrase($content['reasonPhrase']);
+			}
+			else {
+				$vcard = Vcard::get($id);
+				if (!$vcard) {
+					$content['statusCode'] = '400';
+					$this->getResponse()->setStatusCode($content['statusCode']);
+					$content['reasonPhrase'] = 'Resource not found for given id';
+					$this->getResponse()->setReasonPhrase($content['reasonPhrase']);
+				}
+				else {
+
+					// Database update
+					$connection = Vcard::getTable()->getAdapter()->getDriver()->getConnection();
+					$connection->beginTransaction();
+					try {
+						$rc = $vcard->delete(null);
+						if ($rc != 'OK') {
+							$connection->rollback();
+							$content['statusCode'] = '400';
+							$this->getResponse()->setStatusCode($content['statusCode']);
+							$content['reasonPhrase'] = $rc;
+							$this->getResponse()->setReasonPhrase($content['reasonPhrase']);
+						}
+						else {
+							$connection->commit();
+							$content['vcard'] = $vcard->getProperties();
+						}
+					}
+					catch (\Exception $e) {
+						$connection->rollback();
+						$content['statusCode'] = '500';
+						$this->getResponse()->setStatusCode($content['statusCode']);
+						$content['reasonPhrase'] = $e->getMessage();
+						$this->getResponse()->setReasonPhrase($content['reasonPhrase']);
+					}
+				}
+			}
+		}
+		return $content;
+		// Output
+		ob_start("ob_gzhandler");
 		echo json_encode($content, JSON_PRETTY_PRINT);
+		ob_end_flush();
 		return $this->response;
 	}
 }
