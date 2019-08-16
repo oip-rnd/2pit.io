@@ -1835,8 +1835,8 @@ return array_merge(
 				array('route' => 'document/export', 'roles' => array('user')),
 				array('route' => 'document/upload', 'roles' => array('user')),
 				array('route' => 'document/download', 'roles' => array('user')),
-				array('route' => 'document/archive', 'roles' => array('admin')),
-				array('route' => 'document/delete', 'roles' => array('admin')),
+				array('route' => 'document/archive', 'roles' => array('user')),
+				array('route' => 'document/delete', 'roles' => array('user')),
 				
 				array('route' => 'document/update', 'roles' => array('admin')),
 				
