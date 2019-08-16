@@ -20,6 +20,7 @@ class Document
 			'status' => 				['entity' => 'core_document', 'column' => 'status'],
 			'type' => 					['entity' => 'core_document', 'column' => 'type'],
 			'place_id' => 				['entity' => 'core_document', 'column' => 'place_id'],
+			'account_id' => 			['entity' => 'core_document', 'column' => 'account_id'],
 			'folder' => 				['entity' => 'core_document', 'column' => 'folder'],
 			'identifier' => 			['entity' => 'core_document', 'column' => 'identifier'],
 			'name' => 					['entity' => 'core_document', 'column' => 'name'],
@@ -62,7 +63,10 @@ class Document
 				$property['modalities'] = array();
 				foreach (Place::getList(array()) as $place) $property['modalities'][$place->id] = $place->caption;
 			}
-			
+			elseif ($propertyId == 'account_id') {
+				$property['modalities'] = array();
+			}
+
 			$properties[$propertyId] = $property;
 		}
 		return $properties;
@@ -327,6 +331,7 @@ class Document
     public $status;
     public $type;
     public $place_id;
+    public $account_id;
     public $folder;
     public $identifier;
     public $parent_id;
@@ -379,6 +384,7 @@ class Document
         $this->status = (isset($data['status'])) ? $data['status'] : null;
         $this->type = (isset($data['type'])) ? $data['type'] : null;
         $this->place_id = (isset($data['place_id'])) ? $data['place_id'] : null;
+        $this->account_id = (isset($data['account_id'])) ? $data['account_id'] : null;
         $this->folder = (isset($data['folder'])) ? $data['folder'] : null;
         $this->identifier = (isset($data['identifier'])) ? $data['identifier'] : null;
         $this->parent_id = (isset($data['parent_id'])) ? $data['parent_id'] : null;
@@ -418,6 +424,7 @@ class Document
     	$data['status'] = $this->status;
     	$data['type'] = $this->type;
     	$data['place_id'] = (int) $this->place_id;
+    	$data['account_id'] = (int) $this->account_id;
     	$data['folder'] = $this->folder;
     	$data['identifier'] = $this->identifier;
     	$data['parent_id'] = (int) $this->parent_id;
@@ -594,6 +601,10 @@ class Document
 		if (array_key_exists('place_id', $data)) {
 			$place_id = $data['place_id'];
 			if ($this->place_id != $place_id) $auditRow['place_id'] = $this->place_id = $place_id;
+		}
+		if (array_key_exists('account_id', $data)) {
+			$account_id = $data['account_id'];
+			if ($this->account_id != $account_id) $auditRow['account_id'] = $this->account_id = $account_id;
 		}
 		if (array_key_exists('folder', $data)) {
 			$folder = trim(strip_tags($data['folder']));

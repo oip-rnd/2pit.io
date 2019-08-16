@@ -46,6 +46,15 @@ define('CONFIG_DOCUMENT', [
 			'fr_FR' => 'Établissement',
 		),
 	),
+
+	'document/generic/property/account_id' => array(
+		'definition' => 'inline',
+		'type' => 'select',
+		'labels' => array(
+			'en_US' => 'Account',
+			'fr_FR' => 'Compte',
+		),
+	),
 	
 	'document/generic/property/folder' => array(
 		'definition' => 'inline',
@@ -97,7 +106,7 @@ define('CONFIG_DOCUMENT', [
 	),
 	
 	'document/generic' => array(
-		'properties' => array('type', 'status', 'place_id', 'folder', 'identifier', 'name', 'mime', 'update_time'),
+		'properties' => array('type', 'status', 'place_id', 'account_id', 'folder', 'identifier', 'name', 'mime', 'update_time'),
 	),
 
 	'document/search/generic' => [
@@ -136,10 +145,13 @@ define('CONFIG_DOCUMENT', [
 	'document/export/generic' => [
 		'properties' => [
 			'status' => 				['column' => 'A'],
-			'place_id' => 				['column' => 'B'],
-			'identifier' => 			['column' => 'C'],
-			'name' => 					['column' => 'D'],
-			'mime' => 					['column' => 'E'],
+			'type' => 					['column' => 'B'],
+			'folder' => 				['column' => 'C'],
+			'place_id' => 				['column' => 'D'],
+			'account_id' => 			['column' => 'E'],
+			'identifier' => 			['column' => 'F'],
+			'name' => 					['column' => 'G'],
+			'mime' => 					['column' => 'H'],
 		],
 	],
 ]);

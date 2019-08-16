@@ -3064,7 +3064,7 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 		'definition' => 'inline',
 		'type' => 'select',
 		'modalities' => array(
-			'subscription' => array('en_US' => 'Online subscription', 'fr_FR' => 'Inscription en ligne'),
+			'contact_request' => array('en_US' => 'Contact request', 'fr_FR' => 'Demande de contact'),
 			'cooptation' => array('en_US' => 'Cooptation', 'fr_FR' => 'Cooptation'),
 			'file' => array('en_US' => 'File', 'fr_FR' => 'Fichier'),
 			'e_mailing' => array('en_US' => 'e-mailing', 'fr_FR' => 'e-mailing'),
@@ -3681,6 +3681,10 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 							'route' => 'account/updateContact',
 							'params' => array('type' => '', 'contactNumber' => 2),
 							'labels' => array('en_US' => 'Invoicing', 'fr_FR' => 'Contact facturation'),
+					),
+					'account-document' => array(
+							'definition' => 'inline',
+							'labels' => array('en_US' => 'Documents', 'fr_FR' => 'Documents'),
 					),
 			),
 	),

@@ -90,49 +90,54 @@ function documentSearch()
 }
 
 // Load the list
-function getDocumentList(params, target = null) {
-
+function getDocumentList(filters, target = null, place_id = null, account_id = null) {
+  
   if (!target) target = 'document-list-panel';
+  
   $('[data-toggle="tooltip"]').tooltip('hide');
 
   // Execute the ajax request
   let order = 'name';
-  let route = '<?php echo $this->url('document/list', ['type' => $type, 'folder' => $folder]) ?>' + params + '&order=' + order;
+  let route = '<?php echo $this->url('document/list', ['type' => $type, 'folder' => $folder]) ?>?';
+  if (place_id) route += '&place_id=eq,' + place_id;
+  if (account_id) route += '&account_id=eq,' + account_id;
+  route += filters + '&order=' + order;
   xhttp = new XMLHttpRequest();
   xhttp.open("GET", route, true);
   xhttp.onreadystatechange = function() {
     if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
     if (xhttp.readyState == 4 && (xhttp.status == 200 || xhttp.status == 400)) {
-        document.getElementById(target).innerHTML = xhttp.responseText;
+
+    	document.getElementById(target).innerHTML = xhttp.responseText;
         
         // Connect the download buttons
         $('.document-download-btn').click(function () {
           let id = $(this).attr('id').split('_')[1];
-          documentDownload(id);
+          documentDownload(id, target, place_id, account_id);
         });
 
         // Connect the archive buttons
         $('.document-archive-checkbox').change(function () {
           let id = $(this).attr('id').split('_')[1];
-          documentArchive(id);
+          documentArchive(id, target, place_id, account_id);
         });
 
         // Connect the delete buttons
         $('.document-delete-btn').click(function () {
           let id = $(this).attr('id').split('_')[1];
-          connectDeleteBtn(id);
+          connectDeleteBtn(id, target, place_id, account_id);
         });
 
         // Connect the cancel buttons
         $('.document-cancel-btn').hide();
         $('.document-cancel-btn').click(function () {
           let id = $(this).attr('id').split('_')[1];
-          connectCancelBtn(id);
+          connectCancelBtn(id, target, place_id, account_id);
         });
 
         // Connect the upload buttons
         $('.document-upload-btn').click(function () {
-          documentUpload();
+          documentUpload(target, place_id, account_id);
         });
         
         $('[data-toggle="tooltip"]').tooltip()
@@ -141,32 +146,32 @@ function getDocumentList(params, target = null) {
   }
   xhttp.send();
 }
-
+/*
 $('#modalForm').on('hidden.bs.modal', function (e) {
   getDocumentList(getSearchParams(''));
-})
+})*/
 
-function connectDeleteBtn(id) {
+function connectDeleteBtn(id, target, place_id, account_id) {
     $('#document-cancel-btn_' + id).show();
     $('.document-archive-checkbox').attr('disabled', true);
     $('.document-btn').attr('disabled', true);
     $('#document-delete-btn_' + id).attr('disabled', false);
     $('#document-delete-btn_' + id).removeClass('btn-outline-primary').addClass('btn-danger');
     $('#document-delete-btn_' + id).unbind('click');
-    $('#document-delete-btn_' + id).click(function () { documentDelete(id); });
+    $('#document-delete-btn_' + id).click(function () { documentDelete(id, target, place_id, account_id); });
 }
 
-function connectCancelBtn(id) {
+function connectCancelBtn(id, target, place_id, account_id) {
     $('.document-cancel-btn').hide();
     $('.document-checkbox').attr('disabled', false);
     $('.document-btn').attr('disabled', false);
     $('.document-btn').removeClass('btn-warning').removeClass('btn-danger').addClass('btn-outline-primary');
     $('#document-delete-btn_' + id).unbind('click');
-    $('#document-delete-btn_' + id).click(function () { connectDeleteBtn(id) });
+    $('#document-delete-btn_' + id).click(function () { connectDeleteBtn(id, target, place_id, account_id) });
 }
 
 // Add a new vard or update an existing vcard
-function documentUpload()
+function documentUpload(target, place_id, account_id)
 {
   // Submit the formData in a POST request to the server
   formData = new FormData();
@@ -177,12 +182,14 @@ function documentUpload()
       formData.append('document-file', files[0], files[0].name);
 	
 	  let xhttp = new XMLHttpRequest();
-	  let route = '<?php echo $this->url('document/upload', ['type' => $type, 'folder' => $folder]) ?>';
+	  let route = '<?php echo $this->url('document/upload', ['type' => $type, 'folder' => $folder]) ?>?';
+      if (place_id) route += '&place_id=' + place_id;
+      if (account_id) route += '&account_id=' + account_id;
 	  xhttp.open('POST', route, true);
 	  xhttp.onreadystatechange = function() {
 	    if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
 	    if (xhttp.readyState == 4 && (xhttp.status == 200 || xhttp.status == 400)) {
-	      getDocumentList(getSearchParams(''));
+	      getDocumentList(getSearchParams(''), target, place_id, account_id);
 	    }
 	  };
 	  xhttp.send(formData);
@@ -192,7 +199,7 @@ function documentUpload()
 }
 
 // Archive or unarchive a document
-function documentArchive(id)
+function documentArchive(id, target, place_id, account_id)
 {
   let status = ($('#document-archive-checkbox_' + id).prop('checked')) ? 'new' : 'archived';
 
@@ -213,7 +220,7 @@ function documentArchive(id)
 }
 
 // Delete a document
-function documentDelete(id)
+function documentDelete(id, target, place_id, account_id)
 {
   // Submit the DELETE request to the server
   let xhttp = new XMLHttpRequest();
@@ -222,7 +229,7 @@ function documentDelete(id)
   xhttp.onreadystatechange = function() {
 	if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
     if (xhttp.readyState == 4 && (xhttp.status == 200 || xhttp.status == 400)) {
-        getDocumentList(getSearchParams(''));
+        getDocumentList(getSearchParams(''), target, place_id, account_id);
     }
   };
   xhttp.send();

@@ -361,7 +361,7 @@ function getDetail(id) {
               getUpdate(id, '');
 
 	<?php elseif ($tabId == 'account-document') : ?>
-              getDocumentList('?', 'account-update-panel');
+              getDocumentList('', 'account-update-panel', null, id);
 
     <?php elseif ($tabId == 'user') : ?>
               getUserUpdate(id, '');

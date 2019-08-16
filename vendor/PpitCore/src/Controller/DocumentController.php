@@ -78,7 +78,8 @@ class DocumentController extends AbstractActionController
     	$type = $this->params()->fromRoute('type');
     	$folder = $this->params()->fromRoute('folder');
     	$place_id = $this->params()->fromQuery('place_id');
-    
+    	$account_id = $this->params()->fromQuery('account_id');
+    	 
     	$document = Document::instanciate();
     	
     	// Instanciate the csrf form
@@ -97,6 +98,7 @@ class DocumentController extends AbstractActionController
 					$file = current($files);
 					$data['type'] = $type;
 					$data['place_id'] = $place_id;
+					$data['account_id'] = $account_id;
 					$data['folder'] = $folder;
 					$data['mime'] = $file['type'];
 					$data['name'] = $file['name'];
@@ -280,7 +282,8 @@ class DocumentController extends AbstractActionController
     	// Retrieve the query parameters
     	$filters = array();
     
-    	foreach ($description['search']['properties'] as $propertyId => $property) {
+    	foreach ($description['properties'] as $propertyId => $unused) {
+
     		$argument = ($arguments->fromQuery($propertyId, null));
     		if ($argument) {
     			$argument = explode(',', $argument);

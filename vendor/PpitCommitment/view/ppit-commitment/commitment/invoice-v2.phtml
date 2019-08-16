@@ -39,11 +39,15 @@
 
 <input type="hidden" id="commitment-update_time" value="<?php echo $commitment->update_time ?>" />
 
+<?php if ($message != 'OK') : ?>
+
 <div class="form-group">
   <div class="alert alert-danger" id="commitment-invoice-alert" style="text-align: center">
     <strong><?php echo $this->translate('This action is irreversible. Please confirm.', 'ppit-core', $context->getLocale()) ?></strong>
   </div>
 </div>
+
+<?php endif;?>
 
   <?php
   if (in_array($commitment->status, ['invoiced', 'settled'])) $submitLabel = $this->translate('Actualize the invoice', 'ppit-commitment', $context->getLocale());

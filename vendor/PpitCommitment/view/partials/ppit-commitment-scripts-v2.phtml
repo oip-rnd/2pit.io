@@ -259,7 +259,10 @@ function postForm(id, action)
       if (xhttp.readyState == 4) {
         if (xhttp.status == 200) {
           if (id == 0) getCommitmentDetail(xhttp.responseText);
-          else $('#commitment-update-panel').html(xhttp.responseText);
+          else {
+              $('#commitment-update-panel').html(xhttp.responseText);
+              $('.commitment-cancel-btn').click(function () { getCommitmentUpdate(id, ''); });
+          }
         }
         else {
           console.log(xhttp.status + ' ' + xhttp.statusText);
@@ -295,7 +298,7 @@ function getCommitmentUpdate(id, action) {
         $('#commitment-invoice-anchor').click(function () { getInvoiceForm(id); });
         $('#commitment-invoice-alert').hide();
         $('#up-cancel-button').click(function () { getCommitmentUpdate(id, ''); });
-        $('#commitment-cancel-button').click(function () { getCommitmentUpdate(id, ''); });
+        $('.commitment-cancel-btn').click(function () { getCommitmentUpdate(id, ''); });
       }
       else $('#account-add-anchor').click(function () { 
         $('[data-toggle="tooltip"]').tooltip('hide');
