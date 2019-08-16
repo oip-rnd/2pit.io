@@ -307,7 +307,7 @@ class Document
 				if (array_key_exists($propertyId, Document::$model['properties'])) {
 					$entity = Document::$model['properties'][$propertyId]['entity'];
 					$column = Document::$model['properties'][$propertyId]['column'];
-					$where->in($entity . '.' . $column, $values);
+					$where->nest->isNull($entity . '.' . $column)->or->in($entity . '.' . $column, $values)->unnest;
 				}
 			}
 		}
@@ -423,7 +423,7 @@ class Document
     	$data['instance_id'] = (int) $this->instance_id;
     	$data['status'] = $this->status;
     	$data['type'] = $this->type;
-    	$data['place_id'] = (int) $this->place_id;
+    	$data['place_id'] = $this->place_id;
     	$data['account_id'] = (int) $this->account_id;
     	$data['folder'] = $this->folder;
     	$data['identifier'] = $this->identifier;
