@@ -53,7 +53,7 @@
 				        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownVcardLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 				        	<span class="far fa-lg fa-user"> </span><span class="caret"></span></a>
 				        <div class="dropdown-menu" aria-labelledby="navbarDropdownVcardLink">
-				          	<a class="dropdown-item account-list-anchor <?php if ($active == 'password') echo 'active' ?>" href="<?php echo $this->url('user/password', ['id' => $context->getUserId()]) ?>">
+				          	<a class="dropdown-item account-list-anchor <?php if (isset($active) && $active == 'password') echo 'active' ?>" href="<?php echo $this->url('user/password', ['id' => $context->getUserId()]) ?>">
 				          		<?php echo $this->translate('Password', 'ppit-core', $context->getLocale()) ?>
 				          	</a>
 				          	<a class="dropdown-item account-list-anchor" href="<?php echo $this->url('user/logout', ['instance_caption' => $context->getInstance()->caption]) ?>" rel="nofollow">

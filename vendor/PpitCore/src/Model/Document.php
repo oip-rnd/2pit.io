@@ -272,12 +272,12 @@ class Document
 			$entity = Document::$model['properties'][$propertyId]['entity'];
 			$column = Document::$model['properties'][$propertyId]['column'];
 	
-			if ($property['type'] == 'select') {
+/*			if ($property['type'] == 'select') {
 				if (array_key_exists('multiple', $property) && $property['multiple']) $where->like($entity . '.' . $column, '%' . $value . '%');
 				else $where->equalTo($entity.'.'.$column, $value);
 			}
 			elseif ($property['type'] == 'multiselect') $where->like($entity . '.' . $column, '%' . $value . '%');
-			elseif (in_array($property['type'], ['date', 'datetime']) && !$value) $where->isNull($entity . '.' . $propertyId);
+			else*/if (in_array($property['type'], ['date', 'datetime']) && !$value) $where->isNull($entity . '.' . $propertyId);
 			elseif ($operator == 'eq') $where->equalTo($entity . '.' . $column, $value);
 			elseif ($operator == 'ne') $where->notEqualTo($entity . '.' . $column, $value);
 			elseif ($operator == 'gt') $where->greaterThan($entity . '.' . $propertyId, $value);
@@ -754,7 +754,7 @@ class Document
 		$document = Document::get($this->id);
 		if ($update_time && $document->update_time > $update_time) return 'Isolation';
 
-		$this->saveContent();
+//		$this->saveContent();
 		Document::getTable()->save($this);
 		return 'OK';
 	}

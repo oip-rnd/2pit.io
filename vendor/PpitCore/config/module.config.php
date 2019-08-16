@@ -382,6 +382,15 @@ return array_merge(
 				),
 				'may_terminate' => true,
 				'child_routes' => array(
+					'index' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/index[/:type][/:folder]',
+							'defaults' => array(
+								'action' => 'index',
+							),
+						),
+					),
 					'search' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -397,6 +406,24 @@ return array_merge(
 							'route' => '/list[/:type][/:folder]',
 							'defaults' => array(
 								'action' => 'list',
+							),
+						),
+					),
+					'select' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/select[/:type][/:folder]',
+							'defaults' => array(
+								'action' => 'select',
+							),
+						),
+					),
+					'export' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/export[/:type][/:folder]',
+							'defaults' => array(
+								'action' => 'export',
 							),
 						),
 					),
@@ -1801,8 +1828,10 @@ return array_merge(
 				array('route' => 'config/v1', 'roles' => array('guest')),
 				
 				array('route' => 'document', 'roles' => array('user')),
+				array('route' => 'document/index', 'roles' => array('user')),
 				array('route' => 'document/search', 'roles' => array('user')),
 				array('route' => 'document/list', 'roles' => array('user')),
+				array('route' => 'document/select', 'roles' => array('user')),
 				array('route' => 'document/export', 'roles' => array('user')),
 				array('route' => 'document/upload', 'roles' => array('user')),
 				array('route' => 'document/download', 'roles' => array('user')),
@@ -2595,8 +2624,8 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 		'definition' => 'inline',
 		'type' => 'phone',
 		'labels' => array(
-			'en_US' => 'Phone',
-			'fr_FR' => 'Téléphone',
+			'en_US' => 'Office phone',
+			'fr_FR' => 'Téléphone bureau',
 		),
 	),
 	
@@ -2604,8 +2633,8 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 		'definition' => 'inline',
 		'type' => 'phone',
 		'labels' => array(
-			'en_US' => 'Cellular',
-			'fr_FR' => 'Mobile',
+			'en_US' => 'Phone',
+			'fr_FR' => 'Téléphone',
 		),
 	),
 	
@@ -3620,13 +3649,13 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 				),
 				'name' => [],
 				'email' => [],
+				'tel_cell' => [],
 				'opening_date' => [],
 				'callback_date' => [],
 				'first_activation_date' => [],
 				'next_meeting_date' => [],
 				'priority' => [],
 				'origine' => [],
-				'place_id' => [],
 				'update_time' => [],
 			),
 	),
@@ -3672,8 +3701,8 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 			'n_first' => ['mandatory' => false],
 			'n_last' => ['mandatory' => true],
 			'email' => ['mandatory' => false],
-			'tel_work' => ['mandatory' => false],
 			'tel_cell' => ['mandatory' => false],
+			'tel_work' => ['mandatory' => false],
 			'adr_street' => ['mandatory' => false],
 			'adr_zip' => ['mandatory' => false],
 			'adr_city' => ['mandatory' => false],
@@ -3695,8 +3724,8 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 			'n_title' => array('mandatory' => false),
 			'n_first' => array('mandatory' => false),
 			'n_last' => array('mandatory' => false),
-			'tel_work' => array('mandatory' => false),
 			'tel_cell' => array('mandatory' => false),
+			'tel_work' => array('mandatory' => false),
 			'email' => array('mandatory' => false),
 			'adr_street' => array('mandatory' => false),
 			'adr_extended' => array('mandatory' => false),
@@ -3716,47 +3745,37 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 
 	'core_account/export/generic' => array(
 			'status' => [],
-//			'place_id' => [],
-//			'identifier' => [],
+			'place_id' => [],
+			'identifier' => [],
 			'name' => [],
-//			'basket' => [],
+			'basket' => [],
 			'opening_date' => [],
 			'callback_date' => [],
-/*			'first_activation_date' => [],
+			'first_activation_date' => [],
 			'next_meeting_date' => [],
 			'next_meeting_confirmed' => [],
-			'priority' => [],*/
 			'origine' => [],
-/*			'n_title' => [],
+			'n_title' => [],
 			'n_first' => [],
-			'n_last' => [],*/
+			'n_last' => [],
 			'email' => [],
-/*			'property_1' => [],
-			'property_2' => [],
-			'comment_1' => ['mandatory' => false],
-			'comment_2' => ['mandatory' => false],
-			'tel_work' => [],*/
 			'tel_cell' => [],
+			'tel_work' => [],
 			'adr_street' => [],
 			'adr_zip' => [],
 			'adr_city' => [],
-/*	
-			'n_title_2' => [],
-			'n_first_2' => [],
-			'n_last_2' => [],
-			'email_2' => [],
-			'tel_work_2' => [],
-			'tel_cell_2' => [],*/
-
-/*			'default_means_of_payment' => [],
-			'transfer_order_id' => [],
+			'groups' => [],
+			'property_1' => [],
+			'property_2' => [],
+			'default_means_of_payment' => [],
+/*			'transfer_order_id' => [],
 			'transfer_order_date' => [],
 			'bank_identifier' => [],*/
-		
-//			'contact_history' => [],
-//			'notification_time' => [],
+			'comment_1' => [],
+			'comment_2' => [],
+			'contact_history' => [],
+			'notification_time' => [],
 			'locale' => [],
-			'json_property_1' => [],
 	),
 
 	'core_account/indexCard/generic' => array(

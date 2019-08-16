@@ -1,3 +1,5 @@
+<?php echo $this->partial('/ppit-core/view-controller/document', ['type' => 'binary', 'folder' => 'studies']) ?>
+
 <script>
 /**
  * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
@@ -357,6 +359,9 @@ function getDetail(id) {
 
     <?php if ($tabId == 'contact_1') : ?>
               getUpdate(id, '');
+
+	<?php elseif ($tabId == 'account-document') : ?>
+              getDocumentList('?', 'account-update-panel');
 
     <?php elseif ($tabId == 'user') : ?>
               getUserUpdate(id, '');

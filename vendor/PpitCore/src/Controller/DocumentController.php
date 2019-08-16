@@ -15,7 +15,26 @@ use Zend\View\Model\ViewModel;
 
 class DocumentController extends AbstractActionController
 {
-    public function searchAction()
+    public function indexAction()
+    {
+    	// Retrieve the context
+    	$context = Context::getCurrent();
+    	$type = $this->params()->fromRoute('type');
+    	$folder = $this->params()->fromRoute('folder');
+    	
+    	$content = [
+    		'context' => $context,
+    		'type' => $type,
+    		'folder' => $folder,
+    	];
+    	
+    	// Return the view
+    	$view = new ViewModel($content);
+    	$view->setTerminal(true);
+    	return $view;
+    }
+    
+	public function searchAction()
     {
     	
     }
@@ -24,9 +43,13 @@ class DocumentController extends AbstractActionController
     {
     	// Retrieve the context
     	$context = Context::getCurrent();
-    	
+    	$type = $this->params()->fromRoute('type');
+    	$folder = $this->params()->fromRoute('folder');
+
     	$content = [
     		'context' => $context,
+    		'type' => $type,
+    		'folder' => $folder,
     	];
     		 
     	// Get the list and description as content 
@@ -38,6 +61,11 @@ class DocumentController extends AbstractActionController
     	return $view;
     }
 
+    public function selectAction()
+    {
+    	return $this->listAction();
+    }
+    
     public function exportAction()
     {
     	
@@ -73,23 +101,32 @@ class DocumentController extends AbstractActionController
 					$data['mime'] = $file['type'];
 					$data['name'] = $file['name'];
 					$data['binary_content'] = $file;
-					$document->loadData($data);
-
-	    			// Atomically save
-	    			$connection = Account::getTable()->getAdapter()->getDriver()->getConnection();
-	    			$connection->beginTransaction();
-	    			try {
-	    				$rc = $document->add();
-	    				if ($rc != 'OK') $error = $rc;
-	    				else {
-	    					$message = 'OK';
-	    					$connection->commit();
-	    				}
-	    			}
-	    			catch (\Exception $e) {
-	    				$connection->rollback();
-	    				throw $e;
-	    			}
+					$rc = $document->loadData($data);
+					if ($rc != 'OK') {
+						$this->getResponse()->setStatusCode('400');
+						$this->getResponse()->setReasonPhrase($rc);
+					}
+					else {
+						
+		    			// Atomically save
+		    			$connection = Account::getTable()->getAdapter()->getDriver()->getConnection();
+		    			$connection->beginTransaction();
+		    			try {
+		    				$rc = $document->add();
+		    				if ($rc != 'OK') {
+		    					$this->getResponse()->setStatusCode('400');
+		    					$this->getResponse()->setReasonPhrase($rc);
+		    				}
+		    				else {
+		    					$message = 'OK';
+		    					$connection->commit();
+		    				}
+		    			}
+		    			catch (\Exception $e) {
+		    				$connection->rollback();
+		    				throw $e;
+		    			}
+					}
 				}
     		}
     	}
@@ -117,11 +154,7 @@ class DocumentController extends AbstractActionController
 		 
 		// transmit the 'POST' request that switch the status between 'new' and 'archived' => Todo: Create a new request to send to 'document/v1' as a REST web-service
 		$content = array_merge($content, $this->v1Action());
-	
-		// Return the link list
-		$view = new ViewModel($content);
-		$view->setTerminal(true);
-		return $view;
+		return $this->getResponse();
 	}
 
 	public function deleteAction()
@@ -262,7 +295,7 @@ class DocumentController extends AbstractActionController
 		$type = $arguments->fromRoute('type');
 		if ($type) $filters['type'] = ['eq', $type];
 				
-		$folder = $arguments->fromQuery('folder');
+		$folder = $arguments->fromRoute('folder');
 		if ($folder) $filters['folder'] = ['eq', $folder];
     	
 		return $filters;
@@ -330,7 +363,60 @@ class DocumentController extends AbstractActionController
 				}
 			}
 		}
-	
+
+		// Post
+		elseif ($requestType == 'POST') {
+		
+			$data = [];
+			foreach ($description['detail']['properties'] as $propertyId => $property) {
+				$value = $this->request->getPost($propertyId);
+				if ($value !== null) $data[$propertyId] = $value;
+			}
+			if ($id) {
+				$document = Document::get($id);
+				if (!$document) {
+					$content['statusCode'] = '400';
+					$this->getResponse()->setStatusCode($content['statusCode']);
+					$content['reasonPhrase'] = 'Resource not found for given id';
+					$this->getResponse()->setReasonPhrase($content['reasonPhrase']);
+				}
+			}
+			else {
+				$document = Document::instanciate();
+			}
+			$rc = $document->loadData($data);
+			if ($rc != 'OK') {
+				$content['statusCode'] = '500';
+				$this->getResponse()->setStatusCode($content['statusCode']);
+				$content['reasonPhrase'] = 'document->loadData: ' . $rc;
+				$this->getResponse()->setReasonPhrase($content['reasonPhrase']);
+			}
+			else {
+				$connection = Document::getTable()->getAdapter()->getDriver()->getConnection();
+				$connection->beginTransaction();
+				try {
+					$update_time = $this->request->getPost('update_time');
+					$rc = $document->update($update_time);
+					if ($rc != 'OK') {
+						$connection->rollback();
+						$content['statusCode'] = '400';
+						$this->getResponse()->setStatusCode($content['statusCode']);
+						$content['reasonPhrase'] = $rc;
+						$this->getResponse()->setReasonPhrase($content['reasonPhrase']);
+					}
+					else $connection->commit();
+				}
+				catch (\Exception $e) {
+					$content['statusCode'] = '500';
+					$this->getResponse()->setStatusCode($content['statusCode']);
+					$content['reasonPhrase'] = $e->getMessage();
+					$this->getResponse()->setReasonPhrase($content['reasonPhrase']);
+				}
+			}
+			$content['document'] = $document->getProperties();
+			$content['document']['is_deletable'] = $document->isDeletable();
+		}
+		
 		// Delete
 		elseif ($requestType == 'DELETE') {
 			if (!$id) {
@@ -340,8 +426,8 @@ class DocumentController extends AbstractActionController
 				$this->getResponse()->setReasonPhrase($content['reasonPhrase']);
 			}
 			else {
-				$vcard = Vcard::get($id);
-				if (!$vcard) {
+				$document = Document::get($id);
+				if (!$document) {
 					$content['statusCode'] = '400';
 					$this->getResponse()->setStatusCode($content['statusCode']);
 					$content['reasonPhrase'] = 'Resource not found for given id';
@@ -350,10 +436,10 @@ class DocumentController extends AbstractActionController
 				else {
 
 					// Database update
-					$connection = Vcard::getTable()->getAdapter()->getDriver()->getConnection();
+					$connection = Document::getTable()->getAdapter()->getDriver()->getConnection();
 					$connection->beginTransaction();
 					try {
-						$rc = $vcard->delete(null);
+						$rc = $document->delete(null);
 						if ($rc != 'OK') {
 							$connection->rollback();
 							$content['statusCode'] = '400';
@@ -363,7 +449,7 @@ class DocumentController extends AbstractActionController
 						}
 						else {
 							$connection->commit();
-							$content['vcard'] = $vcard->getProperties();
+							$content['document'] = $document->getProperties();
 						}
 					}
 					catch (\Exception $e) {

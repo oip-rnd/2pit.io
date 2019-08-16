@@ -1,0 +1,44 @@
+
+<div class="container">
+  <div class="row my-3">
+  
+<?php foreach ($documents as $document) : ?>
+
+    <div class="col-md-2">
+      
+      <div class="text-center mt-2">
+
+        <input type="hidden" id="document-select-name_<?php echo $document['id'] ?>" value="<?php echo $document['name'] ?>" />
+        <a href="#" class="document-select-anchor" id="document-select-anchor_<?php echo $document['id'] ?>">
+
+  <?php if (substr($document['mime'], 0, 5) == 'image') : ?>
+          <img src="<?php echo $this->url('document/download', ['id' => $document['id']]) ?>" class="img-fluid" alt="<?php echo $document['name'] ?>" />
+
+  <?php else : ?>
+    <?php 
+    if ($document['mime'] == 'application/pdf') $glyph = 'fa-file-pdf';
+    elseif ($document['mime'] == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') $glyph = 'fa-file-word';
+    elseif ($document['mime'] == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') $glyph = 'fa-file-excel';
+    elseif ($document['mime'] == 'application/vnd.openxmlformats-officedocument.presentationml.presentation') $glyph = 'fa-file-powerpoint';
+    else $glyph = 'fa-file';
+    ?>
+          <i class="far <?php echo $glyph ?> fa-2x text-muted"></i>
+  <?php endif;?>
+
+        </a>
+          
+      </div>
+
+  <?php 
+  if (strlen($document['name']) > 20) $name = substr($document['name'], 0, 20) . '&hellip;';
+  else $name = $document['name'];
+  ?>
+      <div class="text-center"><small class="text-muted" data-toggle="tooltip" title="<?php echo $document['name'] ?>"><?php echo $name ?></small></div>
+
+    </div>
+
+<?php endforeach;?>
+    
+  </div>
+
+</div>

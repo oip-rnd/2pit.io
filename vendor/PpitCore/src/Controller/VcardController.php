@@ -327,7 +327,8 @@ class VcardController extends AbstractActionController
 		
 			$data = [];
 			foreach ($description['detail']['properties'] as $propertyId => $property) {
-				$data[$propertyId] = $this->request->getPost($propertyId);
+				$value = $this->request->getPost($propertyId);
+				if ($value !== null) $data[$propertyId] = $value;
 			}
 			
 			if ($id) {
@@ -353,7 +354,8 @@ class VcardController extends AbstractActionController
 				$connection = Vcard::getTable()->getAdapter()->getDriver()->getConnection();
 				$connection->beginTransaction();
 				try {
-					$rc = $vcard->update($this->request->getPost('update_time'));
+					$update_time = $this->request->getPost('update_time');
+					$rc = $vcard->update($update_time);
 					if ($rc != 'OK') {
 						$connection->rollback();
 						$content['statusCode'] = '400';

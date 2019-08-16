@@ -1,0 +1,68 @@
+<!-- 
+/**
+ * 2pit V2.0
+ *
+ * @link      https://github.com/2pit-io/2pit.io/tree/master/vendor/PpitCore
+ * @license   https://github.com/2pit-io/2pit.io/blob/master/vendor/PpitCore/license.txt GNU-GPL license
+ */
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head -->
+<head>
+    
+    <title>Elèves/classes</title>
+    
+    <meta charset="utf-8">
+
+  <meta name="robots" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="<?php echo $this->basePath('/fontawesome-free-5.2.0-web/css/all.min.css') ?>">
+    <link rel="stylesheet" href="<?php echo $this->basePath('/bootstrap-4.3.1-dist/css/bootstrap.min.css') ?>">
+    <link rel="stylesheet" href="<?php echo $this->basePath('/bootstrap-select-1.13.1/dist/css/bootstrap-select.min.css') ?>">
+  <link rel="stylesheet" href="<?php echo $this->basePath('/css/ppit-style.css') ?>">
+  <link rel="stylesheet" href="<?php echo $this->basePath('/jquery-ui-1.11.4/jquery-ui.css') ?>">
+    <link rel='stylesheet' href="<?php echo $this->basePath('/jquery.timepicker/jquery.timepicker.min.css') ?>" />
+     <link rel='stylesheet' href="<?php echo $this->basePath('/fullcalendar/fullcalendar.css') ?>" />
+
+</head>
+
+<body>
+
+<div class="container" id ="document-list-panel"></div>
+  
+</body>
+
+<!-- Sign in and registration -->
+
+<script src="<?php echo $this->basePath('/MDB-Pro/js/jquery-3.3.1.min.js') ?>"></script>
+<script src="<?php echo $this->basePath('/jquery-ui-1.11.4/jquery-ui.js') ?>"></script>
+<script>
+//Resolve name collision between jQuery UI and Twitter Bootstrap
+$.widget.bridge('uitooltip', $.ui.tooltip);
+</script>
+<script src="<?php echo $this->basePath('/MDB-Pro/js/popper.min.js') ?>"></script>
+<script src="<?php echo $this->basePath('/bootstrap-4-2/js/bootstrap.min.js') ?>"></script>
+<script src="<?php echo $this->basePath('/bootstrap-select-1.13.1/dist/js/bootstrap-select.min.js') ?>"></script>
+<script src="<?php echo $this->basePath('/jquery.timepicker/jquery.timepicker.min.js') ?>"></script>
+<script src="<?php echo $this->basePath('/ckeditor/ckeditor.js') ?>"></script>
+
+<!-- toastr -->
+<script type="text/javascript" src="<?php echo $this->basePath('/js/toastr.js') ?>"></script>
+
+<!-- FullCalendar -->
+<script src="<?php echo $this->basePath('/js/moment-with-locales.min.js') ?>"></script>
+<script src="<?php echo $this->basePath('/fullcalendar/fullcalendar.js') ?>"></script>
+<script src="<?php echo $this->basePath('/fullcalendar/locale-all.js') ?>"></script>
+
+<?php echo $this->partial('/ppit-core/view-controller/document') ?>
+
+<script>
+getDocumentList(getSearchParams(''));
+</script>
+
+</html>

@@ -150,6 +150,12 @@ table td {
     <?php elseif ($property['type'] == 'datetime') : ?>
     <td><?php echo $context->decodeDate(substr($account->properties[$propertyId], 0, 10)).' '.substr($account->properties[$propertyId], 11, 8) ?></td>
 
+    <?php elseif ($property['type'] == 'email') : ?>
+    <td><a href="mailto:<?php echo $account->properties[$propertyId] ?>"><?php echo $account->properties[$propertyId] ?></a></td>
+
+    <?php elseif ($property['type'] == 'phone') : ?>
+    <td><a href="tel:<?php echo $account->properties[$propertyId] ?>"><?php echo $account->properties[$propertyId] ?></a></td>
+
     <?php elseif ($property['type'] == 'photo') : ?>
     <td>
       <span class="info">

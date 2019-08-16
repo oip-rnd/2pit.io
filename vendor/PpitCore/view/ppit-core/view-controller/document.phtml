@@ -11,7 +11,6 @@
 <?php echo $this->partial('/partials/search-scripts-v2') ?>
 
 <script>
-var criterion = 'name', dir = 'ASC';
 
 function documentSearch()
 {
@@ -90,30 +89,50 @@ function documentSearch()
   xhttp.send();
 }
 
-// Export the list
-function documentExport() {
-
-	var params = getSearchParams('');
-	document.location.href = '<?php echo $this->url('document/export', ['type' => $type, 'folder' => $folder]) ?>' + params;
-}
-
 // Load the list
-function getDocumentList(params) {
+function getDocumentList(params, target = null) {
+
+  if (!target) target = 'document-list-panel';
+  $('[data-toggle="tooltip"]').tooltip('hide');
 
   // Execute the ajax request
-  let order = ((dir =='ASC') ? '' : '-') + criterion;
+  let order = 'name';
   let route = '<?php echo $this->url('document/list', ['type' => $type, 'folder' => $folder]) ?>' + params + '&order=' + order;
   xhttp = new XMLHttpRequest();
   xhttp.open("GET", route, true);
   xhttp.onreadystatechange = function() {
     if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
     if (xhttp.readyState == 4 && (xhttp.status == 200 || xhttp.status == 400)) {
-        document.getElementById('document-list-panel').innerHTML = xhttp.responseText;
-
+        document.getElementById(target).innerHTML = xhttp.responseText;
+        
         // Connect the download buttons
         $('.document-download-btn').click(function () {
-          var id = $(this).attr('id').split('_')[1];
-          documentDownload($(this).attr('id').split('_')[1]);
+          let id = $(this).attr('id').split('_')[1];
+          documentDownload(id);
+        });
+
+        // Connect the archive buttons
+        $('.document-archive-checkbox').change(function () {
+          let id = $(this).attr('id').split('_')[1];
+          documentArchive(id);
+        });
+
+        // Connect the delete buttons
+        $('.document-delete-btn').click(function () {
+          let id = $(this).attr('id').split('_')[1];
+          connectDeleteBtn(id);
+        });
+
+        // Connect the cancel buttons
+        $('.document-cancel-btn').hide();
+        $('.document-cancel-btn').click(function () {
+          let id = $(this).attr('id').split('_')[1];
+          connectCancelBtn(id);
+        });
+
+        // Connect the upload buttons
+        $('.document-upload-btn').click(function () {
+          documentUpload();
         });
         
         $('[data-toggle="tooltip"]').tooltip()
@@ -127,10 +146,9 @@ $('#modalForm').on('hidden.bs.modal', function (e) {
   getDocumentList(getSearchParams(''));
 })
 
-function connectDeleteBtn() {
-    let id = $(this).attr('id').split('_')[1];
-    $('.document-cancel-btn').show();
-    $('.document-checkbox').attr('disabled', true);
+function connectDeleteBtn(id) {
+    $('#document-cancel-btn_' + id).show();
+    $('.document-archive-checkbox').attr('disabled', true);
     $('.document-btn').attr('disabled', true);
     $('#document-delete-btn_' + id).attr('disabled', false);
     $('#document-delete-btn_' + id).removeClass('btn-outline-primary').addClass('btn-danger');
@@ -138,13 +156,13 @@ function connectDeleteBtn() {
     $('#document-delete-btn_' + id).click(function () { documentDelete(id); });
 }
 
-function connectCancelBtn() {
+function connectCancelBtn(id) {
     $('.document-cancel-btn').hide();
     $('.document-checkbox').attr('disabled', false);
     $('.document-btn').attr('disabled', false);
     $('.document-btn').removeClass('btn-warning').removeClass('btn-danger').addClass('btn-outline-primary');
-    $('.document-delete-btn').unbind('click');
-    $('.document-delete-btn').click(function () { connectDeleteBtn() });
+    $('#document-delete-btn_' + id).unbind('click');
+    $('#document-delete-btn_' + id).click(function () { connectDeleteBtn(id) });
 }
 
 // Add a new vard or update an existing vcard
@@ -155,75 +173,81 @@ function documentUpload()
   let fileSelect = document.getElementById('document-file');
   if (fileSelect) {
     let files = fileSelect.files;
+    if (files[0]) {
       formData.append('document-file', files[0], files[0].name);
+	
+	  let xhttp = new XMLHttpRequest();
+	  let route = '<?php echo $this->url('document/upload', ['type' => $type, 'folder' => $folder]) ?>';
+	  xhttp.open('POST', route, true);
+	  xhttp.onreadystatechange = function() {
+	    if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+	    if (xhttp.readyState == 4 && (xhttp.status == 200 || xhttp.status == 400)) {
+	      getDocumentList(getSearchParams(''));
+	    }
+	  };
+	  xhttp.send(formData);
+	  }
+	  else toastr.error('Erreur');
   }
+}
+
+// Archive or unarchive a document
+function documentArchive(id)
+{
+  let status = ($('#document-archive-checkbox_' + id).prop('checked')) ? 'new' : 'archived';
+
+  // Submit the formData in a POST request to the server
+  formData = new FormData();
+  formData.append('status', status);
 
   let xhttp = new XMLHttpRequest();
-  let route = '<?php echo $this->url('document/upload', ['type' => $type, 'folder' => $folder]) ?>';
+  let route = '<?php echo $this->url('document/archive', ['type' => $type, 'folder' => $folder]) ?>/' + id;
   xhttp.open('POST', route, true);
   xhttp.onreadystatechange = function() {
     if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
     if (xhttp.readyState == 4 && (xhttp.status == 200 || xhttp.status == 400)) {
-      getDocumentList(getSearchParams(''));
+        // Nothing to do
     }
   };
   xhttp.send(formData);
 }
 
-// Delete an existing vcard
+// Delete a document
 function documentDelete(id)
 {
   // Submit the DELETE request to the server
   let xhttp = new XMLHttpRequest();
-  let route = '<?php echo $this->url('document/delete', ['type' => $type, 'folder' => $folder]) ?>' + '/' + id;
+  let route = '<?php echo $this->url('document/delete', ['type' => $type, 'folder' => $folder]) ?>/' + id;
   xhttp.open('DELETE', route, true);
   xhttp.onreadystatechange = function() {
 	if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
     if (xhttp.readyState == 4 && (xhttp.status == 200 || xhttp.status == 400)) {
-      $('#vcard-detail-panel').html(xhttp.responseText);
-      connectAuditPanel();
+        getDocumentList(getSearchParams(''));
     }
   };
   xhttp.send();
 }
 
-// Load the detail panel
-function vcardDetail(id) {
-
-  let route = '<?php echo $this->url('vcard/detail') ?>' + '/' + id;
+// Display the document selecter
+function getDocumentSelect(type, folder, targetInput) {
 
   // Execute the ajax request
+  let route = '<?php echo $this->url('document/select') ?>/' + type + '/' + folder + '?status=ne,archived&order=-update_time';
   xhttp = new XMLHttpRequest();
   xhttp.open("GET", route, true);
   xhttp.onreadystatechange = function() {
     if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
     if (xhttp.readyState == 4 && (xhttp.status == 200 || xhttp.status == 400)) {
-          
-      $('#vcard-detail-panel').html(xhttp.responseText);
-      connectAuditPanel();
-
-      $('.update-focus').focus();
-      $('.update_date').datepicker();
-      $('.update_time').timepicker({ 'timeFormat':'H:i:s', 'step': 15, 'scrollDefault': 'now' });
-      $('.update_selectpicker').selectpicker();
-
-      $('.vcard-cancel-btn').hide();
-      $('.vcard-put-btn').click(function () { 
-          vcardPost(id); 
+      $('#document-select-panel').html(xhttp.responseText);
+      $('.document-select-anchor').click(function () {
+        let id = $(this).attr('id').split('_')[1];
+        $('#' + targetInput).val(id);
+        $('.document-show-anchor').html($('#document-select-name_' + id).val());
+        $('#document-select-panel').hide();
       });
-      $('.vcard-post-btn').click(function () { connectPostBtn() });
-      $('.vcard-delete-btn').click(function () { connectDeleteBtn() });
-      $('.vcard-cancel-btn').click(function () { connectCancelBtn() });
-
-      $('[data-toggle="tooltip"]').tooltip();
-      $('[data-toggle="tooltip"]').click(function () { $('[data-toggle="tooltip"]').tooltip('hide') });
-
-      $('#modalForm').modal('toggle');
     }
   }
   xhttp.send();
 }
-
-vcardSearch();
 
 </script>
