@@ -256,7 +256,7 @@ if ($account->id && $action != 'update' || $message == 'OK') $isDisabled = true;
       <div class="text-muted"><?php echo nl2br($account->properties[$propertyId]) ?></div>
 
       <?php else : ?>
-      <textarea class="form-control  form-control-sm <?php if (!$readonly) echo 'updatable-control' ?>" rows="10" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>><?php echo $account->properties[$propertyId] ?></textarea>
+      <textarea class="form-control  form-control-sm <?php if (!$readonly) echo 'updatable-control' ?>" rows="5" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>><?php echo $account->properties[$propertyId] ?></textarea>
       
       <?php endif;?>
 

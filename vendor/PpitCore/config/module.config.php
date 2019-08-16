@@ -3065,6 +3065,7 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 		'type' => 'select',
 		'modalities' => array(
 			'contact_request' => array('en_US' => 'Contact request', 'fr_FR' => 'Demande de contact'),
+			'subscription' => array('en_US' => 'Online subscription', 'fr_FR' => 'Souscription en ligne'),
 			'cooptation' => array('en_US' => 'Cooptation', 'fr_FR' => 'Cooptation'),
 			'file' => array('en_US' => 'File', 'fr_FR' => 'Fichier'),
 			'e_mailing' => array('en_US' => 'e-mailing', 'fr_FR' => 'e-mailing'),
@@ -3090,8 +3091,8 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 		'definition' => 'inline',
 		'type' => 'log',
 		'labels' => array(
-			'en_US' => 'Comment',
-			'fr_FR' => 'Commentaire',
+			'en_US' => 'contact log',
+			'fr_FR' => 'Historique des contacts',
 		),
 	),
 
@@ -3524,8 +3525,8 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 		'definition' => 'inline',
 		'type' => 'textarea',
 		'labels' => array(
-			'en_US' => 'Comments (1)',
-			'fr_FR' => 'Commentaires (1)',
+			'en_US' => 'Description',
+			'fr_FR' => 'Description',
 		),
 		'max_length' => 65535,
 	),
@@ -3700,6 +3701,7 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 			'first_activation_date' => ['mandatory' => false],
 			'next_meeting_date' => ['mandatory' => false],
 			'origine' => ['mandatory' => false],
+			'default_means_of_payment' => array('mandatory' => false),
 			'title_1' => [],
 			'n_title' => ['mandatory' => false],
 			'n_first' => ['mandatory' => false],
@@ -3710,18 +3712,17 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 			'adr_street' => ['mandatory' => false],
 			'adr_zip' => ['mandatory' => false],
 			'adr_city' => ['mandatory' => false],
+			'locale' => ['mandatory' => false],
 			'title_2' => [],
 			'groups' => ['readonly' => true],
+			'contact_history' => ['mandatory' => false],
 			'property_1' => ['mandatory' => false],
 			'property_2' => ['mandatory' => false],
-			'default_means_of_payment' => array('mandatory' => false),
 /*			'transfer_order_id' => array('mandatory' => false), 
 			'transfer_order_date' => array('mandatory' => false), 
 			'bank_identifier' => array('mandatory' => false),*/
 			'comment_1' => ['mandatory' => false],
-			'comment_2' => ['mandatory' => false],
-			'contact_history' => ['mandatory' => false],
-			'locale' => ['mandatory' => false],
+//			'comment_2' => ['mandatory' => false],
 	),
 	
 	'core_account/updateContact/generic' => array(
@@ -3759,6 +3760,7 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 			'next_meeting_date' => [],
 			'next_meeting_confirmed' => [],
 			'origine' => [],
+			'default_means_of_payment' => [],
 			'n_title' => [],
 			'n_first' => [],
 			'n_last' => [],
@@ -3768,18 +3770,17 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 			'adr_street' => [],
 			'adr_zip' => [],
 			'adr_city' => [],
+			'locale' => [],
 			'groups' => [],
 			'property_1' => [],
 			'property_2' => [],
-			'default_means_of_payment' => [],
 /*			'transfer_order_id' => [],
 			'transfer_order_date' => [],
 			'bank_identifier' => [],*/
 			'comment_1' => [],
-			'comment_2' => [],
+//			'comment_2' => [],
 			'contact_history' => [],
 			'notification_time' => [],
-			'locale' => [],
 	),
 
 	'core_account/indexCard/generic' => array(
