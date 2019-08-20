@@ -122,13 +122,13 @@ if ($event->id && $action != 'update' || $message == 'OK') $isDisabled = true; e
 		<?php if ($property) : ?>
 	
 	<div class="form-group row" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_' : '').$propertyId ?>_group">
-		<label class="col-sm-5 control-label" for="<?php echo $propertyId ?>">
+		<label class="col-sm-5 col-form-label col-form-label-sm" for="<?php echo $propertyId ?>">
 			<?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels']) ?>
 		</label>
 		<div class="col-sm-7">
 
 			<?php if ($propertyId == 'place_id') : ?>
-			<select class="form-control updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
+			<select class="form-control form-control-sm updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
     			<option />
 				<?php foreach ($places as $place) : ?>
     			<option value="<?php echo $place->id ?>" <?php if ($event->place_id == $place->id) echo 'selected="selected"' ?>><?php echo $place->caption ?></option>
@@ -137,20 +137,20 @@ if ($event->id && $action != 'update' || $message == 'OK') $isDisabled = true; e
 
 			<?php elseif ($property['type'] == 'date') : ?>
 			<input type="hidden" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
-			<input class="form-control update_date updatable-control <?php if ($first) echo 'focused-control' ?>" id="input_<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php echo $context->decodeDate($event->properties[$propertyId]) ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+			<input class="form-control form-control-sm update_date updatable-control <?php if ($first) echo 'focused-control' ?>" id="input_<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php echo $context->decodeDate($event->properties[$propertyId]) ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
 
             <?php elseif ($property['type'] == 'time') : ?>
-            <input class="form-control update_time updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" value="<?php echo $event->properties[$propertyId] ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+            <input class="form-control form-control-sm update_time updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" value="<?php echo $event->properties[$propertyId] ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
 
 			<?php elseif ($property['type'] == 'number') : ?>
 			<input type="hidden" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
-			<input class="form-control updatable-control <?php if ($first) echo 'focused-control' ?>" id="input_<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php echo $context->formatFloat($event->properties[$propertyId], 2) ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+			<input class="form-control form-control-sm updatable-control <?php if ($first) echo 'focused-control' ?>" id="input_<?php echo $propertyId ?>" name="input_<?php echo $propertyId ?>" value="<?php echo $context->formatFloat($event->properties[$propertyId], 2) ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
 
 			<?php elseif ($property['type'] == 'textarea') : ?>
-			<textarea class="form-control updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>><?php echo $event->properties[$propertyId] ?></textarea>
+			<textarea class="form-control form-control-sm updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>><?php echo $event->properties[$propertyId] ?></textarea>
 
 			<?php elseif ($property['type'] == 'select') : ?>
-			<select class="form-control updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
+			<select class="form-control form-control-sm updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
     			<option />
 				<?php foreach ($property['modalities'] as $key => $labels) : ?>
     			<option value="<?php echo $key ?>" <?php if ($event->properties[$propertyId] == $key) echo 'selected="selected"' ?>><?php echo $context->localize($labels) ?></option>
@@ -159,7 +159,7 @@ if ($event->id && $action != 'update' || $message == 'OK') $isDisabled = true; e
 
             <?php elseif ($property['type'] == 'multiselect') : ?>
 	         <?php $values = explode(',', $event->properties[$propertyId]) ?>
-	        <select class="form-control update_selectpicker updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" multiple <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
+	        <select class="form-control form-control-sm update_selectpicker updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" multiple <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
 	           <option />
 	           <?php foreach ($property['modalities'] as $key => $labels) : ?>
 	           <option value="<?php echo $key ?>" <?php if (in_array($key, $values)) echo 'selected="selected"' ?>><?php echo $context->localize($labels) ?></option>
@@ -167,7 +167,7 @@ if ($event->id && $action != 'update' || $message == 'OK') $isDisabled = true; e
 	        </select>
 
 			<?php else : ?>
-			<input class="form-control updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" value="<?php echo $event->properties[$propertyId] ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
+			<input class="form-control form-control-sm updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" value="<?php echo $event->properties[$propertyId] ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> />
 
 			<?php endif;?>
 		</div>
