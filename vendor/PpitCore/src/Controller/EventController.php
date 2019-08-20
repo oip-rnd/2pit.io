@@ -93,7 +93,7 @@ class EventController extends AbstractActionController
     			}
     		}
     	}
-    	$tab = $this->params()->fromRoute('entryId', 'account');
+    	$tab = $this->params()->fromRoute('entryId', 'calendar');
     	
     	// Retrieve the application
     	$app = $menuEntries[$tab]['menuId'];
