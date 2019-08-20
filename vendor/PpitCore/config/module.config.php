@@ -4479,7 +4479,7 @@ table.note-report td {
 		'type' => 'date',
 		'labels' => array(
 				'en_US' => 'Begin date',
-				'fr_FR' => 'Date début',
+				'fr_FR' => 'Date de début',
 		),
 	),
 	
@@ -4488,7 +4488,7 @@ table.note-report td {
 		'type' => 'date',
 		'labels' => array(
 				'en_US' => 'End date',
-				'fr_FR' => 'Date fin',
+				'fr_FR' => 'Date de fin',
 		),
 	),
 	
@@ -4561,8 +4561,8 @@ table.note-report td {
 		'definition' => 'inline',
 		'type' => 'time',
 		'labels' => array(
-				'en_US' => 'Time',
-				'fr_FR' => 'Heure',
+				'en_US' => 'Start time',
+				'fr_FR' => 'Heure de début',
 		),
 	),
 	
@@ -5421,8 +5421,8 @@ table.note-report td {
 		'type' => 'select',
 		'account_type' => 'teacher',
 		'labels' => array(
-			'en_US' => 'Coach',
-			'fr_FR' => 'Animateur',
+			'en_US' => 'Trainer',
+			'fr_FR' => 'Formateur',
 		),
 	),
 	
