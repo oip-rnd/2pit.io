@@ -86,6 +86,7 @@ class EventPlanningViewHelper
 									$value = $context->localize($parameter['modalities'][$event->properties[$parameterId]]);
 								}
 								else $value = $event->properties[$parameterId];
+								if ($value && array_key_exists('mask', $options)) $value = vsprintf($options['mask'], [$value]);
 								$arguments[] = $value;
 							}
 							$formatted = vsprintf($captionFormat['mask'], $arguments);

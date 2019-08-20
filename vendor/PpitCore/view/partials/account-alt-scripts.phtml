@@ -374,6 +374,13 @@ function getDetail(id) {
 
   <?php endforeach;?>
 
+            $('.member-unlink-btn').click(function () {
+              $(this).removeClass('btn-outline-primary').addClass('btn-danger');
+              $(this).unbind('click');
+              let account_id = $(this).attr('id').split('_')[1];;
+              $(this).click(function () { removeFromGroup(id, account_id) });
+            });
+
             $('#modalForm').modal('toggle');
           }
           else {
@@ -561,6 +568,21 @@ function addToGroup()
 		}
 	}
 	xhttp.send();
+}
+
+function removeFromGroup(id, account_id) 
+{
+  var xhttp = new XMLHttpRequest();
+  xhttp = new XMLHttpRequest();
+  xhttp.open("POST", '<?php echo $this->url('account/removeFromGroup') ?>/' + id + '?accounts=' + account_id, true);
+  xhttp.onreadystatechange = function() {
+    if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+        $('#member-unlink-btn_' + account_id ).prop('disabled', true);
+        $('#member-unlink-btn_' + account_id ).removeClass('btn-danger').addClass('btn-outline-danger');
+    }
+  }
+  xhttp.send();
 }
 
 // SendMessage

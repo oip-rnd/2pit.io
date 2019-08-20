@@ -405,7 +405,7 @@ class GroupAccount
 		$groupAccount = GroupAccount::getTable()->get($id, $column, $id2, $column2, $id3, $column3, $id4, $column4);
 		if ($groupAccount) {
 			$group = Account::get($groupAccount->group_id);
-			if (!group) $groupAccount->group_name = $group->name;
+			if (!$group) $groupAccount->group_name = $group->name;
 			$account = Account::get($groupAccount->account_id);
 			if ($account) {
 				$groupAccount->name = $account->name;
@@ -414,7 +414,7 @@ class GroupAccount
 					$groupAccount->place_id = $place->id;
 					$groupAccount->place_caption = $place->caption;
 				}
-				$vcard = Vcard::get($account->vcard_id);
+				$vcard = Vcard::get($account->contact_1_id);
 				if ($vcard) {
 					$groupAccount->n_first = $vcard->n_first;
 					$groupAccount->n_last = $vcard->n_last;
@@ -423,7 +423,7 @@ class GroupAccount
 					$groupAccount->tel_work = $vcard->tel_work;
 					$groupAccount->tel_cell = $vcard->tel_cell;
 					$groupAccount->locale = $vcard->locale;
-					$groupAccount->contact_1_id = $vcard->contact_1_id;
+					$groupAccount->contact_1_id = $account->contact_1_id;
 				}
 			}
 			$groupAccount->properties = $groupAccount->getProperties();
@@ -654,7 +654,7 @@ class GroupAccount
 		$groupAccount = GroupAccount::get($this->id);
 
 		// Isolation check
-		if ($groupAccount->update_time > $update_time) return 'Isolation';
+		if ($update_time && $groupAccount->update_time > $update_time) return 'Isolation';
 
 		GroupAccount::getTable()->delete($this->id);
 

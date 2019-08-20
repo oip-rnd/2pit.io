@@ -1660,54 +1660,46 @@ class Account
 		$where->notEqualTo('core_account.status', 'deleted');
 
 		// Set the filters
-		$members = [];
 		foreach ($params as $propertyId => $value) {
-			if (in_array(substr($propertyId, 0, 4), array('min_', 'max_'))) $propertyKey = substr($propertyId, 4);
-			else $propertyKey = $propertyId;
-			$property = Account::getConfig($type)[$propertyKey];
-			$entity = Account::$model['properties'][$propertyKey]['entity'];
-			$column = Account::$model['properties'][$propertyKey]['column'];
-
-			if ($propertyId == 'groups') {
-				$groups = Account::getList('group', [], '+name', null);
-				foreach ($groups as $group) {
-				    $cursor = GroupAccount::getList(GroupAccount::getDescription('generic'), ['group_id' => $group->id]);
-				    foreach($cursor as $link) {
-				    	$members[$link->id] = $link->properties;
-				    }
+			if ($propertyId != 'groups') {
+				if (in_array(substr($propertyId, 0, 4), array('min_', 'max_'))) $propertyKey = substr($propertyId, 4);
+				else $propertyKey = $propertyId;
+				$property = Account::getConfig($type)[$propertyKey];
+				$entity = Account::$model['properties'][$propertyKey]['entity'];
+				$column = Account::$model['properties'][$propertyKey]['column'];
+	
+				if ($propertyId == 'gender') $where->equalTo('core_vcard.gender', $value);
+				elseif ($propertyId == 'adr_zip') $where->like('core_vcard.adr_zip', '%'.$value.'%');
+				elseif ($propertyId == 'locale') $where->like('core_vcard.locale', '%'.$value.'%');
+				elseif ($propertyId == 'min_availability') $where->greaterThanOrEqualTo('availability_end', $value);
+				elseif ($propertyId == 'max_availability') $where->lessThanOrEqualTo('availability_begin', $value);
+				elseif ($propertyId == 'availability') $where->like('availability_constraints', '%'.$value.'%');
+				elseif ($propertyId == 'next_meeting_confirmed') {
+					$where->isNotNull('next_meeting_date');
+					if ($value) $where->isNotNull('next_meeting_confirmed');
+					else {
+						$where->isNull('next_meeting_confirmed');
+					}
 				}
-			}
-			elseif ($propertyId == 'gender') $where->equalTo('core_vcard.gender', $value);
-			elseif ($propertyId == 'adr_zip') $where->like('core_vcard.adr_zip', '%'.$value.'%');
-			elseif ($propertyId == 'locale') $where->like('core_vcard.locale', '%'.$value.'%');
-			elseif ($propertyId == 'min_availability') $where->greaterThanOrEqualTo('availability_end', $value);
-			elseif ($propertyId == 'max_availability') $where->lessThanOrEqualTo('availability_begin', $value);
-			elseif ($propertyId == 'availability') $where->like('availability_constraints', '%'.$value.'%');
-			elseif ($propertyId == 'next_meeting_confirmed') {
-				$where->isNotNull('next_meeting_date');
-				if ($value) $where->isNotNull('next_meeting_confirmed');
-				else {
-					$where->isNull('next_meeting_confirmed');
+				elseif (substr($propertyId, 0, 4) == 'min_') {
+					if (in_array($property['type'], ['date', 'datetime']) && !$value) $where->isNull($entity.'.'.substr($propertyId, 4));
+					else $where->greaterThanOrEqualTo($entity.'.'.substr($propertyId, 4), $value);
 				}
+				elseif (substr($propertyId, 0, 4) == 'max_') {
+					if (in_array($property['type'], ['date', 'datetime']) && !$value) $where->isNull($entity.'.'.substr($propertyId, 4));
+					else $where->lessThanOrEqualTo($entity.'.'.substr($propertyId, 4), $value);
+				}
+				elseif (strpos($value, ',')) $where->in($entity.'.'.$column, array_map('trim', explode(',', $value)));
+				elseif ($value == '*') $where->notEqualTo($entity.'.'.$column, '');
+				elseif ($property['type'] == 'select') {
+					if (array_key_exists('multiple', $property) && $property['multiple']) $where->like($entity.'.'.$column, '%'.$value.'%');
+					else $where->equalTo($entity.'.'.$column, $value);
+				}
+				elseif ($property['type'] == 'multiselect') $where->like($entity.'.'.$column, '%'.$value.'%');
+				elseif ($property['type'] == 'table') $where->equalTo($entity.'.'.$column, $value);
+				elseif ($value === null) $where->isNull($column);
+				else $where->like($entity.'.'.$column, '%'.$value.'%');
 			}
-			elseif (substr($propertyId, 0, 4) == 'min_') {
-				if (in_array($property['type'], ['date', 'datetime']) && !$value) $where->isNull($entity.'.'.substr($propertyId, 4));
-				else $where->greaterThanOrEqualTo($entity.'.'.substr($propertyId, 4), $value);
-			}
-			elseif (substr($propertyId, 0, 4) == 'max_') {
-				if (in_array($property['type'], ['date', 'datetime']) && !$value) $where->isNull($entity.'.'.substr($propertyId, 4));
-				else $where->lessThanOrEqualTo($entity.'.'.substr($propertyId, 4), $value);
-			}
-			elseif (strpos($value, ',')) $where->in($entity.'.'.$column, array_map('trim', explode(',', $value)));
-			elseif ($value == '*') $where->notEqualTo($entity.'.'.$column, '');
-			elseif ($property['type'] == 'select') {
-				if (array_key_exists('multiple', $property) && $property['multiple']) $where->like($entity.'.'.$column, '%'.$value.'%');
-				else $where->equalTo($entity.'.'.$column, $value);
-			}
-			elseif ($property['type'] == 'multiselect') $where->like($entity.'.'.$column, '%'.$value.'%');
-			elseif ($property['type'] == 'table') $where->equalTo($entity.'.'.$column, $value);
-			elseif ($value === null) $where->isNull($column);
-			else $where->like($entity.'.'.$column, '%'.$value.'%');
 		}
 
     	$select->where($where);
@@ -1716,15 +1708,34 @@ class Account
 			$cursor->setCurrentPageNumber($pageNumber);
 			$cursor->setItemCountPerPage($itemCountPerPage);
 		}
+		
+		if (array_key_exists('groups', $params)) {
+			$groups = Account::getList('group', [], '+name', null);
+		}
 
 		$accounts = array();
 		$i = 0;
 		foreach ($cursor as $account) {
 			$account->properties = $account->getProperties($account->type, $description);
 
-			// Filter on authorized perimeter
 			$keep = true;
-			if (array_key_exists('p-pit-admin', $context->getPerimeters())) {
+
+			if (array_key_exists('groups', $params)) {
+				if (!$groups) $keep = false;
+				else {
+					$value = $params['groups'];
+					if ($value) $value = explode(',', $value);
+					foreach ($value as $group_id) {
+						if (!array_key_exists($group_id, $groups)) {
+							$keep = false;
+							$break;
+						}
+					}
+				}
+			}
+			
+			// Filter on authorized perimeter
+			if ($keep && array_key_exists('p-pit-admin', $context->getPerimeters())) {
 				foreach ($context->getPerimeters()['p-pit-admin'] as $key => $values) {
 					$keep2 = false;
 					foreach ($values as $value) {
@@ -1733,7 +1744,7 @@ class Account
 					if (!$keep2) $keep = false;
 				}
 			}
-			if (array_key_exists($type, $context->getPerimeters())) {
+			if ($keep && array_key_exists($type, $context->getPerimeters())) {
 				foreach ($context->getPerimeters()[$type] as $key => $values) {
 					if (array_key_exists($key, $account->properties) && $account->properties[$key]) {
 						$keep2 = false;

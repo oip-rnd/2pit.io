@@ -157,6 +157,7 @@
 			'Re-enter the new password' => 'Ressaisir le nouveau mot de passe',
 			'Reference' => 'Référence',
 			'Register' => 'S\'enregistrer',
+			'Remove from group' => 'Enlever du groupe',
 			'Resources' => 'Ressources',
 			'Return' => 'Retour',
 			'Return to list' => 'Retour à la liste',

@@ -59,7 +59,7 @@
         <div class="row mb-2">
           <div class="col-sm-5" />
           <div class="col-sm-7">
-            <span class="card-title text-muted"><?php echo $this->translate('Teachers', 'ppit-studies', $context->getLocale()) ?></span>
+            <span class="card-title text-muted"><?php echo $this->translate('Trainers', 'ppit-studies', $context->getLocale()) ?></span>
           </div>
         </div>
 
@@ -68,8 +68,11 @@
 
         <div class="form-group row">
           <label class="col-sm-5 col-form-label col-form-label-sm">&nbsp;</label>
-          <div class="col-sm-7">
+          <div class="col-sm-6">
             <input class="form-control form-control-sm" disabled="disabled" value="<?php echo $member->n_fn ?>" />
+          </div>
+          <div class="col-sm-1">
+            <button type="button" class="btn btn-sm btn-outline-primary member-unlink-btn" id="member-unlink-btn_<?php echo $member->id ?>" data-toggle="tooltip" title="<?php echo $this->translate('Remove from group', 'ppit-core', $context->getLocale()) ?>"><i class="fa fa-unlink"></i></button>
           </div>
         </div>
 
@@ -88,8 +91,11 @@
 
         <div class="form-group row">
           <label class="col-sm-5 col-form-label col-form-label-sm">&nbsp;</label>
-          <div class="col-sm-7">
+          <div class="col-sm-6">
             <input class="form-control form-control-sm" disabled="disabled" value="<?php echo $member->n_fn ?>" />
+          </div>
+          <div class="col-sm-1">
+            <button type="button" class="btn btn-sm btn-outline-primary member-unlink-btn" id="member-unlink-btn_<?php echo $member->id ?>" data-toggle="tooltip" title="<?php echo $this->translate('Remove from group', 'ppit-core', $context->getLocale()) ?>"><i class="fa fa-unlink"></i></button>
           </div>
         </div>
 

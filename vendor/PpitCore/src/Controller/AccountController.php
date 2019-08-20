@@ -652,6 +652,62 @@ class AccountController extends AbstractActionController
 		$view->setTerminal(true);
 		return $view;
 	}
+
+	/**
+	 * Add the selection to a group
+	 */
+	public function removeFromGroupAction()
+	{
+		// Retrieve the context
+		$context = Context::getCurrent();
+		$group_id = $this->params()->fromRoute('group_id');
+	
+		// Retrieve the selected list of accounts
+		$accountIds = ($this->params()->fromQuery('accounts')) ? explode(',', $this->params()->fromQuery('accounts')) : [];
+		$accounts = array();
+		foreach ($accountIds as $accountId) {
+			$account = Account::get($accountId);
+			$accounts[$account->id] = $account;
+		}
+	
+		// Instanciate the csrf form
+		$csrfForm = new CsrfForm();
+		$csrfForm->addCsrfElement('csrf');
+		$error = null;
+		$message = null;
+		$request = $this->getRequest();
+		if ($request->isPost()) {
+			$csrfForm->setInputFilter((new Csrf('csrf'))->getInputFilter());
+			$csrfForm->setData($request->getPost());
+			if ($csrfForm->isValid()) { // CSRF check
+	    			
+    			// Atomicity
+	   			$connection = ContactMessage::getTable()->getAdapter()->getDriver()->getConnection();
+    			$connection->beginTransaction();
+    			try {
+					foreach ($accounts as $account) {
+						$groupAccount = GroupAccount::get($account->id, 'account_id', $group_id, 'group_id');
+						if ($groupAccount) {
+							$rc = $groupAccount->delete(null);
+							if ($rc == 'OK') $connection->commit();
+							else {
+			    				$connection->rollback();
+								$this->getResponse()->setStatusCode('400');
+								$this->getResponse()->setReasonPhrase($rc);
+							}
+						}
+					}
+    			}
+    			catch (\Exception $e) {
+    				$connection->rollback();
+					$this->getResponse()->setStatusCode('500');
+					$this->getResponse()->setReasonPhrase($e->getMessage());
+    			}
+    		}
+		}
+
+		return $this->getResponse();
+	}
 	
 	public function sendMessageAction()
 	{

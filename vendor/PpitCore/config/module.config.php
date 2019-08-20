@@ -185,6 +185,15 @@ return array_merge(
 							),
 						),
 					),
+					'removeFromGroup' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/remove-from-group[/:group_id]',
+							'defaults' => array(
+								'action' => 'removeFromGroup',
+							),
+						),
+					),
 					'sendMessage' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -1802,6 +1811,7 @@ return array_merge(
 				array('route' => 'account/group', 'roles' => array('operational_management', 'sales_manager', 'manager')),
 				array('route' => 'account/groupAlt', 'roles' => array('operational_management', 'sales_manager', 'manager')),
 				array('route' => 'account/addToGroup', 'roles' => array('operational_management', 'sales_manager', 'manager')),
+				array('route' => 'account/removeFromGroup', 'roles' => array('operational_management', 'sales_manager', 'manager')),
 				array('route' => 'account/sendMessage', 'roles' => array('operational_management', 'sales_manager', 'manager')),
 				array('route' => 'account/dropboxLink', 'roles' => array('guest')),
 				array('route' => 'account/detail', 'roles' => array('operational_management', 'sales_manager', 'manager')),
@@ -5186,10 +5196,10 @@ table.note-report td {
 	),
 	
 	'event/format/generic' => [
-		'mask' => '%s (%s)',
+		'mask' => '%s %s',
 		'params' => [
 			'caption' => [],
-			'location' => [],
+			'location' => ['mask' => '(%s)'],
 		],
 	],
 	
@@ -5431,7 +5441,7 @@ table.note-report td {
 		'dimensions' => array(),
 		'indicators' => array(),
 		'properties' => array(
-			'status', 'type', 'place_id', 'place_caption', 'account_id', 'groups', 'category', 'subcategory', 'identifier', 'caption', 'description',
+			'status', 'type', 'place_id', 'place_caption', 'account_id', 'n_last', 'groups', 'category', 'subcategory', 'identifier', 'caption', 'description',
 			'begin_date', 'end_date', 'day_of_week', 'day_of_month', 'exception_1', 'exception_2', 'exception_3', 'exception_4', 'begin_time', 'end_time', 'time_zone', 'location', 'latitude', 'longitude',
 			'value', 'comments',
 			'update_time',
@@ -5440,12 +5450,12 @@ table.note-report td {
 	),
 
 	'event/format/calendar' => array(
-		'mask' => '%s%s - %s (%s)',
+		'mask' => '%s%s - %s%s',
 		'params' => [
-			'caption' => [],
 			'property_3' => [],
-			'n_fn' => [],
-			'location' => [],
+			'caption' => ['mask' => ' %s'],
+			'n_last' => [],
+			'location' => ['mask' => ' (%s)'],
 		],
 	),
 /*	
