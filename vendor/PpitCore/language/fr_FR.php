@@ -87,6 +87,7 @@
 			'Function' => 'Fonction',
 			'Fields preceded by * are mandatory' => 'Les champs précédés de * sont obligatoires',
 			'Full list' => 'Liste complète',
+			'Generate separate slots' => 'Générer des créneaux séparés',
 			'Generate the test' => 'Générer le test',
 			'Group' => 'Groupe',
 			'Grouped actions' => 'Actions groupées',

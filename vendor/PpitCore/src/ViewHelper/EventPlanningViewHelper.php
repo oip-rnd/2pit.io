@@ -76,7 +76,7 @@ class EventPlanningViewHelper
     		if ($event->begin_date <= ($viewEndDate) && ($end_date >= $viewBeginDate)) {
     			foreach ($days as $date => $dayOfWeek) {
     				if (!in_array($date, $event->exception_dates) && $event->begin_date <= $date && $end_date >= $date) {
-	    				if ($event->begin_date == $date || $event->day_of_week == $dayOfWeek || $event->day_of_month == substr($date, 5, 2)) {
+	    				if (($event->begin_date == $date && ! $event->day_of_week) || $event->day_of_week == $dayOfWeek || $event->day_of_month == substr($date, 5, 2)) {
 	    					$captionFormat = $context->getConfig('event/format/' . $event->type);
 	    					if (!$captionFormat) $captionFormat = $context->getConfig('event/format/generic');
 							$arguments = array();
@@ -93,6 +93,7 @@ class EventPlanningViewHelper
 	    					$content[] = array(
 	    						'id' => $event->id,
 	    						'category' => $event->category,
+	    						'day_of_week' => $event->day_of_week,
 	    						'begin_date' => $date,
 	    						'end_date' => $date,
 	    						'begin_time' => $event->begin_time,

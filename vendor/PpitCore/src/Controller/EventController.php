@@ -481,9 +481,11 @@ class EventController extends AbstractActionController
     public function updateAction()
     {
     	$context = Context::getCurrent();
-
     	$type = $this->params()->fromRoute('type', null);
     	$category = $this->params()->fromQuery('category');
+    	$groups = $this->params()->fromQuery('groups', []);
+    	if ($groups) $groups = explode(',', $groups);
+    	
     	$description = Event::getDescription($type);
     	if (array_key_exists('options', $description) && array_key_exists('internal_identifier', $description['options'])) $internalIdentifier = $description['options']['internal_identifier'];
     	else $internalIdentifier = false;
@@ -527,6 +529,8 @@ class EventController extends AbstractActionController
 
     		if ($csrfForm->isValid()) { // CSRF check
 	
+    			$isSeparateSlot = $request->getPost('is_separate_slot');
+
     			// Load the input data
 		    	$data = [];
 		    	$data['exception_dates'] = [];
@@ -547,29 +551,57 @@ class EventController extends AbstractActionController
 					}
 		    	}
 
-		    	if ($event->loadData($data) != 'OK') throw new \Exception('View error');
-
-	    		// Atomically save
-	    		$connection = Event::getTable()->getAdapter()->getDriver()->getConnection();
-	    		$connection->beginTransaction();
-	    		try {
-	    			if (!$event->id) $rc = $event->add();
-	    			elseif ($action == 'delete') $rc = $event->delete($request->getPost('event_update_time'));
-	    			else {
-//	    				$event->status = 'checked';
-	    				$rc = $event->update($request->getPost('event_update_time'));
-	    			}
-    				if ($rc != 'OK') $error = $rc;
-	    			if ($error) $connection->rollback();
-	    			else {
-	    				$connection->commit();
-	    				$message = 'OK';
-	    			}
-	    		}
+		    	// Atomically save
+		    	$connection = Event::getTable()->getAdapter()->getDriver()->getConnection();
+		    	$connection->beginTransaction();
+		    	try {
+			    	if ($isSeparateSlot) {
+						if ($event->id) $event->delete(null);
+						$start = new \DateTime($data['begin_date']);
+						$end = new \DateTime($data['end_date']);
+						$dayOfWeek = $data['day_of_week'];
+			    		for ($date = $start; $date <= $end; $date->modify('+1 day')) {
+			    			$formatted = $date->format('Y-m-d');
+	    					if ($dayOfWeek == $date->format('w')) {
+	    						$data['begin_date'] = $formatted;
+	    						$data['end_date'] = $formatted;
+	    						$data['day_of_week'] = null;
+	    						if ($event->loadData($data) != 'OK') throw new \Exception('View error');
+						    	$event->id = null;
+			    				$rc = $event->add();
+		    					if ($rc != 'OK') $error = $rc;
+				    			if ($error) {
+				    				$connection->rollback();
+				    				break;
+				    			}
+	    					}
+			    		}
+		    			if (!$error) {
+		    				$connection->commit();
+	    					$message = 'OK';
+	    				}
+			    	}
+			    	else {
+	
+				    	if ($event->loadData($data) != 'OK') throw new \Exception('View error');
+	    				if (!$event->id) $rc = $event->add();
+		    			elseif ($action == 'delete') $rc = $event->delete($request->getPost('event_update_time'));
+		    			else {
+//		    				$event->status = 'checked';
+	    					$rc = $event->update($request->getPost('event_update_time'));
+	    				}
+    					if ($rc != 'OK') $error = $rc;
+		    			if ($error) $connection->rollback();
+		    			else {
+		    				$connection->commit();
+	    					$message = 'OK';
+	    				}
+		    		}
+    			}
 	    		catch (\Exception $e) {
-	    			$connection->rollback();
-	    			throw $e;
-	    		}
+    				$connection->rollback();
+    				throw $e;
+    			}
 	    		$action = null;
     		}
 	    }
@@ -579,6 +611,7 @@ class EventController extends AbstractActionController
     	$view = new ViewModel(array(
     			'context' => $context,
     			'type' => $type,
+    			'groups' => $groups,
     			'config' => $context->getconfig(),
     			'internalIdentifier' => $internalIdentifier,
     			'id' => $id,

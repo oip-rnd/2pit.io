@@ -346,6 +346,13 @@ class Event
 		foreach ($configUpdate as $propertyId => $options) {
 			$property = $configProperties[$propertyId];
 			$property['mandatory'] = (array_key_exists('mandatory', $options)) ? $options['mandatory'] : false;
+			if (array_key_exists('default', $options)) {
+				$default = $options['default'];
+				$value = $context->getConfig($default);
+				if ($value) $default = $value;
+			}
+			else $default = null;
+			$property['default'] = $default;
 			$configUpdate[$propertyId] = $property;
 		}
 		return $configUpdate;

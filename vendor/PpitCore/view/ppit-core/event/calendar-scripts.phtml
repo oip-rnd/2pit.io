@@ -108,13 +108,12 @@ function getPlanning() {
 <?php endif;?>
 
 			jQuery.each(obj, function (name, value) {
-				var color = 'lightBlue', textColor = 'black';
                 var event={
 		          id: value.id,
 	              allDay: false,
 		          title: value.formatted,
 		          color: $('#color_' + value.account_id).val(),
-	              textColor: $('#textColor_' + value.account_id).val(),
+	              textColor: (value.day_of_week == 0) ? $('#textColor_' + value.account_id).val() : 'grey',
 				  start:  $.fullCalendar.moment(value.begin_date + ' ' + value.begin_time), 
 				  end:  $.fullCalendar.moment(value.begin_date + ' ' + value.end_time)
                 }
@@ -296,11 +295,13 @@ function postForm(id, action)
   <?php endif ?>
 <?php endforeach ?>
 
+    formData.append('is_separate_slot', ($('#is_separate_slot').prop('checked')) ? 1 : 0);
     formData.append('csrf', $('#csrf').val());
 
     var xhttp = new XMLHttpRequest();
     var route;
     route = '<?php echo $this->url('event/updateAlt') ?>/' + id + '/<?php echo $type ?>' + '?category=' + '<?php echo $category ?>' + '&act=' + action;
+    if ($('#search-groups').val()) route += '&groups=' + $('#search-groups').val();
     xhttp.open('POST', route, true);
     // Set up a handler for when the request finishes.
     xhttp.onload = function () {
@@ -333,6 +334,7 @@ function getUpdate(id, action) {
 
   var xhttp = new XMLHttpRequest();
   var route = '<?php echo $this->url('event/updateAlt') ?>/' + id + '/<?php echo $type ?>' + '?category=' + '<?php echo $category ?>';
+  if ($('#search-groups').val()) route += '&groups=' + $('#search-groups').val();
   if (action) route += '&act=' + action;
 
   xhttp.open('GET', route, true);

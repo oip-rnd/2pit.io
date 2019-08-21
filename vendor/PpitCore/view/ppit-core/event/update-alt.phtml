@@ -131,9 +131,25 @@ if ($event->id && $action != 'update' || $message == 'OK') $isDisabled = true; e
 			<select class="form-control form-control-sm updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
     			<option />
 				<?php foreach ($places as $place) : ?>
-    			<option value="<?php echo $place->id ?>" <?php if ($event->place_id == $place->id) echo 'selected="selected"' ?>><?php echo $place->caption ?></option>
+    			<option value="<?php echo $place->id ?>" <?php if ($event->place_id == $place->id || count($places) == 1) echo 'selected="selected"' ?>><?php echo $place->caption ?></option>
 				<?php endforeach;?>
 			</select>
+
+            <?php elseif ($propertyId == 'groups') : ?>
+              <?php 
+              $eventGroups = ($event->groups) ? explode(',', $event->groups) : [];
+              ?>
+            <select class="form-control form-control-sm selectpicker update_selectpicker updatable-control" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?> data-none-selected-text multiple>
+             <?php foreach ($property['modalities'] as $key => $labels) : ?>
+              <?php 
+              $selected = false;
+              foreach ($groups as $group_id) {
+              	if (in_array($key, $eventGroups) || (!$event->groups && $key == $group_id)) $selected = true;
+              }
+              ?>
+              <option value="<?php echo $key ?>" <?php if ($selected) echo 'selected="selected"' ?>><?php echo $context->localize($labels) ?></option>
+            <?php endforeach;?>
+            </select>
 
 			<?php elseif ($property['type'] == 'date') : ?>
 			<input type="hidden" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" />
@@ -153,7 +169,7 @@ if ($event->id && $action != 'update' || $message == 'OK') $isDisabled = true; e
 			<select class="form-control form-control-sm updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
     			<option />
 				<?php foreach ($property['modalities'] as $key => $labels) : ?>
-    			<option value="<?php echo $key ?>" <?php if ($event->properties[$propertyId] == $key) echo 'selected="selected"' ?>><?php echo $context->localize($labels) ?></option>
+    			<option value="<?php echo $key ?>" <?php if ($event->properties[$propertyId] == $key || $key = $property['default']) echo 'selected="selected"' ?>><?php echo $context->localize($labels) ?></option>
 				<?php endforeach;?>
 			</select>
 
@@ -179,6 +195,17 @@ if ($event->id && $action != 'update' || $message == 'OK') $isDisabled = true; e
 	<?php endif;?>
   <?php endif;?>
 <?php endforeach;?>
+  
+<?php if (!$isDisabled && !$readonly && (!$event->id || $event->day_of_week)) : ?> 
+  <div class="form-group row">
+    <label class="col-sm-5 col-form-label col-form-label-sm" for="<?php echo $propertyId ?>">
+      <?php echo $this->translate('Generate separate slots', 'ppit-core', $context->getLocale()) ?>
+    </label>
+    <div class="col-sm-7">
+      <input type="checkbox" class="form-control form-control-sm updatable-control" id="is_separate_slot" />
+    </div>
+  </div>
+<?php endif;?>
 
 <?php if (!$event->id) : ?>
   <div class="form-group row">
