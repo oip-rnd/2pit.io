@@ -557,23 +557,28 @@ class EventController extends AbstractActionController
 		    	try {
 			    	if ($isSeparateSlot) {
 						if ($event->id) $event->delete(null);
+	    				$groups = explode(',', $event->groups);
 						$start = new \DateTime($data['begin_date']);
 						$end = new \DateTime($data['end_date']);
 						$dayOfWeek = $data['day_of_week'];
 			    		for ($date = $start; $date <= $end; $date->modify('+1 day')) {
 			    			$formatted = $date->format('Y-m-d');
 	    					if ($dayOfWeek == $date->format('w')) {
-	    						$data['begin_date'] = $formatted;
-	    						$data['end_date'] = $formatted;
-	    						$data['day_of_week'] = null;
-	    						if ($event->loadData($data) != 'OK') throw new \Exception('View error');
-						    	$event->id = null;
-			    				$rc = $event->add();
-		    					if ($rc != 'OK') $error = $rc;
-				    			if ($error) {
-				    				$connection->rollback();
-				    				break;
-				    			}
+	    						foreach ($groups as $group_id) {
+	    							$data['groups'] = $group_id;
+		    						$data['begin_date'] = $formatted;
+		    						$data['end_date'] = $formatted;
+		    						$data['day_of_week'] = null;
+		    						if ($event->loadData($data) != 'OK') throw new \Exception('View error');
+							    	$event->id = null;
+				    				$rc = $event->add();
+			    					if ($rc != 'OK') $error = $rc;
+					    			if ($error) {
+					    				$connection->rollback();
+					    				break;
+					    			}
+	    						}
+	    						if ($error) $break;
 	    					}
 			    		}
 		    			if (!$error) {
