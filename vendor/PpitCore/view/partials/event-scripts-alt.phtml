@@ -1,3 +1,4 @@
+<!-- 
 /**
  * PpitCore V1.0 (https://github.com/p-pit/PpitCore)
  *
@@ -5,47 +6,13 @@
  * @copyright Copyright (c) 2016 Bruno Lartillot
  * @license   https://github.com/p-pit/PpitCore/blob/master/license.txt GNU-GPL license
  */
+-->
+
+<?php echo $this->partial('/partials/search-scripts-v2') ?>
+
+<script>
 
 var criterion = 'update_time', dir = 'DESC';
-
-function eventGetParams() {
-
-  var params = '?', todo = true;
-
-<?php foreach ($content_description['search']['properties'] as $propertyId => $property) : ?>
-  <?php if (in_array($property['type'], array('date', 'time', 'datetime'))) : ?>
-
-  var min_<?php echo $propertyId ?> = $('#search_min-<?php echo $propertyId ?>').val();
-  if (min_<?php echo $propertyId ?>) min_<?php echo $propertyId ?> = encodeDate(min_<?php echo $propertyId ?>);
-  if (min_<?php echo $propertyId ?>.length >= 2) { params += 'min_<?php echo $propertyId ?>=' + min_<?php echo $propertyId ?> + '&'; todo = false; }
-
-  var max_<?php echo $propertyId ?> = $('#search_max-<?php echo $propertyId ?>').val();
-  if (max_<?php echo $propertyId ?>) max_<?php echo $propertyId ?> = encodeDate(max_<?php echo $propertyId ?>);
-  if (max_<?php echo $propertyId ?>.length >= 2) { params += 'max_<?php echo $propertyId ?>=' + max_<?php echo $propertyId ?> + '&'; todo = false; }
-
-  <?php else : ?>
-
-    <?php if (in_array($property['type'], ['select', 'multiselect'])) : ?>
-  var <?php echo $propertyId ?> = $('#search-<?php echo $propertyId ?>').val();
-  if (<?php echo $propertyId ?>) { params += '<?php echo $propertyId ?>=' + <?php echo $propertyId ?> + '&'; todo = false; }
-
-    <?php else : ?>
-  var <?php echo $propertyId ?> = $('#search-<?php echo $propertyId ?>').val();
-  if (<?php echo $propertyId ?>.length >= 2) { params += '<?php echo $propertyId ?>=' + <?php echo $propertyId ?> + '&'; todo = false; }
-
-    <?php endif;?>	
-  <?php endif;?>
-
-<?php endforeach;?>
-
-  <?php
-  $todoTitle = $context->localize($content_description['search']['todoTitle']);
-  $searchTitle = $context->localize($content_description['search']['searchTitle']);
-  ?>
-  $('#mode-text').text((todo) ? '<?php echo $todoTitle ?>' : '<?php echo $searchTitle ?>');
-
-  return params;
-}
 
 // Export the list
 function exportEventList() {
@@ -72,7 +39,7 @@ function getEventList(params) {
         if (criterion + '-anchor' == ascCriterion) dir = 'DESC';
         else if (criterion + '-anchor' == descCriterion) dir = 'ASC';
         else dir = 'ASC';
-        getEventList(eventGetParams());
+        getEventList(getSearchParams(''));
       });
 
       // Connect the detail anchors
@@ -204,7 +171,7 @@ function postForm(id, action)
       if (xhttp.readyState == 4) { 
         if (xhttp.status == 200) {
           $('#event-update-panel').html(xhttp.responseText);
-          getEventList(eventGetParams());
+          getEventList(getSearchParams(''));
       
           $('.update_date').datepicker();
           $('.update_time').timepicker({ 'timeFormat':'H:i:s', 'step': 15, 'scrollDefault': 'now' });
@@ -298,15 +265,15 @@ function getEventSearch()
       // Connect the erase button that reset all the search engine inputs and checks and refresh the list
       $('#erase-button').click(function() {
         $('.search_input').val('');
-        $('.search_selectpicker').selectpicker('deselectAll');
+        $('.search_selectpicker').selectpicker('refresh');
         $('.search_check_value').val('0');
         $('.search_check').removeClass('btn-secondary').addClass('btn-default').removeClass('active');
         $('#erase-button').removeClass('btn-success').addClass('btn-default');
         $('#erase-button').attr('disabled', 'disabled');
-        getEventList(eventGetParams());
+        getEventList(getSearchParams(''));
       });
       
-      $('.search_selectpicker').selectpicker('deselectAll');
+      $('.search_selectpicker').selectpicker('refresh');
    
       // Connect the date picker on date inputs
       $('.search_input_date').datepicker();
@@ -318,17 +285,17 @@ function getEventSearch()
         $('#erase-button').attr('disabled', false);
         $('#search_check-' + propertyId).removeClass('btn-default').addClass('btn-secondary').addClass('active');
         $('#search_check_value-' + propertyId).val('1');
-        getEventList(eventGetParams());
+        getEventList(getSearchParams(''));
       }); 
    
       // Trigger the change event on select inputs and refresh the list
       $('.search_input_select').change(function () {
-        var propertyId = $(this).attr('id').split('-')[1];
+//        var propertyId = $(this).attr('id').split('-')[1];
         $('#erase-button').removeClass('btn-default').addClass('btn-success');
         $('#erase-button').attr('disabled', false);
-        $('#search_check-' + propertyId).removeClass('btn-default').addClass('btn-secondary').addClass('active');
-        $('#search_check_value-' + propertyId).val('1');
-        getEventList(eventGetParams());
+//        $('#search_check-' + propertyId).removeClass('btn-default').addClass('btn-secondary').addClass('active');
+//        $('#search_check_value-' + propertyId).val('1');
+        getEventList(getSearchParams(''));
       }); 
 
       // Trigger the keyup event on text inputs and refresh the list
@@ -338,7 +305,7 @@ function getEventSearch()
         $('#erase-button').attr('disabled', false);
         $('#search_check-' + propertyId).removeClass('btn-default').addClass('btn-secondary').addClass('active');
         $('#search_check_value-' + propertyId).val('1');
-        getEventList(eventGetParams());
+        getEventList(getSearchParams(''));
       });
 
       // Trigger the click event on per-property checks (allowing to search on empty values) and refresh the list
@@ -355,17 +322,15 @@ function getEventSearch()
           $(this).removeClass('btn-default').addClass('btn-secondary').addClass('active');
           $('#' + check).val('1');
         }
-        getEventList(eventGetParams());
+        getEventList(getSearchParams(''));
 	  });
       
-      getEventList(eventGetParams());
+      getEventList(getSearchParams(''));
     }
   }
   xhttp.send();
 }
 
-function activateEvent() {
+getEventSearch();
 
-    // Connect buttons and links at the search engine
-	getEventSearch();
-}
+</script>

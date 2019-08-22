@@ -185,17 +185,14 @@ $.widget.bridge('uitooltip', $.ui.tooltip);
 <!-- Load the common form javascript functions -->
 <?php echo $this->partial('/partials/common-form-js.phtml'); ?>
 
-<script>
 
-<?php
-echo $this->partial('/partials/event-scripts-alt');
-?>
+<?php echo $this->partial('/partials/event-scripts-alt');?>
+
+<script>
 
 <?php foreach ($context->getConfig('menus/'.(($app) ? $app : 'synapps'))['entries'] as $entryId => $entryDef) : ?>
 $('#<?php echo $entryId ?>-anchor').click(function () { $(location).attr('href', '<?php echo $this->url($entryDef['route'], $entryDef['params']) ?>'); });
 <?php endforeach;?>
-
-activateEvent();
 
 </script>
 
