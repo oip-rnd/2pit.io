@@ -144,7 +144,7 @@ if ($event->id && $action != 'update' || $message == 'OK') $isDisabled = true; e
               <?php 
               $selected = false;
               foreach ($groups as $group_id) {
-              	if (in_array($key, $eventGroups) || (!$event->groups && $key == $group_id)) $selected = true;
+              	if (in_array($key, $eventGroups) || $key == $group_id) $selected = true;
               }
               ?>
               <option value="<?php echo $key ?>" <?php if ($selected) echo 'selected="selected"' ?>><?php echo $context->localize($labels) ?></option>
