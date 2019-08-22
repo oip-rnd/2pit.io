@@ -83,7 +83,7 @@ table td {
 			<?php if ($property) : ?>
 		
 				<?php if ($propertyId == 'place_id') : ?>
-			<td class="<?php //echo $media ?>"><?php echo $places[$event->properties[$propertyId]]->caption ?></td>
+			<td class="<?php //echo $media ?>"><?php if ($event->properties[$propertyId]) echo $places[$event->properties[$propertyId]]->caption ?></td>
 		
 				<?php elseif ($property['type'] == 'date') : ?>
 			<td class="<?php //echo $media ?>"><?php echo $context->decodeDate($event->properties[$propertyId]) ?></td>
