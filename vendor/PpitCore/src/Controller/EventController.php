@@ -346,7 +346,7 @@ class EventController extends AbstractActionController
     	if ($begin && $end) {
     		if (!$groups) {
 	    		$filters['groups'] = null;
-    			$events = Event::getList($type, $filters, '-update_time', null);
+    			$events = Event::getList($type, $filters, '-update_time', null, ['id', 'type', 'category', 'caption', 'location', 'account_id', 'begin_date', 'end_date', 'begin_time', 'end_time', 'exception_dates', 'day_of_week', 'day_of_month', 'update_time']);
     		}
     		else {
 	    		$events = [];
