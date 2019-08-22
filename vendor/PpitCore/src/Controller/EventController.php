@@ -352,7 +352,7 @@ class EventController extends AbstractActionController
 	    		$events = [];
 	    		foreach ($groups as $group_id) {
 	    			$filters['groups'] = $group_id;
-					$cursor = Event::getList($type, $filters, '-update_time', null);
+					$cursor = Event::getList($type, $filters, '-update_time', null, ['id', 'type', 'category', 'caption', 'location', 'account_id', 'begin_date', 'end_date', 'begin_time', 'end_time', 'exception_dates', 'day_of_week', 'day_of_month', 'update_time']);
 					foreach ($cursor as $event_id => $event) $events[$event_id] = $event;
 	    		}
     		}
