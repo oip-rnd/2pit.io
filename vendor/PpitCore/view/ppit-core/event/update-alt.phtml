@@ -169,7 +169,7 @@ if ($event->id && $action != 'update' || $message == 'OK') $isDisabled = true; e
 			<select class="form-control form-control-sm updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
     			<option />
 				<?php foreach ($property['modalities'] as $key => $labels) : ?>
-    			<option value="<?php echo $key ?>" <?php if ($event->properties[$propertyId] == $key || $key = $property['default']) echo 'selected="selected"' ?>><?php echo $context->localize($labels) ?></option>
+    			<option value="<?php echo $key ?>" <?php if ($event->properties[$propertyId] == $key || $key == $property['default']) echo 'selected="selected"' ?>><?php echo $context->localize($labels) ?></option>
 				<?php endforeach;?>
 			</select>
 
