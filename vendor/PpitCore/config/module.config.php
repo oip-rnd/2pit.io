@@ -5373,6 +5373,7 @@ table.note-report td {
 			'caption' => [],
 			'day_of_week' => [],
 			'begin_date' => [],
+			'end_date' => [],
 			'begin_time' => [],
 			'location' => [],
 		),
