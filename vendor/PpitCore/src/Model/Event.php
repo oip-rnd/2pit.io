@@ -755,7 +755,8 @@ class Event
     		}
     	}
     	$select->where($where);
-
+    	if ($limit) $select->limit($limit);
+    	 
     	$cursor = Event::getTable()->selectWith($select);
     	$events = array();
     	$i = 0;
@@ -772,7 +773,7 @@ class Event
 			}
 			if ($keep) {
 				$i++;
-				if ($limit && $i > $limit) break;
+//				if ($limit && $i > $limit) break;
 				$events['E'.$event->id] = $event;
 			}
     	}
