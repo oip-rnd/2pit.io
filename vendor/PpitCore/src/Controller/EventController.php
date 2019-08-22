@@ -205,7 +205,7 @@ class EventController extends AbstractActionController
     	$type = $this->params()->fromRoute('type', '');
     	$description = Event::getDescription($type);
     	$params = $this->getFilters($this->params(), $description);
-		$limit = $this->params()->fromQuery('limit');
+		$limit = $this->params()->fromQuery('limit', 100);
     	$major = ($this->params()->fromQuery('major', 'identifier'));
     	$dir = ($this->params()->fromQuery('dir', 'ASC'));
     	$mask = ($this->params()->fromQuery('mask'));
