@@ -6,7 +6,7 @@
     <?php echo $this->partial('/partials/navbar.phtml'); ?>
 
 <?php if (array_key_exists('intro_src', $header)) : ?>
-    <?php echo $this->partial('/p_pit/ppit/landing-intro.phtml'); ?>
+    <?php echo $this->partial($header['intro_src']); ?>
 <?php else : ?>
     <!-- Mask -->
     <div id="intro" class="view h-100"> 

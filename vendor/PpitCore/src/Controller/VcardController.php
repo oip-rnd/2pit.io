@@ -60,11 +60,9 @@ class VcardController extends AbstractActionController
 			'pageScripts' => 'ppit-core/view-controller/vcard',
 		));
     	
-
     	return new ViewModel(array(
 			'context' => $context,
     	));
-		return $view;
     }
 
     public function searchAction()

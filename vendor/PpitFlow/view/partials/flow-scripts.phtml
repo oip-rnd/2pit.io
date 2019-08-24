@@ -73,5 +73,5 @@ $('#a_survey').click(function () {
 </script>
 
 <?php if (array_key_exists('intro_scripts', $header)) : ?>
-    <?php echo $this->partial('/p_pit/ppit/landing-intro-scripts.phtml'); ?>
+    <?php echo $this->partial($header['intro_scripts']); ?>
 <?php endif;?>
