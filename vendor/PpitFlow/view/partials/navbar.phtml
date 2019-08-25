@@ -110,10 +110,10 @@ body.modal-open {
                     </li>
   <?php if ($navbarAccount) : ?>
                     <li class="nav-item active">
-                      <a class="nav-link" <?php if (array_key_exists('anchorStyle', $header['navbar'])) echo 'style="'.$header['navbar']['anchorStyle'].'"' ?> data-toggle="modal" data-target="#modalRegisterForm"><i class="fa fa-user ml-1"></i> <?php echo $this->translate('Sign Up', 'ppit-flow', $context->getLocale())?></a>
+                      <a class="nav-link" <?php if (array_key_exists('anchorStyle', $header['navbar'])) echo 'style="'.$header['navbar']['anchorStyle'].'"' ?> data-toggle="modal" data-target="#modalRegisterForm"><i class="fa fa-user ml-1"></i> <span class="clearfix d-none d-sm-inline-block"><?php echo $this->translate('Sign Up', 'ppit-flow', $context->getLocale())?></span></a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" <?php if (array_key_exists('anchorStyle', $header['navbar'])) echo 'style="'.$header['navbar']['anchorStyle'].'"' ?> data-toggle="modal" id="login-anchor" data-target="#modalLoginForm"><i class="fa fa-sign-in-alt ml-1"></i> <?php echo $this->translate('Log In', 'ppit-flow', $context->getLocale())?></a>
+                      <a class="nav-link" <?php if (array_key_exists('anchorStyle', $header['navbar'])) echo 'style="'.$header['navbar']['anchorStyle'].'"' ?> data-toggle="modal" id="login-anchor" data-target="#modalLoginForm"><i class="fa fa-sign-in-alt ml-1"></i> <span class="clearfix d-none d-sm-inline-block"><?php echo $this->translate('Log In', 'ppit-flow', $context->getLocale())?></span></a>
                     </li>
   <?php endif;?>
 <?php endif;?>
