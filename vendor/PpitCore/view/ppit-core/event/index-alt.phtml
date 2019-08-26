@@ -147,8 +147,30 @@ $this->headTitle($title);
 
 	<!-- Main panel -->
 	<div class="row">
-		<div class="col-md-12" id="index_panel"></div>
+
+      <div class="card">
+        <h5 class="card-header text-center" style="background: <?php echo $context->getConfig('styleSheet')['panelHeadingBackground'] ?>; color: <?php echo $context->getConfig('styleSheet')['panelHeadingColor'] ?>">
+    <?php 
+    $title = $context->localize($context->getConfig('event/search'.(($type) ? '/'.$type : ''))['title']);
+    echo $title;
+    ?>
+          (<span id="mode-text"></span>)
+        </h5>
+        <div class="card-body">
+          <div class="col-md-12" id="index_panel"></div>
+        </div>
+      </div>
 	</div>
+
+<!-- Add or update section -->
+    <div style="background-color: #ffffff;" class="row">
+      <div>&nbsp;</div>
+      <div class="table-responsive" id="event-list-panel"></div>
+      <div>
+        <div class="col-md-4" id="account_list_panel"></div>
+        <div class="col-md-8" id="calendar"></div>
+      </div>
+    </div>
 </div>
 
 <!-- Modal -->

@@ -8,27 +8,9 @@
  */
 -->
 
-<div class="card">
-	<h5 class="card-header text-center" style="background: <?php echo $context->getConfig('styleSheet')['panelHeadingBackground'] ?>; color: <?php echo $context->getConfig('styleSheet')['panelHeadingColor'] ?>">
-		<?php 
-		$title = $context->localize($context->getConfig('event/search'.(($type) ? '/'.$type : ''))['title']);
-		echo $title;
-		?>
-		(<span id="mode-text"></span>)
-	</h5>
-	<div class="card-body">
-
 <!-- Filters -->
-    	<form class="form-inline">
-		
-		    <div class="input-group input-group-sm mb-2 mr-sm-2">
-	    		<button type="button" class="btn btn-default input-group-text" disabled title="<?php echo $this->translate('Erase', 'ppit-core', $context->getLocale()) ?>" id="erase-button">
-					<i class="fa fa-times text-center"></i>
-				</button>
-		    	<a type="button" class="input-group-text btn" role="button" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Export', 'ppit-core', $context->getLocale()) ?>" id="export-button">
-					<i class="fa fa-cloud-download-alt"></i>
-				</a>
-			</div>
+<form class="form-inline">
+  <div class="row">
 		
 <?php foreach ($description['search']['properties'] as $propertyId => $property) : ?>
 	<?php if ($property) : ?>
@@ -36,6 +18,8 @@
 		$label = $context->localize($property['labels']);
 		$options = (array_key_exists('options', $property)) ? $property['options'] : [];
 		?>
+
+    <div class="col-md-3">
 	
 		    <div class="input-group input-group-sm mb-2 mr-sm-2">
 		<?php if ($property['type'] == 'date') : ?>
@@ -61,7 +45,7 @@
 					$modalities[$modalityId] = $context->localize($modality);
 				}
 				?>
-				<select class="form-control search_input search_input_select selectpicker search_selectpicker" id="search-<?php echo $propertyId ?>" <?php if (array_key_exists('multiple', $options) && $options['multiple']) echo 'multiple' ?>>
+				<select class="form-control search_input search_input_select" id="search-<?php echo $propertyId ?>" <?php if (array_key_exists('multiple', $options) && $options['multiple']) echo 'multiple' ?>>
 					<option value=""></option>
 				<?php foreach ($modalities as $modalityId => $modality) : ?>
 		    		<option value="<?php echo $modalityId ?>" <?php if ($propertyId == 'type' && $modalityId == $type) echo 'selected="selected"' ?>><?php echo $modality ?></option>
@@ -77,17 +61,21 @@
 		<?php endif;?>
 			</div>
 	<?php endif;?>
-<?php endforeach;?>
-		</form>
 
-<!-- Add or update section -->
-		<div style="background-color: #ffffff;" class="row">
-			<div>&nbsp;</div>
-			<div class="table-responsive" id="event-list-panel"></div>
-			<div>
-				<div class="col-md-4" id="account_list_panel"></div>
-				<div class="col-md-8" id="calendar"></div>
-			</div>
-		</div>
-	</div>
-</div>
+    </div>
+
+<?php endforeach;?>
+
+    <div class="col-md-3">    
+        <div class="input-group input-group-sm mb-2 mr-sm-2">
+          <button type="button" class="btn btn-default input-group-text" disabled title="<?php echo $this->translate('Erase', 'ppit-core', $context->getLocale()) ?>" id="erase-button">
+          <i class="fa fa-times text-center"></i>
+        </button>
+          <a type="button" class="input-group-text btn" role="button" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Export', 'ppit-core', $context->getLocale()) ?>" id="export-button">
+          <i class="fa fa-cloud-download-alt"></i>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</form>

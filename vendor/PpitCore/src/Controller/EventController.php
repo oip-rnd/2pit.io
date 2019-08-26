@@ -335,28 +335,29 @@ class EventController extends AbstractActionController
     	$type = $this->params()->fromRoute('type');
     	$description = Event::getDescription($type);
     	$category = $this->params()->fromRoute('category');
-    	$groups = $this->params()->fromQuery('groups');
-    	$groups = ($groups) ? explode(',', $groups) : [];
+/*    	$groups = $this->params()->fromQuery('groups');
+    	$groups = ($groups) ? explode(',', $groups) : [];*/
     	$begin = $this->params()->fromQuery('begin');
     	$end = $this->params()->fromQuery('end');
 //    	$accounts = $this->params()->fromQuery('accounts'/*, '*'*/);
-    	$filters = [];
+    	$description = Event::getDescription($type);
+    	$filters = $this->getFilters($this->params(), $description);
     	if ($category) $filters['category'] = $category;
 //    	$filters['account_id'] = $accounts;
     	if ($begin && $end) {
-    		if (!$groups) {
-	    		$filters['groups'] = null;
+    		if (!array_key_exists('groups', $filters) || !$filters['groups']) {
     			$events = Event::getList($type, $filters, '-update_time', null, ['id', 'type', 'category', 'caption', 'location', 'account_id', 'begin_date', 'end_date', 'begin_time', 'end_time', 'exception_dates', 'day_of_week', 'day_of_month', 'update_time']);
     		}
     		else {
 	    		$events = [];
+	    		$groups = explode(',', $filters['groups']);
 	    		foreach ($groups as $group_id) {
 	    			$filters['groups'] = $group_id;
 					$cursor = Event::getList($type, $filters, '-update_time', null, ['id', 'type', 'category', 'caption', 'location', 'account_id', 'begin_date', 'end_date', 'begin_time', 'end_time', 'exception_dates', 'day_of_week', 'day_of_month', 'update_time']);
 					foreach ($cursor as $event_id => $event) $events[$event_id] = $event;
 	    		}
     		}
-	    	return new JsonModel(EventPlanningViewHelper::displayPlanning($description, $events, $begin, $end));
+    		return new JsonModel(EventPlanningViewHelper::displayPlanning($description, $events, $begin, $end));
     	}
     	else return new JsonModel(EventPlanningViewHelper::format($description, $this->getList()->events));
     }

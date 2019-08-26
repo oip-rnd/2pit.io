@@ -1,16 +1,7 @@
-<div class="col-md-12">
+<div class="mt-5">
 
 <!-- Filters -->
   <form class="form-inline">
-	
-    <div class="input-group input-group-sm mb-2 mr-sm-2 col-md-12">
-      <button type="button" class="btn btn-default input-group-text" disabled title="<?php echo $this->translate('Erase', 'ppit-core', $context->getLocale()) ?>" id="erase-button">
-        <i class="fa fa-times text-center"></i>
-      </button>
-      <a type="button" class="input-group-text btn" role="button" data-toggle="tooltip" data-placement="top" title="<?php echo $this->translate('Export', 'ppit-core', $context->getLocale()) ?>" id="export-button">
-        <i class="fa fa-cloud-download-alt"></i>
-      </a>
-    </div>
 
 <?php foreach ($eventAccountSearchPage['properties'] as $propertyId => $options) : ?>
   <?php 
@@ -91,17 +82,5 @@
 	<?php endif;?>
 <?php endforeach;?>
 
-			<div class="col-sm-6">&nbsp;</div>
-		
-			<div class="col-sm-3">
-	    		<button type="button" class="form-control btn btn-default btn-xs" title="<?php echo $this->translate('Search', 'ppit-core', $context->getLocale()) ?>" id="search-button">
-					<span class="glyphicon glyphicon-search"></span>
-				</button>
-			</div>
-			<div class="col-sm-3 search">
-	    		<button type="button" class="form-control btn btn-default btn-xs" title="<?php echo $this->translate('Erase', 'ppit-core', $context->getLocale()) ?>" id="erase-button">
-					<span class="glyphicon glyphicon-remove"></span>
-				</button>
-			</div>
   </form>
 </div>

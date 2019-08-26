@@ -1,12 +1,41 @@
+<!-- 
+/**
+ * 2pit V2.0
+ *
+ * @link      https://github.com/2pit-io/2pit.io/tree/master/vendor/PpitCore
+ * @license   https://github.com/2pit-io/2pit.io/blob/master/vendor/PpitCore/license.txt GNU-GPL license
+ */
+-->
+
+<div class="container">
 
   <!-- Main panel -->
-  <div class="row mt-4">
-    <div class="col-md-4">
-      <div id="account_search_panel"></div>
-      <div id="account_list_panel"></div>
-    </div>
-    <div class="col-md-8" id="calendar"></div>
+  <div class="row">
+
+      <div class="card">
+        <h5 class="card-header text-center" style="background: <?php echo $context->getConfig('styleSheet')['panelHeadingBackground'] ?>; color: <?php echo $context->getConfig('styleSheet')['panelHeadingColor'] ?>">
+    <?php 
+    $title = $context->localize($context->getConfig('event/search'.(($type) ? '/'.$type : ''))['title']);
+    echo $title;
+    ?>
+        </h5>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-12 ppit-panel" id="index-panel"></div>
+          </div>
+
+          <!-- Main panel -->
+          <div class="row mt-4">
+            <div class="col-md-4">
+              <div id="account_search_panel"></div>
+              <div id="account_list_panel"></div>
+            </div>
+            <div class="col-md-8" id="calendar"></div>
+          </div>
+        </div>
+      </div>
   </div>
+</div>
 
 <!-- Modal -->
 

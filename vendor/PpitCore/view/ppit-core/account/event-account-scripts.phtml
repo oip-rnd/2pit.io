@@ -63,7 +63,7 @@ function getAccountList(params, major, dir) {
 		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
 		if (xhttp.readyState == 4 && xhttp.status == 200) {
 			document.getElementById('account_list_panel').innerHTML = xhttp.responseText;
-            getPlanning();
+//            getPlanning();
 			
 			// Connect the sort anchors
 			$('.ppit-sort-account-anchor').each(function () {
@@ -174,10 +174,5 @@ function getAccountSearch()
     }
   }
   xhttp.send();
-}
-
-function activateCalendar() {
-  getAccountSearch();
-  createCalendar(false);
 }
 </script>
