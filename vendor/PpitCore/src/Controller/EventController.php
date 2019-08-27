@@ -346,14 +346,14 @@ class EventController extends AbstractActionController
 //    	$filters['account_id'] = $accounts;
     	if ($begin && $end) {
     		if (!array_key_exists('groups', $filters) || !$filters['groups']) {
-    			$events = Event::getList($type, $filters, '-update_time', null, ['id', 'type', 'category', 'caption', 'location', 'account_id', 'begin_date', 'end_date', 'begin_time', 'end_time', 'exception_dates', 'day_of_week', 'day_of_month', 'update_time']);
+    			$events = Event::getList($type, $filters, '-update_time', null, ['id', 'type', 'category', 'caption', 'location', 'account_id', 'begin_date', 'end_date', 'begin_time', 'end_time', 'exception_dates', 'day_of_week', 'day_of_month', 'update_time', 'property_1', 'property_2', 'property_3']);
     		}
     		else {
 	    		$events = [];
 	    		$groups = explode(',', $filters['groups']);
 	    		foreach ($groups as $group_id) {
 	    			$filters['groups'] = $group_id;
-					$cursor = Event::getList($type, $filters, '-update_time', null, ['id', 'type', 'category', 'caption', 'location', 'account_id', 'begin_date', 'end_date', 'begin_time', 'end_time', 'exception_dates', 'day_of_week', 'day_of_month', 'update_time']);
+					$cursor = Event::getList($type, $filters, '-update_time', null, ['id', 'type', 'category', 'caption', 'location', 'account_id', 'begin_date', 'end_date', 'begin_time', 'end_time', 'exception_dates', 'day_of_week', 'day_of_month', 'update_time', 'property_1', 'property_2', 'property_3']);
 					foreach ($cursor as $event_id => $event) $events[$event_id] = $event;
 	    		}
     		}

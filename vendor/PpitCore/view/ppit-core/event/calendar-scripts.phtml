@@ -300,7 +300,7 @@ function postForm(id, action)
 
     let xhttp = new XMLHttpRequest();
     let params = getSearchParams('');
-    let route = '<?php echo $this->url('event/updateAlt') ?>/' + id + '/<?php echo $type ?>' + params + '?category=' + '<?php echo $category ?>' + '&act=' + action;
+    let route = '<?php echo $this->url('event/updateAlt') ?>/' + id + '/<?php echo $type ?>' + params + '&category=' + '<?php echo $category ?>' + '&act=' + action;
     if ($('#search-groups').val()) route += '&groups=' + $('#search-groups').val();
     xhttp.open('POST', route, true);
     // Set up a handler for when the request finishes.

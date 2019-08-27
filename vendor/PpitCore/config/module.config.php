@@ -5449,7 +5449,7 @@ table.note-report td {
 		),
 		'options' => ['calendar' => true, 'account_type' => 'teacher'],
 	),
-
+/*
 	'event/format/calendar' => array(
 		'mask' => '%s%s - %s%s',
 		'params' => [
@@ -5458,7 +5458,7 @@ table.note-report td {
 			'n_last' => [],
 			'location' => ['mask' => ' (%s)'],
 		],
-	),
+	),*/
 /*	
 	'event/update/calendar' => array(
 		'status' => ['mandatory' => true],
