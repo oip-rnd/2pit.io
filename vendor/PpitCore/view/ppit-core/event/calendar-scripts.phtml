@@ -85,7 +85,7 @@ function getPlanning(params) {
       accounts += id;
   });
 
-	let route = '<?php echo $this->url('event/planning', ['type' => $type]) ?>?' + params;
+	let route = '<?php echo $this->url('event/planning', ['type' => $type]) ?>' + params;
 //    if (accounts) route += '&accounts=' + accounts;
     route += '&begin=' + begin;
     route += '&end=' + end;
@@ -298,9 +298,9 @@ function postForm(id, action)
     formData.append('is_separate_slot', ($('#is_separate_slot').prop('checked')) ? 1 : 0);
     formData.append('csrf', $('#csrf').val());
 
-    var xhttp = new XMLHttpRequest();
-    var route;
-    route = '<?php echo $this->url('event/updateAlt') ?>/' + id + '/<?php echo $type ?>' + '?category=' + '<?php echo $category ?>' + '&act=' + action;
+    let xhttp = new XMLHttpRequest();
+    let params = getSearchParams('');
+    let route = '<?php echo $this->url('event/updateAlt') ?>/' + id + '/<?php echo $type ?>' + params + '?category=' + '<?php echo $category ?>' + '&act=' + action;
     if ($('#search-groups').val()) route += '&groups=' + $('#search-groups').val();
     xhttp.open('POST', route, true);
     // Set up a handler for when the request finishes.
@@ -332,8 +332,9 @@ function postForm(id, action)
 
 function getUpdate(id, action) {
 
-  var xhttp = new XMLHttpRequest();
-  var route = '<?php echo $this->url('event/updateAlt') ?>/' + id + '/<?php echo $type ?>' + '?category=' + '<?php echo $category ?>';
+  let xhttp = new XMLHttpRequest();
+  let params = getSearchParams('');
+  let route = '<?php echo $this->url('event/updateAlt') ?>/' + id + '/<?php echo $type ?>' + params + '&category=' + '<?php echo $category ?>';
   if ($('#search-groups').val()) route += '&groups=' + $('#search-groups').val();
   if (action) route += '&act=' + action;
 
@@ -455,8 +456,6 @@ function createCalendar(print) {
 		viewBeginDate = moment.format().slice(0, 10);
 		getPlanning(getSearchParams(''));
 	});
-	  
-	getPlanning(getSearchParams(''));
 }
 
 function getEventSearch()
@@ -505,11 +504,11 @@ function getEventSearch()
    
       // Trigger the change event on select inputs and refresh the list
       $('.search_input_select').change(function () {
-//        var propertyId = $(this).attr('id').split('-')[1];
+        var propertyId = $(this).attr('id').split('-')[1];
         $('#erase-button').removeClass('btn-default').addClass('btn-success');
         $('#erase-button').attr('disabled', false);
-//        $('#search_check-' + propertyId).removeClass('btn-default').addClass('btn-secondary').addClass('active');
-//        $('#search_check_value-' + propertyId).val('1');
+        $('#search_check-' + propertyId).removeClass('btn-default').addClass('btn-secondary').addClass('active');
+        $('#search_check_value-' + propertyId).val('1');
         getPlanning(getSearchParams(''));
       }); 
 
@@ -541,7 +540,7 @@ function getEventSearch()
           $('#' + check).val('1');
         }
         getPlanning(getSearchParams(''));
-    });
+      });
       
       getPlanning(getSearchParams(''));
     }

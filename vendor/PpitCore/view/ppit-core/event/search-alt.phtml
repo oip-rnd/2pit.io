@@ -17,23 +17,28 @@
 		<?php
 		$label = $context->localize($property['labels']);
 		$options = (array_key_exists('options', $property)) ? $property['options'] : [];
+		if ($propertyId == 'type') $default = $type;
+		else {
+			$default = (array_key_exists('default', $options)) ? $options['default'] : null;
+			if ($default && $context->getConfig($default)) $default = $context->getConfig($default);
+		}
 		?>
 
     <div class="col-md-3">
 	
 		    <div class="input-group input-group-sm mb-2 mr-sm-2">
 		<?php if ($property['type'] == 'date') : ?>
-                <input type="hidden" value="0" class="search_check_value" id="search_check_value-<?php echo $propertyId ?>" />
+                <input type="hidden" value="<?php echo ($default) ? 1 : 0 ?>" class="search_check_value" id="search_check_value-<?php echo $propertyId ?>" />
 				<div class="input-group-prepend">
-					<button type="button" class="btn btn-secondary input-group-text search_check" id="search_check-<?php echo $propertyId ?>"><?php echo $label ?></button>
+					<button type="button" class="btn btn-secondary input-group-text search_check <?php if ($default) : ?>active<?php endif;?>" id="search_check-<?php echo $propertyId ?>"><?php echo $label ?></button>
 				</div>
 	    		<input class="form-control search_input search_input_date search_input_date_min" type="text" id="search_min-<?php echo $propertyId ?>" placeholder="<?php echo $this->translate('Min', 'ppit-core', $context->getLocale()) ?>" />
 	    		<input class="form-control search_input search_input_date search_input_date_max" type="text" id="search_max-<?php echo $propertyId ?>" placeholder="<?php echo $this->translate('Max', 'ppit-core', $context->getLocale()) ?>" />
 
 		<?php else : ?>
-                <input type="hidden" value="0" class="search_check_value" id="search_check_value-<?php echo $propertyId ?>" />
+                <input type="hidden" value="<?php echo ($default) ? 1 : 0 ?>" class="search_check_value" id="search_check_value-<?php echo $propertyId ?>" />
 				<div class="input-group-prepend">
-					<button type="button" class="btn btn-secondary input-group-text search_check" id="search_check-<?php echo $propertyId ?>"><?php echo $label ?></button>
+					<button type="button" class="btn btn-secondary input-group-text search_check <?php if ($default) : ?>active<?php endif;?>" id="search_check-<?php echo $propertyId ?>"><?php echo $label ?></button>
 				</div>
 			<?php if (in_array($property['type'], ['select', 'multiselect'])) : ?>
 				<?php
@@ -48,9 +53,8 @@
 				<select class="form-control search_input search_input_select" id="search-<?php echo $propertyId ?>" <?php if (array_key_exists('multiple', $options) && $options['multiple']) echo 'multiple' ?>>
 					<option value=""></option>
 				<?php foreach ($modalities as $modalityId => $modality) : ?>
-		    		<option value="<?php echo $modalityId ?>" <?php if ($propertyId == 'type' && $modalityId == $type) echo 'selected="selected"' ?>><?php echo $modality ?></option>
+		    		<option value="<?php echo $modalityId ?>" <?php if ($modalityId == $default) echo 'selected="selected"' ?>><?php echo $modality ?></option>
 				<?php endforeach;?>
-					<option value="*">*</option>
 		    	</select>
 
 			<?php else : ?>

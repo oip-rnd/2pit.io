@@ -486,7 +486,9 @@ class EventController extends AbstractActionController
     	$category = $this->params()->fromQuery('category');
     	$groups = $this->params()->fromQuery('groups', []);
     	if ($groups) $groups = explode(',', $groups);
-    	
+    	$description = Event::getDescription($type);
+    	$filters = $this->getFilters($this->params(), $description);
+
     	$description = Event::getDescription($type);
     	if (array_key_exists('options', $description) && array_key_exists('internal_identifier', $description['options'])) $internalIdentifier = $description['options']['internal_identifier'];
     	else $internalIdentifier = false;
@@ -618,6 +620,7 @@ class EventController extends AbstractActionController
     			'context' => $context,
     			'type' => $type,
     			'groups' => $groups,
+    			'filters' => $filters,
     			'config' => $context->getconfig(),
     			'internalIdentifier' => $internalIdentifier,
     			'id' => $id,

@@ -105,6 +105,8 @@ if ($event->id && $action != 'update' || $message == 'OK') $isDisabled = true; e
   if (array_key_exists('options', $property) && array_key_exists('readonly', $property['options']) && $property['options']['readonly']) $readonly = true;
   elseif ($propertyId == 'identifier' && $internalIdentifier) $readonly = true;
   else $readonly = false;
+  if (array_key_exists($propertyId, $filters)) $default = $filters[$propertyId];
+  else $default = $property['default'];
   ?>
 
   <?php if (!$readonly || $event->properties[$propertyId]) : ?>
@@ -169,7 +171,19 @@ if ($event->id && $action != 'update' || $message == 'OK') $isDisabled = true; e
 			<select class="form-control form-control-sm updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
     			<option />
 				<?php foreach ($property['modalities'] as $key => $labels) : ?>
-    			<option value="<?php echo $key ?>" <?php if ($event->properties[$propertyId] == $key || $key == $property['default']) echo 'selected="selected"' ?>><?php echo $context->localize($labels) ?></option>
+                  <?php 
+                  if ($type == 'calendar' && $propertyId == 'property_3' && array_key_exists('property_2', $filters)) { 
+                  	if (array_key_exists('class', $labels)) {
+                  		if ($filters['property_2'] == $labels['class']) $keep = true;
+                  		else $keep = false;
+                  	}
+                  	else $keep = true;
+                  }
+                  else $keep=true;
+                  ?>
+                  <?php if ($keep) : ?>
+    			<option value="<?php echo $key ?>" <?php if ($event->properties[$propertyId] == $key || $key == $default) echo 'selected="selected"' ?>><?php echo $context->localize($labels) ?></option>
+                  <?php endif;?>
 				<?php endforeach;?>
 			</select>
 
