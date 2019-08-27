@@ -173,8 +173,8 @@ if ($event->id && $action != 'update' || $message == 'OK') $isDisabled = true; e
 				<?php foreach ($property['modalities'] as $key => $labels) : ?>
                   <?php 
                   if ($type == 'calendar' && $propertyId == 'property_3' && array_key_exists('property_2', $filters)) { 
-                  	if (array_key_exists('class', $labels)) {
-                  		if ($filters['property_2'] == $labels['class']) $keep = true;
+                  	if (array_key_exists('classes', $labels)) {
+                  		if (in_array($filters['property_2'], $labels['classes'])) $keep = true;
                   		else $keep = false;
                   	}
                   	else $keep = true;
