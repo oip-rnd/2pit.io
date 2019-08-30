@@ -1783,7 +1783,8 @@ class CommitmentController extends AbstractActionController
 
     	// Initialize the message
     	$message = ['type' => $type];
-
+    	$message = ['identifier' => $template_identifier . ' '];
+    	 
     	// Set the header data
     	if ($place && $place->banner_src) {
     		$message['headerData']['src'] = $place->banner_src;
@@ -1849,7 +1850,7 @@ class CommitmentController extends AbstractActionController
 
     	// Render the message in HTML
 
-    	$html = CommitmentMessageViewHelper::render($message, $place);
+    	$html = CommitmentMessageViewHelper::renderHtml($message, $place);
     	 
     	$view = new ViewModel(array(
     		'context' => $context,
@@ -1864,6 +1865,28 @@ class CommitmentController extends AbstractActionController
     	$view->setTerminal(true);
     	return $view;
     }
+
+    public function downloadMessageAction()
+    {
+    	// Retrieve the context
+    	$context = Context::getCurrent();
+    
+    	$id = $this->params()->fromRoute('id', null);
+    	if (!$id) return $this->redirect()->toRoute('index');
+    	$commitment = Commitment::get($id);
+    
+    	$invoice = $this->generateInvoice($commitment->type, $commitment->account, $commitment, true);
+    
+    	// create new PDF document
+    	$pdf = new PpitPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+    
+    	PdfInvoiceViewHelper::render($pdf, $invoice, $commitment->account->place);
+    
+    	$content = $pdf->Output('invoice-'.$context->getInstance()->caption.'-'.$commitment->account->name.'.pdf', 'I');
+    	return $this->response;
+    }
+    
+    // Send by email
     
     public function sendMessageAction()
     {
