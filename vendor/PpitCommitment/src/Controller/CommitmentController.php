@@ -8,6 +8,7 @@ use PpitCommitment\Model\Commitment;
 use PpitCommitment\Model\CommitmentMessage;
 use PpitCommitment\Model\CommitmentYear;
 use PpitCommitment\Model\Term;
+use PpitCommitment\ViewHelper\CommitmentMessageViewHelper;
 use PpitCommitment\ViewHelper\SsmlCommitmentViewHelper;
 use PpitCommitment\ViewHelper\PdfInvoiceViewHelper;
 use PpitCommitment\ViewHelper\PpitPDF;
@@ -1417,57 +1418,6 @@ class CommitmentController extends AbstractActionController
     	echo $message;
     	return $this->response;
     }
-/*    
-    public function settleAction()
-    {
-    	// Retrieve the context
-    	$context = Context::getCurrent();
-    
-    	// Retrieve the commitment
-    	$id = (int) $this->params()->fromRoute('id', 0);
-    	if (!$id) return $this->redirect()->toRoute('home');
-    	$commitment = Commitment::get($id);
-    
-    	// Instanciate the csrf form
-    	$csrfForm = new CsrfForm();
-    	$csrfForm->addCsrfElement('csrf');
-    	$error = null;
-    	$message = null;
-    	$request = $this->getRequest();
-    	if ($request->isPost()) {
-    		$csrfForm->setInputFilter((new Csrf('csrf'))->getInputFilter());
-    		$csrfForm->setData($request->getPost());
-    		 
-    		if ($csrfForm->isValid()) { // CSRF check
-    			 
-    			$type = $commitment->type;
-    			$commitment->status = 'settled';
-    			 
-    			// Atomically save
-    			$connection = Commitment::getTable()->getAdapter()->getDriver()->getConnection();
-    			$connection->beginTransaction();
-    			try {
-    				$rc = $commitment->update($request->getPost('update_time'));
-    
-    				if ($rc != 'OK') {
-    					$connection->rollback();
-    					$error = $rc;
-    				}
-    				else {
-    					$commitment->record('settlement');
-    					$connection->commit();
-    					$message = 'OK';
-    				}
-    			}
-    			catch (\Exception $e) {
-    				$connection->rollback();
-    				throw $e;
-    			}
-    			$action = null;
-    		}
-    	}
-    	return $this->response;
-    }*/
     
     public function updateOptionAction()
     {
@@ -1608,136 +1558,6 @@ class CommitmentController extends AbstractActionController
     	}
     	return $this->response;
     }
-/*
-    public function subrogateAction()
-    {
-    	// Retrieve the context
-    	$context = Context::getCurrent();
-    	
-    	// Retrieve the parameters
-    	$type = $this->params()->fromRoute('type');
-		$description = Commitment::getDescription($type);
-    	$termDescription = Term::getDescription($type);
-
-    	$id = (int) $this->params()->fromRoute('id', 0);
-    	$commitment = Commitment::get($id);
-    	$accounts = Account::getList('business', [], '+name', null);
-    	 
-    	$subData = array();
-    	$subData['status'] = 'new';
-    	$subData['property_10'] = $commitment->identifier;
-    	$subData['property_11'] = $commitment->account_name;
-    	$subData['property_12'] = null;
-    	$subData['property_13'] = null;
-    	$subData['description'] = $commitment->description;
-    	$subData['product_caption'] = $commitment->product_caption;
-    	$subData['quantity'] = 1;
-    	$subData['default_means_of_payment'] = $commitment->default_means_of_payment;
-    	$termData = array();
-    	 
-    	// Instanciate the csrf form
-    	$csrfForm = new CsrfForm();
-    	$csrfForm->addCsrfElement('csrf');
-    	$error = null;
-    	$message = null;
-    	$request = $this->getRequest();
-    	if ($request->isPost()) {
-    		$csrfForm->setInputFilter((new Csrf('csrf'))->getInputFilter());
-    		$csrfForm->setData($request->getPost());
-    		if ($csrfForm->isValid()) { // CSRF check
-
-    			$subCommitment = Commitment::instanciate($type);
-    			 
-    			// Load the input data
-    			$subData['account_id'] = $request->getPost('account_id');
-    			$subData['property_10'] = $request->getPost('property_10');
-    			$subData['property_11'] = $request->getPost('property_11');
-    			$subData['property_12'] = $request->getPost('property_12');
-    			$subData['property_13'] = $request->getPost('property_13');
-    			$subData['property_14'] = $commitment->id; // Store the id of the original commitment
-    			$numberOfTerms = $request->getPost('number_of_terms');
-    			$termDate = $request->getPost('first_term_date');
-    			$year = substr($termDate, 0, 4);
-    			$month = substr($termDate, 5, 2);
-    			$day = substr($termDate, 8, 2);
-    			$periodicity = $request->getPost('periodicity');
-    			$sameDayOfMonth = $request->getPost('same_day_of_month');
-    			$amountToDivide = $request->getPost('amount_to_divide');
-    			$paymentMean = $request->getPost('means_of_payment');
-    			$termAmount = round($amountToDivide / $numberOfTerms, 2);
-    			$cumulativeAmount = 0;
-
-    			// Atomically save
-    			$connection = Commitment::getTable()->getAdapter()->getDriver()->getConnection();
-    			$connection->beginTransaction();
-    			try {
-    				for ($i = 0; $i < $numberOfTerms; $i++) {
-    					$subData['caption'] = 'Echéance '.($i + 1);
-    					$month++;
-    					if ($month == 13) { $month = 1; $year++; }
-    					if ($month == 2 && $day > 28) $forcedDay = 28;
-    					else $forcedDay = $day;
-    					if ($sameDayOfMonth) $termDate = $year.'-'.sprintf('%02d', $month).'-'.$forcedDay;
-    					else $termDate = date('Y-m-d', strtotime($termDate.' + '.$periodicity.' days'));
-    					if ($i == $numberOfTerms - 1) $amount = $amountToDivide - $cumulativeAmount;
-    					else $amount = $termAmount;
-
-    					$subData['tax_inclusive'] = $termAmount;
-    					$subData['unit_price'] = $subData['amount'] = $subData['taxable_1_amount'] = $subData['including_options_amount'] = $subData['taxable_1_total'] = $subData['excluding_tax'] = round($amount / 1.2, 2);
-    					$subData['tax_1_amount'] = $subData['tax_amount'] = $subData['tax_inclusive'] - $subData['excluding_tax'];
-    					$cumulativeAmount += $amount;
-
-    					if ($subCommitment->loadData($subData) != 'OK') throw new \Exception('View error');
-    					$subCommitment->id = null;
-    					$rc = $subCommitment->add();
-    					if ($rc != 'OK') {
-    						$error = $rc;
-    						break;
-    					}
-
-				    	$term = Term::instanciate($type, $subCommitment->id);
-				    	$termData['commitment_caption'] = $subCommitment->caption;
-				    	$termData['means_of_payment'] = $paymentMean;
-    					$termData['due_date'] = $termDate;
-    					$termData['settlement_date'] = $termDate;
-    					$termData['collection_date'] = $termDate;
-    					$termData['amount'] = $termAmount;
-    					if ($term->loadData($termData, $request->getFiles()->toArray()) != 'OK') throw new \Exception('View error');
-    					$term->id = null;
-    					$rc = $term->add();
-    					if ($rc != 'OK') {
-    						$error = $rc;
-    						break;
-    					}
-    				}
-    				if ($error) $connection->rollback();
-    				else {
-    					$connection->commit();
-    					$message = 'OK';
-    				}
-    			}
-    			catch (\Exception $e) {
-    				$connection->rollback();
-    				throw $e;
-    			}
-    		}
-    	}
-
-    	$view = new ViewModel(array(
-    		'context' => $context,
-    		'description' => $description,
-    		'termProperties' => $termDescription['properties'],
-    		'accounts' => $accounts,
-    		'subData' => $subData,
-    		'update_time' => $commitment->update_time,
-    		'amountToDivide' => $commitment->tax_inclusive,
-    		'csrfForm' => $csrfForm,
-    		'error' => $error,
-    		'message' => $message,
-    	));
-    	$view->setTerminal(true);
-    	return $view;
-    }*/
 
     public function serviceAddAction()
     {
@@ -1920,6 +1740,131 @@ class CommitmentController extends AbstractActionController
     	return $this->response;
     }
 
+    public function generateMessageAction()
+    {
+    	// Retrieve the context and parameters
+    	$context = Context::getCurrent();
+    	
+    	// From route
+    	$type = $this->params()->fromRoute('type');
+    	$template_identifier = $this->params()->fromRoute('template_identifier');
+		$id = $this->params()->fromRoute('id'); // Message id in update mode
+
+		// From Query
+    	$commitment_id = $this->params()->fromQuery('commitment_id');
+    	$commitment = Commitment::get($commitment_id);
+    	$place = Place::get($commitment->place_id);
+    	$account = Account::get($commitment->account_id);
+    	$template = $context->getConfig('commitment/message/' . $type . '/' . $template_identifier);
+		$addressee = $this->params()->fromQuery('addressee');
+		if ($addressee) $addressee = Vcard::get($addressee);
+    	
+    	// Retrieve the commitment description for the type
+    	$description = Commitment::getDescription($commitment->type);
+ 
+    	// Determine the addressee
+    	if (!$addressee) {
+	    	if ($commitment->account_name != $commitment->n_last . ', ' . $commitment->n_first) $message['addressee_name'] = $commitment->account_name;
+	    	if ($commitment->contact_1_status == 'invoice') $addressee = $account->contact_1;
+	    	elseif ($commitment->contact_2_status == 'invoice') $addressee = $account->contact_2;
+	    	elseif ($commitment->contact_3_status == 'invoice') $addressee = $account->contact_3;
+	    	elseif ($commitment->contact_4_status == 'invoice') $addressee = $account->contact_4;
+	    	elseif ($commitment->contact_5_status == 'invoice') $addressee = $account->contact_5;
+    	}
+    	
+    	if (!$addressee) {
+    		if ($commitment->contact_1_status == 'main') $addressee = $account->contact_1;
+    		elseif ($commitment->contact_2_status == 'main') $addressee = $account->contact_2;
+    		elseif ($commitment->contact_3_status == 'main') $addressee = $account->contact_3;
+    		elseif ($commitment->contact_4_status == 'main') $addressee = $account->contact_4;
+    		elseif ($commitment->contact_5_status == 'main') $addressee = $account->contact_5;
+    	}
+    	if (!$addressee) $addressee = $account->contact_1;
+
+    	// Initialize the message
+    	$message = ['type' => $type];
+
+    	// Set the header data
+    	if ($place && $place->banner_src) {
+    		$message['headerData']['src'] = $place->banner_src;
+    		$message['headerData']['width'] = ($place->banner_width) ? $place->banner_width : $context->getConfig('corePlace')['properties']['banner_width']['maxValue'];
+    	}
+    	elseif (array_key_exists('advert', $context->getConfig('headerParams'))) {
+    		$message['headerData']['src'] = 'logos/'.$context->getInstance()->caption.'/'.$context->getConfig('headerParams')['advert'];
+    		$message['headerData']['width'] = $context->getConfig('headerParams')['advert-width'];
+    	}
+    	 
+    	if ($place->getConfig('commitment/invoice_header')) $message['header'] = $place->getConfig('commitment/invoice_header');
+    	else $message['header'] = $context->getConfig('commitment/invoice_header');
+
+    	// Add the data to merge with the template at printing time
+    	
+    	$message['data'] = [];
+    	$message['data']['date'] = $context->decodeDate(date('Y-m-d'));
+    	foreach (array_merge($template['header']['paragraphs'], $template['body']['paragraphs'], $template['footer']['paragraphs']) as $paragraph) {
+    		if (array_key_exists('params', $paragraph)) foreach ($paragraph['params'] as $propertyId) {
+    			$message['data'][$propertyId] = null;
+    			if (array_key_exists($propertyId, $commitment->properties) && $commitment->properties[$propertyId]) {
+	    			$property = $description['properties'][$propertyId];
+	    			if ($property['type'] == 'select') $value = $context->localize($property['modalities'][$commitment->properties[$propertyId]]);
+	    			elseif ($property['type'] == 'multiselect') {
+	    				$codes = $commitment->properties[$propertyId];
+	    				if ($codes) $codes = explode(',', $codes);
+	    				else $codes = [];
+	    				$value = [];
+	    				foreach ($codes as $code) $value[] = $context->localize($property['modalities'][$code]);
+	    				$value = implode(',', $value);
+	    			}
+	    			elseif ($property['type'] == 'date') $value = $context->decodeDate($commitment->properties[$propertyId]);
+	    			elseif ($property['type'] == 'number') $value = $context->formatFloat($commitment->properties[$propertyId], 2);
+	    			else $value = $commitment->properties[$propertyId];
+    				$message['data'][$propertyId] = $value;
+    			}
+    		}
+    	}
+
+    	// Overwright the addressee
+    	$message['data']['addressee_n_fn'] = '';
+    	if ($addressee->n_title || $addressee->n_last || $addressee->n_first) {
+    		if ($addressee->n_title) $message['data']['addressee_n_fn'] .= $addressee->n_title.' ';
+    		$message['data']['addressee_n_fn'] .= $addressee->n_last.' ';
+    		$message['data']['addressee_n_fn'] .= $addressee->n_first;
+    	}
+    	if ($addressee->adr_street) $message['data']['addressee_adr_street'] = $addressee->adr_street;
+    	if ($addressee->adr_extended) $message['data']['addressee_adr_extended'] = $addressee->adr_extended;
+    	if ($addressee->adr_post_office_box) $message['data']['customer_adr_post_office_box'] = $addressee->adr_post_office_box;
+    	if ($addressee->adr_zip) $message['data']['addressee_adr_zip'] = $addressee->adr_zip;
+    	if ($addressee->adr_city) $message['data']['addressee_adr_city'] = $addressee->adr_city;
+    	if ($addressee->adr_state) $message['data']['addressee_adr_state'] = $addressee->adr_state;
+    	if ($addressee->adr_country) $message['data']['addressee_adr_country'] = $addressee->adr_country;
+    	 
+    	// Set the legal footer
+    	$legal_footer_1 = ($place->legal_footer) ? $place->legal_footer : $context->getConfig('headerParams')['footer']['value'];
+    	if ($legal_footer_1) $message['legal_footer_1'] = $legal_footer_1;
+    	$legal_footer_2 = ($place->legal_footer_2) ? $place->legal_footer_2 : ((array_key_exists('footer_2', $context->getConfig('headerParams'))) ? $context->getConfig('headerParams')['footer_2']['value'] : null);
+    	if ($legal_footer_2) $message['legal_footer_2'] = $legal_footer_2;
+    	 
+    	// Add the presentation template
+    	$message['template'] = $template;
+
+    	// Render the message in HTML
+
+    	$html = CommitmentMessageViewHelper::render($message, $place);
+    	 
+    	$view = new ViewModel(array(
+    		'context' => $context,
+    		'type' => $type,
+    		'id' => $id,
+    		'commitment' => $commitment,
+/*    		'csrfForm' => $csrfForm,
+    		'error' => $error,*/
+    		'message' => $message,
+    		'html' => $html,
+    	));
+    	$view->setTerminal(true);
+    	return $view;
+    }
+    
     public function sendMessageAction()
     {
     	// Retrieve the context

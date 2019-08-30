@@ -20,6 +20,12 @@ class HomeController extends AbstractActionController
 			else return $this->redirect()->toRoute('user/login', array('instance_caption' => ($instance_caption) ? $instance_caption : $context->getInstance()->caption));
 		}
 
+		// Check password expiration
+		if ($context->getConfig()['ppitUserSettings']['strongPassword']) {
+			$rc = $context->getSecurityAgent()->checkExpiration();
+			if ($rc == 'Expired') return $this->redirect()->toRoute('user/password', ['id' => $context->getUserId()], ['query' => ['message' => 'Expired']]);
+		}
+		
 		$applications = $context->getApplications();
 		foreach ($applications as $applicationId => $application) {
 			if ($application['isCurrent']) {

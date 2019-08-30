@@ -15,14 +15,49 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="modalFormLabel"><?php echo $this->translate('Detail', 'ppit-core', $context->getLocale()) ?></h5>
+        <h5 class="modal-title" id="modalFormLabel"><?php echo $this->translate('Detail on commitment', 'ppit-commitment', $context->getLocale()) ?></h5>
         <div>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close" title="<?php echo $this->translate('Cancel', 'ppit-core', $context->getLocale()) ?>">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
       </div>
-      <div id="modalFormContent"></div>
+ 
+       <div class="modal-body">
+        <div class="container">
+
+         <ul class="nav nav-tabs">
+            <li class="nav-item"><a class="nav-link commitment-nav-link active ?>" id="commitment-nav-link-data"><?php echo $this->translate('Data', 'ppit-core', $context->getLocale()) ?></a></li>
+            <li class="nav-item"><a class="nav-link commitment-nav-link ?>" id="commitment-nav-link-document"><?php echo $this->translate('Documents', 'ppit-core', $context->getLocale()) ?></a></li>
+          </ul>
+      
+          <div class="commitment-nav-target" id="commitment-nav-target-data"></div>
+
+          <div class="commitment-nav-target" id="commitment-nav-target-document">
+
+            <div class="form-group row mt-3">
+              <label class="col-sm-5 col-form-label col-form-label-sm"><?php echo $this->translate('Select a document', 'ppit-core', $context->getLocale()) ?></label>
+              <div class="col-sm-7">
+                <select class="form-control form-control-sm" id="commitment-select-document">
+                  <option />
+
+<?php foreach ($context->getConfig('commitment/message/' . $type) as $documentId) : ?>
+  <?php
+  $document = $context->getConfig('commitment/message/' . $type . '/' . $documentId);
+  ?>
+                  <option value="<?php echo $documentId ?>"><?php echo $context->localize($document['name']) ?></option>
+<?php endforeach;?>
+  
+                </select>
+              </div>
+            </div>
+
+            <div class="row mt-3">
+              <div id="commitment-generate-message-target"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

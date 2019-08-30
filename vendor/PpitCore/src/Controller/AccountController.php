@@ -484,7 +484,7 @@ class AccountController extends AbstractActionController
 
 		// Retrieve the per account planned hours 
 		foreach ($accounts as $account) $account->properties['planned'] = 0;
-		$events = Event::getList('calendar', ['category' => $event_category], '-update_time', null);
+		$events = Event::getList('calendar', ['category' => $event_category], '-update_time', null, ['account_id', 'value', 'update_time']);
 		foreach ($events as $event) {
 			if (array_key_exists($event->account_id, $accounts)) $accounts[$event->account_id]->properties['planned'] += $event->value;
 		}
@@ -1881,27 +1881,26 @@ class AccountController extends AbstractActionController
 
 	public function repairAction()
 	{
-		$config = array();
-		foreach (Context::getCurrent()->getConfig() as $paramId => $param) {
-			if (substr($paramId, 0, 13) == 'core_account/') $config[$paramId] = $param;
-		}
-		echo json_encode($config, JSON_PRETTY_PRINT);
-		return $this->response;
-/*    			
-		// Atomically save
-		$connection = Account::getTable()->getAdapter()->getDriver()->getConnection();
-		$connection->beginTransaction();
-		
-    	$context = Context::getCurrent();
-		$accounts = Account::getList(null, ['bank_identifier' => '*'], '+id', null);
-		foreach ($accounts as $account_id => $account) {
-			$bank_identifier = $context->getSecurityAgent()->unprotectPrivateData($account->bank_identifier);
-			echo $account_id . ' => ' . $bank_identifier . "\n";
-			$account->bank_identifier = $context->getSecurityAgent()->protectPrivateDataV2($bank_identifier);
-//			$account->update(null);
-		}
-		
-		$connection->commit();
-		return $this->response;*/
+			$connection = Account::getTable()->getAdapter()->getDriver()->getConnection();
+			$connection->beginTransaction();
+			
+	    	$context = Context::getCurrent();
+			$vcards = Vcard::getList(null, ['roles' => 'teacher']);
+			foreach ($vcards as $vcard_id => $vcard) {
+				$account = Account::get($vcard_id, 'contact_1_id');
+				if ($account) echo 'Vcard: ' . $vcard_id . ' => ' . 'Account: ' . $account->id . "\n";
+				else {
+					echo 'Generate account';
+					$account = Account::instanciate('teacher');
+					$account->place_id = $context->getPlaceId();
+					$account->name = $vcard->n_fn;
+					$account->contact_1_id = $vcard_id;
+					$account->add();
+					echo 'Vcard: ' . $vcard_id . ' ' . $vcard->n_fn . ' => ' . 'Generate account: ' . $account->id . "\n";
+				}
+			}
+			
+			$connection->commit();
+			return $this->response;
 	}
 }

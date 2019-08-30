@@ -799,6 +799,7 @@ class Vcard
     		if (isset($params['nationality'])) $where->like('nationality', '%'.$params['nationality'].'%');
     		if (isset($params['is_notified'])) $where->like('is_notified', '%'.$params['is_notified'].'%');
     		if (isset($params['is_demo_mode_active'])) $where->like('is_demo_mode_active', '%'.$params['is_demo_mode_active'].'%');
+    		if (isset($params['roles'])) $where->like('roles', '%'.$params['roles'].'%');
     	}
 
     	$select->where($where)->order(array($major.' '.$dir, 'n_fn'));

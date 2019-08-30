@@ -424,6 +424,18 @@ return array_merge(
         								),
         						),
         				),
+        				'generateMessage' => array(
+        						'type' => 'segment',
+        						'options' => array(
+        								'route' => '/generate-message[/:type][/:template_identifier][/:id]',
+        								'constraints' => array(
+        										'id'     => '[0-9]*',
+        								),
+        								'defaults' => array(
+        										'action' => 'generateMessage',
+        								),
+        						),
+        				),
         				'sendMessage' => array(
         						'type' => 'segment',
         						'options' => array(
@@ -1152,6 +1164,7 @@ return array_merge(
 //            	array('route' => 'commitment/workflow', 'roles' => array('sales_manager')),
             	array('route' => 'commitment/serviceSettle', 'roles' => array('accountant')),
             	array('route' => 'commitment/downloadInvoice', 'roles' => array('user')),
+            	array('route' => 'commitment/generateMessage', 'roles' => array('operational_management', 'sales_manager', 'accountant')),
             	array('route' => 'commitment/sendMessage', 'roles' => array('sales_manager', 'accountant')),
             	array('route' => 'commitment/sendMessageV2', 'roles' => array('sales_manager', 'accountant')),
             	array('route' => 'commitment/paymentResponse', 'roles' => array('accountant')),
@@ -2523,6 +2536,33 @@ table.note-report td {
 			'fr_FR' => 'Payeur',
 		),
 	),
+
+	'commitment/generic/property/n_title' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'en_US' => 'Title',
+			'fr_FR' => 'Titre',
+		),
+	),
+
+	'commitment/generic/property/n_first' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'en_US' => 'First name',
+			'fr_FR' => 'Prénom',
+		),
+	),
+
+	'commitment/generic/property/n_last' => array(
+		'definition' => 'inline',
+		'type' => 'input',
+		'labels' => array(
+			'en_US' => 'Last name',
+			'fr_FR' => 'Nom',
+		),
+	),
 	
 	'commitment/generic/property/caption' => array(
 		'definition' => 'inline',
@@ -2739,7 +2779,7 @@ table.note-report td {
 		'currencySymbol' => '€',
 		'tax' => 'excluding',
 		'properties' => array(
-			'year', 'status', 'place_id', 'account_id', 'account_status', 'account_name', 'account_identifier', 'email', 'invoice_n_fn',
+			'year', 'status', 'place_id', 'account_id', 'account_status', 'account_name', 'account_identifier', 'email', 'n_title', 'n_first', 'n_last', 'invoice_n_fn',
 			'caption', 'description', 'product_caption',
 			'quantity', 'unit_price', 'amount', 'including_options_amount', 'invoice_identifier', 'invoice_date', 'tax_amount', 'tax_inclusive',
 			'default_means_of_payment', 'update_time',

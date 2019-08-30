@@ -229,7 +229,19 @@ class SecurityAgent
        		$data = $user->toArray();
        		$bcrypt = new Bcrypt();
     		$bcrypt->setCost(14);
+    		
+    		// Check the new password is different than the 3 previous ones
+    		if ($context->getConfig()['ppitUserSettings']['strongPassword']) {
+	    		if ($user->previous_password_1 && $bcrypt->verify($new_password, $user->previous_password_1)) return 'SamePassword';
+	    		if ($user->previous_password_2 && $bcrypt->verify($new_password, $user->previous_password_2)) return 'SamePassword';
+	    		if ($user->previous_password_3 && $bcrypt->verify($new_password, $user->previous_password_3)) return 'SamePassword';
+    		}
+    				
+    		$user->previous_password_3 = $user->previous_password_2;
+    		$user->previous_password_2 = $user->previous_password_1;
+    		$user->previous_password_1 = $user->password;
     		$user->password = $bcrypt->create($new_password);
+    		$user->password_date = date('Y-m-d');
     		$user->password_init_token = null;
     		$user->password_init_validity = null;
     		return $user->update($update_time);
@@ -300,6 +312,13 @@ class SecurityAgent
     			return 'OK';
     		}
     	}
+    }
+    
+    public function checkExpiration()
+    {
+    	$user = User::getTable()->transGet($this->getUserId());
+    	if ($user->password_date < date('Y-m-d', strtotime(date('Y-m-d') . ' - 90 days'))) return 'Expired';
+    	else return 'OK';
     }
     
     public function demoAuthenticate($username)

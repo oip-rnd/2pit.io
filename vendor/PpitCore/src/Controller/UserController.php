@@ -521,15 +521,19 @@ class UserController extends AbstractActionController
     
     protected function passwordAction()
     {
-        // Check the presence of the id parameter for the entity to update
-    	$id = (int) $this->params()->fromRoute('id', 0);
-    	if (!$id) {
-    		return $this->redirect()->toRoute('user/index');
-    	}
     	// Retrieve the context
     	$context = Context::getCurrent();
-    	$config = $context->getConfig();
+    	
+    	// Check the presence of the id parameter for the entity to update
+/*    	$id = (int) $this->params()->fromRoute('id', 0);
+    	if (!$id) {
+    		return $this->redirect()->toRoute('user/index');
+    	}*/
+    	$id = $context->getUserId();
 
+    	$config = $context->getConfig();
+		$message = $this->params()->fromQuery('message');
+    	
     	$place = Place::get($context->getPlaceId());
     	
     	// Retrieve the object and control access
@@ -539,7 +543,7 @@ class UserController extends AbstractActionController
 		// Instanciate the csrf form
         $csrfForm = new CsrfForm();
     	$csrfForm->addCsrfElement('csrf');
-    	$message = null;
+//    	$message = null;
     	$error = null;
 	    $request = $this->getRequest();
 	    if ($request->isPost()) {

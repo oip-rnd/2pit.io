@@ -504,7 +504,7 @@ class EventController extends AbstractActionController
     	}
 
 		// Overwrite the account list as being the group members for type Calendar
-    	if ($type == 'calendar') {
+/*    	if ($type == 'calendar') {
     		$group = Account::get($category, 'identifier', 'group', 'type');
     		if ($group) {
 	    		$property = &$description['update']['account_id'];
@@ -515,7 +515,7 @@ class EventController extends AbstractActionController
 					}
 				}
     		}
-    	}
+    	}*/
     	 
     	// Instanciate the csrf form
     	$csrfForm = new CsrfForm();

@@ -43,6 +43,7 @@
 			'Delete a commitment' => 'Supprimer un engagement',
 			'Delete an event' => 'Supprimer un évènement',
 			'Delete a notification' => 'Supprimer une notification',
+			'Detail on commitment' => 'Détail sur l’engagement',
 			'Display start' => 'Début d\'affichage',
 			'Display end' => 'Fin d\'affichage',
 			'Download the invoice' => 'Télécharger la facture',

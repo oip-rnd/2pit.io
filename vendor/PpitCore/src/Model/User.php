@@ -30,6 +30,10 @@ class User extends Context
     public $username;
     public $vcard_id;
     public $password;
+    public $password_date;
+    public $previous_password_1;
+    public $previous_password_2;
+    public $previous_password_3;
     public $password_init_token;
     public $password_init_validity;
     public $authentication_token;
@@ -92,6 +96,10 @@ class User extends Context
  	   	$this->vcard_id = (isset($data['vcard_id'])) ? $data['vcard_id'] : null;
         $this->username = (isset($data['username'])) ? $data['username'] : null;
  	   	$this->password = (isset($data['password'])) ? $data['password'] : null;
+ 	   	$this->password_date = (isset($data['password_date'])) ? $data['password_date'] : null;
+ 	   	$this->previous_password_1 = (isset($data['previous_password_1'])) ? $data['previous_password_1'] : null;
+ 	   	$this->previous_password_2 = (isset($data['previous_password_2'])) ? $data['previous_password_2'] : null;
+ 	   	$this->previous_password_3 = (isset($data['previous_password_3'])) ? $data['previous_password_3'] : null;
  	   	$this->password_init_token = (isset($data['password_init_token'])) ? $data['password_init_token'] : null;
  	   	$this->password_init_validity = (isset($data['password_init_validity'])) ? $data['password_init_validity'] : null;
  	   	$this->authentication_token = (isset($data['authentication_token'])) ? $data['authentication_token'] : null;
@@ -121,6 +129,10 @@ class User extends Context
     	$data['instance_id'] = (int) $this->instance_id;
     	$data['username'] =  $this->username;
     	$data['password'] = $this->password;
+    	$data['password_date'] = $this->password_date;
+    	$data['previous_password_1'] = $this->previous_password_1;
+    	$data['previous_password_2'] = $this->previous_password_2;
+    	$data['previous_password_3'] = $this->previous_password_3;
     	$data['password_init_token'] = $this->password_init_token;
     	$data['password_init_validity'] = $this->password_init_validity;
     	$data['authentication_token'] = $this->authentication_token;

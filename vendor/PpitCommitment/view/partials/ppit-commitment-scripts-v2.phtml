@@ -940,7 +940,7 @@ function getCommitmentDetail(id) {
 	xhttp.onreadystatechange = function() {
 		if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
 		if (xhttp.readyState == 4 && xhttp.status == 200) {
-			$('#modalFormContent').html(xhttp.responseText);
+			$('#commitment-nav-target-data').html(xhttp.responseText);
 
 			connectAuditPanel();
 			connectCgvPanel();
@@ -1047,6 +1047,23 @@ function getCommitmentDetail(id) {
 			$('.term-action').click(function() {
 				connectCommitmentUpdateTermForm(id);
 			});
+
+            $('#commitment-select-document').unbind('change');
+            $('#commitment-select-document').change(function () {
+                let template = $(this).val();
+                $('#commitment-generate-message-target').html('');
+                if (template) {
+                  let xhttp = new XMLHttpRequest();
+                  xhttp.open("GET", '<?php echo $this->url('commitment/generateMessage', ['type' => $type]) ?>/' + template + '?commitment_id=' + id, false);
+                  xhttp.onreadystatechange = function() {
+                    if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+                    if (xhttp.readyState == 4 && xhttp.status == 200) {
+                        $('#commitment-generate-message-target').html(xhttp.responseText);
+                    }
+                  }
+                  xhttp.send();
+                }
+            });
 		}
 	}
 	xhttp.send();
@@ -1255,7 +1272,7 @@ function getGroup() {
 		if (xhttp.readyState == 4) {
 		  if (xhttp.status == 200) {
 
-			$('#modalFormContent').html(xhttp.responseText);
+			$('#commitment-nav-target-data').html(xhttp.responseText);
 
 			postGroup();
 			getSendMessage();
@@ -1313,6 +1330,19 @@ function getGroup() {
 }
 
 getSearch();
+
+$('.commitment-nav-link').click(function () {
+  let id = $(this).attr('id');
+  $('.commitment-nav-link').removeClass('active');
+  $('#' + id).addClass('active');
+
+  $('.commitment-nav-target').hide();
+  if (id == 'commitment-nav-link-data') $('#commitment-nav-target-data').show();
+  else if (id == 'commitment-nav-link-document') $('#commitment-nav-target-document').show();
+});
+
+$('.commitment-nav-target').hide();
+$('#commitment-nav-target-data').show();
 
 </script>
 

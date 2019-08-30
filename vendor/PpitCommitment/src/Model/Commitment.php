@@ -78,9 +78,9 @@ class Commitment
 			'contact_4_status' => 				['entity' => 'core_account', 'column' => 'contact_4_status'],
 			'contact_5_status' => 				['entity' => 'core_account', 'column' => 'contact_5_status'],
 			
-			'contact_n_title' => 				['entity' => 'core_vcard', 'column' => 'n_title'],
-			'contact_n_first' => 				['entity' => 'core_vcard', 'column' => 'n_first'],
-			'contact_n_last' => 				['entity' => 'core_vcard', 'column' => 'n_last'],
+			'n_title' => 				['entity' => 'core_vcard', 'column' => 'n_title'],
+			'n_first' => 				['entity' => 'core_vcard', 'column' => 'n_first'],
+			'n_last' => 				['entity' => 'core_vcard', 'column' => 'n_last'],
 			'contact_n_fn' => 					['entity' => 'core_vcard', 'column' => 'n_fn'],
 			'contact_email' => 					['entity' => 'core_vcard', 'column' => 'email'],
 			'contact_tel_work' => 				['entity' => 'core_vcard', 'column' => 'tel_work'],

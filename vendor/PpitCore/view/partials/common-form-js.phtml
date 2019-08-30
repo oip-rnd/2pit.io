@@ -167,6 +167,7 @@ function encodeDate(value) {
 }
 
 function renderElement(elementId, error) {
+console.log(elementId);
 	if (error) {
 		document.getElementById(elementId + "_group").className = "form-group has-error";
 		document.getElementById(elementId + "_error").innerHTML = error;

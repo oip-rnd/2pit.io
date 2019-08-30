@@ -386,11 +386,14 @@ if ($account->id && $action != 'update' || $message == 'OK') $isDisabled = true;
     
     <?php elseif ($property['type'] == 'log') : ?>
 
+  <div class="form-group row" id="<?php echo $propertyId ?>_group">
     <div><?php echo $context->localize($property['labels']) ?></div>
     
     <?php if (!$isDisabled) : ?>
     <textarea class="form-control  form-control-sm" id="<?php echo $propertyId ?>" <?php if ($isDisabled) echo 'disabled="disabled"'?>></textarea>
     <?php endif;?>
+    <div class="invalid-feedback" id="<?php echo $propertyId ?>_error"></div>
+  </div>
     
       <?php if ($account->properties[$propertyId]) : ?>
 

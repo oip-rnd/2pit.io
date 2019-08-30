@@ -541,10 +541,10 @@ class Event
     	$data['end_date'] = ($this->end_date) ? $this->end_date : null;
     	$data['day_of_week'] = (int) $this->day_of_week;
     	$data['day_of_month'] = (int) $this->day_of_month;
-    	$data['exception_1'] = (array_key_exists(0, $this->exception_dates)) ? $this->exception_dates[0] : null;
-    	$data['exception_2'] = (array_key_exists(1, $this->exception_dates)) ? $this->exception_dates[1] : null;
-    	$data['exception_3'] = (array_key_exists(2, $this->exception_dates)) ? $this->exception_dates[2] : null;
-    	$data['exception_4'] = (array_key_exists(3, $this->exception_dates)) ? $this->exception_dates[3] : null;
+    	$data['exception_1'] = (is_array($this->exception_dates) && array_key_exists(0, $this->exception_dates)) ? $this->exception_dates[0] : null;
+    	$data['exception_2'] = (is_array($this->exception_dates) && array_key_exists(1, $this->exception_dates)) ? $this->exception_dates[1] : null;
+    	$data['exception_3'] = (is_array($this->exception_dates) && array_key_exists(2, $this->exception_dates)) ? $this->exception_dates[2] : null;
+    	$data['exception_4'] = (is_array($this->exception_dates) && array_key_exists(3, $this->exception_dates)) ? $this->exception_dates[3] : null;
     	$data['exception_dates'] = $this->exception_dates;
     	$data['begin_time'] = $this->begin_time;
     	$data['end_time'] = $this->end_time;
