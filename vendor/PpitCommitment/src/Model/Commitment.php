@@ -78,14 +78,15 @@ class Commitment
 			'contact_4_status' => 				['entity' => 'core_account', 'column' => 'contact_4_status'],
 			'contact_5_status' => 				['entity' => 'core_account', 'column' => 'contact_5_status'],
 			
-			'n_title' => 				['entity' => 'core_vcard', 'column' => 'n_title'],
-			'n_first' => 				['entity' => 'core_vcard', 'column' => 'n_first'],
-			'n_last' => 				['entity' => 'core_vcard', 'column' => 'n_last'],
+			'n_title' => 						['entity' => 'core_vcard', 'column' => 'n_title'],
+			'n_first' =>		 				['entity' => 'core_vcard', 'column' => 'n_first'],
+			'n_last' => 						['entity' => 'core_vcard', 'column' => 'n_last'],
 			'contact_n_fn' => 					['entity' => 'core_vcard', 'column' => 'n_fn'],
 			'contact_email' => 					['entity' => 'core_vcard', 'column' => 'email'],
 			'contact_tel_work' => 				['entity' => 'core_vcard', 'column' => 'tel_work'],
 			'contact_tel_cell' => 				['entity' => 'core_vcard', 'column' => 'tel_cell'],
-
+			'contact_birth_date' => 			['entity' => 'core_vcard', 'column' => 'birth_date'],
+				
 			'contact_n_title_2' => 				['entity' => 'contact_2', 'column' => 'n_title'],
 			'contact_n_first_2' => 				['entity' => 'contact_2', 'column' => 'n_first'],
 			'contact_n_last_2' => 				['entity' => 'contact_2', 'column' => 'n_last'],
@@ -456,6 +457,7 @@ class Commitment
 	public $email;
 	public $tel_work;
 	public $tel_cell;
+	public $birth_date;
 	
 	public $n_title_2;
 	public $n_first_2;
@@ -628,6 +630,7 @@ class Commitment
         $this->email = (isset($data['email'])) ? $data['email'] : null;
         $this->tel_work = (isset($data['tel_work'])) ? $data['tel_work'] : null;
         $this->tel_cell = (isset($data['tel_cell'])) ? $data['tel_cell'] : null;
+        $this->birth_date = (isset($data['birth_date'])) ? $data['birth_date'] : null;
         $this->account_status = (isset($data['account_status'])) ? $data['account_status'] : null;
         $this->account_name = (isset($data['account_name'])) ? $data['account_name'] : null;
         $this->account_identifier = (isset($data['account_identifier'])) ? $data['account_identifier'] : null;
@@ -811,6 +814,7 @@ class Commitment
     	$data['email'] = $this->email;
     	$data['tel_work'] = $this->tel_work;
     	$data['tel_cell'] = $this->tel_cell;
+    	$data['birth_date'] = $this->birth_date;
     	$data['account_status'] = $this->account_status;
     	$data['account_identifier'] = $this->account_identifier;
     	$data['account_date_1'] = $this->account_date_1;
@@ -933,6 +937,7 @@ class Commitment
     	unset($data['email']);
     	unset($data['tel_work']);
     	unset($data['tel_cell']);
+    	unset($data['birth_date']);
     	unset($data['place_caption']);
     	unset($data['place_identifier']);
     	unset($data['place_support_email']);
@@ -1019,7 +1024,7 @@ class Commitment
     	$context = Context::getCurrent();
     	$select = Commitment::getTable()->getSelect()
     		->join('core_account', 'commitment.account_id = core_account.id', array('account_status' => 'status', 'account_name' => 'name', 'account_identifier' => 'identifier', 'place_id', 'contact_1_status', 'contact_2_status', 'contact_3_status', 'contact_4_status', 'contact_5_status', 'default_means_of_payment', 'transfer_order_id', 'transfer_order_date', 'bank_identifier', 'account_date_1' => 'date_1', 'account_date_2' => 'date_2', 'account_date_3' => 'date_3', 'account_date_4' => 'date_4', 'account_date_5' => 'date_5', 'account_property_1' => 'property_1', 'account_property_2' => 'property_2', 'account_property_3' => 'property_3', 'account_property_4' => 'property_4', 'account_property_5' => 'property_5', 'account_property_6' => 'property_6', 'account_property_7' => 'property_7', 'account_property_8' => 'property_8', 'account_property_9' => 'property_9', 'account_property_10' => 'property_10', 'account_property_11' => 'property_11', 'account_property_12' => 'property_12', 'account_property_13' => 'property_13', 'account_property_14' => 'property_14', 'account_property_15' => 'property_15', 'account_property_16' => 'property_16'), 'left')
-    		->join('core_vcard', 'core_account.contact_1_id = core_vcard.id', array('n_title', 'n_first', 'n_last', 'n_fn', 'email', 'tel_work', 'tel_cell'), 'left')
+    		->join('core_vcard', 'core_account.contact_1_id = core_vcard.id', array('n_title', 'n_first', 'n_last', 'n_fn', 'email', 'tel_work', 'tel_cell', 'birth_date'), 'left')
 			->join(array('contact_2' => 'core_vcard'), 'core_account.contact_2_id = contact_2.id', array('n_title_2' =>'n_title', 'n_first_2' => 'n_first', 'n_last_2' => 'n_last', 'n_fn_2' => 'n_fn', 'email_2' => 'email', 'tel_work_2' => 'tel_work', 'tel_cell_2' => 'tel_cell'), 'left')
 			->join(array('contact_3' => 'core_vcard'), 'core_account.contact_3_id = contact_3.id', array('n_title_3' =>'n_title', 'n_first_3' => 'n_first', 'n_last_3' => 'n_last', 'n_fn_3' => 'n_fn', 'email_3' => 'email', 'tel_work_3' => 'tel_work', 'tel_cell_3' => 'tel_cell'), 'left')
 			->join(array('contact_4' => 'core_vcard'), 'core_account.contact_4_id = contact_4.id', array('n_title_4' =>'n_title', 'n_first_4' => 'n_first', 'n_last_4' => 'n_last', 'n_fn_4' => 'n_fn', 'email_4' => 'email', 'tel_work_4' => 'tel_work', 'tel_cell_4' => 'tel_cell'), 'left')
@@ -1152,8 +1157,10 @@ class Commitment
 	    	$commitment->account->contact_1 = Vcard::get($commitment->account->contact_1_id);
 	    	$commitment->n_fn = $commitment->account->contact_1->n_fn;
 	    	$commitment->email = $commitment->account->contact_1->email;
+	    	$commitment->n_title = $commitment->account->contact_1->n_title;
 	    	$commitment->n_first = $commitment->account->contact_1->n_first;
 	    	$commitment->n_last = $commitment->account->contact_1->n_last;
+	    	$commitment->birth_date = $commitment->account->contact_1->birth_date;
 	    	$place = Place::get($commitment->account->place_id);
 	    	$commitment->place_caption = $place->caption;
 	    	$commitment->place_identifier = $place->identifier;
