@@ -436,6 +436,18 @@ return array_merge(
         								),
         						),
         				),
+        				'downloadMessage' => array(
+        						'type' => 'segment',
+        						'options' => array(
+        								'route' => '/download-message[/:type][/:template_identifier][/:id]',
+        								'constraints' => array(
+        										'id'     => '[0-9]*',
+        								),
+        								'defaults' => array(
+        										'action' => 'downloadMessage',
+        								),
+        						),
+        				),
         				'sendMessage' => array(
         						'type' => 'segment',
         						'options' => array(
@@ -1165,6 +1177,7 @@ return array_merge(
             	array('route' => 'commitment/serviceSettle', 'roles' => array('accountant')),
             	array('route' => 'commitment/downloadInvoice', 'roles' => array('user')),
             	array('route' => 'commitment/generateMessage', 'roles' => array('operational_management', 'sales_manager', 'accountant')),
+            	array('route' => 'commitment/downloadMessage', 'roles' => array('operational_management', 'sales_manager', 'accountant')),
             	array('route' => 'commitment/sendMessage', 'roles' => array('sales_manager', 'accountant')),
             	array('route' => 'commitment/sendMessageV2', 'roles' => array('sales_manager', 'accountant')),
             	array('route' => 'commitment/paymentResponse', 'roles' => array('accountant')),

@@ -96,6 +96,7 @@
 			'Object' => 'Objet',
 			'Order form' => 'Bon de commande',
 			'Orders in progress' => 'Commandes en cours',
+			'Download the PDF document' => "Télécharger le document PDF",
 			'Place to credit' => "Etablissement à créditer",
 			'Please accept the conditions' => "Veuillez accepter les conditions",
 			'Positioning' => 'Positionnement',

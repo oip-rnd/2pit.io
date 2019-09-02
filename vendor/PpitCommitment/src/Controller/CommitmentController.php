@@ -1740,20 +1740,16 @@ class CommitmentController extends AbstractActionController
     	return $this->response;
     }
 
-    public function generateMessageAction()
+    public function generateMessage($commitment, $place)
     {
     	// Retrieve the context and parameters
     	$context = Context::getCurrent();
-    	
+
     	// From route
     	$type = $this->params()->fromRoute('type');
     	$template_identifier = $this->params()->fromRoute('template_identifier');
-		$id = $this->params()->fromRoute('id'); // Message id in update mode
 
 		// From Query
-    	$commitment_id = $this->params()->fromQuery('commitment_id');
-    	$commitment = Commitment::get($commitment_id);
-    	$place = Place::get($commitment->place_id);
     	$account = Account::get($commitment->account_id);
     	$template = $context->getConfig('commitment/message/' . $type . '/' . $template_identifier);
 		$addressee = $this->params()->fromQuery('addressee');
@@ -1783,7 +1779,7 @@ class CommitmentController extends AbstractActionController
 
     	// Initialize the message
     	$message = ['type' => $type];
-    	$message = ['identifier' => $template_identifier . ' '];
+    	$message = ['identifier' => $template_identifier];
     	 
     	// Set the header data
     	if ($place && $place->banner_src) {
@@ -1801,28 +1797,31 @@ class CommitmentController extends AbstractActionController
     	// Add the data to merge with the template at printing time
     	
     	$message['data'] = [];
-    	$message['data']['date'] = $context->decodeDate(date('Y-m-d'));
-    	foreach (array_merge($template['header']['paragraphs'], $template['body']['paragraphs'], $template['footer']['paragraphs']) as $paragraph) {
-    		if (array_key_exists('params', $paragraph)) foreach ($paragraph['params'] as $propertyId) {
-    			$message['data'][$propertyId] = null;
-    			if (array_key_exists($propertyId, $commitment->properties) && $commitment->properties[$propertyId]) {
-	    			$property = $description['properties'][$propertyId];
-	    			if ($property['type'] == 'select') $value = $context->localize($property['modalities'][$commitment->properties[$propertyId]]);
-	    			elseif ($property['type'] == 'multiselect') {
-	    				$codes = $commitment->properties[$propertyId];
-	    				if ($codes) $codes = explode(',', $codes);
-	    				else $codes = [];
-	    				$value = [];
-	    				foreach ($codes as $code) $value[] = $context->localize($property['modalities'][$code]);
-	    				$value = implode(',', $value);
+    	foreach ($template['sections'] as $section) {
+    		foreach ($section['paragraphs'] as $paragraph) {
+	    		if (array_key_exists('params', $paragraph)) foreach ($paragraph['params'] as $propertyId) {
+	    			$message['data'][$propertyId] = null;
+	    			if (array_key_exists($propertyId, $commitment->properties) && $commitment->properties[$propertyId]) {
+		    			$property = $description['properties'][$propertyId];
+		    			if ($property['type'] == 'select') $value = $context->localize($property['modalities'][$commitment->properties[$propertyId]]);
+		    			elseif ($property['type'] == 'multiselect') {
+		    				$codes = $commitment->properties[$propertyId];
+		    				if ($codes) $codes = explode(',', $codes);
+		    				else $codes = [];
+		    				$value = [];
+		    				foreach ($codes as $code) $value[] = $context->localize($property['modalities'][$code]);
+		    				$value = implode(',', $value);
+		    			}
+		    			elseif ($property['type'] == 'date') $value = $context->decodeDate($commitment->properties[$propertyId]);
+		    			elseif ($property['type'] == 'number') $value = $context->formatFloat($commitment->properties[$propertyId], 2);
+		    			else $value = $commitment->properties[$propertyId];
+	    				$message['data'][$propertyId] = $value;
 	    			}
-	    			elseif ($property['type'] == 'date') $value = $context->decodeDate($commitment->properties[$propertyId]);
-	    			elseif ($property['type'] == 'number') $value = $context->formatFloat($commitment->properties[$propertyId], 2);
-	    			else $value = $commitment->properties[$propertyId];
-    				$message['data'][$propertyId] = $value;
-    			}
+	    		}
     		}
     	}
+    	$message['data']['current_date'] = $context->decodeDate(date('Y-m-d'));
+    	$message['data']['study_manager_name'] = $place->getConfig('study_manager_name');
 
     	// Overwright the addressee
     	$message['data']['addressee_n_fn'] = '';
@@ -1848,41 +1847,61 @@ class CommitmentController extends AbstractActionController
     	// Add the presentation template
     	$message['template'] = $template;
 
-    	// Render the message in HTML
+    	return $message;
+    }
 
-    	$html = CommitmentMessageViewHelper::renderHtml($message, $place);
+    public function generateMessageAction()
+    {   
+    	// Retrieve the context, parameters and data
+    	$context = Context::getCurrent();
+    	$type = $this->params()->fromRoute('type');
+    	$template_identifier = $this->params()->fromRoute('template_identifier');
+    	$id = $this->params()->fromRoute('id'); // Message id in update mode
+    	$commitment_id = $this->params()->fromQuery('commitment_id');
+    	$commitment = Commitment::get($commitment_id);
+    	$place = Place::get($commitment->place_id);
     	 
+    	// Add the presentation template
+    	$message = $this->generateMessage($commitment, $place);
+    
+    	// Render the message in HTML
+    	$html = CommitmentMessageViewHelper::renderHtml($message, $place);
+    
     	$view = new ViewModel(array(
     		'context' => $context,
     		'type' => $type,
+    		'template_identifier' => $template_identifier,
     		'id' => $id,
+    		'commitment_id' => $commitment_id,
     		'commitment' => $commitment,
 /*    		'csrfForm' => $csrfForm,
-    		'error' => $error,*/
+    		 'error' => $error,*/
     		'message' => $message,
     		'html' => $html,
     	));
     	$view->setTerminal(true);
     	return $view;
     }
-
+    
     public function downloadMessageAction()
     {
-    	// Retrieve the context
+    	// Retrieve the context, parameters and data
     	$context = Context::getCurrent();
-    
-    	$id = $this->params()->fromRoute('id', null);
-    	if (!$id) return $this->redirect()->toRoute('index');
-    	$commitment = Commitment::get($id);
-    
-    	$invoice = $this->generateInvoice($commitment->type, $commitment->account, $commitment, true);
-    
+    	$type = $this->params()->fromRoute('type');
+		$id = $this->params()->fromRoute('id'); // Message id in update mode
+    	$commitment_id = $this->params()->fromQuery('commitment_id');
+    	$commitment = Commitment::get($commitment_id);
+    	$place = Place::get($commitment->place_id);
+    	 
+    	// Add the presentation template
+    	$message = $this->generateMessage($commitment, $place);
+    	
     	// create new PDF document
     	$pdf = new PpitPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
     
-    	PdfInvoiceViewHelper::render($pdf, $invoice, $commitment->account->place);
+    	CommitmentMessageViewHelper::renderPdf($pdf, $message, $place);
     
-    	$content = $pdf->Output('invoice-'.$context->getInstance()->caption.'-'.$commitment->account->name.'.pdf', 'I');
+    	$content = $pdf->Output($message['identifier'] . '-' . $context->getInstance()->caption . '-' . $commitment->account->name . '.pdf', 'I');
     	return $this->response;
     }
     
