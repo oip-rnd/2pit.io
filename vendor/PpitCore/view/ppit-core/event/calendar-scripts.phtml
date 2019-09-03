@@ -366,10 +366,10 @@ function getUpdate(id, action) {
   xhttp.send();
 }
 
-function getDetail(id) {
-
-  var xhttp = new XMLHttpRequest();
-  var route = '<?php echo $this->url('event/detailAlt', ['type' => $type]) ?>/' + id;
+function getDetail(event) {
+  let id = (event) ? event.id : 0;
+  let xhttp = new XMLHttpRequest();
+  let route = '<?php echo $this->url('event/detailAlt', ['type' => $type]) ?>/' + id;
 
   xhttp.open('GET', route, true);
   xhttp.onreadystatechange = function() {
@@ -418,7 +418,7 @@ function createCalendar(print) {
 	        addButton: {
 	            text: '<?php echo $context->localize(['default' => 'Add', 'fr_FR' => 'Ajouter']) ?>',
 	            click: function() {
-	                getDetail(0);
+	                getDetail(null);
 			    }
 			},
             testButton: {
@@ -430,7 +430,7 @@ function createCalendar(print) {
 		},
 
         eventClick: function(event) {
-          getDetail(event.id);
+          getDetail(event);
         },
 
     	header: {

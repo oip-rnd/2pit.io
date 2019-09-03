@@ -58,6 +58,10 @@
   </div>
   <?php endif;?>
 
+  <div class="my-3">
+    <a target="_blank" href="<?php echo $this->url('event/downloadAttendanceSheet', ['type' => 'p-pit-studies', 'template_identifier' => 'attendance_sheet'], ['query' => ['event_id' => $id, 'property_7' => $event->property_2]]) ?>"><?php echo $this->translate('Attendance sheet', 'ppit-core', $context->getLocale()) ?></a>
+  </div>
+
   <!-- Currently updated by anyone else -->
   <?php if (false) : //($event->currently_updated_by && $event->currently_updated_by != $context->getFormatedName()) : ?>
     <div class="alert alert-danger update-alert my-3" style="text-align: center">

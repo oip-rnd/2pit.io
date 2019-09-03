@@ -723,7 +723,7 @@ class Event
     			$property = $context->getConfig('event/'.$type.'/property/'.$propertyKey);
     			if (!$property) $property = $context->getConfig('event/generic/property/'.$propertyKey);
     			if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
-    			
+
     			if ($value === null) $where->isNull($propertyId);
     			elseif ($propertyId == 'status') $where->in('core_event.status', explode(',', $value));
     			elseif ($propertyId == 'place_identifier') {

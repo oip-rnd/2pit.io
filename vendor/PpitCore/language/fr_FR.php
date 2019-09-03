@@ -25,6 +25,7 @@
 			'An error has occurred, please try again later' => 'Une erreur est survenue, veuillez ré-essayer un peu plus tard',
 			'Applications' => 'Applications',
 			'Apply the changes' => 'Appliquer les modifications',
+			'Attendance sheet' => 'Liste d’émargement',
 			'Authentication failed, please try again' => 'Authentification invalide, Veuillez essayer à nouveau',
 			'Available' => 'Disponibles',
 			'Available images' => 'Images disponibles',

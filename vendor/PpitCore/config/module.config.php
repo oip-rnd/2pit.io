@@ -681,6 +681,30 @@ return array_merge(
 							),
 						),
 					),
+ 					'attendanceSheet' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/attendance-sheet[/:type][/:template_identifier][/:id]',
+							'constraints' => array(
+								'id'     => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'attendanceSheet',
+							),
+						),
+					),
+					'downloadAttendanceSheet' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/download-attendance-sheet[/:type][/:template_identifier][/:id]',
+							'constraints' => array(
+								'id'     => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'downloadAttendanceSheet',
+							),
+						),
+					),
 				),
             ),
 			'interaction' => array(
@@ -1870,6 +1894,8 @@ return array_merge(
 				array('route' => 'event/detailAlt', 'roles' => array('user')),
 				array('route' => 'event/update', 'roles' => array('user')),
 				array('route' => 'event/updateAlt', 'roles' => array('user')),
+				array('route' => 'event/attendanceSheet', 'roles' => array('sales_manager', 'manager')),
+				array('route' => 'event/downloadAttendanceSheet', 'roles' => array('sales_manager', 'manager')),
 				
 				array('route' => 'interaction', 'roles' => array('admin')),
 				array('route' => 'interaction/index', 'roles' => array('admin')),

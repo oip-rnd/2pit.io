@@ -24,37 +24,102 @@ class CommitmentMessageViewHelper
     	if (array_key_exists('style', $message['template'])) $html .= $context->localize($message['template']['style']);
 
     	foreach ($message['template']['sections'] as $section) {
+
+    		if (array_key_exists('class', $section) && $section['class'] == 'table') {
+
+    			$html .= "<table>\n";
+
+    			$html .= "  <tr>\n";
+    			 
+    			foreach ($section['columns'] as $column) {
+
+    				// Format the markup possibly with a class attribute
+    				$format = '    <th';
+    				if (array_key_exists('class', $column)) $format .= ' class="' . $column['class'] . '"';
+    				if (array_key_exists('style', $column)) $format .= ' style="' . $column['style'] . '"';
+    				$format .= '>';
+    				$format .= '%s';
+    				$format .= "</th>\n";
+    					
+    				$html .= sprintf($format, $context->localize($column['header']));
+    			}
+
+    			$html .= "  </tr>\n";
+
+    			for ($i = 0; $i < $message['data']['occurrence_number']; $i++) {
+    				
+    				$html .= "  <tr>\n";
+
+    				foreach ($section['columns'] as $column) {
+			    		$arguments = [];
+			    		if (array_key_exists('params', $column)) {
+			    			foreach ($column['params'] as $prefixedPropertyId) {
+			    				if (strpos($prefixedPropertyId, ':')) {
+			    					$arrayPropertyId = explode(':', $prefixedPropertyId);
+			    					$prefix = $arrayPropertyId[0];
+			    					$propertyId = $arrayPropertyId[1];
+			    				}
+			    				else {
+			    					$prefix = null;
+			    					$propertyId = $prefixedPropertyId;
+			    				}
+			    				if ($prefix) $arguments[$propertyId] = $message['data'][$prefixedPropertyId . '_' . $i];
+			    				else $arguments[$propertyId] = $message['data'][$propertyId];
+			    			}
+			    		}
+			    		
+		    			// Format the markup possibly with a class attribute 
+			    		$format = '    <td';
+			    		if (array_key_exists('class', $column)) $format .= ' class="' . $column['class'] . '"';
+			    		if (array_key_exists('style', $column)) $format .= ' style="' . $column['style'] . '"';
+			    		$format .= '>';
+						$format .= '%s';
+			    		$format .= "</td>\n";
+			
+		    			if (array_key_exists('label', $column)) $content = trim(vsprintf($context->localize($column['label']), $arguments));
+			    		else $content = null;
+			    		if ($content != '') $html .= sprintf($format, $content);
+		    		}
+
+		    		$html .= "  </tr>\n";
+    			}
+    				
+    			$html .= "</table>\n";
+    		}
     		
-    		if (array_key_exists('class', $section) && $section['class'] == 'box-title') $html .= '<div style="border: 1px solid black; ">';
-    		
-    		foreach ($section['paragraphs'] as $paragraph) {
-	    		$arguments = [];
-	    		if (array_key_exists('params', $paragraph)) {
-	    			foreach ($paragraph['params'] as $propertyId) $arguments[$propertyId] = $message['data'][$propertyId];
-	    		}
+    		else {
 	    		
-	    		if (array_key_exists('class', $paragraph) && $paragraph['class'] == 'addressee') {
-	    			$format = '<table class="addressee"><tr><td width="60%%"></td><td width="40%%">%s</td></tr></table>';
-	    		}
-	    		else {
-		    		// Format the markup possibly with a class attribute 
-		    		$format = '<' . $paragraph['type'];
-		    		if (array_key_exists('class', $paragraph)) $format .= ' class="' . $paragraph['class'] . '"';
-		    		if (array_key_exists('style', $paragraph)) $format .= ' style="' . $paragraph['style'] . '"';
-		    		$format .= '>';
-					$format .= '%s';
-		    		$format .= '</' . $paragraph['type'] . '>';
-	    		}
-	
-	    		if ($paragraph['type'] == 'br') $html .= '<p></p>'."\n";
-	    		else {
-		    		if (array_key_exists('label', $paragraph)) $content = trim(vsprintf($context->localize($paragraph['label']), $arguments));
-		    		else $content = null;
-		    		if ($content != '') $html .= sprintf($format, $content)."\n";
-	    		}
-	    	}
-    	    		
-    		if (array_key_exists('class', $section) && $section['class'] == 'box-title') $html .= '</div>';
+	    		if (array_key_exists('class', $section) && $section['class'] == 'box-title') $html .= '<div style="border: 1px solid black; ">';
+	    		
+	    		foreach ($section['paragraphs'] as $paragraph) {
+		    		$arguments = [];
+		    		if (array_key_exists('params', $paragraph)) {
+		    			foreach ($paragraph['params'] as $propertyId) $arguments[$propertyId] = $message['data'][$propertyId];
+		    		}
+		    		
+		    		if (array_key_exists('class', $paragraph) && $paragraph['class'] == 'addressee') {
+		    			$format = '<table class="addressee"><tr><td width="60%%"></td><td width="40%%">%s</td></tr></table>';
+		    		}
+		    		else {
+			    		// Format the markup possibly with a class attribute 
+			    		$format = '<' . $paragraph['type'];
+			    		if (array_key_exists('class', $paragraph)) $format .= ' class="' . $paragraph['class'] . '"';
+			    		if (array_key_exists('style', $paragraph)) $format .= ' style="' . $paragraph['style'] . '"';
+			    		$format .= '>';
+						$format .= '%s';
+			    		$format .= '</' . $paragraph['type'] . '>';
+		    		}
+		
+		    		if ($paragraph['type'] == 'br') $html .= '<p></p>'."\n";
+		    		else {
+			    		if (array_key_exists('label', $paragraph)) $content = trim(vsprintf($context->localize($paragraph['label']), $arguments));
+			    		else $content = null;
+			    		if ($content != '') $html .= sprintf($format, $content)."\n";
+		    		}
+		    	}
+	    	    		
+	    		if (array_key_exists('class', $section) && $section['class'] == 'box-title') $html .= '</div>';
+    		}
     	}
     	 
     	return $html;

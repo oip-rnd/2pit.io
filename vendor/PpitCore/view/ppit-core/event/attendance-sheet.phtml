@@ -1,0 +1,10 @@
+<?php
+$query = '';
+foreach ($filters as $propertyId => $value) {
+  $query .= '&' . $propertyId . '=' . $value;
+}
+?>
+
+<a target="_blank" href="<?php echo $this->url('event/downloadAttendanceSheet', ['type' => $type, 'template_identifier' => $template_identifier], ['query' => array_merge(['event_id' => $event_id], $filters)]) ?>"><?php echo $this->translate('Download the PDF document', 'ppit-commitment', $context->getLocale()) ?></a>
+
+<?php echo $html ?>

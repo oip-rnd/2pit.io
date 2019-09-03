@@ -9,6 +9,8 @@
 
 namespace PpitCore\Controller;
 
+use PpitCommitment\ViewHelper\CommitmentMessageViewHelper;
+use PpitCommitment\ViewHelper\PpitPDF;
 use PpitCore\Model\Account;
 use PpitCore\Model\Community;
 use PpitCore\Model\Generic;
@@ -639,6 +641,207 @@ class EventController extends AbstractActionController
     public function updateAltAction()
     {
     	return $this->updateAction();
+    }
+
+    public function attendanceSheet($event, $place, $filters, $order)
+    {
+    	// Retrieve the context and parameters
+    	$context = Context::getCurrent();
+    	$type = $this->params()->fromRoute('type');
+    	$template_identifier = $this->params()->fromRoute('template_identifier');
+		$template = $context->getConfig('event/message/' . $type . '/' . $template_identifier);
+
+		// Retrieve the accounts
+		$accounts = Account::getList($type, $filters, $order, null);
+		
+		// Retrieve the commitment description for the type
+		$eventDescription = Event::getDescription($event->type);
+		$accountDescription = Account::getDescription($type);
+		
+    	// Initialize the message
+    	$message = ['type' => $type];
+    	$message = ['identifier' => $template_identifier];
+    	 
+    	// Set the header data
+    	if ($place && $place->banner_src) {
+    		$message['headerData']['src'] = $place->banner_src;
+    		$message['headerData']['width'] = ($place->banner_width) ? $place->banner_width : $context->getConfig('corePlace')['properties']['banner_width']['maxValue'];
+    	}
+    	elseif (array_key_exists('advert', $context->getConfig('headerParams'))) {
+    		$message['headerData']['src'] = 'logos/'.$context->getInstance()->caption.'/'.$context->getConfig('headerParams')['advert'];
+    		$message['headerData']['width'] = $context->getConfig('headerParams')['advert-width'];
+    	}
+    	 
+    	if ($place->getConfig('commitment/invoice_header')) $message['header'] = $place->getConfig('commitment/invoice_header');
+    	else $message['header'] = $context->getConfig('commitment/invoice_header');
+
+    	// Add the data to merge with the template at printing time
+    	
+    	$message['data'] = [];
+    	foreach ($template['sections'] as $section) {
+    		if ($section['class'] == 'table') {
+    			$message['data']['occurrence_number'] = count($accounts);
+    			$i = 0; 
+    			foreach ($accounts as $account_id => $account) {
+    				foreach ($section['columns'] as $column) {
+    					if (array_key_exists('params', $column)) foreach ($column['params'] as $prefixedPropertyId) {
+    						if (strpos($prefixedPropertyId, ':')) {
+    							$arrayPropertyId = explode(':', $prefixedPropertyId);
+    							$prefix = $arrayPropertyId[0];
+    							$propertyId = $arrayPropertyId[1];
+    						}
+    						else {
+    							$prefix = null;
+    							$propertyId = $prefixedPropertyId;
+    						}
+
+    						$property = null;
+    						if ($prefix && array_key_exists($propertyId, $account->properties) && $account->properties[$propertyId]) {
+    							$property = $accountDescription['properties'][$propertyId];
+    							$codedValue = $account->properties[$propertyId];
+    						}
+    						elseif (array_key_exists($propertyId, $event->properties) && $event->properties[$propertyId]) {
+    							$property = $eventDescription['properties'][$propertyId];
+    							$codedValue = $event->properties[$propertyId];
+    						}
+    						if ($property) {
+    							if ($property['type'] == 'select') $value = $context->localize($property['modalities'][$codedValue]);
+    							elseif ($property['type'] == 'multiselect') {
+    								$codes = $codedValue;
+    								if ($codes) $codes = explode(',', $codes);
+    								else $codes = [];
+    								$value = [];
+    								foreach ($codes as $code) $value[] = $context->localize($property['modalities'][$code]);
+    								$value = implode(',', $value);
+    							}
+    							elseif ($property['type'] == 'date') $value = $context->decodeDate($codedValue);
+    							elseif ($property['type'] == 'number') $value = $context->formatFloat($codedValue, 2);
+    							else $value = $codedValue;
+    							$message['data'][($prefix) ? $prefixedPropertyId . '_' . $i : $prefixedPropertyId] = $value;
+    						}
+    					}
+    					$i++;
+    				}
+    			}
+    		}
+    		else foreach ($section['paragraphs'] as $paragraph) {
+	    		if (array_key_exists('params', $paragraph)) foreach ($paragraph['params'] as $propertyId) {
+	    			$message['data'][$propertyId] = null;
+	    			if (array_key_exists($propertyId, $event->properties) && $event->properties[$propertyId]) {
+		    			$property = $eventDescription['properties'][$propertyId];
+		    			if ($property['type'] == 'select') $value = $context->localize($property['modalities'][$event->properties[$propertyId]]);
+		    			elseif ($property['type'] == 'multiselect') {
+		    				$codes = $event->properties[$propertyId];
+		    				if ($codes) $codes = explode(',', $codes);
+		    				else $codes = [];
+		    				$value = [];
+		    				foreach ($codes as $code) $value[] = $context->localize($property['modalities'][$code]);
+		    				$value = implode(',', $value);
+		    			}
+		    			elseif ($property['type'] == 'date') $value = $context->decodeDate($event->properties[$propertyId]);
+		    			elseif ($property['type'] == 'number') $value = $context->formatFloat($event->properties[$propertyId], 2);
+		    			else $value = $event->properties[$propertyId];
+	    				$message['data'][$propertyId] = $value;
+	    			}
+	    		}
+    		}
+    	}
+    	$message['data']['current_date'] = $context->decodeDate(date('Y-m-d'));
+
+		$firstTime = strtotime($event->begin_time);
+		$lastTime = strtotime($event->end_time);
+		$timeDiff = ($lastTime - $firstTime) / 3600;
+		$message['data']['duration'] = $timeDiff;
+
+    	// Set the legal footer
+    	$legal_footer_1 = ($place->legal_footer) ? $place->legal_footer : $context->getConfig('headerParams')['footer']['value'];
+    	if ($legal_footer_1) $message['legal_footer_1'] = $legal_footer_1;
+    	$legal_footer_2 = ($place->legal_footer_2) ? $place->legal_footer_2 : ((array_key_exists('footer_2', $context->getConfig('headerParams'))) ? $context->getConfig('headerParams')['footer_2']['value'] : null);
+    	if ($legal_footer_2) $message['legal_footer_2'] = $legal_footer_2;
+    	 
+    	// Add the presentation template
+    	$message['template'] = $template;
+
+    	return $message;
+    }
+
+    public function attendanceSheetAction()
+    {
+    	// Retrieve the context, parameters and data
+    	$context = Context::getCurrent();
+    	$type = $this->params()->fromRoute('type');
+    	$template_identifier = $this->params()->fromRoute('template_identifier');
+		$template = $context->getConfig('event/message/' . $type . '/' . $template_identifier);
+    	$id = $this->params()->fromRoute('id'); // Message id in update mode
+    	$event_id = $this->params()->fromQuery('event_id');
+
+    	// Retrieve the account filters
+    	$filters = array();
+    	foreach ($template['filters'] as $propertyId) {
+    		$property = ($this->params()->fromQuery($propertyId, null));
+    		if ($property !== null) $filters[$propertyId] = $property;
+    	}
+    	$order = ($this->params()->fromQuery('order', 'n_fn'));
+    	if (substr($order, 0, 1) != '-') $order = '+' . $order;
+
+    	$event = Event::get($event_id);
+    	$place = Place::get($event->place_id);
+    
+    	// Add the presentation template
+    	$message = $this->attendanceSheet($event, $place, $filters, $order);
+    
+    	// Render the message in HTML
+    	$html = CommitmentMessageViewHelper::renderHtml($message, $place);
+    
+    	$view = new ViewModel(array(
+    		'context' => $context,
+    		'type' => $type,
+    		'template_identifier' => $template_identifier,
+    		'id' => $id,
+    		'filters' => $filters,
+    		'event_id' => $event_id,
+    		'event' => $event,
+/*    		'csrfForm' => $csrfForm,
+    		 'error' => $error,*/
+    		'message' => $message,
+    		'html' => $html,
+    	));
+    	$view->setTerminal(true);
+    	return $view;
+    }
+    
+    public function downloadAttendanceSheetAction()
+    {
+    	// Retrieve the context, parameters and data
+    	$context = Context::getCurrent();
+    	$type = $this->params()->fromRoute('type');
+    	$template_identifier = $this->params()->fromRoute('template_identifier');
+		$template = $context->getConfig('event/message/' . $type . '/' . $template_identifier);
+    	$id = $this->params()->fromRoute('id'); // Message id in update mode
+    	$event_id = $this->params()->fromQuery('event_id');
+
+    	// Retrieve the account filters
+    	$filters = array();
+    	foreach ($template['filters'] as $propertyId) {
+    		$property = ($this->params()->fromQuery($propertyId, null));
+    		if ($property !== null) $filters[$propertyId] = $property;
+    	}
+    	$order = ($this->params()->fromQuery('order', 'n_fn'));
+    	if (substr($order, 0, 1) != '-') $order = '+' . $order;
+
+    	$event = Event::get($event_id);
+    	$place = Place::get($event->place_id);
+    
+    	// Add the presentation template
+    	$message = $this->attendanceSheet($event, $place, $filters, $order);
+    	 
+    	// create new PDF document
+    	$pdf = new PpitPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+    
+    	CommitmentMessageViewHelper::renderPdf($pdf, $message, $place);
+    
+    	$content = $pdf->Output($message['identifier'] . '-' . $context->getInstance()->caption . '-' . $event->n_fn . '.pdf', 'I');
+    	return $this->response;
     }
     
     /**
