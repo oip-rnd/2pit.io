@@ -832,7 +832,8 @@ class EventController extends AbstractActionController
 
     	$event = Event::get($event_id);
     	$place = Place::get($event->place_id);
-    
+    	if (!$place) $place = $context->getPlace();
+
     	// Add the presentation template
     	$message = $this->attendanceSheet($event, $place, $filters, $order);
     	 
