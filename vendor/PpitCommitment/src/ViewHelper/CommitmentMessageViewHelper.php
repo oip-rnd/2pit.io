@@ -23,7 +23,7 @@ class CommitmentMessageViewHelper
     	
     	if (array_key_exists('style', $message['template'])) $html .= $context->localize($message['template']['style']);
 
-    	foreach ($message['template']['sections'] as $section) {
+    	foreach ($message['template']['sections'] as $sectionId => $section) {
 
     		if (array_key_exists('class', $section) && $section['class'] == 'table') {
 
@@ -46,7 +46,7 @@ class CommitmentMessageViewHelper
 
     			$html .= "  </tr>\n";
 
-    			for ($i = 0; $i < $message['data']['occurrence_number']; $i++) {
+    			for ($i = 0; $i < $message['data'][$sectionId]['occurrence_number']; $i++) {
     				
     				$html .= "  <tr>\n";
 

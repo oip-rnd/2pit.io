@@ -680,7 +680,7 @@ class EventController extends AbstractActionController
     	$message['data'] = [];
     	foreach ($template['sections'] as $sectionId => $section) {
     		if ($sectionId == 'attendees') {
-    			$message['data']['occurrence_number'] = count($accounts);
+    			$message['data']['attendees']['occurrence_number'] = count($accounts);
     			$i = 0; 
     			foreach ($accounts as $account_id => $account) {
     				foreach ($section['paragraphs'] as $column) {
@@ -724,26 +724,31 @@ class EventController extends AbstractActionController
     				$i++;
     			}
     		}
-    		else foreach ($section['paragraphs'] as $paragraph) {
-	    		if (array_key_exists('params', $paragraph)) foreach ($paragraph['params'] as $propertyId) {
-	    			$message['data'][$propertyId] = null;
-	    			if (array_key_exists($propertyId, $event->properties) && $event->properties[$propertyId]) {
-		    			$property = $eventDescription['properties'][$propertyId];
-		    			if ($property['type'] == 'select') $value = $context->localize($property['modalities'][$event->properties[$propertyId]]);
-		    			elseif ($property['type'] == 'multiselect') {
-		    				$codes = $event->properties[$propertyId];
-		    				if ($codes) $codes = explode(',', $codes);
-		    				else $codes = [];
-		    				$value = [];
-		    				foreach ($codes as $code) $value[] = $context->localize($property['modalities'][$code]);
-		    				$value = implode(',', $value);
+    		else {
+    			if ($section['class'] == 'table') {
+    				$message['data'][$sectionId]['occurrence_number'] = (array_key_exists('occurrence_number', $section)) ? $section['occurrence_number'] : 1;
+    			}
+    			foreach ($section['paragraphs'] as $paragraph) {
+		    		if (array_key_exists('params', $paragraph)) foreach ($paragraph['params'] as $propertyId) {
+		    			$message['data'][$propertyId] = null;
+		    			if (array_key_exists($propertyId, $event->properties) && $event->properties[$propertyId]) {
+			    			$property = $eventDescription['properties'][$propertyId];
+			    			if ($property['type'] == 'select') $value = $context->localize($property['modalities'][$event->properties[$propertyId]]);
+			    			elseif ($property['type'] == 'multiselect') {
+			    				$codes = $event->properties[$propertyId];
+			    				if ($codes) $codes = explode(',', $codes);
+			    				else $codes = [];
+			    				$value = [];
+			    				foreach ($codes as $code) $value[] = $context->localize($property['modalities'][$code]);
+			    				$value = implode(',', $value);
+			    			}
+			    			elseif ($property['type'] == 'date') $value = $context->decodeDate($event->properties[$propertyId]);
+			    			elseif ($property['type'] == 'number') $value = $context->formatFloat($event->properties[$propertyId], 2);
+			    			else $value = $event->properties[$propertyId];
+		    				$message['data'][$propertyId] = $value;
 		    			}
-		    			elseif ($property['type'] == 'date') $value = $context->decodeDate($event->properties[$propertyId]);
-		    			elseif ($property['type'] == 'number') $value = $context->formatFloat($event->properties[$propertyId], 2);
-		    			else $value = $event->properties[$propertyId];
-	    				$message['data'][$propertyId] = $value;
-	    			}
-	    		}
+		    		}
+    			}
     		}
     	}
     	$message['data']['current_date'] = $context->decodeDate(date('Y-m-d'));
