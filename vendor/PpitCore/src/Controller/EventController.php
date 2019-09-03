@@ -720,8 +720,8 @@ class EventController extends AbstractActionController
     							$message['data'][($prefix) ? $prefixedPropertyId . '_' . $i : $prefixedPropertyId] = $value;
     						}
     					}
-    					$i++;
     				}
+    				$i++;
     			}
     		}
     		else foreach ($section['paragraphs'] as $paragraph) {
