@@ -671,19 +671,19 @@ class EventController extends AbstractActionController
     		$message['headerData']['src'] = 'logos/'.$context->getInstance()->caption.'/'.$context->getConfig('headerParams')['advert'];
     		$message['headerData']['width'] = $context->getConfig('headerParams')['advert-width'];
     	}
-    	 
+
     	if ($place->getConfig('commitment/invoice_header')) $message['header'] = $place->getConfig('commitment/invoice_header');
     	else $message['header'] = $context->getConfig('commitment/invoice_header');
 
     	// Add the data to merge with the template at printing time
     	
     	$message['data'] = [];
-    	foreach ($template['sections'] as $section) {
-    		if ($section['class'] == 'table') {
+    	foreach ($template['sections'] as $sectionId => $section) {
+    		if ($sectionId == 'attendees') {
     			$message['data']['occurrence_number'] = count($accounts);
     			$i = 0; 
     			foreach ($accounts as $account_id => $account) {
-    				foreach ($section['columns'] as $column) {
+    				foreach ($section['paragraphs'] as $column) {
     					if (array_key_exists('params', $column)) foreach ($column['params'] as $prefixedPropertyId) {
     						if (strpos($prefixedPropertyId, ':')) {
     							$arrayPropertyId = explode(':', $prefixedPropertyId);
@@ -786,6 +786,7 @@ class EventController extends AbstractActionController
 
     	$event = Event::get($event_id);
     	$place = Place::get($event->place_id);
+    	if (!$place) $place = $context->getPlace();
     
     	// Add the presentation template
     	$message = $this->attendanceSheet($event, $place, $filters, $order);

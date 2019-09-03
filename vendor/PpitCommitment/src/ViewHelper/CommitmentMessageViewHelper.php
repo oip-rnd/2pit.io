@@ -31,7 +31,7 @@ class CommitmentMessageViewHelper
 
     			$html .= "  <tr>\n";
     			 
-    			foreach ($section['columns'] as $column) {
+    			foreach ($section['paragraphs'] as $column) {
 
     				// Format the markup possibly with a class attribute
     				$format = '    <th';
@@ -50,7 +50,7 @@ class CommitmentMessageViewHelper
     				
     				$html .= "  <tr>\n";
 
-    				foreach ($section['columns'] as $column) {
+    				foreach ($section['paragraphs'] as $column) {
 			    		$arguments = [];
 			    		if (array_key_exists('params', $column)) {
 			    			foreach ($column['params'] as $prefixedPropertyId) {
