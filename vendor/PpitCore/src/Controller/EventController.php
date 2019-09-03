@@ -750,8 +750,8 @@ class EventController extends AbstractActionController
 
 		$firstTime = strtotime($event->begin_time);
 		$lastTime = strtotime($event->end_time);
-		$timeDiff = ($lastTime - $firstTime) / 3600;
-		$message['data']['duration'] = $timeDiff;
+		$timeDiff = ($lastTime - $firstTime) / 60;
+		$message['data']['duration'] = ((int) ($timeDiff / 60)) . 'h' . (($timeDiff % 60) ? sprintf('%02u', $timeDiff % 60).'mn' : '');
 
     	// Set the legal footer
     	$legal_footer_1 = ($place->legal_footer) ? $place->legal_footer : $context->getConfig('headerParams')['footer']['value'];
