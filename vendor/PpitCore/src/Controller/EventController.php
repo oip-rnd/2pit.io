@@ -643,6 +643,35 @@ class EventController extends AbstractActionController
     	return $this->updateAction();
     }
 
+	public function matchedIndexCardAction()
+	{
+		// Retrieve the context
+		$context = Context::getCurrent();
+
+		// Retrieve the entry and type
+		$type = $this->params()->fromRoute('type');
+		$configProperties = Account::getConfig($type);
+		$updatePage = Account::getConfigUpdate($type, $configProperties);
+		$description = $context->getConfig('core_account/'.$type);
+	
+		$id = (int) $this->params()->fromRoute('id');
+		$event = Event::get($id);
+
+		$account = Account::get($event->matched_accounts);
+		$account->properties = $account->getProperties($account->type, Account::getDescription($type));
+		$view = new ViewModel(array(
+			'context' => $context,
+			'configProperties' => $configProperties,
+			'type' => $type,
+			'id' => $id,
+			'account' => $account,
+			'detailPage' => $context->getConfig('core_account/detail/'.$type),
+			'updatePage' => $updatePage,
+		));
+		$view->setTerminal(true);
+		return $view;
+    }
+    
     public function attendanceSheet($event, $place, $filters, $order)
     {
     	// Retrieve the context and parameters

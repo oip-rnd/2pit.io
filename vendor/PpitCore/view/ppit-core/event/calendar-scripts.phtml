@@ -366,6 +366,23 @@ function getUpdate(id, action) {
   xhttp.send();
 }
 
+function getIndexCard(id) {
+
+  var xhttp = new XMLHttpRequest();
+  var route = '<?php echo $this->url('event/matchedIndexCard', ['type' => $context->getConfig('event/' . $type . '/property/matched_accounts')['account_type']]) ?>/' + id;
+
+  xhttp.open('GET', route, true);
+  xhttp.onreadystatechange = function() {
+    if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+    if (xhttp.readyState == 4) {
+      if (xhttp.status == 200) {
+        $('#event-nav-target-index-card').html(xhttp.responseText);
+      }
+    }
+  }
+  xhttp.send();
+}
+
 function getDetail(event) {
   let id = (event) ? event.id : 0;
   let xhttp = new XMLHttpRequest();
@@ -376,10 +393,11 @@ function getDetail(event) {
     if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
     if (xhttp.readyState == 4) {
       if (xhttp.status == 200) {
-        $('#modalFormBody').html(xhttp.responseText);
+        $('#event-nav-target-appointment').html(xhttp.responseText);
         $('#modalFormLabel').html($('#caption_' + id).val());
         connectAuditPanel();
         getUpdate(id, '');
+        if (id) getIndexCard(id);
 
         $('#modalForm').modal('toggle');
       }
@@ -552,6 +570,19 @@ function activateCalendar() {
   createCalendar(false);
   getEventSearch();
   getAccountSearch();
+
+  $('.event-nav-link').click(function () {
+    let id = $(this).attr('id');
+    $('.event-nav-link').removeClass('active');
+    $('#' + id).addClass('active');
+
+    $('.event-nav-target').hide();
+    if (id == 'event-nav-link-appointment') $('#event-nav-target-appointment').show();
+    else if (id == 'event-nav-link-index-card') $('#event-nav-target-index-card').show();
+  });
+
+  $('.event-nav-target').hide();
+  $('#event-nav-target-appointment').show();
 }
 
 activateCalendar();

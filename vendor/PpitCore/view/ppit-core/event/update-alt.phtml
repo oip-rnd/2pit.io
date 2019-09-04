@@ -51,16 +51,18 @@
 
   <input type="hidden" id="event_update_time" value="<?php echo $event->update_time ?>" />
 
-  <?php if ($event->id && !in_array($action, ['add', 'delete'])) : ?>
+<?php if ($event->id && !in_array($action, ['add', 'delete'])) : ?>
   <div class="my-3">
     <button type="button" class="btn btn-outline-primary" id="event-update-anchor" data-toggle="tooltip" title="<?php echo $this->translate('Modifier', 'ppit-core', $context->getLocale()) ?>"><i class="fa fa-edit"></i></button>
     <button type="button" class="btn btn-outline-primary" id="event-delete-anchor" data-toggle="tooltip" title="<?php echo $this->translate('Supprimer', 'ppit-core', $context->getLocale()) ?>"><i class="fa fa-trash-alt"></i></button>
   </div>
-  <?php endif;?>
+<?php endif;?>
 
+<?php if ($id & $type == 'calendar') : ?>
   <div class="my-3">
     <a target="_blank" href="<?php echo $this->url('event/downloadAttendanceSheet', ['type' => 'p-pit-studies', 'template_identifier' => 'attendance_sheet'], ['query' => ['event_id' => $id, 'property_7' => $event->property_2]]) ?>"><?php echo $this->translate('Attendance sheet', 'ppit-core', $context->getLocale()) ?></a>
   </div>
+<?php endif;?>
 
   <!-- Currently updated by anyone else -->
   <?php if (false) : //($event->currently_updated_by && $event->currently_updated_by != $context->getFormatedName()) : ?>
@@ -194,7 +196,6 @@ if ($event->id && $action != 'update' || $message == 'OK') $isDisabled = true; e
             <?php elseif ($property['type'] == 'multiselect') : ?>
 	         <?php $values = explode(',', $event->properties[$propertyId]) ?>
 	        <select class="form-control form-control-sm update_selectpicker updatable-control <?php if ($first) echo 'focused-control' ?>" id="<?php echo $propertyId ?>" name="<?php echo $propertyId ?>" multiple <?php if (array_key_exists('mandatory', $property) && $property['mandatory']) echo 'required' ?> <?php if ($isDisabled || $readonly) echo 'disabled="disabled"'?>>
-	           <option />
 	           <?php foreach ($property['modalities'] as $key => $labels) : ?>
 	           <option value="<?php echo $key ?>" <?php if (in_array($key, $values)) echo 'selected="selected"' ?>><?php echo $context->localize($labels) ?></option>
 	           <?php endforeach;?>

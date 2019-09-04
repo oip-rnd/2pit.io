@@ -11,7 +11,10 @@
 <?php if ($context->hasRole('admin') && $event->id) : ?>
 
 <!-- Display the audit -->
-  <?php echo $this->translate('History', 'ppit-core', $context->getLocale()) ?> (<a id="audit-label"><?php echo $this->translate('Show', 'ppit-core', $context->getLocale()) ?></a>)
+
+<div class="card mt-2">
+  <div class="card-body">
+      <div class="card-title text-muted"><?php echo $this->translate('History', 'ppit-core', $context->getLocale()) ?> (<a id="audit-label"><?php echo $this->translate('Show', 'ppit-core', $context->getLocale()) ?></a>)</div>
       <div id="audit-panel" class="panel panel-default">
         <div class="panel-body">
   <?php foreach ($event->audit as $auditEvent) : ?>
@@ -32,6 +35,8 @@
   <?php endforeach;?>
         </div>
       </div>
+  </div>
+</div>
       <div>&nbsp;</div>
 <?php endif;?>
 

@@ -681,7 +681,16 @@ return array_merge(
 							),
 						),
 					),
- 					'attendanceSheet' => array(
+					'matchedIndexCard' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/matched-account-card[/:type][/:id]',
+							'defaults' => array(
+								'action' => 'matchedIndexCard',
+		        			),
+						),
+					),
+					'attendanceSheet' => array(
 						'type' => 'segment',
 						'options' => array(
 							'route' => '/attendance-sheet[/:type][/:template_identifier][/:id]',
@@ -1894,6 +1903,7 @@ return array_merge(
 				array('route' => 'event/detailAlt', 'roles' => array('user')),
 				array('route' => 'event/update', 'roles' => array('user')),
 				array('route' => 'event/updateAlt', 'roles' => array('user')),
+				array('route' => 'event/matchedIndexCard', 'roles' => array('sales_manager', 'manager')),
 				array('route' => 'event/attendanceSheet', 'roles' => array('sales_manager', 'manager')),
 				array('route' => 'event/downloadAttendanceSheet', 'roles' => array('sales_manager', 'manager')),
 				
@@ -5376,7 +5386,7 @@ table.note-report td {
 		'dimensions' => array(),
 		'indicators' => array(),
 		'properties' => array(
-			'status', 'type', 'place_id', 'place_caption', 'account_id', 'category', 'subcategory', 'identifier', 'caption', 'description',
+			'status', 'type', 'place_id', 'place_caption', 'account_id', 'category', 'subcategory', 'identifier', 'caption', 'description', 'matched_accounts',
 			'begin_date', 'end_date', 'day_of_week', 'day_of_month', 'exception_1', 'exception_2', 'exception_3', 'exception_4', 'begin_time', 'end_time', 'time_zone', 'location', 'latitude', 'longitude',
 			'value', 'comments',
 			'update_time',
@@ -5429,7 +5439,8 @@ table.note-report td {
 		'status' => ['mandatory' => true],
 		'place_id' => [],
 		'account_id' => [],
-		'category' => [],
+		'matched_accounts' => [],
+//		'category' => [],
 		'caption' => [],
 		'description' => [],
 		'begin_date' => array('mandatory' => false),

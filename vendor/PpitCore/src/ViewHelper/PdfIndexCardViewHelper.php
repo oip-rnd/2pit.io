@@ -63,7 +63,7 @@ class PdfIndexCardViewHelper
     	$pdf->AddPage();
 
     	// Title
-    	$text = '<div>&nbsp;</div><div style="text-align: center"><strong>'.$cardSpec['title'][$context->getLocale()].' - '.$account->contact_1->n_fn.'</strong></div>';
+    	$text = '<div>&nbsp;</div><div style="text-align: center"><strong>'.$context->localize($cardSpec['title']).' - '.$account->contact_1->n_fn.'</strong></div>';
     	$pdf->writeHTML($text, true, 0, true, 0);
     	$pdf->Ln(10);
 
@@ -92,7 +92,7 @@ class PdfIndexCardViewHelper
 	    		}
 	    		else $value = $account->properties[$propertyId];
     		}
-	    	$pdf->MultiCell(30, 5, '<strong>'.$property['labels'][$context->getLocale()].'</strong>', 1, 'L', 1, 0, '', '', true, 0, true);
+	    	$pdf->MultiCell(30, 5, '<strong>'.$context->localize($property['labels']).'</strong>', 1, 'L', 1, 0, '', '', true, 0, true);
 	    	$pdf->MultiCell(5, 5, ':', 1, 'L', 1, 0, '', '', true);
 	    	$pdf->MultiCell(145, 5, $value, 1, 'L', 0, 1, '' ,'', true);
     	}
@@ -118,9 +118,9 @@ class PdfIndexCardViewHelper
 			}
 			else $value = $account->properties[$propertyId];
 
-			$rows .= sprintf('<tr><td style="width: 40%%; font-weight: bold">%s</td><td style="width: 60%%;">%s</td></tr>', $property['labels'][$context->getLocale()], $value);
+			$rows .= sprintf('<tr><td style="width: 40%%; font-weight: bold">%s</td><td style="width: 60%%;">%s</td></tr>', $context->localize($property['labels']), $value);
 	    }
-	    $table1 = sprintf('<table class="table note-report"><tr><th style="width: 100%%">%s</th></tr>%s</table>', $title['labels'][$context->getLocale()], $rows);
+	    $table1 = sprintf('<table class="table note-report"><tr><th style="width: 100%%">%s</th></tr>%s</table>', $context->localize($title['labels']), $rows);
 	    $rows = '';
 	    $title = $context->getConfig('core_account/'.$account->type.'/property/'.$cardSpec['2nd-column']['title']);
 	    foreach($cardSpec['2nd-column']['rows'] as $propertyId => $unused) {
@@ -138,9 +138,9 @@ class PdfIndexCardViewHelper
 			}
 			else $value = $account->properties[$propertyId];
 
-			$rows .= sprintf('<tr><td style="width: 40%%; font-weight: bold">%s</td><td style="width: 60%%;">%s</td></tr>', $property['labels'][$context->getLocale()], $value);
+			$rows .= sprintf('<tr><td style="width: 40%%; font-weight: bold">%s</td><td style="width: 60%%;">%s</td></tr>', $context->localize($property['labels']), $value);
 	    }
-	    $table2 = sprintf('<table class="table note-report"><tr><th style="width: 100%%">%s</th></tr>%s</table>', $title['labels'][$context->getLocale()], $rows);
+	    $table2 = sprintf('<table class="table note-report"><tr><th style="width: 100%%">%s</th></tr>%s</table>', $context->localize($title['labels']), $rows);
 	     
 //	    $text = $cardSpec['pdfDetailStyle'].sprintf('<table><tr><td style="width: 48%%">%s</td><td style="width: 4%%">&nbsp;</td><td style="width: 48%%">%s</td></tr></table>', $table1, $table2);
 	    $text = $cardSpec['pdfDetailStyle'].sprintf('%s<br><br>%s', $table1, $table2);

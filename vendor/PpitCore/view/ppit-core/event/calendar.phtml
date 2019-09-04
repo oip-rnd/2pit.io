@@ -50,6 +50,17 @@
         </button>
       </div>
       <div class="modal-body" id="modalFormBody">
+        <div class="container">
+
+         <ul class="nav nav-tabs">
+            <li class="nav-item"><a class="nav-link event-nav-link active ?>" id="event-nav-link-appointment"><?php echo $this->translate('Appointment', 'ppit-core', $context->getLocale()) ?></a></li>
+            <li class="nav-item"><a class="nav-link event-nav-link ?>" id="event-nav-link-index-card"><?php echo $this->translate('Index card', 'ppit-core', $context->getLocale()) ?></a></li>
+          </ul>
+      
+          <div class="event-nav-target" id="event-nav-target-appointment"></div>
+
+          <div class="event-nav-target mt-3" id="event-nav-target-index-card"></div>
+        </div>
       </div>
     </div>
   </div>
