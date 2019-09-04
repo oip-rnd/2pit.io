@@ -35,6 +35,7 @@ class Account
 			'contact_5' => 		['table' => 'core_vcard', 'foreign_key' => 'contact_5_id'],
 		),
 		'properties' => array(
+			'id' => 						['entity' => 'core_account', 'column' => 'id'],
 			'status' => 					['entity' => 'core_account', 'column' => 'status'],
 			'place_id' => 					['entity' => 'core_account', 'column' => 'place_id'],
 			'identifier' => 				['entity' => 'core_account', 'column' => 'identifier'],
@@ -1644,16 +1645,37 @@ class Account
     	$order = explode(',', $order);
 
     	foreach ($order as &$criterion) $criterion = substr($criterion, 1).' '.((substr($criterion, 0, 1) == '-') ? 'DESC' : 'ASC');
-    	$select = Account::getTable()->getSelect()
-			->join('core_place', 'core_account.place_id = core_place.id', array('place_caption' => 'caption', 'place_identifier' => 'identifier'), 'left')
-			->join('core_vcard', 'core_account.contact_1_id = core_vcard.id', array('n_title', 'n_first', 'n_last', 'n_fn', 'email', 'birth_date', 'tel_work', 'tel_cell', 'photo_link_id', 'adr_street', 'adr_extended', 'adr_post_office_box', 'adr_zip', 'adr_city', 'adr_state', 'adr_country', 'gender', 'nationality', 'profile_tiny_1' => 'tiny_1', 'profile_tiny_2' => 'tiny_2', 'profile_tiny_3' => 'tiny_3', 'profile_tiny_4' => 'tiny_4', 'profile_tiny_5' => 'tiny_5', 'profile_tiny_6' => 'tiny_6', 'profile_tiny_7' => 'tiny_7', 'profile_tiny_8' => 'tiny_8', 'profile_tiny_9' => 'tiny_9', 'profile_tiny_10' => 'tiny_10', 'locale'), 'left')
-			->join(array('contact_2' => 'core_vcard'), 'core_account.contact_2_id = contact_2.id', array('n_title_2' =>'n_title', 'n_first_2' => 'n_first', 'n_last_2' => 'n_last', 'n_fn_2' => 'n_fn', 'email_2' => 'email', 'birth_date_2' => 'birth_date', 'tel_work_2' => 'tel_work', 'tel_cell_2' => 'tel_cell', 'adr_street_2' => 'adr_street', 'adr_extended_2' => 'adr_extended', 'adr_post_office_box_2' => 'adr_post_office_box', 'adr_zip_2' => 'adr_zip', 'adr_city_2' => 'adr_city', 'adr_state_2' => 'adr_state', 'adr_country_2' => 'adr_country'), 'left')
-			->join(array('contact_3' => 'core_vcard'), 'core_account.contact_3_id = contact_3.id', array('n_title_3' =>'n_title', 'n_first_3' => 'n_first', 'n_last_3' => 'n_last', 'n_fn_3' => 'n_fn', 'email_3' => 'email', 'birth_date_3' => 'birth_date', 'tel_work_3' => 'tel_work', 'tel_cell_3' => 'tel_cell', 'adr_street_3' => 'adr_street', 'adr_extended_3' => 'adr_extended', 'adr_post_office_box_3' => 'adr_post_office_box', 'adr_zip_3' => 'adr_zip', 'adr_city_3' => 'adr_city', 'adr_state_3' => 'adr_state', 'adr_country_3' => 'adr_country'), 'left')
-			->join(array('contact_4' => 'core_vcard'), 'core_account.contact_4_id = contact_4.id', array('n_title_4' =>'n_title', 'n_first_4' => 'n_first', 'n_last_4' => 'n_last', 'n_fn_4' => 'n_fn', 'email_4' => 'email', 'birth_date_4' => 'birth_date', 'tel_work_4' => 'tel_work', 'tel_cell_4' => 'tel_cell', 'adr_street_4' => 'adr_street', 'adr_extended_4' => 'adr_extended', 'adr_post_office_box_4' => 'adr_post_office_box', 'adr_zip_4' => 'adr_zip', 'adr_city_4' => 'adr_city', 'adr_state_4' => 'adr_state', 'adr_country_4' => 'adr_country'), 'left')
-			->join(array('contact_5' => 'core_vcard'), 'core_account.contact_5_id = contact_5.id', array('n_title_5' =>'n_title', 'n_first_5' => 'n_first', 'n_last_5' => 'n_last', 'n_fn_5' => 'n_fn', 'email_5' => 'email', 'birth_date_5' => 'birth_date', 'tel_work_5' => 'tel_work', 'tel_cell_5' => 'tel_cell', 'adr_street_5' => 'adr_street', 'adr_extended_5' => 'adr_extended', 'adr_post_office_box_5' => 'adr_post_office_box', 'adr_zip_5' => 'adr_zip', 'adr_city_5' => 'adr_city', 'adr_state_5' => 'adr_state', 'adr_country_5' => 'adr_country'), 'left')
-			->order($order);
-
-		if ($columns) $select->columns($columns);
+    	$select = Account::getTable()->getSelect()->order($order);
+			
+		if ($columns) {
+			$joins = [''];
+			$joins['core_account'] = [];
+			$joins['core_place'] = [];
+			$joins['core_vcard'] = [];
+			$joins['contact_2'] = [];
+			$joins['contact_3'] = [];
+			$joins['contact_4'] = [];
+			$joins['contact_5'] = [];
+			foreach ($columns as $alias) {
+				$entity = Account::$model['properties'][$alias]['entity'];
+				$joins[$entity][$alias] = Account::$model['properties'][$alias]['column'];
+			}
+			
+			$select->columns($joins['core_account']);
+			$select->join('core_vcard', 'core_account.contact_1_id = core_vcard.id', $joins['core_vcard'], 'left');
+			$select->join(['contact_2' => 'core_vcard'], 'core_account.contact_2_id = contact_2.id', $joins['contact_2'], 'left');
+			$select->join(['contact_3' => 'core_vcard'], 'core_account.contact_3_id = contact_3.id', $joins['contact_3'], 'left');
+			$select->join(['contact_4' => 'core_vcard'], 'core_account.contact_4_id = contact_4.id', $joins['contact_4'], 'left');
+			$select->join(['contact_5' => 'core_vcard'], 'core_account.contact_5_id = contact_5.id', $joins['contact_5'], 'left');
+		}
+		else {
+			$select->join('core_place', 'core_account.place_id = core_place.id', array('place_caption' => 'caption', 'place_identifier' => 'identifier'), 'left');
+			$select->join('core_vcard', 'core_account.contact_1_id = core_vcard.id', array('n_title', 'n_first', 'n_last', 'n_fn', 'email', 'birth_date', 'tel_work', 'tel_cell', 'photo_link_id', 'adr_street', 'adr_extended', 'adr_post_office_box', 'adr_zip', 'adr_city', 'adr_state', 'adr_country', 'gender', 'nationality', 'profile_tiny_1' => 'tiny_1', 'profile_tiny_2' => 'tiny_2', 'profile_tiny_3' => 'tiny_3', 'profile_tiny_4' => 'tiny_4', 'profile_tiny_5' => 'tiny_5', 'profile_tiny_6' => 'tiny_6', 'profile_tiny_7' => 'tiny_7', 'profile_tiny_8' => 'tiny_8', 'profile_tiny_9' => 'tiny_9', 'profile_tiny_10' => 'tiny_10', 'locale'), 'left');
+			$select->join(array('contact_2' => 'core_vcard'), 'core_account.contact_2_id = contact_2.id', array('n_title_2' =>'n_title', 'n_first_2' => 'n_first', 'n_last_2' => 'n_last', 'n_fn_2' => 'n_fn', 'email_2' => 'email', 'birth_date_2' => 'birth_date', 'tel_work_2' => 'tel_work', 'tel_cell_2' => 'tel_cell', 'adr_street_2' => 'adr_street', 'adr_extended_2' => 'adr_extended', 'adr_post_office_box_2' => 'adr_post_office_box', 'adr_zip_2' => 'adr_zip', 'adr_city_2' => 'adr_city', 'adr_state_2' => 'adr_state', 'adr_country_2' => 'adr_country'), 'left');
+			$select->join(array('contact_3' => 'core_vcard'), 'core_account.contact_3_id = contact_3.id', array('n_title_3' =>'n_title', 'n_first_3' => 'n_first', 'n_last_3' => 'n_last', 'n_fn_3' => 'n_fn', 'email_3' => 'email', 'birth_date_3' => 'birth_date', 'tel_work_3' => 'tel_work', 'tel_cell_3' => 'tel_cell', 'adr_street_3' => 'adr_street', 'adr_extended_3' => 'adr_extended', 'adr_post_office_box_3' => 'adr_post_office_box', 'adr_zip_3' => 'adr_zip', 'adr_city_3' => 'adr_city', 'adr_state_3' => 'adr_state', 'adr_country_3' => 'adr_country'), 'left');
+			$select->join(array('contact_4' => 'core_vcard'), 'core_account.contact_4_id = contact_4.id', array('n_title_4' =>'n_title', 'n_first_4' => 'n_first', 'n_last_4' => 'n_last', 'n_fn_4' => 'n_fn', 'email_4' => 'email', 'birth_date_4' => 'birth_date', 'tel_work_4' => 'tel_work', 'tel_cell_4' => 'tel_cell', 'adr_street_4' => 'adr_street', 'adr_extended_4' => 'adr_extended', 'adr_post_office_box_4' => 'adr_post_office_box', 'adr_zip_4' => 'adr_zip', 'adr_city_4' => 'adr_city', 'adr_state_4' => 'adr_state', 'adr_country_4' => 'adr_country'), 'left');
+			$select->join(array('contact_5' => 'core_vcard'), 'core_account.contact_5_id = contact_5.id', array('n_title_5' =>'n_title', 'n_first_5' => 'n_first', 'n_last_5' => 'n_last', 'n_fn_5' => 'n_fn', 'email_5' => 'email', 'birth_date_5' => 'birth_date', 'tel_work_5' => 'tel_work', 'tel_cell_5' => 'tel_cell', 'adr_street_5' => 'adr_street', 'adr_extended_5' => 'adr_extended', 'adr_post_office_box_5' => 'adr_post_office_box', 'adr_zip_5' => 'adr_zip', 'adr_city_5' => 'adr_city', 'adr_state_5' => 'adr_state', 'adr_country_5' => 'adr_country'), 'left');
+		}
 
 		$where = new Where;
 		if ($type) $where->equalTo('type', $type);
