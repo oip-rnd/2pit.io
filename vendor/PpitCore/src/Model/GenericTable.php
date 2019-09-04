@@ -44,7 +44,7 @@ class GenericTable
     	$context = Context::getCurrent();
     	$table = $this->tableGateway->getTable();
 		$select->where(array($table.'.instance_id' => $context->getInstanceId()));
-//		echo $select->getSqlString($this->getAdapter()->getPlatform()).'<br>';
+		echo $select->getSqlString($this->getAdapter()->getPlatform()).'<br>';
 		if ($prototype) {
 			$resultSetPrototype = new ResultSet();
 			$resultSetPrototype->setArrayObjectPrototype($prototype);
