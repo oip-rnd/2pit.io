@@ -424,6 +424,8 @@ function createCalendar(print) {
 		    start: '08:00',
 		    end: '18:00'
 	    },
+        allDayText: '<?php echo $this->translate('Day', 'ppit-core', $context->getLocale()) ?>',
+        weekends: false,
 
         buttonText: {
           today: '<?php echo $this->translate('Today', 'ppit-core', $context->getLocale()) ?>',

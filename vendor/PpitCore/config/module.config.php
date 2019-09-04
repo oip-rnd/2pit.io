@@ -5245,8 +5245,9 @@ table.note-report td {
 	),
 	
 	'event/format/generic' => [
-		'mask' => '%s %s',
+		'mask' => '%s %s %s',
 		'params' => [
+			'matched_accounts' => [],
 			'caption' => [],
 			'location' => ['mask' => '(%s)'],
 		],

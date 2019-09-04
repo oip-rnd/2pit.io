@@ -348,7 +348,7 @@ class EventController extends AbstractActionController
 //    	$filters['account_id'] = $accounts;
     	if ($begin && $end) {
     		if (!array_key_exists('groups', $filters) || !$filters['groups']) {
-    			$events = Event::getList($type, $filters, '-update_time', null, ['id', 'type', 'category', 'caption', 'location', 'account_id', 'begin_date', 'end_date', 'begin_time', 'end_time', 'exception_dates', 'day_of_week', 'day_of_month', 'update_time', 'property_1', 'property_2', 'property_3']);
+    			$events = Event::getList($type, $filters, '-update_time', null, ['id', 'type', 'category', 'caption', 'location', 'account_id', 'begin_date', 'end_date', 'begin_time', 'end_time', 'exception_dates', 'day_of_week', 'day_of_month', 'matched_accounts', 'update_time', 'property_1', 'property_2', 'property_3']);
     		}
     		else {
 	    		$events = [];
