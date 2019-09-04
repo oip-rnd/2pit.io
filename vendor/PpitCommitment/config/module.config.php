@@ -3199,9 +3199,9 @@ table.note-report td {
 			'year' => [],
 			'account_name' => [],
 			'caption' => [],
-			'quantity' => [],
+/*			'quantity' => [],
 			'unit_price' => [],
-			'amount' => [],
+			'amount' => [],*/
 			'including_options_amount' => [],
 			'update_time' => [],
 		),
