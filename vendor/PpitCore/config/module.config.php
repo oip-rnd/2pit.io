@@ -284,6 +284,18 @@ return array_merge(
 							),
 						),
 					),
+					'updateUserAlt' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/update-user-alt[/:type][/:id][/:act]',
+							'constraints' => array(
+								'id' => '[0-9]*',
+							),
+							'defaults' => array(
+								'action' => 'updateUserAlt',
+							),
+						),
+					),
 					'passwordRequest' => array(
 						'type' => 'segment',
 						'options' => array(
@@ -1859,6 +1871,7 @@ return array_merge(
 				array('route' => 'account/update', 'roles' => array('operational_management', 'sales_manager', 'manager')),
 				array('route' => 'account/updateAlt', 'roles' => array('operational_management', 'sales_manager', 'manager')),
 				array('route' => 'account/updateUser', 'roles' => array('operational_management', 'sales_manager', 'manager')),
+				array('route' => 'account/updateUserAlt', 'roles' => array('operational_management', 'sales_manager', 'manager')),
 				array('route' => 'account/passwordRequest', 'roles' => array('admin')),
 				array('route' => 'account/updateContact', 'roles' => array('operational_management', 'sales_manager', 'manager')),
 				array('route' => 'account/updateContactAlt', 'roles' => array('operational_management', 'sales_manager', 'manager')),

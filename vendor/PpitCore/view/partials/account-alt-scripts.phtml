@@ -364,7 +364,7 @@ function getDetail(id) {
               getDocumentList('', 'account-update-panel', null, id);
 
     <?php elseif ($tabId == 'user') : ?>
-              getUserUpdate(id, '');
+              getUserUpdate(id);
 
     <?php else : ?>
               get<?php echo $tabId ?>Update(id, '');
@@ -390,6 +390,91 @@ function getDetail(id) {
 		}
 	}
 	xhttp.send();
+}
+
+<?php 
+$properties = array();
+$properties['username'] = array('type' => 'input', 'mandatory' => false, 'maxSize' => 255);
+$properties['state'] = array('type' => 'checkbox');
+$properties['is_notified'] = array('type' => 'checkbox');
+$properties['new_password'] = array('type' => 'input', 'mandatory' => false, 'maxSize' => 255);
+$properties['locale'] = array('type' => 'select', 'mandatory' => false);
+$properties['update_time'] = array('type' => 'hidden');
+
+echo $this->partial('/partials/check-update-properties', array('entity' => 'User', 'context' => $context, 'properties' => $properties)) 
+?>
+
+function postUserUpdate(id)
+{
+
+<?php foreach ($properties as $propertyId => $property) : ?>
+  <?php if ($property['type'] == 'date') : ?>
+    $('#input_<?php echo $propertyId ?>').datepicker();
+  <?php elseif ($property['type'] == 'time') : ?>
+    $('#<?php echo $propertyId ?>').timepicker({ 'timeFormat': 'H:i:s' });
+  <?php endif;?>
+<?php endforeach ?>
+
+  var form = document.getElementById('ppit-form');
+  form.onsubmit = function(event) {
+    
+    event.preventDefault();
+  
+    // Check validity
+    var validity = checkUserUpdateProperties(id);
+    if ($('#new_password').val() != $('#new_password2').val()) {
+      renderElement("new_password", "<?php echo $this->translate('Both new passwords should be identical', 'ppit-core', $context->getLocale()) ?>");
+      validity = false;
+    }
+
+    if (validity) {
+    
+      // Create a new FormData object.
+      var formData = new FormData();
+      
+      // Get the properties values
+<?php foreach ($properties as $propertyId => $property) : ?>
+  <?php if (in_array($property['type'], array('input', 'date', 'time', 'textarea', 'log', 'select', 'multiselect', 'number', 'email', 'phone', 'hidden'))) : ?>
+        formData.append('<?php echo $propertyId ?>', document.getElementById('<?php echo $propertyId ?>').value);
+
+  <?php elseif ($property['type'] == 'checkbox') : ?>
+        formData.append('<?php echo $propertyId ?>', ((document.getElementById('<?php echo $propertyId ?>').checked) ? 1 : 0));
+
+  <?php endif ?>
+
+<?php endforeach ?>
+
+      var xhttp = new XMLHttpRequest();
+      var route, target;
+      route = '<?php echo $this->url('account/updateUserAlt', array('type' => $type)) ?>/' + id;
+      xhttp.open('POST', route, true);
+      // Set up a handler for when the request finishes.
+      xhttp.onload = function () {
+        if (xhttp.readyState == 4 <?php if (!$context->getConfig()['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+          $('#account-update-panel').html(xhttp.responseText);
+          postUserUpdate(id);
+        }
+      };
+      xhttp.send(formData);
+    }
+    else return false;
+  }
+}
+
+function getUserUpdate(id) {
+
+  var xhttp = new XMLHttpRequest();
+  var route = '<?php echo $this->url('account/updateUserAlt', array('type' => $type)) ?>/' + id;
+
+  xhttp.open('GET', route, true);
+  xhttp.onreadystatechange = function() {
+    if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      $('#account-update-panel').html(xhttp.responseText);
+      postUserUpdate(id);
+    }
+  }
+  xhttp.send();
 }
 
 // Contact creation and updating

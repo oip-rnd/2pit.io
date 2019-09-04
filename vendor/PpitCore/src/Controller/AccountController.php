@@ -1381,6 +1381,11 @@ class AccountController extends AbstractActionController
     	$view->setTerminal(true);
     	return $view;
     }
+
+    public function updateUserAltAction()
+    {
+    	return $this->updateUserAction();
+    }
     
     public function updateContactAction()
     {
