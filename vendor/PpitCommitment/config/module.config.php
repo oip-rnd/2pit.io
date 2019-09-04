@@ -1332,6 +1332,24 @@ return array_merge(
 						'fr_FR' => 'Echéances',
 					),
 				),
+				'agent' => array(
+					'route' => 'account/indexAlt',
+					'params' => array('entry' => 'account', 'type' => 'agent', 'entryId' => 'agent'),
+					'glyphicon' => 'glyphicon-user',
+					'label' => array(
+						'en_US' => 'Team',
+						'fr_FR' => 'Équipe',
+					),
+				),
+				'planning' => array(
+					'route' => 'event/calendar',
+					'params' => array('type' => 'planning', 'category' => 'business', 'entryId' => 'planning'),
+					'glyphicon' => 'glyphicon-calendar',
+					'label' => array(
+						'en_US' => 'Appointments',
+						'fr_FR' => 'Rendez-vous',
+					),
+				),
 				'operation_general' => array(
 						'route' => 'accountingOperation/index',
 						'params' => array('year' => 2019, 'type' => 'general', 'app' => 'p-pit-engagements'),
@@ -1342,8 +1360,8 @@ return array_merge(
 						),
 				),
 				'product' => array(
-					'route' => 'product/index',
-					'params' => array(),
+					'route' => 'product/indexV2',
+					'params' => array('type' => 0, 'entryId' => 'product'),
 					'glyphicon' => 'glyphicon-book',
 					'label' => array(
 						'en_US' => 'Catalogue',
