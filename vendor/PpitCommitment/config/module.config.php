@@ -1305,13 +1305,22 @@ return array_merge(
 
 	'menus/p-pit-engagements' => array(
 		'entries' => array(
+				'suspect' => array(
+					'route' => 'account/indexAlt',
+					'params' => array('entry' => 'suspect', 'type' => 'business', 'entryId' => 'suspect'),
+					'glyphicon' => 'glyphicon-user',
+					'label' => array(
+						'en_US' => 'Suspects',
+						'fr_FR' => 'Suspects',
+					),
+				),
 				'account' => array(
 					'route' => 'account/indexAlt',
 					'params' => array('entry' => 'account', 'type' => 'business', 'entryId' => 'account'),
 					'glyphicon' => 'glyphicon-user',
 					'label' => array(
-						'en_US' => 'Clients',
-						'fr_FR' => 'Clients',
+						'en_US' => 'Prospects/Clients',
+						'fr_FR' => 'Prospects/Clients',
 					),
 				),
 				'commitment' => array(
@@ -1350,7 +1359,7 @@ return array_merge(
 						'fr_FR' => 'Rendez-vous',
 					),
 				),
-				'operation_general' => array(
+/*				'operation_general' => array(
 						'route' => 'accountingOperation/index',
 						'params' => array('year' => 2019, 'type' => 'general', 'app' => 'p-pit-engagements'),
 						'glyphicon' => 'glyphicon-book',
@@ -1358,7 +1367,7 @@ return array_merge(
 								'en_US' => 'Account books',
 								'fr_FR' => 'Journaux comptables',
 						),
-				),
+				),*/
 				'product' => array(
 					'route' => 'product/indexV2',
 					'params' => array('type' => 0, 'entryId' => 'product'),
@@ -1419,6 +1428,7 @@ return array_merge(
 		'definition' => 'inline',
 		'type' => 'select',
 		'modalities' => array(
+			'suspect' => array('en_US' => 'Suspect', 'fr_FR' => 'Suspect'),
 			'new' => array('en_US' => 'New', 'fr_FR' => 'Nouveau'),
 			'interested' => array('en_US' => 'Interested', 'fr_FR' => 'Intéressé'),
 			'committed' => array('en_US' => 'Committed', 'fr_FR' => 'Engagé'),
@@ -1430,6 +1440,7 @@ return array_merge(
 			'fr_FR' => 'Statut',
 		),
 		'perspectives' => array(
+			'suspect' => array('suspect'),
 			'account' => array('new', 'interested', 'gone', 'committed', 'active'),
 		),
 		'mandatory' => true,

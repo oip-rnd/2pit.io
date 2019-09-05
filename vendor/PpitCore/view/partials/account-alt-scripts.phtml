@@ -1,4 +1,4 @@
-<?php echo $this->partial('/ppit-core/view-controller/document', ['type' => 'binary', 'folder' => 'studies']) ?>
+<?php echo $this->partial('/ppit-core/view-controller/document', ['type' => 'binary', 'folder' => 'commitments']) ?>
 
 <script>
 /**
@@ -10,6 +10,13 @@
  */
 
  var criterion = '<?php echo $context->getConfig('core_account/'.$type)['order'] ?>', dir = 'ASC';
+
+ function openDocumentModal()
+ {
+   getDocumentList(getSearchParams(''));
+   $('#shared-document-modal').modal('toggle');
+   
+ }
 
 function accountGetParams() {
 
@@ -1109,6 +1116,9 @@ function getAccountSearch()
           }
           getAccountList(accountGetParams());
         });
+
+        // Connect the shared documents button to a modal view
+        $('.shared-document-button').click(openDocumentModal);
   
         // Retrieve and show the initial list
         getAccountList(accountGetParams());
