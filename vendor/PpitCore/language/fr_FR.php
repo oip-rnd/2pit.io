@@ -136,6 +136,7 @@
 			'Non-catalog' => 'Hors catalogue',
 			'Number' => 'Nombre',
 			'Opening date' => 'Date d\'ouverture',
+			'OR Send a new password email' => 'OU Envoyer un email de nouveau mot de passe',
 			'Order additional accounts' => 'Commander des comptes supplémentaires',
 			'Order' => 'Commande',
 			'Value list restrictions at place level' => 'Restrictions de listes de valeurs au niveau centre',

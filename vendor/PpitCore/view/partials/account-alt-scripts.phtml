@@ -407,6 +407,7 @@ $properties['is_notified'] = array('type' => 'checkbox');
 $properties['new_password'] = array('type' => 'input', 'mandatory' => false, 'maxSize' => 255);
 $properties['locale'] = array('type' => 'select', 'mandatory' => false);
 $properties['update_time'] = array('type' => 'hidden');
+$properties['password_email'] = array('type' => 'checkbox');
 
 echo $this->partial('/partials/check-update-properties', array('entity' => 'User', 'context' => $context, 'properties' => $properties)) 
 ?>
@@ -478,6 +479,11 @@ function getUserUpdate(id) {
     if (xhttp.status == 401) location.href = '<?php echo $this->url('user/expired')?>';
     if (xhttp.readyState == 4 && xhttp.status == 200) {
       $('#account-update-panel').html(xhttp.responseText);
+
+      $('#password_email').change(function () {
+          $('#new_password').val('');
+          $('#new_password2').val('');
+      });
       postUserUpdate(id);
     }
   }

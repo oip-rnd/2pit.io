@@ -1281,6 +1281,8 @@ class AccountController extends AbstractActionController
 	    	}
     	}
 
+    	$password_email = false;
+    	
     	// Instanciate the csrf form
     	$csrfForm = new CsrfForm();
     	$csrfForm->addCsrfElement('csrf');
@@ -1297,7 +1299,7 @@ class AccountController extends AbstractActionController
 
     			// Load the input data
     			$data = array();
-    			$data['communities'] = array($community->id => true);
+//    			$data['communities'] = array($community->id => true);
     			$data['roles'] = array();
     			$data['perimeters'] = array();
     			if ($type) $data['credits'] = array($type => true);
@@ -1305,8 +1307,15 @@ class AccountController extends AbstractActionController
     			$data['username'] = $account->username;
     			$data['state'] = $request->getPost('state');
     			$data['is_notified'] = $request->getPost('is_notified');
-    			$new_password = $request->getPost('new_password');
-    			$data['new_password'] = $new_password;
+    			
+    			if ($request->getPost('password_email')) {
+    				$password_email = true;
+    				$data['new_password'] = false;
+    			}
+    			else {
+	    			$new_password = $request->getPost('new_password');
+    				$data['new_password'] = $new_password;
+    			}
     			$data['locale'] = $request->getPost('locale');
     			$data['is_demo_mode_active'] = false;
  
@@ -1346,7 +1355,10 @@ class AccountController extends AbstractActionController
     						if ($rc != 'OK') $error = $rc;
     					}
     					if (!$error) {
-	    					if ($data['new_password']) {
+    						if ($password_email) {
+    							$context->getSecurityAgent()->requestPasswordInit($account->user, true, $this->url(), $account->contact_1);
+    						}
+	    					elseif ($data['new_password']) {
 	    						$account->user->new_password = $data['new_password'];
 	    						if ($rc != 'OK') $error = $rc;
 	    						else $context->getSecurityAgent()->changePassword($account->user, $account->user->username, null, $account->user->new_password, null);
@@ -1374,6 +1386,7 @@ class AccountController extends AbstractActionController
     			'action' => $action,
     			'account' => $account,
     			'new_password' => $new_password,
+    			'password_email' => $password_email,
     			'csrfForm' => $csrfForm,
     			'error' => $error,
     			'message' => $message
