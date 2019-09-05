@@ -1412,8 +1412,8 @@ return array_merge(
 		'definition' => 'inline',
 		'type' => 'title',
 		'labels' => array(
-			'en_US' => 'REGISTRATION DATA',
-			'fr_FR' => 'DONNEES D\'INSCRIPTION',
+			'en_US' => 'SUBSCRIPTION',
+			'fr_FR' => 'SOUSCRIPTION',
 		),
 	),
 	'core_account/business/property/title_3' => array(
@@ -1737,33 +1737,30 @@ return array_merge(
 		),
 	),
 
-	'core_account/business/property/property_2' => array(
-		'definition' => 'inline',
-		'type' => 'input',
-		'labels' => array(
-			'en_US' => 'Available field 1',
-			'fr_FR' => 'Champs libre 1',
-		),
-	),
-
 	'core_account/business/property/property_3' => array(
 		'definition' => 'inline',
 		'type' => 'input',
 		'labels' => array(
-			'en_US' => 'Available field 2',
-			'fr_FR' => 'Champs libre 2',
+			'en_US' => 'Web site', 'fr_FR' => 'Site web'
 		),
 	),
 	
 	'core_account/business/property/property_4' => array(
 		'definition' => 'inline',
 		'type' => 'input',
-		'labels' => array(
-			'en_US' => 'Available field 3',
-			'fr_FR' => 'Champs libre 3',
-		),
+		'labels' => array('en_US' => 'Legal mention', 'fr_FR' => 'Mention légale'),
 	),
-
+	
+	'core_account/business/property/property_5' => array(
+		'definition' => 'inline',
+		'type' => 'select',
+		'modalities' => array(
+			'vat_on_collection' => array('en_US' => 'VAT on collection', 'fr_FR' => 'TVA sur les encaissements'),
+			'vat_not_applicable' => array('en_US' => 'VAT not applicable', 'fr_FR' => 'TVA non applicable'),
+		),
+		'labels' => array('en_US' => 'VAT regime', 'fr_FR' => 'Régime de TVA'),
+	),
+	
 	'core_account/business/property/property_5' => array(
 		'definition' => 'inline',
 		'type' => 'input',
