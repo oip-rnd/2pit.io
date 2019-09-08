@@ -337,18 +337,21 @@ class EventController extends AbstractActionController
     	$type = $this->params()->fromRoute('type');
     	$description = Event::getDescription($type);
     	$category = $this->params()->fromRoute('category');
-/*    	$groups = $this->params()->fromQuery('groups');
-    	$groups = ($groups) ? explode(',', $groups) : [];*/
+    	$groups = $this->params()->fromQuery('groups');
     	$begin = $this->params()->fromQuery('begin');
     	$end = $this->params()->fromQuery('end');
 //    	$accounts = $this->params()->fromQuery('accounts'/*, '*'*/);
     	$description = Event::getDescription($type);
     	$filters = $this->getFilters($this->params(), $description);
+    	unset($filters['groups']);
     	if ($category) $filters['category'] = $category;
 //    	$filters['account_id'] = $accounts;
     	if ($begin && $end) {
     		if (!array_key_exists('groups', $filters) || !$filters['groups']) {
-    			$events = Event::getList($type, $filters, '-update_time', null, ['id', 'type', 'category', 'caption', 'location', 'account_id', 'begin_date', 'end_date', 'begin_time', 'end_time', 'exception_dates', 'day_of_week', 'day_of_month', 'matched_accounts', 'update_time', 'property_1', 'property_2', 'property_3']);
+    			$events = array_merge(
+    				Event::getList($type, ['groups' => $groups], '-update_time', null, ['id', 'type', 'category', 'caption', 'location', 'account_id', 'begin_date', 'end_date', 'begin_time', 'end_time', 'exception_dates', 'day_of_week', 'day_of_month', 'matched_accounts', 'update_time', 'property_1', 'property_2', 'property_3']),
+    				Event::getList($type, $filters, '-update_time', null, ['id', 'type', 'category', 'caption', 'location', 'account_id', 'begin_date', 'end_date', 'begin_time', 'end_time', 'exception_dates', 'day_of_week', 'day_of_month', 'matched_accounts', 'update_time', 'property_1', 'property_2', 'property_3'])
+    			);
     		}
     		else {
 	    		$events = [];
