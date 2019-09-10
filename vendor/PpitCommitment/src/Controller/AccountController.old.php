@@ -24,7 +24,7 @@ use Zend\Log\Writer;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
-class AccountController extends AbstractActionController
+class AccountController.old extends AbstractActionController
 {
     public function contactFormAction()
 	{
@@ -400,7 +400,7 @@ class AccountController extends AbstractActionController
     		}
 			$interaction->http_status = '200';
 			$rc = $interaction->add();
-			$rc = AccountController::processPost($data, $interaction);
+			$rc = AccountController.old::processPost($data, $interaction);
 	   		$this->getResponse()->setStatusCode($interaction->http_status);
    			$this->response->setContent(json_encode(array('interaction_id' => $interaction->id, 'rc' => $rc)));
    			return $this->getResponse();
@@ -419,7 +419,7 @@ class AccountController extends AbstractActionController
 			return $this->getResponse();
 		}
     	$data = json_decode($interaction->content, true);
-		$rc = AccountController::processPost($data, $interaction);
+		$rc = AccountController.old::processPost($data, $interaction);
    		$this->getResponse()->setStatusCode($interaction->http_status);
    		echo $rc;
 		return $this->getResponse();

@@ -1,0 +1,14 @@
+<script>
+
+function getJson() {
+  try {
+    return JSON.parse($('#specifications').text());
+  } catch (ex) {
+    console.log('Wrong JSON Format: ' + ex);
+  }
+}
+
+var editor = new JsonEditor('#json-display', getJson());
+editor.load(getJson());
+
+</script>

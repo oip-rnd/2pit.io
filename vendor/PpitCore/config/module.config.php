@@ -848,7 +848,7 @@ return array_merge(
 					'index' => array(
 						'type' => 'segment',
 						'options' => array(
-							'route' => '/index',
+							'route' => '/index[/:entryId]',
 							'defaults' => array(
 								'action' => 'index',
 							),
@@ -998,7 +998,7 @@ return array_merge(
 					'serialize' => array(
 						'type' => 'segment',
 						'options' => array(
-							'route' => '/serialize',
+							'route' => '/serialize[/:entryId]',
 							'defaults' => array(
 								'action' => 'serialize',
 							),
@@ -2350,6 +2350,14 @@ Hébergeur : OVH 59820 Gravelines pour 2pit.io
 				'label' => array(
 					'en_US' => 'Interactions',
 					'fr_FR' => 'Interactions',
+				),
+			),
+			'serialize' => array(
+				'route' => 'instance/serialize',
+				'params' => array(),
+				'glyphicon' => 'glyphicon-cog',
+				'label' => array(
+					'default' => 'Load config',
 				),
 			),
 			'admin' => array(

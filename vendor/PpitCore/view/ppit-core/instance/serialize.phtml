@@ -15,7 +15,8 @@
 
   <form action="<?php echo $this->url('instance/serialize') ?>" method="post" class="form-horizontal" enctype="multipart/form-data">
     <div class="col-sm-12">
-      <textarea class="form-control" name="specifications" rows="10"><?php echo $specifications ?></textarea>
+      <pre id="json-display"></pre>
+      <textarea class="form-control" id="specifications" name="specifications" rows="10"><?php echo $specifications ?></textarea>
     </div>
     <div class="col-sm-12">
       <input name="submit" type="submit" id="submit-button" class="btn btn-warning" value="<?php echo $this->translate('Load the config', 'ppit-core', $context->getLocale()) ?>">

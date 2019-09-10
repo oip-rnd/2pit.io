@@ -7,7 +7,6 @@ return array_merge(
 [
     'controllers' => array(
         'invokables' => array(
-            'PpitCommitment\Controller\Account' => 'PpitCommitment\Controller\AccountController', // Deprecated. For compatibility reasons with Shin Agency
         	'PpitCommitment\Controller\Commitment' => 'PpitCommitment\Controller\CommitmentController',
 //        	'PpitCommitment\Controller\CommitmentCredit' => 'PpitCommitment\Controller\CommitmentCreditController',
         	'PpitCommitment\Controller\CommitmentMessage' => 'PpitCommitment\Controller\CommitmentMessageController',
@@ -44,47 +43,7 @@ return array_merge(
 	                ),
 	       		),
             ),
-        	'commitmentAccount' => array(
-                'type'    => 'literal',
-                'options' => array(
-                    'route'    => '/commitment-account',
-                    'defaults' => array(
-                        'controller' => 'PpitCommitment\Controller\Account',
-                        'action'     => 'list',
-                    ),
-                ),
-           		'may_terminate' => true,
-	       		'child_routes' => array(
- 	       						'contactForm' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/contact-form[/:type][/:place_identifier][/:state_id][/:action_id][/:id]',
-        										'defaults' => array(
-        												'action' => 'contactForm',
-        										),
-        								),
-        						),
-	       						'post' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/post[/:type]',
-        										'defaults' => array(
-        												'action' => 'post',
-        										),
-        								),
-        						),
-	       						'processPost' => array(
-        								'type' => 'segment',
-        								'options' => array(
-        										'route' => '/process-post[/:interaction_id]',
-        										'defaults' => array(
-        												'action' => 'processPost',
-        										),
-        								),
-        						),
-	       		),
-	       	),
-        	'commitment' => array(
+	       	'commitment' => array(
         		'type'    => 'segment',
         			'options' => array(
         				'route'    => '/commitment',
@@ -1138,10 +1097,6 @@ return array_merge(
         // Guard listeners to be attached to the application event manager
         'guards' => array(
             'BjyAuthorize\Guard\Route' => array(
-            	array('route' => 'commitmentAccount/post', 'roles' => array('guest')), // Deprecated. For compatibility reasons with Shin Agency
-            	array('route' => 'commitmentAccount/contactForm', 'roles' => array('guest')),
-            	array('route' => 'commitmentAccount/processPost', 'roles' => array('admin', 'ws-incoming')),
-            		
             	array('route' => 'commitment', 'roles' => array('sales_manager')),
             	array('route' => 'commitment/index', 'roles' => array('sales_manager')),
             	array('route' => 'commitment/indexV2', 'roles' => array('sales_manager')),

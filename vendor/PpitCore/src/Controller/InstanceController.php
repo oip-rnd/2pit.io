@@ -391,8 +391,24 @@ class InstanceController extends AbstractActionController
     {
     	$context = Context::getCurrent();
     	$config = $context->getConfig();
-    	
+		$place = Place::get($context->getPlaceId());
+    	 
     	$instance = Instance::get($context->getInstanceId());
+
+    	// Transient: Serialize a list of the entries from all menus
+    	$menuEntries = [];
+    	foreach ($context->getApplications() as $applicationId => $application) {
+    		if ($context->getConfig('menus/'.$applicationId)) {
+    			foreach ($context->getConfig('menus/' . $applicationId)['entries'] as $entryId => $entryDef) {
+    				$menuEntries[$entryId] = ['menuId' => $applicationId, 'menu' => $application, 'definition' => $entryDef];
+    			}
+    		}
+    	}
+    	$tab = $this->params()->fromRoute('entryId', 'serialize');
+    	
+    	// Retrieve the application
+    	$app = $menuEntries[$tab]['menuId'];
+    	$applicationName = $context->localize($menuEntries[$tab]['menu']['labels']);
 
     	// Instanciate the csrf form
     	$csrfForm = new CsrfForm();
@@ -412,6 +428,17 @@ class InstanceController extends AbstractActionController
     		}
     	}
 
+    	// Feed the layout
+    	$this->layout('/layout/core-layout');
+    	$this->layout()->setVariables(array(
+    		'context' => $context,
+    		'place' => $place,
+    		'tab' => $tab,
+    		'app' => $app,
+    		'applicationName' => $applicationName,
+    		'pageScripts' => 'ppit-core/view-controller/instance',
+    	));
+    	 
     	$view = new ViewModel(array(
     		'context' => $context,
     		'instance' => $instance,
