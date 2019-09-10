@@ -58,7 +58,7 @@
   </div>
 <?php endif;?>
 
-<?php if ($id & $type == 'calendar') : ?>
+<?php if ($id && $type == 'calendar') : ?>
   <div class="my-3">
     <a target="_blank" href="<?php echo $this->url('event/downloadAttendanceSheet', ['type' => 'p-pit-studies', 'template_identifier' => 'attendance_sheet'], ['query' => ['event_id' => $id, 'property_7' => $event->property_2]]) ?>"><?php echo $this->translate('Attendance sheet', 'ppit-core', $context->getLocale()) ?></a>
   </div>
