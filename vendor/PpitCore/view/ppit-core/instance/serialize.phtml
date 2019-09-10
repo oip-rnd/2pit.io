@@ -13,9 +13,11 @@
 
 <?php if (!$statusCode ) : ?>
 
+  <button id="translate">Translate</button>
+
   <form action="<?php echo $this->url('instance/serialize') ?>" method="post" class="form-horizontal" enctype="multipart/form-data">
     <div class="col-sm-12">
-      <pre id="json-display"></pre>
+       <pre id="json-display"></pre>
       <textarea class="form-control" id="specifications" name="specifications" rows="10"><?php echo $specifications ?></textarea>
     </div>
     <div class="col-sm-12">

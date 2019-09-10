@@ -9,6 +9,7 @@ function getJson() {
 }
 
 var editor = new JsonEditor('#json-display', getJson());
-editor.load(getJson());
-
+$('#translate').on('click', function () {
+    editor.load(getJson());
+});
 </script>

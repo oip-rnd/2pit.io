@@ -1279,8 +1279,8 @@ return array_merge(
 					),
 				),
 				'commitment' => array(
-					'route' => 'commitment/index',
-					'params' => array('type' => 'service'),
+					'route' => 'commitment/indexV2',
+					'params' => array('type' => 'service', 'entryId' => 'commitment'),
 					'glyphicon' => 'glyphicon-link',
 					'label' => array(
 						'en_US' => 'Commitments',
@@ -1288,8 +1288,8 @@ return array_merge(
 					),
 				),
 				'term' => array(
-					'route' => 'commitmentTerm/index',
-					'params' => array('type' => 'service'),
+					'route' => 'commitmentTerm/indexV2',
+					'params' => array('type' => 'service', 'entryId' => 'term'),
 					'glyphicon' => 'glyphicon-calendar',
 					'label' => array(
 						'en_US' => 'Terms',
