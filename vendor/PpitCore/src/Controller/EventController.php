@@ -355,7 +355,7 @@ class EventController extends AbstractActionController
     		}
     		else {
 	    		$events = [];
-	    		$groups = explode(',', $filters['groups']);
+	    		$groups = explode(',', $groups);
 	    		foreach ($groups as $group_id) {
 	    			$filters['groups'] = $group_id;
 					$cursor = Event::getList($type, $filters, '-update_time', null, ['id', 'type', 'category', 'caption', 'location', 'account_id', 'begin_date', 'end_date', 'begin_time', 'end_time', 'exception_dates', 'day_of_week', 'day_of_month', 'update_time', 'property_1', 'property_2', 'property_3']);
