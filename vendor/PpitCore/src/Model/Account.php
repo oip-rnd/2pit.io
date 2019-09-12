@@ -223,7 +223,9 @@ class Account
 			if (!$property) $property = $context->getConfig('core_account/generic/property/'.$propertyId);
 	
 			// Overwrite the description with the referred description for non-inline property definition
+			$propertyType = (array_key_exists('type', $property)) ? $property['type'] : null;
 			if ($property['definition'] != 'inline') $property = $context->getConfig($property['definition']);
+			if ($propertyType) $property['type'] = $propertyType;
 
 			if (!array_key_exists('private', $property)) $property['private'] = false;
 			
