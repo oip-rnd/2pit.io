@@ -300,7 +300,7 @@ if ($account->id && $action != 'update' || $message == 'OK') $isDisabled = true;
 
       <?php 
       $multiple = array_key_exists('multiple', $property) && $property['multiple'];
-      $values = /*explode(',', */$account->properties[$propertyId]/*)*/;
+      $values = explode(',', $account->properties[$propertyId]);
       ?>
   <div class="form-group row" id="<?php echo (($property['type'] == 'date' || $property['type'] == 'number') ? 'input_' : '').$propertyId ?>_group">
     <label class="col-sm-5 col-form-label col-form-label-sm"><?php if (array_key_exists('mandatory', $property['options']) && $property['options']['mandatory']) echo '* ' ?><?php echo $context->localize($property['labels']) ?></label>
