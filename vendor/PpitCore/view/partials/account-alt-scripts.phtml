@@ -1084,7 +1084,7 @@ function getAccountSearch()
         // Trigger the change event on select inputs and refresh the list
         $('.search_input_select').change(function () {
           var propertyIdAttr = $(this).attr('id');
-          if ($propertyIdAttr) {
+          if (propertyIdAttr) {
 	          var propertyId = propertyIdAttr.split('-')[1];
 	          $('#erase-button').removeClass('btn-default').addClass('btn-success');
 	          $('#erase-button').attr('disabled', false);
