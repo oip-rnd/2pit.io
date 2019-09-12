@@ -74,7 +74,7 @@ function getAccountList(params, major, dir) {
 
 			$('.account-checkbox').each(function () {
 				$(this).click(function () {
-					getPlanning();
+					getPlanning(getSearchParams(''));
 				});
 			});
 		}
