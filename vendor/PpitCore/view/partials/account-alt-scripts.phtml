@@ -1083,12 +1083,15 @@ function getAccountSearch()
    
         // Trigger the change event on select inputs and refresh the list
         $('.search_input_select').change(function () {
-          var propertyId = $(this).attr('id').split('-')[1];
-          $('#erase-button').removeClass('btn-default').addClass('btn-success');
-          $('#erase-button').attr('disabled', false);
-          $('#search_check-' + propertyId).removeClass('btn-default').addClass('btn-secondary').addClass('active');
-          $('#search_check_value-' + propertyId).val('1');
-          getAccountList(accountGetParams());
+          var propertyIdAttr = $(this).attr('id');
+          if ($propertyIdAttr) {
+	          var propertyId = propertyIdAttr.split('-')[1];
+	          $('#erase-button').removeClass('btn-default').addClass('btn-success');
+	          $('#erase-button').attr('disabled', false);
+	          $('#search_check-' + propertyId).removeClass('btn-default').addClass('btn-secondary').addClass('active');
+	          $('#search_check_value-' + propertyId).val('1');
+	          getAccountList(accountGetParams());
+          }
         }); 
 
         // Trigger the keyup event on text inputs and refresh the list

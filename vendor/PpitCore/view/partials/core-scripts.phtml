@@ -19,12 +19,13 @@ $.widget.bridge('uitooltip', $.ui.tooltip);
 <script src="<?php echo $this->basePath('/fullcalendar/fullcalendar.js') ?>"></script>
 <script src="<?php echo $this->basePath('/fullcalendar/locale-all.js') ?>"></script>
 
-<!-- JSON editor -->
-<script type="text/javascript" src="<?php echo$this->basePath('/Beautiful-JSON-Viewer-Editor/dist/jquery.json-editor.min.js')?>"></script>
+<!-- JSON viewer -->
+<script type="text/javascript" src="<?php echo$this->basePath('/json-viewer/jquery.json-viewer.js')?>"></script>
 
 <!-- Load the common form javascript functions -->
 <?php echo $this->partial('/partials/common-form-js.phtml'); ?>
 <?php echo $this->partial('/ppit-core/view-controller/common-scripts.phtml'); ?>
+
 
 <script>
 <?php foreach ($context->getConfig('menus/' . $app)['entries'] as $entryId => $entryDef) : ?>

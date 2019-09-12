@@ -2521,6 +2521,7 @@ table.note-report td {
 	'commitment/generic/property/account_property_16' => ['definition' => 'core_account/generic/property/property_16'],
 
 	'commitment/generic/property/email' => ['definition' => 'core_account/generic/property/email'],
+	'commitment/generic/property/tel_cell' => ['definition' => 'core_account/generic/property/tel_cell'],
 	'commitment/generic/property/birth_date' => ['definition' => 'core_account/generic/property/birth_date'],
 	
 	'commitment/generic/property/invoice_n_fn' => array(

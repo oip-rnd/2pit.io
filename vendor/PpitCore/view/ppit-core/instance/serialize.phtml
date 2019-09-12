@@ -9,20 +9,33 @@
 -->
 
 <!-- Main panel -->
-<div class="row">
+<div class="container">
+  <div class="row">
+    <div class="panel panel-default my-3">
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-md-12">
+            <pre id="json-renderer"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
 <?php if (!$statusCode ) : ?>
 
-  <button id="translate">Translate</button>
-
   <form action="<?php echo $this->url('instance/serialize') ?>" method="post" class="form-horizontal" enctype="multipart/form-data">
-    <div class="col-sm-12">
-       <pre id="json-display"></pre>
-      <textarea class="form-control" id="specifications" name="specifications" rows="10"><?php echo $specifications ?></textarea>
+
+    <div class="row">
+        <textarea class="form-control" id="specifications" name="specifications" rows="10"><?php echo $specifications ?></textarea>
     </div>
-    <div class="col-sm-12">
-      <input name="submit" type="submit" id="submit-button" class="btn btn-warning" value="<?php echo $this->translate('Load the config', 'ppit-core', $context->getLocale()) ?>">
+    
+    <div class="row">
+      <div class="col-sm-12">
+        <input name="submit" type="submit" id="submit-button" class="btn btn-warning" value="<?php echo $this->translate('Load the config', 'ppit-core', $context->getLocale()) ?>">
+      </div>
     </div>
+
   </form>
 </div>
 

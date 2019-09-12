@@ -12,7 +12,7 @@
 <?php echo $this->partial('/partials/common-form-js.phtml'); ?>
 
 <?php
-$title = $context->getConfig('user/index')['title'][$context->getLocale()];
+$title = $context->localize($context->getConfig('user/index')['title']);
 $this->headTitle($title);
 echo $this->partial('/partials/header');
 ?>
@@ -26,7 +26,7 @@ echo $this->partial('/partials/header');
 				<button type="button" class="btn menu-btn <?php echo $color ?>" style="width:100%; text-align: left" id="<?php echo $entryId ?>-anchor">
 				<?php if (array_key_exists('glyphicon', $entryDef)) : ?>
 				<?php endif;?>
-						<?php echo $entryDef['label'][$context->getLocale()] ?>
+						<?php echo $context->localize($entryDef['label']) ?>
 				</button>
 		</div>
 	<?php endif ?>

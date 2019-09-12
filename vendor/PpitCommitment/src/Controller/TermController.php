@@ -202,7 +202,7 @@ class TermController extends AbstractActionController
     	$view = $this->getList();
     	$type = $this->params()->fromRoute('type', 'generic');
     	$description = Term::getDescription($type);
-    	 
+
    		include 'public/PHPExcel_1/Classes/PHPExcel.php';
    		include 'public/PHPExcel_1/Classes/PHPExcel/Writer/Excel2007.php';
 

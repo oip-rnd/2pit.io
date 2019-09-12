@@ -55,7 +55,7 @@
 			$modalities[$modalityId] = $context->localize($modality);
 		}
 
-		/*if (array_key_exists('multiple', $options) && $options['multiple'])*/ $multiple = false; //else $multiple = false;
+		if (array_key_exists('multiple', $options) && $options['multiple']) $multiple = true; else $multiple = false;
 		?>
         <div class="input-group input-group-sm mb-2 mr-sm-2">
           <input type="hidden" value="0" class="search_check_value" id="search_check_value-<?php echo $propertyId ?>" />

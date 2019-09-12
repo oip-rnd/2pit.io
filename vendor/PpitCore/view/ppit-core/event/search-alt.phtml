@@ -49,8 +49,10 @@
 				else foreach ($property['modalities'] as $modalityId => $modality) {
 					$modalities[$modalityId] = $context->localize($modality);
 				}
+				
+				if (array_key_exists('multiple', $options) && $options['multiple']) $multiple = true; else $multiple = false;
 				?>
-				<select class="form-control search_input search_input_select" id="search-<?php echo $propertyId ?>" <?php if (array_key_exists('multiple', $options) && $options['multiple']) echo 'multiple' ?>>
+				<select class="form-control search_input search_input_select <?php if ($multiple) echo 'selectpicker search_selectpicker' ?>" id="search-<?php echo $propertyId ?>" <?php if ($multiple) echo 'data-none-selected-text' ?> <?php if ($multiple) echo 'multiple' ?>>
 					<option value=""></option>
 				<?php foreach ($modalities as $modalityId => $modality) : ?>
 		    		<option value="<?php echo $modalityId ?>" <?php if ($modalityId == $default) echo 'selected="selected"' ?>><?php echo $modality ?></option>

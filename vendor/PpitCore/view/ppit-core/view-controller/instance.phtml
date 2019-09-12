@@ -1,15 +1,3 @@
 <script>
-
-function getJson() {
-  try {
-    return JSON.parse($('#specifications').text());
-  } catch (ex) {
-    console.log('Wrong JSON Format: ' + ex);
-  }
-}
-
-var editor = new JsonEditor('#json-display', getJson());
-$('#translate').on('click', function () {
-    editor.load(getJson());
-});
+$('#json-renderer').jsonViewer(JSON.parse($('#specifications').text()), { collapsed: true, withLinks: false} );
 </script>
