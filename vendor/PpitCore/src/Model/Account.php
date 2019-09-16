@@ -337,6 +337,16 @@ class Account
 	
 				// Retrieve the property description from the whole properties dictionary and merge it with the update options for this property
 				$property = $configProperties[$propertyId];
+			
+				// Filter the archived modalities as not available anymore in add or update modes
+				if (in_array($property['type'], ['select', 'multiselect'])) {
+	    			$modalities = [];
+	    			foreach ($property['modalities'] as $modalityId => $modality) {
+	    				if (!is_array($modality) || !array_key_exists('archive', $modality) || !$modality['archive']) $modalities[$modalityId] = $modality;
+	    			}
+	    			$property['modalities'] = $modalities;
+	    		}
+	    		
 				$property['options'] = $options;
 				$properties[$propertyId] = $property;
 			}

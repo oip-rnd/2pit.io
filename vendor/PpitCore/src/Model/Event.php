@@ -317,7 +317,17 @@ class Event
 		$configSearch = $context->getConfig('event/search/'.$type);
 		if (!$configSearch) $configSearch = $context->getConfig('event/search/generic');
 		foreach ($configSearch['properties'] as $propertyId => $options) {
+			
 			$property = $configProperties[$propertyId];
+
+			// Restrict the modalities to wichever is defined at the place config level for users authorized on only one place
+/*			$perimeters = $context->getPerimeters();
+			if (array_key_exists('p-pit-admin', $perimeters) && array_key_exists('place_id', $perimeters['p-pit-admin'])) {
+				if (count($perimeters['p-pit-admin']['place_id'] == 1) && array_key_exists($propertyId, $context->getPlace()->config)) {
+					$property = $context->getPlace()->getConfig($propertyId);
+				}
+			}*/
+
 			$configSearch['properties'][$propertyId] = $property;
 			$configSearch['properties'][$propertyId]['options'] = $options;
 		}
@@ -344,6 +354,16 @@ class Event
 		if (!$configUpdate) $configUpdate = $context->getConfig('event/update/generic');
 		foreach ($configUpdate as $propertyId => $options) {
 			$property = $configProperties[$propertyId];
+			
+			// Filter the archived modalities as not available anymore in add or update modes
+			if (in_array($property['type'], ['select', 'multiselect'])) {
+    			$modalities = [];
+    			foreach ($property['modalities'] as $modalityId => $modality) {
+    				if (!is_array($modality) || !array_key_exists('archive', $modality) || !$modality['archive']) $modalities[$modalityId] = $modality;
+    			}
+    			$property['modalities'] = $modalities;
+    		}
+    		
 			$property['mandatory'] = (array_key_exists('mandatory', $options)) ? $options['mandatory'] : false;
 			if (array_key_exists('default', $options)) {
 				$default = $options['default'];

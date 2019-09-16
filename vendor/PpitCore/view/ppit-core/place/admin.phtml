@@ -12,7 +12,7 @@
 <?php echo $this->partial('/partials/common-form-js.phtml'); ?>
 
 <?php
-$title = $context->getConfig('instance/index')['title'][$context->getLocale()];
+$title = $context->localize($context->getConfig('instance/index')['title']);
 $this->headTitle($title);
 echo $this->partial('/partials/header');
 ?>
@@ -34,7 +34,7 @@ echo $this->partial('/partials/header');
 		<?php if (array_key_exists('glyphicon', $entryDef)) : ?>
 						<span class="glyphicon <?php echo $entryDef['glyphicon'] ?>"></span>
 		<?php endif;?>
-						<?php echo $entryDef['label'][$context->getLocale()] ?>
+						<?php echo $context->localize($entryDef['label']) ?>
 					</button>
 	<?php endif ?>
 <?php endforeach;?>
@@ -75,7 +75,7 @@ $isDisabled = true;
 	else $restriction = true;
 	?>
 
-						<h4><?php echo $property['labels'][$context->getLocale()] ?></h4>
+						<h4><?php echo $context->localize($property['labels']) ?></h4>
     <?php if (!$restriction) : ?>
                         <h5 class="alert alert-info my-3 text-center"><?php echo $this->translate('No restriction currently defined on this list', 'ppit-core', $context->getLocale()) ?></h5>
     <?php endif;?>
