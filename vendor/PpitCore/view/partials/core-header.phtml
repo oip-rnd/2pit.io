@@ -40,12 +40,18 @@
 	if ($context->getConfig('menus/'.$applicationId)) {
 		$menuEntry = $context->getConfig('menus/'.$applicationId)['entries'][$application['default']];
 		$url = (array_key_exists('url', $application) ? $application['url'] : $this->url($menuEntry['route'], $menuEntry['params']));
+		$allowed = $context->isAllowed($menuEntry['route']);
 	}
-	else $url = $this->url($application['url']);
+	else {
+		$url = $this->url($application['url']);
+		$allowed = $context->isAllowed($application['url'][0]);
+	}
 	?>
+  <?php if ($allowed) : ?>
 				          	<a class="dropdown-item" href="<?php echo $url ?>">
 				          		<?php echo $application['labels'][$context->getLocale()]?>
 				          	</a>
+  <?php endif;?>
 <?php endforeach;?>
 						</div>
 					</li>

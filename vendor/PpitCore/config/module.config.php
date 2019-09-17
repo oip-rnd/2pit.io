@@ -1900,7 +1900,7 @@ return array_merge(
 				array('route' => 'event/v1', 'roles' => array('guest')),
 				array('route' => 'event/index', 'roles' => array('user')),
 				array('route' => 'event/indexAlt', 'roles' => array('user')),
-				array('route' => 'event/calendar', 'roles' => array('user')),
+				array('route' => 'event/calendar', 'roles' => array('sales_manager', 'operational_management', 'manager')),
 				array('route' => 'event/search', 'roles' => array('user')),
 				array('route' => 'event/searchAlt', 'roles' => array('user')),
 				array('route' => 'event/list', 'roles' => array('user')),
