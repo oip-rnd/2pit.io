@@ -959,8 +959,10 @@ function getCommitmentDetail(id) {
 			connectCgvPanel();
 
 			getCommitmentUpdate(id, '');
+      
+            $('.detail-remove-anchor').click(function () { getCommitmentDetail(id); });
 			
-			$('.detail-remove-anchor').click(function () { $('.term-tr').hide(); });
+//			$('.detail-remove-anchor').click(function () { $('.term-tr').hide(); });
 
 			$('#row-anchor').click(function () {
 				$('.row-anchor').removeClass('btn-warning').addClass('btn-outline-primary');
