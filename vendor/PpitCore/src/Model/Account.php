@@ -138,7 +138,7 @@ class Account
 			'adr_city_5' => 				['entity' => 'contact_5', 'column' => 'adr_city'],
 			'adr_state_5' => 				['entity' => 'contact_5', 'column' => 'adr_state'],
 			'adr_country_5' => 				['entity' => 'contact_5', 'column' => 'adr_country'],
-			'groups' =>						['entity' => 'core_account', 'column' => 'groups'], // Implemented in fact by the n-n link on core_group_account
+			'groups' =>						['entity' => 'core_account', 'column' => 'groups'],
 			'opening_date' => 				['entity' => 'core_account', 'column' => 'opening_date'],
 			'closing_date' => 				['entity' => 'core_account', 'column' => 'closing_date'],
 			'callback_date' => 				['entity' => 'core_account', 'column' => 'callback_date'],
@@ -826,6 +826,7 @@ class Account
     public $place_id;
     public $identifier;
     public $name;
+    public $groups;
     public $basket;
     public $contact_1_id;
     public $contact_1_status;
@@ -1004,7 +1005,6 @@ class Account
     public $contact_3;
     public $contact_4;
     public $contact_5;
-    public $groups;
     public $members;
 	public $properties;
     public $files;
@@ -1049,6 +1049,7 @@ class Account
         $this->place_id = (isset($data['place_id'])) ? $data['place_id'] : null;
         $this->identifier = (isset($data['identifier'])) ? $data['identifier'] : null;
         $this->name = (isset($data['name'])) ? $data['name'] : null;
+        $this->groups = (isset($data['groups'])) ? $data['groups'] : null;
         $this->basket = (isset($data['basket'])) ? $data['basket'] : null;
         $this->contact_1_id = (isset($data['contact_1_id'])) ? $data['contact_1_id'] : null;
         $this->contact_1_status = (isset($data['contact_1_status'])) ? $data['contact_1_status'] : null;
@@ -1231,6 +1232,7 @@ class Account
     	$data['place_id'] = (int) $this->place_id;
     	$data['identifier'] = $this->identifier;
     	$data['name'] = $this->name;
+    	$data['groups'] = $this->groups;
     	$data['basket'] = $this->basket;
     	$data['opening_date'] =  ($this->opening_date) ? $this->opening_date : null;
     	$data['closing_date'] =  ($this->closing_date) ? $this->closing_date : null;
@@ -1498,7 +1500,6 @@ class Account
     	}
     	
     	// Transient properties
-    	$data['groups'] = $this->groups;
     	$data['members'] = $this->members;    	 
     	
     	$data['update_time'] = $this->update_time;
@@ -1641,7 +1642,6 @@ class Account
     	unset($data['invoice_adr_state']);
     	unset($data['invoice_adr_country']);
     	 
-    	unset($data['groups']);
     	unset($data['members']);
     	
     	return $data;
@@ -1695,45 +1695,44 @@ class Account
 
 		// Set the filters
 		foreach ($params as $propertyId => $value) {
-			if ($propertyId != 'groups') {
-				if (in_array(substr($propertyId, 0, 4), array('min_', 'max_'))) $propertyKey = substr($propertyId, 4);
-				else $propertyKey = $propertyId;
-				$property = Account::getConfig($type)[$propertyKey];
-				$entity = Account::$model['properties'][$propertyKey]['entity'];
-				$column = Account::$model['properties'][$propertyKey]['column'];
-	
-				if ($propertyId == 'gender') $where->equalTo('core_vcard.gender', $value);
-				elseif ($propertyId == 'adr_zip') $where->like('core_vcard.adr_zip', '%'.$value.'%');
-				elseif ($propertyId == 'locale') $where->like('core_vcard.locale', '%'.$value.'%');
-				elseif ($propertyId == 'min_availability') $where->greaterThanOrEqualTo('availability_end', $value);
-				elseif ($propertyId == 'max_availability') $where->lessThanOrEqualTo('availability_begin', $value);
-				elseif ($propertyId == 'availability') $where->like('availability_constraints', '%'.$value.'%');
-				elseif ($propertyId == 'next_meeting_confirmed') {
-					$where->isNotNull('next_meeting_date');
-					if ($value) $where->isNotNull('next_meeting_confirmed');
-					else {
-						$where->isNull('next_meeting_confirmed');
-					}
+			if (in_array(substr($propertyId, 0, 4), array('min_', 'max_'))) $propertyKey = substr($propertyId, 4);
+			else $propertyKey = $propertyId;
+			$property = Account::getConfig($type)[$propertyKey];
+			$entity = Account::$model['properties'][$propertyKey]['entity'];
+			$column = Account::$model['properties'][$propertyKey]['column'];
+
+			if ($propertyId == 'groups') $where->like('core_account.groups', '%'.$value.'%');
+			elseif ($propertyId == 'gender') $where->equalTo('core_vcard.gender', $value);
+			elseif ($propertyId == 'adr_zip') $where->like('core_vcard.adr_zip', '%'.$value.'%');
+			elseif ($propertyId == 'locale') $where->like('core_vcard.locale', '%'.$value.'%');
+			elseif ($propertyId == 'min_availability') $where->greaterThanOrEqualTo('availability_end', $value);
+			elseif ($propertyId == 'max_availability') $where->lessThanOrEqualTo('availability_begin', $value);
+			elseif ($propertyId == 'availability') $where->like('availability_constraints', '%'.$value.'%');
+			elseif ($propertyId == 'next_meeting_confirmed') {
+				$where->isNotNull('next_meeting_date');
+				if ($value) $where->isNotNull('next_meeting_confirmed');
+				else {
+					$where->isNull('next_meeting_confirmed');
 				}
-				elseif (substr($propertyId, 0, 4) == 'min_') {
-					if (in_array($property['type'], ['date', 'datetime']) && !$value) $where->isNull($entity.'.'.substr($propertyId, 4));
-					else $where->greaterThanOrEqualTo($entity.'.'.substr($propertyId, 4), $value);
-				}
-				elseif (substr($propertyId, 0, 4) == 'max_') {
-					if (in_array($property['type'], ['date', 'datetime']) && !$value) $where->isNull($entity.'.'.substr($propertyId, 4));
-					else $where->lessThanOrEqualTo($entity.'.'.substr($propertyId, 4), $value);
-				}
-				elseif (strpos($value, ',')) $where->in($entity.'.'.$column, array_map('trim', explode(',', $value)));
-				elseif ($value == '*') $where->notEqualTo($entity.'.'.$column, '');
-				elseif ($property['type'] == 'select') {
-					if (array_key_exists('multiple', $property) && $property['multiple']) $where->like($entity.'.'.$column, '%'.$value.'%');
-					else $where->equalTo($entity.'.'.$column, $value);
-				}
-				elseif ($property['type'] == 'multiselect') $where->like($entity.'.'.$column, '%'.$value.'%');
-				elseif ($property['type'] == 'table') $where->equalTo($entity.'.'.$column, $value);
-				elseif ($value === null) $where->isNull($column);
-				else $where->like($entity.'.'.$column, '%'.$value.'%');
 			}
+			elseif (substr($propertyId, 0, 4) == 'min_') {
+				if (in_array($property['type'], ['date', 'datetime']) && !$value) $where->isNull($entity.'.'.substr($propertyId, 4));
+				else $where->greaterThanOrEqualTo($entity.'.'.substr($propertyId, 4), $value);
+			}
+			elseif (substr($propertyId, 0, 4) == 'max_') {
+				if (in_array($property['type'], ['date', 'datetime']) && !$value) $where->isNull($entity.'.'.substr($propertyId, 4));
+				else $where->lessThanOrEqualTo($entity.'.'.substr($propertyId, 4), $value);
+			}
+			elseif (strpos($value, ',')) $where->in($entity.'.'.$column, array_map('trim', explode(',', $value)));
+			elseif ($value == '*') $where->notEqualTo($entity.'.'.$column, '');
+			elseif ($property['type'] == 'select') {
+				if (array_key_exists('multiple', $property) && $property['multiple']) $where->like($entity.'.'.$column, '%'.$value.'%');
+				else $where->equalTo($entity.'.'.$column, $value);
+			}
+			elseif ($property['type'] == 'multiselect') $where->like($entity.'.'.$column, '%'.$value.'%');
+			elseif ($property['type'] == 'table') $where->equalTo($entity.'.'.$column, $value);
+			elseif ($value === null) $where->isNull($column);
+			else $where->like($entity.'.'.$column, '%'.$value.'%');
 		}
 
     	$select->where($where);
@@ -1742,10 +1741,6 @@ class Account
 			$cursor->setCurrentPageNumber($pageNumber);
 			$cursor->setItemCountPerPage($itemCountPerPage);
 		}
-		
-		if (array_key_exists('groups', $params)) {
-			$groups = Account::getList('group', [], '+name', null);
-		}
 
 		$accounts = array();
 		$i = 0;
@@ -1753,20 +1748,6 @@ class Account
 			$account->properties = $account->getProperties($account->type, $description);
 
 			$keep = true;
-
-			if (array_key_exists('groups', $params)) {
-				if (!$groups) $keep = false;
-				else {
-					$value = $params['groups'];
-					if ($value) $value = explode(',', $value);
-					foreach ($value as $group_id) {
-						if (!array_key_exists($group_id, $groups)) {
-							$keep = false;
-							$break;
-						}
-					}
-				}
-			}
 			
 			// Filter on authorized perimeter
 			if ($keep && array_key_exists('p-pit-admin', $context->getPerimeters())) {
@@ -1932,23 +1913,16 @@ class Account
 		$account->denormalize();	    
 	    $account->properties = $account->getProperties($account->type, $description);
 
-	    // Retrieve the groups this account is linked to
-	    $groups = [];
-	    $cursor = GroupAccount::getList(GroupAccount::getDescription('generic'), ['account_id' => $account->id]);
-	    foreach($cursor as $group) {
-	    	$groups[$group->id] = $group->properties;
-	    }
-	    $account->groups = $groups;
-
 		// Group account: Retrieve the members
 		if ($account->type == 'group') {
-			$members = [];
+/*			$members = [];
 			$cursor = GroupAccount::getList(GroupAccount::getDescription('generic'), ['group_id' => $account->id]);
 			foreach($cursor as $row) {
 				$member = Account::get($row->account_id);
 				$members[$member->id] = $member;
 			}
-			$account->members = $members;
+			$account->members = $members;*/
+			$account->members = Account::getList(null, ['groups' => $account->id], '+name', null);
 		}
 
 	    return $account;
@@ -2015,6 +1989,7 @@ class Account
     		elseif ($propertyId == 'place_id') $this->place_id = $value;
         	elseif ($propertyId == 'identifier') $this->identifier = $value;
     		elseif ($propertyId == 'name') $this->name = $value;
+    		elseif ($propertyId == 'groups') $this->groups = $value;
     		elseif ($propertyId == 'basket') $this->basket = $value;
     		elseif ($propertyId == 'contact_1_id') $this->contact_1_id = $value;
     		elseif ($propertyId == 'contact_1_status') $this->contact_1_status = $value;
