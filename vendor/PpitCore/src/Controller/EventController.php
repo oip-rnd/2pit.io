@@ -684,6 +684,7 @@ class EventController extends AbstractActionController
 		$template = $context->getConfig('event/message/' . $type . '/' . $template_identifier);
 
 		// Retrieve the accounts
+		$filters['status'] = 'active,retention';
 		$accounts = Account::getList($type, $filters, $order, null);
 		
 		// Retrieve the commitment description for the type
@@ -864,6 +865,7 @@ class EventController extends AbstractActionController
     		$property = ($this->params()->fromQuery($propertyId, null));
     		if ($property !== null) $filters[$propertyId] = $property;
     	}
+    	
     	$order = ($this->params()->fromQuery('order', 'n_fn'));
     	if (substr($order, 0, 1) != '-') $order = '+' . $order;
 
