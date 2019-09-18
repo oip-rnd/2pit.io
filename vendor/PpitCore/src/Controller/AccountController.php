@@ -628,11 +628,15 @@ class AccountController extends AbstractActionController
 			$csrfForm->setData($request->getPost());
 			if ($csrfForm->isValid()) { // CSRF check
 				$selectedGroup = $request->getPost('group_id');
-				$groupAccount = GroupAccount::instanciate();
-				$content['data']['group_id'] = $selectedGroup;
+//				$groupAccount = GroupAccount::instanciate();
 				foreach ($accounts as $account) {
-					$content['data']['account_id'] = $account->id;
-					$rc = $groupAccount->loadAndAdd($groupDescription, $content, true, true);
+//					$content['data']['account_id'] = $account->id;
+					if ($account->groups) $groups = explode(',', $account->groups);
+					else $groups = [];
+					if (!in_array($selectedGroup, $groups)) $groups[] = $selectedGroup;
+					$content['data']['groups'] = implode(',', $groups);
+//					$rc = $groupAccount->loadAndAdd($groupDescription, $content, true, true);
+					$rc = $account->loadAndUpdate($content['data']);
 					if ($rc[0] != '200') {
 						print_r($content);
 						$error = $rc[0];
@@ -686,7 +690,7 @@ class AccountController extends AbstractActionController
     			$connection->beginTransaction();
     			try {
 					foreach ($accounts as $account) {
-						$groupAccount = GroupAccount::get($account->id, 'account_id', $group_id, 'group_id');
+/*						$groupAccount = GroupAccount::get($account->id, 'account_id', $group_id, 'group_id');
 						if ($groupAccount) {
 							$rc = $groupAccount->delete(null);
 							if ($rc == 'OK') $connection->commit();
@@ -694,6 +698,19 @@ class AccountController extends AbstractActionController
 			    				$connection->rollback();
 								$this->getResponse()->setStatusCode('400');
 								$this->getResponse()->setReasonPhrase($rc);
+							}
+						}*/
+						if ($account->groups) $groups = explode(',', $account->groups);
+						else $groups = [];
+						if (in_array($group_id, $groups)) {
+							$newGroups = [];
+							foreach ($groups as $group) if ($group != $group_id) $newGroups[] = $group;
+							if ($newGroups) $data['groups'] = implode(',', $newGroups);
+							else $data['groups'] = '';
+							$rc = $account->loadAndUpdate($data);
+							if ($rc[0] != '200') {
+								print_r($data);
+								$error = $rc[0];
 							}
 						}
 					}
