@@ -9,6 +9,7 @@
 namespace PpitCore\Controller;
 
 use PpitCore\Form\CsrfForm;
+use PpitCore\Model\Account;
 use PpitCore\Model\Community;
 use PpitCore\Model\Context;
 use PpitCore\Model\Csrf;
@@ -424,6 +425,63 @@ return $content;
 		ob_start("ob_gzhandler");
 		echo json_encode($content, JSON_PRETTY_PRINT);
 		ob_end_flush();
+		return $this->response;
+	}
+	
+	public function rgpdAction()
+	{
+		// Retrieve the Vcards older than 2 years
+		$date = $this->params()->fromQuery('date', '2017-09-01');
+		$select = Vcard::getTable()->getSelect()->where(['update_time < ?' => $date]);
+		$cursor = Vcard::getTable()->selectWith($select);
+		$vcards = [];
+		foreach ($cursor as $vcard) {
+			
+			// Keep the accounts relative to the vcard that have not been updated since two years
+			$keep = true;
+		
+			$vcard->properties = [];
+			$vcard->properties[] = $vcard->id;
+			$vcard->properties[] = $vcard->n_fn;
+			
+			$vcard->properties['accounts'] = [];
+			$account = Account::get($vcard->id, 'contact_1_id');
+			if ($account) {
+				if ($account->update_time >= $date) $keep = false;
+				else $vcard->properties['accounts'][] = $account->id;
+			}
+				
+			$account = Account::get($vcard->id, 'contact_2_id');
+			if ($account) {
+				if ($account->update_time >= $date) $keep = false;
+				else $vcard->properties['accounts'][] = $account->id;
+			}
+				
+			$account = Account::get($vcard->id, 'contact_3_id');
+			if ($account) {
+				if ($account->update_time >= $date) $keep = false;
+				else $vcard->properties['accounts'][] = $account->id;
+			}
+				
+			$account = Account::get($vcard->id, 'contact_4_id');
+			if ($account) {
+				if ($account->update_time >= $date) $keep = false;
+				else $vcard->properties['accounts'][] = $account->id;
+			}
+				
+			$account = Account::get($vcard->id, 'contact_5_id');
+			if ($account) {
+				if ($account->update_time >= $date) $keep = false;
+				else $vcard->properties['accounts'][] = $account->id;
+			}
+				
+			if ($keep) {
+				$vcards[$vcard->id] = $vcard;
+				$vcard->properties['accounts'] = implode(',', $vcard->properties['accounts']);
+				print_r(implode(';', $vcard->properties) . "\n");
+			}
+		}
+		
 		return $this->response;
 	}
 }

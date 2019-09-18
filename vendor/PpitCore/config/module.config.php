@@ -1806,6 +1806,15 @@ return array_merge(
 							),
 						),
 					),
+					'rgpd' => array(
+						'type' => 'segment',
+						'options' => array(
+							'route' => '/rgpd',
+							'defaults' => array(
+								'action' => 'rgpd',
+							),
+						),
+					),
 				),
 			),
 			'config' => array(
@@ -2032,6 +2041,7 @@ return array_merge(
 				array('route' => 'vcard/photo', 'roles' => array('user')),
 				array('route' => 'vcard/demoMode', 'roles' => array('user')),
 				array('route' => 'vcard/dataRecovery', 'roles' => array('admin')),
+				array('route' => 'vcard/rgpd', 'roles' => array('admin')),
 			)
 		)
 	),
