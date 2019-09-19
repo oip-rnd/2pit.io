@@ -708,9 +708,11 @@ class AccountController extends AbstractActionController
 							if ($newGroups) $data['groups'] = implode(',', $newGroups);
 							else $data['groups'] = '';
 							$rc = $account->loadAndUpdate($data);
-							if ($rc[0] != '200') {
-								print_r($data);
-								$error = $rc[0];
+							if ($rc[0] == '200') $connection->commit();
+							else {
+			    				$connection->rollback();
+								$this->getResponse()->setStatusCode($rc[0]);
+								$this->getResponse()->setReasonPhrase($rc[1]);
 							}
 						}
 					}
